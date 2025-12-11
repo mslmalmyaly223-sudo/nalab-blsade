@@ -2408,14 +2408,14 @@
         }
         
         // تحويل التاريخ إلى تنسيق ميلادي
-        function formatGregorianDate(date) {
-            if (!date) return '--/--/----';
-            const d = new Date(date);
-            const day = d.getDate().toString().padStart(2, '0');
-            const month = (d.getMonth() + 1).toString().padStart(2, '0');
-            const year = d.getFullYear();
-            return `${day}/${month}/${year}`;
-        }
+function formatGregorianDate(date) {
+    if (!date) return '--/--/----';
+    const d = new Date(date);
+    const day = d.getDate().toString().padStart(2, '0');
+    const month = (d.getMonth() + 1).toString().padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+}
         
         // ============== إدارة حالة المصادقة ==============
         
@@ -2663,63 +2663,81 @@
         
         // ============== إدارة البريد الوارد والرسائل ==============
         
-        // إرسال رسالة إلى البريد الوارد
-        async function sendMessageToInbox(userId, title, content, type = 'info') {
-            try {
-                // حفظ الرسالة في قاعدة البيانات
-                await window.firestoreFunctions.addDoc(
-                    window.firestoreFunctions.collection(window.firebaseDb, "inbox"),
-                    {
-                        userId: userId,
-                        title: title,
-                        content: content,
-                        type: type,
-                        read: false,
-                        createdAt: window.firestoreFunctions.serverTimestamp(),
-                        delivered: true
-                    }
-                );
-                
-                console.log(`Message sent to ${userId}: ${title}`);
-                
-                // إذا كان المستخدم الحالي هو المرسل إليه، تحديث الفقاعات
-                if (currentUser && currentUser.uid === userId) {
-                    await checkUnreadMessages();
-                }
-                
-                return true;
-            } catch (error) {
-                console.error("Error sending message to inbox:", error);
-                return false;
-            }
+        // إرسال رسالة إلى البريد الوادر
+async function sendMessageToInbox(userId, title, content, type = 'info') {
+    try {
+        // التحقق من أن userId صالح
+        if (!userId || userId.trim() === '') {
+            console.error("Invalid userId provided to sendMessageToInbox");
+            return false;
         }
         
-        // التحقق من الرسائل غير المقروءة
-        async function checkUnreadMessages() {
-            if (!currentUser) return;
-            
-            try {
-                const q = window.firestoreFunctions.query(
-                    window.firestoreFunctions.collection(window.firebaseDb, "inbox"),
-                    window.firestoreFunctions.where("userId", "==", currentUser.uid),
-                    window.firestoreFunctions.where("read", "==", false)
-                );
-                
-                const querySnapshot = await window.firestoreFunctions.getDocs(q);
-                unreadMessagesCount = querySnapshot.size;
-                
-                // حفظ عدد الرسائل غير المقروءة في localStorage
-                localStorage.setItem(`unreadMessages_${currentUser.uid}`, unreadMessagesCount);
-                
-                // تحديث الفقاعات
-                updateNotificationBadges();
-                
-                return unreadMessagesCount;
-            } catch (error) {
-                console.error("Error checking unread messages:", error);
-                return 0;
-            }
+        // إنشاء كائن الرسالة
+        const messageData = {
+            userId: userId,
+            title: title || 'رسالة بدون عنوان',
+            content: content || 'لا يوجد محتوى',
+            type: type || 'info',
+            read: false,
+            createdAt: window.firestoreFunctions.serverTimestamp(),
+            delivered: true
+        };
+        
+        console.log("Sending message to inbox:", messageData);
+        
+        // حفظ الرسالة في قاعدة البيانات
+        await window.firestoreFunctions.addDoc(
+            window.firestoreFunctions.collection(window.firebaseDb, "inbox"),
+            messageData
+        );
+        
+        console.log(`Message sent successfully to user: ${userId}`);
+        
+        // إذا كان المستخدم الحالي هو المرسل إليه، تحديث الفقاعات
+        if (currentUser && currentUser.uid === userId) {
+            await checkUnreadMessages();
         }
+        
+        return true;
+    } catch (error) {
+        console.error("Error sending message to inbox:", error);
+        console.error("Error details:", {
+            userId: userId,
+            title: title,
+            errorCode: error.code,
+            errorMessage: error.message
+        });
+        return false;
+    }
+}
+        
+        // التحقق من الرسائل غير المقروءة
+        // التحقق من الرسائل غير المقروءة
+async function checkUnreadMessages() {
+    if (!currentUser) return;
+    
+    try {
+        const q = window.firestoreFunctions.query(
+            window.firestoreFunctions.collection(window.firebaseDb, "inbox"),
+            window.firestoreFunctions.where("userId", "==", currentUser.uid),
+            window.firestoreFunctions.where("read", "==", false)
+        );
+        
+        const querySnapshot = await window.firestoreFunctions.getDocs(q);
+        unreadMessagesCount = querySnapshot.size;
+        
+        // حفظ عدد الرسائل غير المقروءة في localStorage
+        localStorage.setItem(`unreadMessages_${currentUser.uid}`, unreadMessagesCount);
+        
+        // تحديث الفقاعات
+        updateNotificationBadges();
+        
+        return unreadMessagesCount;
+    } catch (error) {
+        console.error("Error checking unread messages:", error);
+        return 0;
+    }
+}
         
         // تحديث الفقاعات (Badges) للإشعارات
         function updateNotificationBadges() {
@@ -2817,16 +2835,16 @@ async function loadInboxMessages() {
     }
 }
         
-        // الحصول على نص نوع الرسالة
-        function getMessageTypeText(type) {
-            switch(type) {
-                case 'subscription': return 'اشتراك';
-                case 'cancellation': return 'إلغاء اشتراك';
-                case 'expiry': return 'انتهاء اشتراك';
-                case 'ban': return 'حظر / فك حظر';
-                default: return 'معلومة';
-            }
-        }
+// الحصول على نص نوع الرسالة
+function getMessageTypeText(type) {
+    switch(type) {
+        case 'subscription': return 'اشتراك';
+        case 'cancellation': return 'إلغاء اشتراك';
+        case 'expiry': return 'انتهاء اشتراك';
+        case 'ban': return 'حظر / فك حظر';
+        default: return 'معلومة';
+    }
+}
         
         // ============== إدارة الصفحات والتنقل ==============
         
@@ -2865,6 +2883,10 @@ async function loadInboxMessages() {
                 document.getElementById('navProfile').classList.add('active');
             }
             
+            if (pageId === 'inboxPage') {
+    loadInboxMessages();
+}
+
             // تحميل البيانات الخاصة بكل صفحة
             switch(pageId) {
                 case 'statsPage':
@@ -2972,13 +2994,16 @@ async function loadInboxMessages() {
                     // إعادة تحميل البيانات
                     await loadUserData();
                     
-                    // إرسال رسالة ترحيب
-                    await sendMessageToInbox(
-                        currentUser.uid,
-                        'مرحباً بك في تطبيق "اختبر نفسك"',
-                        `أهلاً وسهلاً بك ${userData.name} في تطبيق "اختبر نفسك". يمكنك الآن رفع ملفات PDF واستخراج أسئلة منها لاختبار نفسك. نتمنى لك تجربة ممتعة!`,
-                        'info'
-                    );
+                    // في قسم loadUserData بعد إنشاء المستخدم الجديد:
+// أضف هذا بعد setDoc مباشرة:
+
+// إرسال رسالة ترحيب
+await sendMessageToInbox(
+    currentUser.uid,
+    'مرحباً بك في تطبيق "اختبر نفسك"',
+    `أهلاً وسهلاً بك ${userData.name} في تطبيق "اختبر نفسك". يمكنك الآن رفع ملفات PDF واستخراج أسئلة منها لاختبار نفسك. نتمنى لك تجربة ممتعة!`,
+    'info'
+);
                 }
             } catch (error) {
                 console.error("Error loading user data:", error);
@@ -4243,6 +4268,14 @@ async function loadInboxMessages() {
                             }
                         );
                         
+                        // إرسال رسالة تأكيد الاشتراك
+await sendMessageToInbox(
+    userId,
+    'تم تفعيل الاشتراك المميز',
+    `تم تفعيل اشتراكك المميز في تطبيق "اختبر نفسك" لمدة ${subscriptionName} بنجاح. يمكنك الآن رفع عدد غير محدود من الملفات والحصول على جميع المميزات.`,
+    'subscription'
+);
+
                         await sendMessageToInbox(
                             userId,
                             'إلغاء الاشتراك المميز',
