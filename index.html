@@ -46,7 +46,6 @@
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes pulse-soft { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-        @keyframes glow { 0% { box-shadow: 0 0 5px #ffd700; } 50% { box-shadow: 0 0 20px #ffd700, 0 0 10px #ffed4a; } 100% { box-shadow: 0 0 5px #ffd700; } }
         
         /* --- Components --- */
         .screen {
@@ -125,21 +124,17 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
-        /* Leaderboard Top Styles (Updated) */
-        /* Gold */
+        /* Leaderboard Top Styles */
         .rank-item:nth-child(1) { border: 2px solid #FFD700; background: linear-gradient(to right, #fff, #fffde7); position: relative; }
         .rank-item:nth-child(1)::after { content: '👑'; position: absolute; top: -10px; left: 10px; font-size: 20px; animation: bounce 2s infinite; }
         .rank-item:nth-child(1) .rank-num { background: #FFD700; color: white; border: none; box-shadow: 0 0 10px #FFD700; }
         
-        /* Silver */
         .rank-item:nth-child(2) { border: 2px solid #C0C0C0; background: linear-gradient(to right, #fff, #f3f3f3); }
         .rank-item:nth-child(2) .rank-num { background: #C0C0C0; color: white; border: none; }
         
-        /* Bronze */
         .rank-item:nth-child(3) { border: 2px solid #CD7F32; background: linear-gradient(to right, #fff, #fff5eb); }
         .rank-item:nth-child(3) .rank-num { background: #CD7F32; color: white; border: none; }
 
-        /* Top 4-10 (Elite) */
         .rank-item:nth-child(n+4):nth-child(-n+10) { border: 2px solid #a5b4fc; }
         .rank-item:nth-child(n+4):nth-child(-n+10) .rank-num { background: #a5b4fc; color: white; border: none; }
 
@@ -169,7 +164,47 @@
         
         .day-box.locked { opacity: 0.6; }
 
-        /* Responsive Fixes */
+        /* --- FIXED TOGGLE SWITCH STYLES --- */
+        .toggle-wrapper {
+            position: relative;
+            width: 50px;
+            height: 26px;
+        }
+        .toggle-checkbox {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #9CA3AF; /* Gray when off */
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        /* When Checked (Green) */
+        .toggle-checkbox:checked + .toggle-slider {
+            background-color: #10B981; 
+        }
+        .toggle-checkbox:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+        
         @media (min-width: 768px) {
             .input-box { font-size: 1.1rem; }
             .auth-overlay > div { max-width: 500px; }
@@ -284,6 +319,38 @@
         <!-- TAB 1: CHALLENGES -->
         <div id="tab-challenges" class="screen pt-20">
             <div class="scroll-container px-5 py-6">
+                
+                <!-- === ADMIN CONTROL PANEL (ONLY FOR OWNER) === -->
+                <div id="admin-challenge-controls" class="hidden mb-6 bg-gray-900 rounded-2xl p-5 border-2 border-indigo-600 shadow-xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-indigo-600 opacity-20 rounded-full -mr-10 -mt-10"></div>
+                    
+                    <div class="flex items-center justify-between mb-4 relative z-10">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-user-shield text-indigo-400 text-xl"></i>
+                            <h3 class="font-bold text-white text-sm">لوحة التحكم بالنظام</h3>
+                        </div>
+                        
+                        <!-- Fixed Toggle Switch -->
+                        <label class="toggle-wrapper">
+                            <input type="checkbox" id="system-toggle" class="toggle-checkbox" onchange="toggleSystemUI()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <p id="system-status-text" class="text-xs font-bold text-green-400 mb-2">النظام يعمل حالياً ✅</p>
+
+                    <!-- Hidden Message Input -->
+                    <div id="maintenance-input-area" class="transition-all duration-300 overflow-hidden max-h-0 opacity-0">
+                        <hr class="border-gray-700 my-3">
+                        <label class="block text-xs font-bold text-gray-400 mb-2">رسالة التنبيه للطلاب (سبب الإيقاف):</label>
+                        <textarea id="maintenance-msg-input" class="w-full bg-gray-800 border border-gray-600 text-white rounded-xl p-3 text-sm focus:border-indigo-500 outline-none h-20 mb-3" placeholder="مثلاً: توقف للصيانة، نعود بعد ساعة..."></textarea>
+                        <button onclick="saveSystemSettings()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg flex items-center justify-center gap-2">
+                            <i class="fas fa-save"></i> حفظ الإعدادات
+                        </button>
+                    </div>
+                </div>
+                <!-- ============================================== -->
+
                 <!-- Select Grade First Time -->
                 <div id="grade-selector-card" class="bg-white p-6 rounded-2xl shadow-sm mb-6 border border-gray-100">
                     <div class="text-center mb-4">
@@ -702,6 +769,9 @@
         let localMatchData = null; // For AI mode
         let aiTimeoutId = null; // To clear AI thinking
 
+        // --- SYSTEM STATUS VARS (Global) ---
+        let systemConfig = { enabled: true, msg: "النظام في وضع الصيانة حالياً" };
+
         const subjects = {
             '6sci': ['اسلامية', 'عربي', 'انكليزي', 'احياء', 'رياضيات', 'كيمياء', 'فيزياء'],
             '6lit': ['اسلامية', 'عربي', 'انكليزي', 'تاريخ', 'رياضيات', 'جغرافية', 'اقتصاد'],
@@ -715,6 +785,9 @@
 
             if (user) {
                 currentUser = user;
+                // Start listening to system status immediately
+                listenToSystemStatus();
+
                 try {
                     const docSnap = await getDoc(doc(db, "users", user.uid));
                     if (docSnap.exists()) {
@@ -756,6 +829,82 @@
                 window.switchAuthTab('login');
             }
         });
+
+        // --- SYSTEM STATUS LISTENER ---
+        function listenToSystemStatus() {
+            onSnapshot(doc(db, "system_settings", "config"), (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    systemConfig.enabled = data.challengesEnabled !== undefined ? data.challengesEnabled : true;
+                    systemConfig.msg = data.maintenanceMessage || "النظام في وضع الصيانة حالياً، يرجى المحاولة لاحقاً.";
+                    
+                    // Update Admin UI only (if user is admin and UI is loaded)
+                    const toggle = document.getElementById('system-toggle');
+                    const inputArea = document.getElementById('maintenance-input-area');
+                    const statusText = document.getElementById('system-status-text');
+                    const msgInput = document.getElementById('maintenance-msg-input');
+                    
+                    if (toggle) {
+                        // Sync state from DB if user hasn't touched it recently?
+                        // Actually, we should just reflect DB state.
+                        toggle.checked = systemConfig.enabled;
+                        
+                        // Update Visuals based on DB state
+                        if (!systemConfig.enabled) {
+                            inputArea.style.maxHeight = "300px";
+                            inputArea.style.opacity = "1";
+                            statusText.innerText = "النظام متوقف ⛔ (الطلاب يرون الرسالة)";
+                            statusText.className = "text-xs font-bold text-red-400 mb-2";
+                        } else {
+                            inputArea.style.maxHeight = "0";
+                            inputArea.style.opacity = "0";
+                            statusText.innerText = "النظام يعمل حالياً ✅";
+                            statusText.className = "text-xs font-bold text-green-400 mb-2";
+                        }
+                        
+                        if (!msgInput.value) msgInput.value = systemConfig.msg;
+                    }
+                }
+            });
+        }
+
+        // Exposed Function for Toggle Switch Change (Visual Update Immediate)
+        window.toggleSystemUI = () => {
+             const toggle = document.getElementById('system-toggle');
+             const inputArea = document.getElementById('maintenance-input-area');
+             const statusText = document.getElementById('system-status-text');
+
+             if (!toggle.checked) {
+                 // Turning OFF (Gray)
+                 inputArea.style.maxHeight = "300px";
+                 inputArea.style.opacity = "1";
+                 statusText.innerText = "النظام متوقف ⛔ (الطلاب يرون الرسالة)";
+                 statusText.className = "text-xs font-bold text-red-400 mb-2";
+             } else {
+                 // Turning ON (Green)
+                 inputArea.style.maxHeight = "0";
+                 inputArea.style.opacity = "0";
+                 statusText.innerText = "النظام يعمل حالياً ✅";
+                 statusText.className = "text-xs font-bold text-green-400 mb-2";
+             }
+        };
+
+        window.saveSystemSettings = async () => {
+            const isEnabled = document.getElementById('system-toggle').checked;
+            const msg = document.getElementById('maintenance-msg-input').value;
+            
+            if (!isEnabled && !msg.trim()) return alert("يرجى كتابة رسالة توضيحية للمستخدمين عند الإيقاف.");
+
+            try {
+                await setDoc(doc(db, "system_settings", "config"), {
+                    challengesEnabled: isEnabled,
+                    maintenanceMessage: msg
+                }, { merge: true });
+                alert("✅ تم حفظ إعدادات النظام بنجاح!");
+            } catch (e) {
+                alert("خطأ في الحفظ: " + e.message);
+            }
+        };
 
         window.switchAuthTab = (tab) => {
             if(tab === 'login') {
@@ -919,7 +1068,13 @@
             document.getElementById('profile-img').src = userData.photo;
         }
         function setupHeaderUI() { document.getElementById('header-points').innerText = userData.points; }
-        function setupAdminUI() { if (userData.email === ADMIN_EMAIL) document.getElementById('admin-buttons').classList.remove('hidden'); }
+        function setupAdminUI() { 
+            if (userData.email === ADMIN_EMAIL) {
+                document.getElementById('admin-buttons').classList.remove('hidden'); 
+                // Show Admin Controls in Challenges Tab
+                document.getElementById('admin-challenge-controls').classList.remove('hidden');
+            }
+        }
 
         window.saveUserGrade = async () => {
             const g = document.getElementById('grade-select').value;
@@ -949,6 +1104,13 @@
         };
 
         window.startMatchmaking = async (mode) => {
+            // === SYSTEM STATUS CHECK (MAINTENANCE) ===
+            if (!systemConfig.enabled) {
+                // If disabled, show popup alert with the owner's message
+                alert("⚠️ تنبيه من الإدارة:\n\n" + systemConfig.msg);
+                return;
+            }
+
             const sub = document.getElementById('challenge-subject').value;
             if(!sub || !selectedQType) return alert("يرجى اختيار المادة ونوع الأسئلة");
 
