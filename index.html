@@ -9,12 +9,13 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     
     <style>
         /* --- Global Reset & Variables --- */
         :root {
             --primary: #4F46E5;
+            --primary-dark: #4338ca;
             --secondary: #10B981;
             --bg-app: #f8fafc;
         }
@@ -36,7 +37,7 @@
             height: 100%;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            padding-bottom: 100px; /* Space for bottom nav */
+            padding-bottom: 120px; /* Space for bottom nav */
         }
         .scroll-container::-webkit-scrollbar { display: none; }
         .scroll-container { -ms-overflow-style: none; scrollbar-width: none; }
@@ -45,6 +46,7 @@
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes pulse-soft { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        @keyframes glow { 0% { box-shadow: 0 0 5px #ffd700; } 50% { box-shadow: 0 0 20px #ffd700, 0 0 10px #ffed4a; } 100% { box-shadow: 0 0 5px #ffd700; } }
         
         /* --- Components --- */
         .screen {
@@ -68,13 +70,15 @@
         .btn-main {
             background: var(--primary); color: white; padding: 14px;
             border-radius: 12px; font-weight: bold; width: 100%;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2); transition: transform 0.1s;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2); transition: transform 0.1s, background-color 0.2s;
             text-align: center; border: none; cursor: pointer;
+            display: flex; justify-content: center; align-items: center; gap: 8px;
         }
         .btn-main:active { transform: scale(0.98); }
+        .btn-main:hover { background-color: var(--primary-dark); }
 
         .nav-item.active { color: var(--primary); transform: translateY(-2px); }
-        .nav-item { position: relative; } 
+        .nav-item { position: relative; transition: all 0.2s; } 
         
         .stat-btn {
             background: white; border: 1px solid #eee; padding: 15px; border-radius: 16px;
@@ -86,20 +90,13 @@
 
         /* Notification Dot */
         .red-dot {
-            position: absolute;
-            top: -2px;
-            right: 20%;
-            width: 10px;
-            height: 10px;
-            background-color: #ef4444;
-            border-radius: 50%;
-            border: 2px solid white;
-            display: none; 
-            z-index: 50;
+            position: absolute; top: -2px; right: 25%;
+            width: 10px; height: 10px; background-color: #ef4444;
+            border-radius: 50%; border: 2px solid white;
+            display: none; z-index: 50;
         }
         .red-dot.visible { display: block; }
         
-        /* Button inner dot */
         .btn-dot {
             width: 8px; height: 8px; background: #ef4444; border-radius: 50%; margin-right: 10px; display: none;
         }
@@ -115,63 +112,47 @@
 
         /* Auth Tabs Styles */
         .auth-tabs {
-            display: flex;
-            background: #f1f5f9;
-            padding: 4px;
-            border-radius: 14px;
-            margin-bottom: 24px;
+            display: flex; background: #f1f5f9; padding: 4px;
+            border-radius: 14px; margin-bottom: 24px;
         }
         .auth-tab {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            font-weight: bold;
-            color: #64748b;
-            cursor: pointer;
-            border-radius: 10px;
-            transition: all 0.3s;
-            font-size: 0.95rem;
+            flex: 1; text-align: center; padding: 10px;
+            font-weight: bold; color: #64748b; cursor: pointer;
+            border-radius: 10px; transition: all 0.3s; font-size: 0.95rem;
         }
         .auth-tab.active {
-            background: white;
-            color: var(--primary);
+            background: white; color: var(--primary);
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
-        /* Leaderboard Top 5 Styles */
-        .rank-item:nth-child(1) { border: 2px solid #FFD700; background: linear-gradient(to right, #fff, #fffde7); }
-        .rank-item:nth-child(1) .rank-num { background: #FFD700; color: white; }
+        /* Leaderboard Top Styles (Updated) */
+        /* Gold */
+        .rank-item:nth-child(1) { border: 2px solid #FFD700; background: linear-gradient(to right, #fff, #fffde7); position: relative; }
+        .rank-item:nth-child(1)::after { content: '👑'; position: absolute; top: -10px; left: 10px; font-size: 20px; animation: bounce 2s infinite; }
+        .rank-item:nth-child(1) .rank-num { background: #FFD700; color: white; border: none; box-shadow: 0 0 10px #FFD700; }
         
-        .rank-item:nth-child(2) { border: 2px solid #C0C0C0; }
-        .rank-item:nth-child(2) .rank-num { background: #C0C0C0; color: white; }
+        /* Silver */
+        .rank-item:nth-child(2) { border: 2px solid #C0C0C0; background: linear-gradient(to right, #fff, #f3f3f3); }
+        .rank-item:nth-child(2) .rank-num { background: #C0C0C0; color: white; border: none; }
         
-        .rank-item:nth-child(3) { border: 2px solid #CD7F32; }
-        .rank-item:nth-child(3) .rank-num { background: #CD7F32; color: white; }
+        /* Bronze */
+        .rank-item:nth-child(3) { border: 2px solid #CD7F32; background: linear-gradient(to right, #fff, #fff5eb); }
+        .rank-item:nth-child(3) .rank-num { background: #CD7F32; color: white; border: none; }
 
-        .rank-item:nth-child(4) { border: 2px solid #60A5FA; }
-        .rank-item:nth-child(5) { border: 2px solid #A78BFA; }
+        /* Top 4-10 (Elite) */
+        .rank-item:nth-child(n+4):nth-child(-n+10) { border: 2px solid #a5b4fc; }
+        .rank-item:nth-child(n+4):nth-child(-n+10) .rank-num { background: #a5b4fc; color: white; border: none; }
 
         /* Subway Surfers Style Daily Reward */
         .reward-overlay { background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); }
         .reward-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 6px;
-            margin-bottom: 20px;
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 20px;
         }
         .day-box {
-            background: #f1f5f9;
-            border-radius: 8px;
-            padding: 6px 2px;
-            text-align: center;
-            position: relative;
-            border: 2px solid transparent;
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 50px;
+            background: #f1f5f9; border-radius: 8px; padding: 6px 2px;
+            text-align: center; position: relative; border: 2px solid transparent;
+            transition: all 0.2s; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; min-height: 50px;
         }
         .day-box p { font-size: 0.6rem; color: #94a3b8; font-weight: bold; margin-bottom: 2px; }
         .day-box span { font-size: 0.7rem; font-weight: 900; display: block; line-height: 1.1; }
@@ -187,6 +168,12 @@
         .day-box.active p { color: #D97706; }
         
         .day-box.locked { opacity: 0.6; }
+
+        /* Responsive Fixes */
+        @media (min-width: 768px) {
+            .input-box { font-size: 1.1rem; }
+            .auth-overlay > div { max-width: 500px; }
+        }
 
     </style>
 </head>
@@ -204,10 +191,9 @@
         <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl relative overflow-hidden animate-[slideUp_0.4s_ease-out]">
             <div class="text-center mb-4">
                 <h2 class="text-2xl font-black text-indigo-800">سجل الحضور اليومي 📅</h2>
-                <p class="text-xs text-gray-500">سجل دخولك يومياً لزيادة المكافأة</p>
+                <p class="text-xs text-gray-500">التوقيت حسب بغداد (12:00 ص)</p>
             </div>
             
-            <!-- Grid generated by JS -->
             <div id="reward-grid-container" class="reward-grid"></div>
 
             <div class="text-center mt-6">
@@ -216,6 +202,10 @@
                       <i class="fas fa-gift animate-bounce"></i>
                 </button>
             </div>
+            
+            <button onclick="document.getElementById('daily-reward-screen').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
     </div>
 
@@ -322,9 +312,25 @@
                         <button onclick="setQType('tf')" id="btn-tf" class="py-3 rounded-xl border-2 border-indigo-100 text-gray-500 font-bold active:scale-95 transition">صح وخطأ</button>
                     </div>
 
-                    <button onclick="startMatchmaking()" class="btn-main bg-gradient-to-r from-indigo-600 to-purple-600">
-                        <i class="fas fa-bolt ml-2 animate-pulse"></i> بحث عن منافس
+                    <!-- PVP Button -->
+                    <button onclick="startMatchmaking('online')" class="btn-main bg-gradient-to-r from-indigo-600 to-purple-600 mb-4">
+                        <i class="fas fa-user-graduate ml-2"></i> اللعب ضد طالب (حقيقي)
                     </button>
+
+                    <!-- AI Button Section -->
+                    <div class="flex gap-2 items-center">
+                        <button onclick="startMatchmaking('ai')" class="btn-main bg-gradient-to-r from-emerald-500 to-green-600 flex-1">
+                            <i class="fas fa-robot ml-2"></i> ضد الذكاء الاصطناعي
+                        </button>
+                        <div class="w-1/3">
+                            <select id="ai-difficulty" class="input-box text-xs font-bold text-center h-[52px] bg-green-50 border-green-200 text-green-800 focus:border-green-500">
+                                <option value="easy">بسيط (25%)</option>
+                                <option value="medium" selected>متوسط (50%)</option>
+                                <option value="hard">ذكي (70%)</option>
+                            </select>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- Searching UI -->
@@ -333,7 +339,7 @@
                         <div class="absolute inset-0 rounded-full border-4 border-indigo-500 opacity-20 animate-ping"></div>
                         <i class="fas fa-search text-3xl text-indigo-600"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-800">جاري البحث...</h3>
+                    <h3 class="text-xl font-bold text-gray-800" id="search-msg">جاري البحث...</h3>
                     <button onclick="cancelSearch()" class="mt-8 text-red-500 font-bold text-sm bg-red-50 px-4 py-2 rounded-full">إلغاء</button>
                 </div>
             </div>
@@ -362,12 +368,12 @@
                 </div>
                 <div id="answers-container" class="space-y-3"></div>
                 <p id="waiting-msg" class="text-center text-gray-400 text-sm hidden animate-pulse mt-4">بانتظار إجابة الخصم...</p>
+                <p id="ai-thinking-msg" class="text-center text-green-600 text-sm hidden animate-pulse mt-4 font-bold">الذكاء الاصطناعي يفكر...</p>
             </div>
         </div>
 
         <!-- POST MATCH RESULT SCREEN -->
         <div id="result-screen" class="fixed inset-0 bg-white z-[200] hidden flex-col items-center justify-center p-6 animate-[fadeIn_0.3s_ease-out]">
-            <!-- Added Back Button (Same Functionality as Main Button) -->
             <button onclick="closeResultScreen()" class="absolute top-6 right-6 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-200">
                 <i class="fas fa-times"></i>
             </button>
@@ -394,7 +400,6 @@
                 <i class="fas fa-gem text-yellow-500"></i>
             </div>
 
-            <!-- MODIFIED BUTTON: Return to Home Page -->
             <button onclick="closeResultScreen()" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold shadow-lg hover:bg-indigo-700 transition flex items-center justify-center gap-2">
                 <i class="fas fa-home"></i>
                 <span>العودة للصفحة الرئيسية</span>
@@ -418,6 +423,16 @@
         <!-- TAB 3: UPLOAD -->
         <div id="tab-upload" class="screen pt-20">
             <div class="scroll-container px-5 py-6">
+                <!-- NOTES SECTION ADDED -->
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+                    <h3 class="font-bold text-blue-800 text-sm mb-2"><i class="fas fa-info-circle ml-1"></i> تعليمات رفع الأسئلة:</h3>
+                    <ul class="text-xs text-blue-700 space-y-1 list-decimal list-inside font-medium">
+                        <li>يجب ان تكون الأسئلة المضافة من ضمن المنهج ليتم قبولها.</li>
+                        <li>يجب التأكد من اختيار الجواب الصحيح بدقة.</li>
+                        <li>يجب التفريق بين نوع الأسئلة (اختيارات) و (صح وخطأ).</li>
+                    </ul>
+                </div>
+
                 <div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 flex items-center gap-3">
                     <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600 flex-shrink-0">
                         <i class="fas fa-gift"></i>
@@ -680,8 +695,12 @@
         let adminListenerUnsubscribe = null;
         let matchListenerUnsubscribe = null; 
         
-        // --- NEW GLOBAL FLAG TO PREVENT GLITCHES ---
+        // --- GAME LOGIC VARS ---
         let isExitingGame = false;
+        let currentGameMode = 'online'; // 'online' or 'ai'
+        let aiDifficulty = 'medium'; // easy, medium, hard
+        let localMatchData = null; // For AI mode
+        let aiTimeoutId = null; // To clear AI thinking
 
         const subjects = {
             '6sci': ['اسلامية', 'عربي', 'انكليزي', 'احياء', 'رياضيات', 'كيمياء', 'فيزياء'],
@@ -785,8 +804,12 @@
                     points: 0,
                     role: 'user',
                     createdAt: serverTimestamp(),
-                    lastRewardDate: null,
-                    rewardStreak: 0,
+                    
+                    // Daily Reward Fields
+                    lastRewardDayKey: null, // Stores "Day-Month-Year" to prevent multiple claims same day
+                    rewardMonthKey: null,   // Stores "Month-Year" to handle global monthly reset
+                    daysClaimedInMonth: 0,  // Counts how many days claimed in CURRENT month (streak/progress)
+
                     hiddenFromLeaderboard: false 
                 });
             } catch (e) { alert("خطأ: " + e.message); }
@@ -798,35 +821,49 @@
             signOut(auth);
         };
 
-        // --- SUBWAY SURF STYLE DAILY REWARD ---
+        // --- NEW DAILY REWARD LOGIC (Global Month + No Streak Reset on Miss) ---
+        
+        function getIraqDate() {
+            // Returns a Date object representing the current time in Baghdad
+            const dateStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Baghdad"});
+            return new Date(dateStr);
+        }
+
         window.checkDailyReward = async () => {
-            const now = new Date();
-            if (now.getHours() < 9) return; 
-
-            const todayStr = now.toDateString();
-            if (userData.lastRewardDate === todayStr) return; 
-
-            let streak = userData.rewardStreak || 0;
-            const lastDate = userData.lastRewardDate ? new Date(userData.lastRewardDate) : null;
+            const iraqDate = getIraqDate();
             
-            if (lastDate) {
-                const diffTime = Math.abs(now - lastDate);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-                if (diffDays > 2) streak = 0; // Reset if missed a day
+            // Construct keys based on IRAQ time
+            const currentDayKey = `${iraqDate.getDate()}-${iraqDate.getMonth()}-${iraqDate.getFullYear()}`; // e.g. "30-11-2025"
+            const currentMonthKey = `${iraqDate.getMonth()}-${iraqDate.getFullYear()}`; // e.g. "11-2025"
+
+            // Check if user already claimed TODAY
+            if (userData.lastRewardDayKey === currentDayKey) return; 
+
+            // Global Month Reset Check
+            let userDaysClaimed = userData.daysClaimedInMonth || 0;
+            
+            // If the month stored in user data is different from current month -> RESET everything
+            if (userData.rewardMonthKey !== currentMonthKey) {
+                userDaysClaimed = 0; // New month start for everyone
             }
-            
-            // Cycle every 30 days
-            const currentDay = (streak % 30) + 1;
-            
+
+            // Determine which day is NEXT to claim (1-based index)
+            const nextDayToClaim = userDaysClaimed + 1;
+
             // Generate Grid
             const grid = document.getElementById('reward-grid-container');
             grid.innerHTML = '';
             for(let i=1; i<=30; i++) {
                 const pts = 10 + ((i - 1) * 5);
                 let cls = "day-box";
-                if (i < currentDay) cls += " claimed";
-                else if (i === currentDay) cls += " active";
-                else cls += " locked";
+                
+                if (i < nextDayToClaim) {
+                    cls += " claimed"; // Already claimed
+                } else if (i === nextDayToClaim) {
+                    cls += " active"; // Available now
+                } else {
+                    cls += " locked"; // Future
+                }
                 
                 grid.innerHTML += `
                     <div class="${cls}">
@@ -841,22 +878,33 @@
         };
 
         window.claimReward = async () => {
-            const now = new Date();
-            const todayStr = now.toDateString();
-            let streak = (userData.rewardStreak || 0) + 1;
-            
-            const currentDay = ((streak - 1) % 30) + 1;
-            const rewardAmount = 10 + ((currentDay - 1) * 5);
+            const iraqDate = getIraqDate();
+            const currentDayKey = `${iraqDate.getDate()}-${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
+            const currentMonthKey = `${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
 
+            let userDaysClaimed = userData.daysClaimedInMonth || 0;
+
+            // Global Reset Logic Application
+            if (userData.rewardMonthKey !== currentMonthKey) {
+                userDaysClaimed = 0;
+            }
+
+            const dayToClaim = userDaysClaimed + 1;
+            const rewardAmount = 10 + ((dayToClaim - 1) * 5);
+
+            // Update Database
             await updateDoc(doc(db, "users", currentUser.uid), {
                 points: increment(rewardAmount),
-                lastRewardDate: todayStr,
-                rewardStreak: streak
+                lastRewardDayKey: currentDayKey,
+                rewardMonthKey: currentMonthKey,
+                daysClaimedInMonth: increment(1) // Just increment, never reset to 0 unless month changes
             });
             
+            // Update Local Data
             userData.points += rewardAmount;
-            userData.lastRewardDate = todayStr;
-            userData.rewardStreak = streak;
+            userData.lastRewardDayKey = currentDayKey;
+            userData.rewardMonthKey = currentMonthKey;
+            userData.daysClaimedInMonth = dayToClaim;
             
             setupHeaderUI();
             
@@ -893,25 +941,40 @@
             subjects[grade].forEach(s => sel.innerHTML += `<option value="${s}">${s}</option>`);
         }
 
-        // --- MATCHMAKING ---
+        // --- MATCHMAKING & GAME LOGIC ---
         window.setQType = (t) => {
             selectedQType = t;
             document.getElementById('btn-mcq').className = `py-3 rounded-xl border-2 font-bold transition flex-1 ${t==='mcq'?'border-indigo-600 bg-indigo-50 text-indigo-600':'border-indigo-100 text-gray-500'}`;
             document.getElementById('btn-tf').className = `py-3 rounded-xl border-2 font-bold transition flex-1 ${t==='tf'?'border-indigo-600 bg-indigo-50 text-indigo-600':'border-indigo-100 text-gray-500'}`;
         };
 
-        window.startMatchmaking = async () => {
+        window.startMatchmaking = async (mode) => {
             const sub = document.getElementById('challenge-subject').value;
             if(!sub || !selectedQType) return alert("يرجى اختيار المادة ونوع الأسئلة");
+
+            currentGameMode = mode;
+            if (mode === 'ai') {
+                aiDifficulty = document.getElementById('ai-difficulty').value;
+            }
 
             document.getElementById('challenge-active-card').classList.add('hidden');
             document.getElementById('searching-ui').classList.remove('hidden');
             document.getElementById('searching-ui').style.display = 'flex';
+            document.getElementById('search-msg').innerText = mode === 'online' ? "جاري البحث عن طالب..." : "جاري تحضير البوت...";
 
             const grade = userData.grade;
             let group = `${grade}_${sub}`;
             if(['اسلامية','عربي','انكليزي'].includes(sub) && grade.startsWith('6')) group = `6shared_${sub}`;
 
+            if (mode === 'online') {
+                startOnlineMatch(group, sub);
+            } else {
+                startAIMatch(sub);
+            }
+        };
+
+        // --- ONLINE LOGIC ---
+        async function startOnlineMatch(group, sub) {
             try {
                 const qRef = collection(db, "match_queue");
                 const qWait = query(qRef, where("group", "==", group), where("status", "==", "waiting"), limit(1));
@@ -930,7 +993,6 @@
                     const qDocs = await getQuestions(sub, selectedQType);
                     if(qDocs.length === 0) { alert("لا توجد أسئلة كافية"); cancelSearch(); return; }
                     
-                    // Shuffle Questions
                     const shuffledQs = qDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
                     
                     const newMatch = await addDoc(qRef, {
@@ -945,7 +1007,32 @@
                     listenToMatch(newMatch.id);
                 }
             } catch(e) { console.error(e); cancelSearch(); }
-        };
+        }
+
+        // --- AI LOGIC ---
+        async function startAIMatch(sub) {
+            const qDocs = await getQuestions(sub, selectedQType);
+            if(qDocs.length === 0) { alert("لا توجد أسئلة كافية"); cancelSearch(); return; }
+            
+            const shuffledQs = qDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
+
+            // Construct Local Match Data
+            let botName = "الذكاء الاصطناعي 🤖";
+            localMatchData = {
+                status: 'active',
+                player1: { uid: currentUser.uid, name: userData.name, score: 0 },
+                player2: { uid: 'AI_BOT', name: botName, score: 0 },
+                questions: shuffledQs,
+                currentIdx: 0,
+                answersCount: 0
+            };
+            
+            setTimeout(() => {
+                document.getElementById('game-overlay').classList.remove('hidden');
+                document.getElementById('game-overlay').style.display = 'flex';
+                renderGame(localMatchData);
+            }, 1000);
+        }
 
         async function getQuestions(sub, type) {
             const q = query(collection(db, "questions"), where("subject", "==", sub), where("type", "==", type), limit(50));
@@ -956,7 +1043,7 @@
         }
 
         window.cancelSearch = async () => {
-            if(currentMatchId) { try { await deleteDoc(doc(db, "match_queue", currentMatchId)); } catch(e){} }
+            if(currentMatchId && currentGameMode === 'online') { try { await deleteDoc(doc(db, "match_queue", currentMatchId)); } catch(e){} }
             document.getElementById('searching-ui').classList.add('hidden');
             document.getElementById('searching-ui').style.removeProperty('display'); 
             document.getElementById('challenge-active-card').classList.remove('hidden');
@@ -965,15 +1052,11 @@
         function listenToMatch(id) {
             if(matchListenerUnsubscribe) matchListenerUnsubscribe(); 
             matchListenerUnsubscribe = onSnapshot(doc(db, "match_queue", id), (snap) => {
-                // *** CRITICAL FIX: If we are exiting, IGNORE any updates ***
                 if(isExitingGame) return;
-
                 if(!snap.exists()) return;
                 const d = snap.data();
                 if(d.status === 'active') {
-                    // Safety check again before showing
                     if(isExitingGame) return;
-                    
                     document.getElementById('game-overlay').classList.remove('hidden');
                     document.getElementById('game-overlay').style.display = 'flex';
                     renderGame(d);
@@ -982,22 +1065,20 @@
         }
 
         function renderGame(data) {
-            // *** CRITICAL FIX: Abort if exiting or match ID is nulled ***
-            if (isExitingGame || !currentMatchId) return;
-
+            if (isExitingGame) return;
             if(!data.questions || data.currentIdx >= data.questions.length) { endGame(data); return; }
 
-            // If both players answered (or timeout logic triggered 2 answers count)
-            if (data.answersCount >= 2) {
+            // If ONLINE and both answered
+            if (currentGameMode === 'online' && data.answersCount >= 2) {
                  if(data.player1.uid === currentUser.uid) {
-                      updateDoc(doc(db, "match_queue", currentMatchId), { 
-                          currentIdx: increment(1),
-                          answersCount: 0 
-                      });
+                       updateDoc(doc(db, "match_queue", currentMatchId), { 
+                           currentIdx: increment(1),
+                           answersCount: 0 
+                       });
                  }
                  return;
             }
-            
+
             const q = data.questions[data.currentIdx];
             if (!q) { endGame(data); return; }
 
@@ -1005,17 +1086,26 @@
             
             // New Question Rendering
             if(qTextEl.innerText !== q.question) {
+                // RESET STATE FOR NEW QUESTION
                 hasAnsweredCurrentQ = false;
+                clearTimeout(aiTimeoutId); // Stop old AI thought if any
                 document.getElementById('answers-container').classList.remove('pointer-events-none', 'opacity-50');
                 document.getElementById('waiting-msg').classList.add('hidden');
+                document.getElementById('ai-thinking-msg').classList.add('hidden');
                 
-                // Set Real Names (Fixed)
-                const isP1 = data.player1.uid === currentUser.uid;
-                const myName = userData.name;
-                const opName = isP1 ? data.player2.name : data.player1.name;
-
-                document.getElementById('p1-name').innerText = myName;
-                document.getElementById('p2-name').innerText = opName;
+                // Set Names
+                if (currentGameMode === 'online') {
+                    const isP1 = data.player1.uid === currentUser.uid;
+                    document.getElementById('p1-name').innerText = userData.name;
+                    document.getElementById('p2-name').innerText = isP1 ? data.player2.name : data.player1.name;
+                    document.getElementById('game-my-score').innerText = isP1 ? data.player1.score : data.player2.score;
+                    document.getElementById('game-op-score').innerText = isP1 ? data.player2.score : data.player1.score;
+                } else {
+                    document.getElementById('p1-name').innerText = userData.name;
+                    document.getElementById('p2-name').innerText = data.player2.name;
+                    document.getElementById('game-my-score').innerText = data.player1.score;
+                    document.getElementById('game-op-score').innerText = data.player2.score;
+                }
 
                 // Setup Timer
                 clearInterval(gameTimer);
@@ -1023,16 +1113,19 @@
                 document.getElementById('game-timer').innerText = t;
                 
                 gameTimer = setInterval(() => {
-                    // *** CRITICAL FIX: Stop timer if exiting ***
                     if (isExitingGame) { clearInterval(gameTimer); return; }
-                    
                     t--;
                     document.getElementById('game-timer').innerText = t;
                     
                     if(t <= 0) { 
                         clearInterval(gameTimer); 
+                        // TIMEOUT LOGIC
                         if(!hasAnsweredCurrentQ) {
                             submitGameAnswer(null, q, data); 
+                        } else {
+                            if (currentGameMode === 'ai') {
+                                handleAINextTurn();
+                            }
                         }
                     }
                 }, 1000);
@@ -1040,15 +1133,13 @@
 
             document.getElementById('q-progress').innerText = `${data.currentIdx + 1} / 10`;
             qTextEl.innerText = q.question;
-            
-            const isP1 = data.player1.uid === currentUser.uid;
-            document.getElementById('game-my-score').innerText = isP1 ? data.player1.score : data.player2.score;
-            document.getElementById('game-op-score').innerText = isP1 ? data.player2.score : data.player1.score;
+            qTextEl.setAttribute('data-qid', q.question);
 
             const div = document.getElementById('answers-container');
             
-            if(div.children.length === 0 || qTextEl.getAttribute('data-qid') !== q.question) {
-                qTextEl.setAttribute('data-qid', q.question);
+            // Render Answers only if empty or new question
+            if(div.children.length === 0 || div.getAttribute('data-curr-q') !== q.question) {
+                div.setAttribute('data-curr-q', q.question);
                 div.innerHTML = '';
                 
                 let ansList = [];
@@ -1067,45 +1158,98 @@
                     const btn = document.createElement('button');
                     btn.className = "w-full py-4 bg-white border-2 border-gray-100 rounded-xl text-lg font-bold text-gray-700 shadow-sm active:scale-95 transition hover:border-indigo-300";
                     btn.innerText = ansObj.txt;
-                    btn.onclick = () => submitGameAnswer(ansObj, q, data);
+                    // --- PREVENT DOUBLE CLICK GLITCH ---
+                    btn.onclick = () => {
+                          if(hasAnsweredCurrentQ) return; 
+                          submitGameAnswer(ansObj, q, data);
+                    };
                     div.appendChild(btn);
                 });
             }
         }
 
         async function submitGameAnswer(ansObj, q, matchData) {
+            // DOUBLE LOCK
             if(hasAnsweredCurrentQ || isExitingGame) return;
             hasAnsweredCurrentQ = true;
             
+            // LOCK UI IMMEDIATELY
             document.getElementById('answers-container').classList.add('pointer-events-none', 'opacity-50');
-            document.getElementById('waiting-msg').classList.remove('hidden');
-
+            
             let correct = false;
             if(ansObj && ansObj.isCorrect) correct = true;
 
-            const isP1 = matchData.player1.uid === currentUser.uid;
-            
-            // Safety check
-            if (!currentMatchId) return;
-            const ref = doc(db, "match_queue", currentMatchId);
+            if (currentGameMode === 'online') {
+                document.getElementById('waiting-msg').classList.remove('hidden');
+                
+                const isP1 = matchData.player1.uid === currentUser.uid;
+                if (!currentMatchId) return;
+                const ref = doc(db, "match_queue", currentMatchId);
 
-            const updates = { answersCount: increment(1) };
-            if(correct) {
-                updates[isP1?'player1.score':'player2.score'] = increment(1);
+                const updates = { answersCount: increment(1) };
+                if(correct) {
+                    updates[isP1?'player1.score':'player2.score'] = increment(1);
+                }
+                await updateDoc(ref, updates);
+
+            } else {
+                // --- AI MODE LOGIC ---
+                document.getElementById('waiting-msg').classList.remove('hidden'); // Show waiting for AI
+                
+                // Update Player Score locally
+                if(correct) {
+                    localMatchData.player1.score += 1;
+                    document.getElementById('game-my-score').innerText = localMatchData.player1.score;
+                }
+
+                // TRIGGER AI RESPONSE
+                triggerAIResponse();
             }
-            await updateDoc(ref, updates);
+        }
+
+        function triggerAIResponse() {
+            document.getElementById('waiting-msg').classList.add('hidden');
+            document.getElementById('ai-thinking-msg').classList.remove('hidden');
+
+            let delay = 2000;
+            let accuracy = 0.25;
+
+            if (aiDifficulty === 'medium') { delay = 4000; accuracy = 0.5; }
+            if (aiDifficulty === 'hard') { delay = 6000; accuracy = 0.7; }
+
+            aiTimeoutId = setTimeout(() => {
+                // AI Answers
+                const isCorrect = Math.random() < accuracy;
+                if(isCorrect) {
+                    localMatchData.player2.score += 1;
+                    document.getElementById('game-op-score').innerText = localMatchData.player2.score;
+                }
+                handleAINextTurn();
+            }, delay);
+        }
+
+        function handleAINextTurn() {
+            if(isExitingGame) return;
+            localMatchData.currentIdx += 1;
+            localMatchData.answersCount = 0;
+            renderGame(localMatchData);
         }
 
         async function endGame(d) {
             clearInterval(gameTimer);
             document.getElementById('game-overlay').classList.add('hidden');
-            
-            // Check exiting flag just in case
             if (isExitingGame) return;
 
-            const isP1 = d.player1.uid === currentUser.uid;
-            const myScore = isP1 ? d.player1.score : d.player2.score;
-            const opScore = isP1 ? d.player2.score : d.player1.score;
+            let myScore, opScore;
+            
+            if (currentGameMode === 'online') {
+                const isP1 = d.player1.uid === currentUser.uid;
+                myScore = isP1 ? d.player1.score : d.player2.score;
+                opScore = isP1 ? d.player2.score : d.player1.score;
+            } else {
+                myScore = localMatchData.player1.score;
+                opScore = localMatchData.player2.score;
+            }
             
             let pts = 0;
             let msg = "";
@@ -1135,19 +1279,17 @@
             document.getElementById('result-screen').style.display = 'flex';
         }
 
-        // --- FIXED AND FINAL CLOSE FUNCTION ---
+        // --- CLOSE FUNCTION ---
         window.closeResultScreen = async () => {
-             // 1. ACTIVATE SAFETY LOCK
              isExitingGame = true;
 
-             // 2. Kill Listeners & Timers
              if (matchListenerUnsubscribe) {
                  matchListenerUnsubscribe();
                  matchListenerUnsubscribe = null;
              }
              clearInterval(gameTimer);
+             clearTimeout(aiTimeoutId);
 
-             // 3. FORCE HIDE All Game Screens (Use style.display = 'none' to override flex)
              const resScreen = document.getElementById('result-screen');
              resScreen.classList.add('hidden');
              resScreen.style.display = 'none'; 
@@ -1160,22 +1302,20 @@
              searchScreen.classList.add('hidden');
              searchScreen.style.removeProperty('display');
 
-             // 4. Nullify Game ID immediately
              currentMatchId = null;
+             localMatchData = null;
              hasAnsweredCurrentQ = false;
 
-             // 5. Clean DOM (Erase old data visually)
              document.getElementById('q-text').innerText = "...";
              document.getElementById('q-progress').innerText = "0 / 10";
              document.getElementById('answers-container').innerHTML = "";
              document.getElementById('waiting-msg').classList.add('hidden');
+             document.getElementById('ai-thinking-msg').classList.add('hidden');
              document.getElementById('game-my-score').innerText = "0";
              document.getElementById('game-op-score').innerText = "0";
 
-             // 6. Reset Main Challenge UI
              document.getElementById('challenge-active-card').classList.remove('hidden');
 
-             // 7. REFRESH ALL DATA (As requested)
              if(currentUser) {
                  const userDoc = await getDoc(doc(db, "users", currentUser.uid));
                  if(userDoc.exists()) {
@@ -1186,13 +1326,10 @@
                  loadLeaderboard();
              }
 
-             // 8. Go Home
              switchTab('challenges');
 
-             // 9. RELEASE SAFETY LOCK (After a short delay to ensure UI settles)
              setTimeout(() => {
                  isExitingGame = false;
-                 // Double check hiding just to be paranoid
                  document.getElementById('game-overlay').classList.add('hidden');
              }, 500);
         };
@@ -1286,8 +1423,9 @@
 
              usersSnap.forEach(d => {
                  const u = d.data();
-                 if(u.createdAt && u.createdAt.toDate() >= today) newUsers++;
-                 if (u.lastActive && (now - u.lastActive.toDate()) < 3 * 60 * 1000) activeNow++;
+                 if(!u) return;
+                 if(u.createdAt && u.createdAt.toDate && u.createdAt.toDate() >= today) newUsers++;
+                 if (u.lastActive && u.lastActive.toDate && (now - u.lastActive.toDate()) < 15 * 60 * 1000) activeNow++;
              });
              if(activeNow === 0) activeNow = 1; 
 
@@ -1433,19 +1571,6 @@
             }
         };
 
-        window.adminDeleteUser = async (uid) => {
-            if(confirm("تحذير! هل أنت متأكد؟ سيتم تصفير نقاط المستخدم وحذفه من التصنيف.")) {
-                try {
-                    await updateDoc(doc(db, "users", uid), {
-                        points: 0,
-                        hiddenFromLeaderboard: true
-                    });
-                    alert("تم حذف المستخدم من التصنيف وتصفير نقاطه.");
-                    loadLeaderboard(); 
-                } catch(e) { alert("حدث خطأ: " + e.message); }
-            }
-        };
-
         window.checkAdminNotifications = () => {
             const q = query(collection(db, "pending_questions"));
             adminListenerUnsubscribe = onSnapshot(q, (snapshot) => {
@@ -1478,7 +1603,8 @@
             const div = document.getElementById('leaderboard-list');
             div.innerHTML = '<p class="text-center text-gray-400 mt-10">تحميل...</p>';
             
-            const q = query(collection(db, "users"), limit(500));
+            // INCREASED LIMIT TO 100
+            const q = query(collection(db, "users"), limit(100));
             const snap = await getDocs(q);
             
             let users = [];
@@ -1504,15 +1630,20 @@
             div.innerHTML = '';
             let i = 1;
 
-            users.slice(0, 50).forEach(u => {
+            users.forEach(u => {
                 let medal = "";
+                let bgStyle = "bg-white"; // default
+                let extraClass = "";
+
                 if(i===1) medal = "🥇";
                 if(i===2) medal = "🥈";
                 if(i===3) medal = "🥉";
+                if(i>=4 && i<=10) medal = "🎖️";
 
-                let deleteBtn = "";
-                if(userData.email === ADMIN_EMAIL) {
-                    deleteBtn = `<button onclick="adminDeleteUser('${u.uid}')" class="text-red-400 bg-red-50 w-8 h-8 rounded-full ml-2 flex items-center justify-center hover:bg-red-100"><i class="fas fa-trash"></i></button>`;
+                // Admin Reset Button Visibility
+                let resetBtn = "";
+                if (currentUser.email === ADMIN_EMAIL) {
+                    resetBtn = `<button onclick="resetUserPoints('${u.uid}', '${u.name}')" class="w-6 h-6 rounded bg-red-100 text-red-500 flex items-center justify-center mr-2"><i class="fas fa-trash-alt text-xs"></i></button>`;
                 }
 
                 div.innerHTML += `
@@ -1521,15 +1652,27 @@
                             <span class="rank-num font-black text-gray-300 w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-sm border">${i}</span>
                             <img src="${u.photo}" class="w-12 h-12 rounded-full border-2 border-white shadow-sm object-cover">
                             <div>
-                                <p class="font-bold text-gray-800 text-sm flex items-center">${u.name} ${medal} ${deleteBtn}</p>
+                                <p class="font-bold text-gray-800 text-sm flex items-center">${u.name} ${medal}</p>
                                 <p class="text-[10px] text-gray-400">ID: ${u.uniqueId}</p>
                             </div>
                         </div>
-                        <span class="font-black text-indigo-600 text-lg z-10">${u.points} 💎</span>
+                        <div class="flex items-center z-10">
+                            ${resetBtn}
+                            <span class="font-black text-indigo-600 text-lg">${u.points} 💎</span>
+                        </div>
                     </div>`;
                 i++;
             });
         }
+
+        // --- ADMIN RESET POINTS FUNCTION ---
+        window.resetUserPoints = async (uid, name) => {
+            if(confirm(`هل أنت متأكد من تصفير نقاط الطالب: ${name}؟\n(النقاط ستعود للصفر فقط)`)) {
+                await updateDoc(doc(db, "users", uid), { points: 0 });
+                alert("تم تصفير النقاط بنجاح!");
+                loadLeaderboard(); // Refresh list
+            }
+        };
 
         window.handleImagePreview = (input) => {
             if(input.files[0]) {
