@@ -32,12 +32,13 @@
             margin: 0; padding: 0;
         }
 
-        /* --- Custom Scroll --- */
+        /* --- Custom Scroll (UPDATED FOR BETTER SCROLLING) --- */
         .scroll-container {
             height: 100%;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            padding-bottom: 120px; /* Space for bottom nav */
+            /* زيدت المسافة الجووة حتى تكدر تنزل براحتك */
+            padding-bottom: 200px; 
         }
         .scroll-container::-webkit-scrollbar { display: none; }
         .scroll-container { -ms-overflow-style: none; scrollbar-width: none; }
@@ -205,6 +206,17 @@
             transform: translateX(24px);
         }
         
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999;
+            display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: white; width: 90%; max-width: 500px; max-height: 90vh;
+            border-radius: 20px; padding: 20px; overflow-y: auto;
+            animation: slideUp 0.3s ease-out; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
         @media (min-width: 768px) {
             .input-box { font-size: 1.1rem; }
             .auth-overlay > div { max-width: 500px; }
@@ -320,37 +332,6 @@
         <div id="tab-challenges" class="screen pt-20">
             <div class="scroll-container px-5 py-6">
                 
-                <!-- === ADMIN CONTROL PANEL (ONLY FOR OWNER) === -->
-                <div id="admin-challenge-controls" class="hidden mb-6 bg-gray-900 rounded-2xl p-5 border-2 border-indigo-600 shadow-xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-20 h-20 bg-indigo-600 opacity-20 rounded-full -mr-10 -mt-10"></div>
-                    
-                    <div class="flex items-center justify-between mb-4 relative z-10">
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-user-shield text-indigo-400 text-xl"></i>
-                            <h3 class="font-bold text-white text-sm">لوحة التحكم بالنظام</h3>
-                        </div>
-                        
-                        <!-- Fixed Toggle Switch -->
-                        <label class="toggle-wrapper">
-                            <input type="checkbox" id="system-toggle" class="toggle-checkbox" onchange="toggleSystemUI()">
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-
-                    <p id="system-status-text" class="text-xs font-bold text-green-400 mb-2">النظام يعمل حالياً ✅</p>
-
-                    <!-- Hidden Message Input -->
-                    <div id="maintenance-input-area" class="transition-all duration-300 overflow-hidden max-h-0 opacity-0">
-                        <hr class="border-gray-700 my-3">
-                        <label class="block text-xs font-bold text-gray-400 mb-2">رسالة التنبيه للطلاب (سبب الإيقاف):</label>
-                        <textarea id="maintenance-msg-input" class="w-full bg-gray-800 border border-gray-600 text-white rounded-xl p-3 text-sm focus:border-indigo-500 outline-none h-20 mb-3" placeholder="مثلاً: توقف للصيانة، نعود بعد ساعة..."></textarea>
-                        <button onclick="saveSystemSettings()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg flex items-center justify-center gap-2">
-                            <i class="fas fa-save"></i> حفظ الإعدادات
-                        </button>
-                    </div>
-                </div>
-                <!-- ============================================== -->
-
                 <!-- Select Grade First Time -->
                 <div id="grade-selector-card" class="bg-white p-6 rounded-2xl shadow-sm mb-6 border border-gray-100">
                     <div class="text-center mb-4">
@@ -409,6 +390,37 @@
                     <h3 class="text-xl font-bold text-gray-800" id="search-msg">جاري البحث...</h3>
                     <button onclick="cancelSearch()" class="mt-8 text-red-500 font-bold text-sm bg-red-50 px-4 py-2 rounded-full">إلغاء</button>
                 </div>
+
+                <!-- === ADMIN CONTROL PANEL (MOVED TO BOTTOM) === -->
+                <div id="admin-challenge-controls" class="hidden mt-8 mb-6 bg-gray-900 rounded-2xl p-5 border-2 border-indigo-600 shadow-xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-indigo-600 opacity-20 rounded-full -mr-10 -mt-10"></div>
+                    
+                    <div class="flex items-center justify-between mb-4 relative z-10">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-user-shield text-indigo-400 text-xl"></i>
+                            <h3 class="font-bold text-white text-sm">لوحة التحكم بالنظام</h3>
+                        </div>
+                        
+                        <!-- Toggle Switch -->
+                        <label class="toggle-wrapper">
+                            <input type="checkbox" id="system-toggle" class="toggle-checkbox" onchange="toggleSystemUI()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <p id="system-status-text" class="text-xs font-bold text-green-400 mb-2">النظام يعمل حالياً ✅</p>
+                    
+                    <!-- Always visible settings container -->
+                    <div class="mt-4">
+                        <label class="block text-xs font-bold text-gray-400 mb-2">رسالة التنبيه للطلاب (سبب الإيقاف):</label>
+                        <textarea id="maintenance-msg-input" class="w-full bg-gray-800 border border-gray-600 text-white rounded-xl p-3 text-sm focus:border-indigo-500 outline-none h-20 mb-3" placeholder="مثلاً: توقف للصيانة، نعود بعد ساعة..."></textarea>
+                        
+                        <button onclick="saveSystemSettings()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg flex items-center justify-center gap-2">
+                            <i class="fas fa-save"></i> حفظ الإعدادات
+                        </button>
+                    </div>
+                </div>
+                <!-- ============================================== -->
             </div>
         </div>
 
@@ -619,6 +631,13 @@
                                 <span class="font-bold text-red-700">كل الأسئلة المرفوعة</span>
                             </div>
                         </button>
+                        <!-- NEW: Question Stats Button -->
+                        <button onclick="openPage('screen-admin-counts')" class="stat-btn border-red-100 bg-red-50">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-red-600"><i class="fas fa-calculator"></i></div>
+                                <span class="font-bold text-red-700">عدد الأسئلة المرفوعة</span>
+                            </div>
+                        </button>
                     </div>
 
                     <button onclick="logout()" class="stat-btn mt-6 border-red-100 text-red-500">
@@ -696,15 +715,57 @@
             </div>
         </div>
 
-         <!-- Screen: Admin ALL Questions -->
+         <!-- Screen: Admin ALL Questions (IMPROVED) -->
          <div id="screen-admin-all" class="screen pt-20">
             <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
                 <button onclick="backToProfile()" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
-                <h1 class="font-bold text-lg text-gray-800">كل الأسئلة</h1>
+                <h1 class="font-bold text-lg text-gray-800">كل الأسئلة (المحرر الذكي)</h1>
             </div>
             <div class="scroll-container px-5 py-6">
-                <input type="text" id="admin-search-all" onkeyup="filterAdminQuestions()" placeholder="بحث في الأسئلة..." class="input-box mb-4 text-sm">
-                <div id="admin-all-list" class="space-y-3"></div>
+                <!-- Filters -->
+                <div class="flex gap-2 mb-4">
+                    <select id="admin-filter-grade" class="input-box text-sm flex-1" onchange="filterAdminQuestions()">
+                        <option value="">كل المراحل</option>
+                        <option value="6sci">السادس العلمي</option>
+                        <option value="6lit">السادس الأدبي</option>
+                        <option value="3med">الثالث متوسط</option>
+                    </select>
+                    <input type="text" id="admin-search-all" onkeyup="filterAdminQuestions()" placeholder="بحث..." class="input-box text-sm flex-[2]">
+                </div>
+                
+                <div id="admin-all-list" class="space-y-3 pb-20"></div>
+            </div>
+        </div>
+        
+        <!-- Screen: Admin Question Counts (NEW) -->
+        <div id="screen-admin-counts" class="screen pt-20">
+            <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
+                <button onclick="backToProfile()" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
+                <h1 class="font-bold text-lg text-gray-800">عداد الأسئلة</h1>
+            </div>
+            <div class="scroll-container px-5 py-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm mb-6">
+                    <label class="block text-sm font-bold text-gray-500 mb-1">الصف</label>
+                    <select id="count-grade-select" class="input-box mb-4">
+                        <option value="6sci">السادس العلمي</option>
+                        <option value="6lit">السادس الأدبي</option>
+                        <option value="3med">الثالث متوسط</option>
+                    </select>
+                    
+                    <label class="block text-sm font-bold text-gray-500 mb-1">نوع السؤال</label>
+                    <select id="count-type-select" class="input-box mb-4">
+                        <option value="mcq">اختيارات (MCQ)</option>
+                        <option value="tf">صح وخطأ</option>
+                    </select>
+                    
+                    <button onclick="calculateQuestionCounts()" class="btn-main">
+                        <i class="fas fa-search"></i> بحث
+                    </button>
+                </div>
+                
+                <div id="counts-result-container" class="space-y-3 pb-20">
+                    <!-- Results go here -->
+                </div>
             </div>
         </div>
 
@@ -724,6 +785,64 @@
                 <i class="fas fa-user text-xl mb-1"></i><span class="text-[10px] font-bold">حسابي</span>
                 <!-- Notification Badge -->
                 <div id="profile-tab-badge" class="red-dot"></div>
+            </div>
+        </div>
+        
+        <!-- EDIT QUESTION MODAL (NEW) -->
+        <div id="edit-modal" class="modal-overlay hidden">
+            <div class="modal-content relative">
+                <button onclick="document.getElementById('edit-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+                <h3 class="font-bold text-lg mb-4 text-indigo-700 border-b pb-2">تعديل السؤال الشامل</h3>
+                
+                <input type="hidden" id="edit-q-id">
+                
+                <label class="block text-xs font-bold text-gray-500 mb-1">نص السؤال</label>
+                <textarea id="edit-q-text" class="input-box h-20 mb-3 text-sm"></textarea>
+                
+                <div class="flex gap-2 mb-3">
+                     <div class="flex-1">
+                        <label class="block text-xs font-bold text-gray-500 mb-1">الصف</label>
+                        <select id="edit-q-grade" class="input-box text-sm p-2">
+                            <option value="6sci">6 علمي</option>
+                            <option value="6lit">6 أدبي</option>
+                            <option value="3med">3 متوسط</option>
+                        </select>
+                     </div>
+                     <div class="flex-1">
+                        <label class="block text-xs font-bold text-gray-500 mb-1">المادة</label>
+                        <select id="edit-q-subject" class="input-box text-sm p-2">
+                             <!-- Populated by JS -->
+                        </select>
+                     </div>
+                </div>
+
+                <!-- MCQ Fields -->
+                <div id="edit-mcq-fields" class="hidden">
+                     <label class="block text-xs font-bold text-gray-500 mb-1">الخيار 1</label>
+                     <input type="text" id="edit-ans-0" class="input-box mb-2 p-2 text-sm">
+                     <label class="block text-xs font-bold text-gray-500 mb-1">الخيار 2</label>
+                     <input type="text" id="edit-ans-1" class="input-box mb-2 p-2 text-sm">
+                     <label class="block text-xs font-bold text-gray-500 mb-1">الخيار 3</label>
+                     <input type="text" id="edit-ans-2" class="input-box mb-3 p-2 text-sm">
+                     
+                     <label class="block text-xs font-bold text-green-600 mb-1">رقم الإجابة الصحيحة (0, 1, 2)</label>
+                     <select id="edit-correct-mcq" class="input-box p-2 text-sm">
+                         <option value="0">الخيار 1</option>
+                         <option value="1">الخيار 2</option>
+                         <option value="2">الخيار 3</option>
+                     </select>
+                </div>
+
+                <!-- TF Fields -->
+                <div id="edit-tf-fields" class="hidden">
+                    <label class="block text-xs font-bold text-green-600 mb-1">الإجابة الصحيحة</label>
+                    <select id="edit-correct-tf" class="input-box p-2 text-sm">
+                        <option value="true">صح</option>
+                        <option value="false">خطأ</option>
+                    </select>
+                </div>
+
+                <button onclick="saveFullEditQ()" class="btn-main mt-6 bg-indigo-600 text-sm">حفظ التعديلات</button>
             </div>
         </div>
     </div>
@@ -748,7 +867,11 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        
+        // ******************************************************
+        // ⚠️⚠️⚠️ غير هذا الايميل الى ايميلك انت (الادمن) ⚠️⚠️⚠️
         const ADMIN_EMAIL = "mslmalmyaly223@gmail.com";
+        // ******************************************************
 
         setPersistence(auth, browserLocalPersistence).catch(e => console.error("Persistence Error", e));
 
@@ -838,31 +961,25 @@
                     systemConfig.enabled = data.challengesEnabled !== undefined ? data.challengesEnabled : true;
                     systemConfig.msg = data.maintenanceMessage || "النظام في وضع الصيانة حالياً، يرجى المحاولة لاحقاً.";
                     
-                    // Update Admin UI only (if user is admin and UI is loaded)
                     const toggle = document.getElementById('system-toggle');
-                    const inputArea = document.getElementById('maintenance-input-area');
                     const statusText = document.getElementById('system-status-text');
                     const msgInput = document.getElementById('maintenance-msg-input');
                     
                     if (toggle) {
-                        // Sync state from DB if user hasn't touched it recently?
-                        // Actually, we should just reflect DB state.
                         toggle.checked = systemConfig.enabled;
                         
-                        // Update Visuals based on DB state
                         if (!systemConfig.enabled) {
-                            inputArea.style.maxHeight = "300px";
-                            inputArea.style.opacity = "1";
                             statusText.innerText = "النظام متوقف ⛔ (الطلاب يرون الرسالة)";
                             statusText.className = "text-xs font-bold text-red-400 mb-2";
                         } else {
-                            inputArea.style.maxHeight = "0";
-                            inputArea.style.opacity = "0";
                             statusText.innerText = "النظام يعمل حالياً ✅";
                             statusText.className = "text-xs font-bold text-green-400 mb-2";
                         }
                         
-                        if (!msgInput.value) msgInput.value = systemConfig.msg;
+                        // Don't overwrite if user is typing
+                        if (msgInput && document.activeElement !== msgInput) {
+                             msgInput.value = systemConfig.msg;
+                        }
                     }
                 }
             });
@@ -871,20 +988,13 @@
         // Exposed Function for Toggle Switch Change (Visual Update Immediate)
         window.toggleSystemUI = () => {
              const toggle = document.getElementById('system-toggle');
-             const inputArea = document.getElementById('maintenance-input-area');
              const statusText = document.getElementById('system-status-text');
 
              if (!toggle.checked) {
-                 // Turning OFF (Gray)
-                 inputArea.style.maxHeight = "300px";
-                 inputArea.style.opacity = "1";
-                 statusText.innerText = "النظام متوقف ⛔ (الطلاب يرون الرسالة)";
+                 statusText.innerText = "النظام متوقف ⛔ (سيتم الحفظ عند الضغط على الزر)";
                  statusText.className = "text-xs font-bold text-red-400 mb-2";
              } else {
-                 // Turning ON (Green)
-                 inputArea.style.maxHeight = "0";
-                 inputArea.style.opacity = "0";
-                 statusText.innerText = "النظام يعمل حالياً ✅";
+                 statusText.innerText = "النظام يعمل حالياً ✅ (سيتم الحفظ عند الضغط على الزر)";
                  statusText.className = "text-xs font-bold text-green-400 mb-2";
              }
         };
@@ -902,7 +1012,7 @@
                 }, { merge: true });
                 alert("✅ تم حفظ إعدادات النظام بنجاح!");
             } catch (e) {
-                alert("خطأ في الحفظ: " + e.message);
+                alert("خطأ في الحفظ (تأكد من القواعد): " + e.message);
             }
         };
 
@@ -955,9 +1065,9 @@
                     createdAt: serverTimestamp(),
                     
                     // Daily Reward Fields
-                    lastRewardDayKey: null, // Stores "Day-Month-Year" to prevent multiple claims same day
-                    rewardMonthKey: null,   // Stores "Month-Year" to handle global monthly reset
-                    daysClaimedInMonth: 0,  // Counts how many days claimed in CURRENT month (streak/progress)
+                    lastRewardDayKey: null, 
+                    rewardMonthKey: null,   
+                    daysClaimedInMonth: 0,  
 
                     hiddenFromLeaderboard: false 
                 });
@@ -970,58 +1080,33 @@
             signOut(auth);
         };
 
-        // --- NEW DAILY REWARD LOGIC (Global Month + No Streak Reset on Miss) ---
-        
+        // --- DAILY REWARD LOGIC ---
         function getIraqDate() {
-            // Returns a Date object representing the current time in Baghdad
             const dateStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Baghdad"});
             return new Date(dateStr);
         }
 
         window.checkDailyReward = async () => {
             const iraqDate = getIraqDate();
-            
-            // Construct keys based on IRAQ time
-            const currentDayKey = `${iraqDate.getDate()}-${iraqDate.getMonth()}-${iraqDate.getFullYear()}`; // e.g. "30-11-2025"
-            const currentMonthKey = `${iraqDate.getMonth()}-${iraqDate.getFullYear()}`; // e.g. "11-2025"
+            const currentDayKey = `${iraqDate.getDate()}-${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
+            const currentMonthKey = `${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
 
-            // Check if user already claimed TODAY
             if (userData.lastRewardDayKey === currentDayKey) return; 
 
-            // Global Month Reset Check
             let userDaysClaimed = userData.daysClaimedInMonth || 0;
-            
-            // If the month stored in user data is different from current month -> RESET everything
-            if (userData.rewardMonthKey !== currentMonthKey) {
-                userDaysClaimed = 0; // New month start for everyone
-            }
+            if (userData.rewardMonthKey !== currentMonthKey) userDaysClaimed = 0;
 
-            // Determine which day is NEXT to claim (1-based index)
             const nextDayToClaim = userDaysClaimed + 1;
-
-            // Generate Grid
             const grid = document.getElementById('reward-grid-container');
             grid.innerHTML = '';
             for(let i=1; i<=30; i++) {
                 const pts = 10 + ((i - 1) * 5);
                 let cls = "day-box";
-                
-                if (i < nextDayToClaim) {
-                    cls += " claimed"; // Already claimed
-                } else if (i === nextDayToClaim) {
-                    cls += " active"; // Available now
-                } else {
-                    cls += " locked"; // Future
-                }
-                
-                grid.innerHTML += `
-                    <div class="${cls}">
-                        <p>يوم ${i}</p>
-                        <span>${pts} نقاط</span>
-                    </div>
-                `;
+                if (i < nextDayToClaim) cls += " claimed"; 
+                else if (i === nextDayToClaim) cls += " active"; 
+                else cls += " locked"; 
+                grid.innerHTML += `<div class="${cls}"><p>يوم ${i}</p><span>${pts} نقاط</span></div>`;
             }
-
             document.getElementById('daily-reward-screen').classList.remove('hidden');
             document.getElementById('daily-reward-screen').style.display = 'flex';
         };
@@ -1032,31 +1117,22 @@
             const currentMonthKey = `${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
 
             let userDaysClaimed = userData.daysClaimedInMonth || 0;
-
-            // Global Reset Logic Application
-            if (userData.rewardMonthKey !== currentMonthKey) {
-                userDaysClaimed = 0;
-            }
+            if (userData.rewardMonthKey !== currentMonthKey) userDaysClaimed = 0;
 
             const dayToClaim = userDaysClaimed + 1;
             const rewardAmount = 10 + ((dayToClaim - 1) * 5);
 
-            // Update Database
             await updateDoc(doc(db, "users", currentUser.uid), {
                 points: increment(rewardAmount),
                 lastRewardDayKey: currentDayKey,
                 rewardMonthKey: currentMonthKey,
-                daysClaimedInMonth: increment(1) // Just increment, never reset to 0 unless month changes
+                daysClaimedInMonth: increment(1) 
             });
-            
-            // Update Local Data
             userData.points += rewardAmount;
             userData.lastRewardDayKey = currentDayKey;
             userData.rewardMonthKey = currentMonthKey;
             userData.daysClaimedInMonth = dayToClaim;
-            
             setupHeaderUI();
-            
             document.getElementById('daily-reward-screen').classList.add('hidden');
             document.getElementById('daily-reward-screen').style.display = 'none';
         };
@@ -1071,7 +1147,6 @@
         function setupAdminUI() { 
             if (userData.email === ADMIN_EMAIL) {
                 document.getElementById('admin-buttons').classList.remove('hidden'); 
-                // Show Admin Controls in Challenges Tab
                 document.getElementById('admin-challenge-controls').classList.remove('hidden');
             }
         }
@@ -1104,9 +1179,7 @@
         };
 
         window.startMatchmaking = async (mode) => {
-            // === SYSTEM STATUS CHECK (MAINTENANCE) ===
             if (!systemConfig.enabled) {
-                // If disabled, show popup alert with the owner's message
                 alert("⚠️ تنبيه من الإدارة:\n\n" + systemConfig.msg);
                 return;
             }
@@ -1115,9 +1188,7 @@
             if(!sub || !selectedQType) return alert("يرجى اختيار المادة ونوع الأسئلة");
 
             currentGameMode = mode;
-            if (mode === 'ai') {
-                aiDifficulty = document.getElementById('ai-difficulty').value;
-            }
+            if (mode === 'ai') aiDifficulty = document.getElementById('ai-difficulty').value;
 
             document.getElementById('challenge-active-card').classList.add('hidden');
             document.getElementById('searching-ui').classList.remove('hidden');
@@ -1135,25 +1206,43 @@
             }
         };
 
-        // --- ONLINE LOGIC ---
+        // --- ONLINE LOGIC (FIXED: SELF-PLAY PREVENTION) ---
         async function startOnlineMatch(group, sub) {
             try {
                 const qRef = collection(db, "match_queue");
-                const qWait = query(qRef, where("group", "==", group), where("status", "==", "waiting"), limit(1));
+                
+                // 1. DELETE ANY OLD WAITING SESSIONS FOR THIS USER FIRST
+                const oldSessionsQuery = query(qRef, where("player1.uid", "==", currentUser.uid), where("status", "==", "waiting"));
+                const oldDocs = await getDocs(oldSessionsQuery);
+                oldDocs.forEach(async (d) => { await deleteDoc(d.ref); });
+
+                // 2. SEARCH FOR OPPONENT (NOT SELF)
+                const qWait = query(qRef, where("group", "==", group), where("status", "==", "waiting"), limit(10));
                 const snap = await getDocs(qWait);
 
-                if(!snap.empty) {
-                    const matchId = snap.docs[0].id;
-                    currentMatchId = matchId;
-                    await updateDoc(doc(db, "match_queue", matchId), {
+                let foundMatchId = null;
+
+                // Loop through waiting matches to find one that isn't me
+                snap.forEach((doc) => {
+                    const d = doc.data();
+                    if (d.player1.uid !== currentUser.uid) {
+                        foundMatchId = doc.id;
+                    }
+                });
+
+                if(foundMatchId) {
+                    // JOIN EXISTING MATCH
+                    currentMatchId = foundMatchId;
+                    await updateDoc(doc(db, "match_queue", foundMatchId), {
                         player2: { uid: currentUser.uid, name: userData.name, score: 0 },
                         status: 'active',
                         answersCount: 0 
                     });
-                    listenToMatch(matchId);
+                    listenToMatch(foundMatchId);
                 } else {
+                    // CREATE NEW MATCH
                     const qDocs = await getQuestions(sub, selectedQType);
-                    if(qDocs.length === 0) { alert("لا توجد أسئلة كافية"); cancelSearch(); return; }
+                    if(qDocs.length === 0) { alert("لا توجد أسئلة كافية في هذا القسم"); cancelSearch(); return; }
                     
                     const shuffledQs = qDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
                     
@@ -1175,10 +1264,8 @@
         async function startAIMatch(sub) {
             const qDocs = await getQuestions(sub, selectedQType);
             if(qDocs.length === 0) { alert("لا توجد أسئلة كافية"); cancelSearch(); return; }
-            
             const shuffledQs = qDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
 
-            // Construct Local Match Data
             let botName = "الذكاء الاصطناعي 🤖";
             localMatchData = {
                 status: 'active',
@@ -1188,7 +1275,6 @@
                 currentIdx: 0,
                 answersCount: 0
             };
-            
             setTimeout(() => {
                 document.getElementById('game-overlay').classList.remove('hidden');
                 document.getElementById('game-overlay').style.display = 'flex';
@@ -1230,13 +1316,9 @@
             if (isExitingGame) return;
             if(!data.questions || data.currentIdx >= data.questions.length) { endGame(data); return; }
 
-            // If ONLINE and both answered
             if (currentGameMode === 'online' && data.answersCount >= 2) {
                  if(data.player1.uid === currentUser.uid) {
-                       updateDoc(doc(db, "match_queue", currentMatchId), { 
-                           currentIdx: increment(1),
-                           answersCount: 0 
-                       });
+                       updateDoc(doc(db, "match_queue", currentMatchId), { currentIdx: increment(1), answersCount: 0 });
                  }
                  return;
             }
@@ -1246,16 +1328,13 @@
 
             const qTextEl = document.getElementById('q-text');
             
-            // New Question Rendering
             if(qTextEl.innerText !== q.question) {
-                // RESET STATE FOR NEW QUESTION
                 hasAnsweredCurrentQ = false;
-                clearTimeout(aiTimeoutId); // Stop old AI thought if any
+                clearTimeout(aiTimeoutId); 
                 document.getElementById('answers-container').classList.remove('pointer-events-none', 'opacity-50');
                 document.getElementById('waiting-msg').classList.add('hidden');
                 document.getElementById('ai-thinking-msg').classList.add('hidden');
                 
-                // Set Names
                 if (currentGameMode === 'online') {
                     const isP1 = data.player1.uid === currentUser.uid;
                     document.getElementById('p1-name').innerText = userData.name;
@@ -1269,7 +1348,6 @@
                     document.getElementById('game-op-score').innerText = data.player2.score;
                 }
 
-                // Setup Timer
                 clearInterval(gameTimer);
                 let t = 15;
                 document.getElementById('game-timer').innerText = t;
@@ -1278,17 +1356,10 @@
                     if (isExitingGame) { clearInterval(gameTimer); return; }
                     t--;
                     document.getElementById('game-timer').innerText = t;
-                    
                     if(t <= 0) { 
                         clearInterval(gameTimer); 
-                        // TIMEOUT LOGIC
-                        if(!hasAnsweredCurrentQ) {
-                            submitGameAnswer(null, q, data); 
-                        } else {
-                            if (currentGameMode === 'ai') {
-                                handleAINextTurn();
-                            }
-                        }
+                        if(!hasAnsweredCurrentQ) submitGameAnswer(null, q, data); 
+                        else if (currentGameMode === 'ai') handleAINextTurn();
                     }
                 }, 1000);
             }
@@ -1299,43 +1370,28 @@
 
             const div = document.getElementById('answers-container');
             
-            // Render Answers only if empty or new question
             if(div.children.length === 0 || div.getAttribute('data-curr-q') !== q.question) {
                 div.setAttribute('data-curr-q', q.question);
                 div.innerHTML = '';
                 
                 let ansList = [];
-                if(q.type === 'mcq') {
-                    ansList = q.answers.map((txt, idx) => ({ txt, isCorrect: idx === q.correct }));
-                } else {
-                    ansList = [
-                        { txt: 'صح', isCorrect: q.correct === 'true' },
-                        { txt: 'خطأ', isCorrect: q.correct === 'false' }
-                    ];
-                }
+                if(q.type === 'mcq') ansList = q.answers.map((txt, idx) => ({ txt, isCorrect: idx === q.correct }));
+                else ansList = [{ txt: 'صح', isCorrect: q.correct === 'true' }, { txt: 'خطأ', isCorrect: q.correct === 'false' }];
 
                 ansList.sort(() => 0.5 - Math.random());
-
                 ansList.forEach(ansObj => {
                     const btn = document.createElement('button');
                     btn.className = "w-full py-4 bg-white border-2 border-gray-100 rounded-xl text-lg font-bold text-gray-700 shadow-sm active:scale-95 transition hover:border-indigo-300";
                     btn.innerText = ansObj.txt;
-                    // --- PREVENT DOUBLE CLICK GLITCH ---
-                    btn.onclick = () => {
-                          if(hasAnsweredCurrentQ) return; 
-                          submitGameAnswer(ansObj, q, data);
-                    };
+                    btn.onclick = () => { if(hasAnsweredCurrentQ) return; submitGameAnswer(ansObj, q, data); };
                     div.appendChild(btn);
                 });
             }
         }
 
         async function submitGameAnswer(ansObj, q, matchData) {
-            // DOUBLE LOCK
             if(hasAnsweredCurrentQ || isExitingGame) return;
             hasAnsweredCurrentQ = true;
-            
-            // LOCK UI IMMEDIATELY
             document.getElementById('answers-container').classList.add('pointer-events-none', 'opacity-50');
             
             let correct = false;
@@ -1343,28 +1399,18 @@
 
             if (currentGameMode === 'online') {
                 document.getElementById('waiting-msg').classList.remove('hidden');
-                
                 const isP1 = matchData.player1.uid === currentUser.uid;
                 if (!currentMatchId) return;
                 const ref = doc(db, "match_queue", currentMatchId);
-
                 const updates = { answersCount: increment(1) };
-                if(correct) {
-                    updates[isP1?'player1.score':'player2.score'] = increment(1);
-                }
+                if(correct) updates[isP1?'player1.score':'player2.score'] = increment(1);
                 await updateDoc(ref, updates);
-
             } else {
-                // --- AI MODE LOGIC ---
-                document.getElementById('waiting-msg').classList.remove('hidden'); // Show waiting for AI
-                
-                // Update Player Score locally
+                document.getElementById('waiting-msg').classList.remove('hidden'); 
                 if(correct) {
                     localMatchData.player1.score += 1;
                     document.getElementById('game-my-score').innerText = localMatchData.player1.score;
                 }
-
-                // TRIGGER AI RESPONSE
                 triggerAIResponse();
             }
         }
@@ -1372,15 +1418,11 @@
         function triggerAIResponse() {
             document.getElementById('waiting-msg').classList.add('hidden');
             document.getElementById('ai-thinking-msg').classList.remove('hidden');
-
-            let delay = 2000;
-            let accuracy = 0.25;
-
+            let delay = 2000; let accuracy = 0.25;
             if (aiDifficulty === 'medium') { delay = 4000; accuracy = 0.5; }
             if (aiDifficulty === 'hard') { delay = 6000; accuracy = 0.7; }
 
             aiTimeoutId = setTimeout(() => {
-                // AI Answers
                 const isCorrect = Math.random() < accuracy;
                 if(isCorrect) {
                     localMatchData.player2.score += 1;
@@ -1403,7 +1445,6 @@
             if (isExitingGame) return;
 
             let myScore, opScore;
-            
             if (currentGameMode === 'online') {
                 const isP1 = d.player1.uid === currentUser.uid;
                 myScore = isP1 ? d.player1.score : d.player2.score;
@@ -1413,25 +1454,16 @@
                 opScore = localMatchData.player2.score;
             }
             
-            let pts = 0;
-            let msg = "";
-            let icon = "";
-            
-            if (myScore > opScore) {
-                pts = myScore * 5; msg = "فوز ساحق!"; icon = "🏆";
-            } else if (myScore < opScore) {
-                pts = 0; msg = "حظ أوفر!"; icon = "😢";
-            } else {
-                if (myScore > 0) pts = myScore * 3; else pts = 2;
-                msg = "تعادل!"; icon = "🤝";
-            }
+            let pts = 0; let msg = ""; let icon = "";
+            if (myScore > opScore) { pts = myScore * 5; msg = "فوز ساحق!"; icon = "🏆"; } 
+            else if (myScore < opScore) { pts = 0; msg = "حظ أوفر!"; icon = "😢"; } 
+            else { pts = myScore > 0 ? myScore * 3 : 2; msg = "تعادل!"; icon = "🤝"; }
 
             if(pts > 0) {
                 await updateDoc(doc(db, "users", currentUser.uid), { points: increment(pts) });
                 userData.points += pts;
                 setupHeaderUI();
             }
-
             document.getElementById('result-icon-container').innerText = icon;
             document.getElementById('result-title').innerText = msg;
             document.getElementById('final-my-score').innerText = myScore;
@@ -1441,59 +1473,26 @@
             document.getElementById('result-screen').style.display = 'flex';
         }
 
-        // --- CLOSE FUNCTION ---
         window.closeResultScreen = async () => {
              isExitingGame = true;
+             if (matchListenerUnsubscribe) { matchListenerUnsubscribe(); matchListenerUnsubscribe = null; }
+             clearInterval(gameTimer); clearTimeout(aiTimeoutId);
+             document.getElementById('result-screen').classList.add('hidden');
+             document.getElementById('result-screen').style.display = 'none'; 
+             document.getElementById('game-overlay').classList.add('hidden');
+             document.getElementById('game-overlay').style.display = 'none';
+             document.getElementById('searching-ui').classList.add('hidden');
+             document.getElementById('searching-ui').style.removeProperty('display');
 
-             if (matchListenerUnsubscribe) {
-                 matchListenerUnsubscribe();
-                 matchListenerUnsubscribe = null;
-             }
-             clearInterval(gameTimer);
-             clearTimeout(aiTimeoutId);
-
-             const resScreen = document.getElementById('result-screen');
-             resScreen.classList.add('hidden');
-             resScreen.style.display = 'none'; 
-             
-             const gameScreen = document.getElementById('game-overlay');
-             gameScreen.classList.add('hidden');
-             gameScreen.style.display = 'none';
-
-             const searchScreen = document.getElementById('searching-ui');
-             searchScreen.classList.add('hidden');
-             searchScreen.style.removeProperty('display');
-
-             currentMatchId = null;
-             localMatchData = null;
-             hasAnsweredCurrentQ = false;
-
-             document.getElementById('q-text').innerText = "...";
-             document.getElementById('q-progress').innerText = "0 / 10";
-             document.getElementById('answers-container').innerHTML = "";
-             document.getElementById('waiting-msg').classList.add('hidden');
-             document.getElementById('ai-thinking-msg').classList.add('hidden');
-             document.getElementById('game-my-score').innerText = "0";
-             document.getElementById('game-op-score').innerText = "0";
-
+             currentMatchId = null; localMatchData = null; hasAnsweredCurrentQ = false;
              document.getElementById('challenge-active-card').classList.remove('hidden');
-
              if(currentUser) {
                  const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-                 if(userDoc.exists()) {
-                      userData = userDoc.data();
-                      setupHeaderUI(); 
-                      setupProfileUI();
-                 }
+                 if(userDoc.exists()) { userData = userDoc.data(); setupHeaderUI(); setupProfileUI(); }
                  loadLeaderboard();
              }
-
              switchTab('challenges');
-
-             setTimeout(() => {
-                 isExitingGame = false;
-                 document.getElementById('game-overlay').classList.add('hidden');
-             }, 500);
+             setTimeout(() => { isExitingGame = false; document.getElementById('game-overlay').classList.add('hidden'); }, 500);
         };
 
         // --- UPLOAD ---
@@ -1501,10 +1500,8 @@
             const sub = document.getElementById('up-subject').value;
             const type = document.getElementById('up-type').value;
             if (!sub) return alert("يرجى اختيار المادة");
-            
             document.getElementById('up-step-1').classList.add('hidden');
             document.getElementById('up-step-2').classList.remove('hidden');
-
             if(type === 'mcq') {
                 document.getElementById('up-mcq-container').classList.remove('hidden');
                 document.getElementById('up-tf-container').classList.add('hidden');
@@ -1518,14 +1515,9 @@
              const sub = document.getElementById('up-subject').value;
              const type = document.getElementById('up-type').value;
              const txt = document.getElementById('up-q-text').value;
-
              if(!txt) return alert("يرجى كتابة نص السؤال");
              
-             let q = {
-                 grade: userData.grade, subject: sub, type, question: txt,
-                 authorId: currentUser.uid, authorName: userData.name, createdAt: serverTimestamp()
-             };
-
+             let q = { grade: userData.grade, subject: sub, type, question: txt, authorId: currentUser.uid, authorName: userData.name, createdAt: serverTimestamp() };
              if(type==='mcq') {
                  const a0 = document.getElementById('ans-0').value;
                  const a1 = document.getElementById('ans-1').value;
@@ -1533,56 +1525,33 @@
                  if(!a0 || !a1 || !a2) return alert("يرجى ملء جميع الخيارات");
                  q.answers = [a0, a1, a2];
                  q.correct = parseInt(document.querySelector('input[name="correct"]:checked').value);
-             } else {
-                 q.correct = document.getElementById('up-tf-val').value;
-             }
+             } else { q.correct = document.getElementById('up-tf-val').value; }
 
              await addDoc(collection(db, "pending_questions"), q);
              alert("تم ارسال السؤال للمراجعة بنجاح!");
-             
-             document.getElementById('up-q-text').value = "";
-             document.getElementById('ans-0').value = "";
-             document.getElementById('ans-1').value = "";
-             document.getElementById('ans-2').value = "";
-             document.getElementById('up-step-2').classList.add('hidden');
-             document.getElementById('up-step-1').classList.remove('hidden');
+             document.getElementById('up-q-text').value = ""; document.getElementById('ans-0').value = ""; document.getElementById('ans-1').value = ""; document.getElementById('ans-2').value = "";
+             document.getElementById('up-step-2').classList.add('hidden'); document.getElementById('up-step-1').classList.remove('hidden');
         };
 
         // --- FREE PAGES LOGIC ---
         window.openPage = async (screenId) => {
-            document.querySelectorAll('.screen').forEach(s => {
-                if(s.id.startsWith('screen-')) s.classList.remove('active');
-            });
+            document.querySelectorAll('.screen').forEach(s => { if(s.id.startsWith('screen-')) s.classList.remove('active'); });
             document.getElementById(screenId).classList.add('active');
-            
-            if (screenId === 'screen-stats') {
-                loadStatsContent();
-            } else if (screenId === 'screen-my-points') {
-                loadMyPointsContent();
-            } else if (screenId === 'screen-my-questions') {
-                loadMyQuestionsContent();
-            } else if (screenId === 'screen-admin-review') {
-                loadAdminReviewContent();
-            } else if (screenId === 'screen-admin-all') {
-                loadAdminAllContent();
-            }
+            if (screenId === 'screen-stats') loadStatsContent();
+            else if (screenId === 'screen-my-points') loadMyPointsContent();
+            else if (screenId === 'screen-my-questions') loadMyQuestionsContent();
+            else if (screenId === 'screen-admin-review') loadAdminReviewContent();
+            else if (screenId === 'screen-admin-all') loadAdminAllContent();
         };
 
-        window.backToProfile = () => {
-             document.querySelectorAll('.screen').forEach(s => {
-                if(s.id.startsWith('screen-')) s.classList.remove('active');
-            });
-        };
+        window.backToProfile = () => { document.querySelectorAll('.screen').forEach(s => { if(s.id.startsWith('screen-')) s.classList.remove('active'); }); };
 
         async function loadStatsContent() {
              const div = document.getElementById('stats-content');
              const usersSnap = await getDocs(collection(db, "users"));
              const total = usersSnap.size;
              const today = new Date(); today.setHours(0,0,0,0);
-             let newUsers = 0;
-             let activeNow = 0; 
-             const now = new Date();
-
+             let newUsers = 0; let activeNow = 0; const now = new Date();
              usersSnap.forEach(d => {
                  const u = d.data();
                  if(!u) return;
@@ -1590,32 +1559,11 @@
                  if (u.lastActive && u.lastActive.toDate && (now - u.lastActive.toDate()) < 15 * 60 * 1000) activeNow++;
              });
              if(activeNow === 0) activeNow = 1; 
-
              div.innerHTML = `
-                <div class="bg-white p-5 rounded-2xl shadow-sm flex justify-between items-center">
-                    <div>
-                        <p class="text-sm text-gray-500">المستخدمين الكلي</p>
-                        <p class="text-2xl font-bold text-gray-800">${total}</p>
-                    </div>
-                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600"><i class="fas fa-users"></i></div>
-                </div>
-                <div class="bg-white p-5 rounded-2xl shadow-sm flex justify-between items-center">
-                    <div>
-                        <p class="text-sm text-gray-500">نشطين الآن</p>
-                        <p class="text-2xl font-bold text-green-500">${activeNow}</p>
-                    </div>
-                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600"><i class="fas fa-wifi"></i></div>
-                </div>
-                <div class="bg-white p-5 rounded-2xl shadow-sm flex justify-between items-center">
-                    <div>
-                        <p class="text-sm text-gray-500">سجلوا اليوم</p>
-                        <p class="text-2xl font-bold text-purple-500">${newUsers}</p>
-                    </div>
-                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600"><i class="fas fa-user-plus"></i></div>
-                </div>
-             `;
+                <div class="bg-white p-5 rounded-2xl shadow-sm flex justify-between items-center"><div><p class="text-sm text-gray-500">المستخدمين الكلي</p><p class="text-2xl font-bold text-gray-800">${total}</p></div><div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600"><i class="fas fa-users"></i></div></div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm flex justify-between items-center"><div><p class="text-sm text-gray-500">نشطين الآن</p><p class="text-2xl font-bold text-green-500">${activeNow}</p></div><div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600"><i class="fas fa-wifi"></i></div></div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm flex justify-between items-center"><div><p class="text-sm text-gray-500">سجلوا اليوم</p><p class="text-2xl font-bold text-purple-500">${newUsers}</p></div><div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600"><i class="fas fa-user-plus"></i></div></div>`;
         }
-
         async function loadMyPointsContent() {
              document.getElementById('detail-points').innerText = userData.points;
              const joinDate = userData.createdAt ? userData.createdAt.toDate() : new Date();
@@ -1624,67 +1572,22 @@
              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
              document.getElementById('detail-days').innerText = diffDays + " يوم";
         }
-
         async function loadMyQuestionsContent() {
             const div = document.getElementById('my-questions-list');
             div.innerHTML = '<p class="text-center text-gray-400">تحميل...</p>';
-            
             const q1 = query(collection(db, "pending_questions"), where("authorId", "==", currentUser.uid));
-            
             try {
                 const s1 = await getDocs(q1);
                 let html = "";
-                s1.forEach(d => {
-                    const q = d.data();
-                    html += `<div class="bg-white p-4 rounded-xl border border-yellow-100 mb-2">
-                        <div class="flex justify-between mb-1"><span class="text-xs text-gray-400">${q.subject}</span><span class="text-xs bg-yellow-100 text-yellow-600 px-2 rounded">قيد المراجعة</span></div>
-                        <p class="font-bold text-gray-800 text-sm">${q.question}</p>
-                    </div>`;
-                });
+                s1.forEach(d => { const q = d.data(); html += `<div class="bg-white p-4 rounded-xl border border-yellow-100 mb-2"><div class="flex justify-between mb-1"><span class="text-xs text-gray-400">${q.subject}</span><span class="text-xs bg-yellow-100 text-yellow-600 px-2 rounded">قيد المراجعة</span></div><p class="font-bold text-gray-800 text-sm">${q.question}</p></div>`; });
                 if(html === "") html = "<p class='text-center text-gray-400 mt-10'>لم تقم برفع أسئلة (قيد المراجعة) حالياً.</p>";
                 div.innerHTML = html;
-            } catch(e) {
-                div.innerHTML = "<p class='text-red-500'>حدث خطأ في جلب البيانات (تأكد من الفهارس).</p>";
-            }
+            } catch(e) { div.innerHTML = "<p class='text-red-500'>حدث خطأ في جلب البيانات.</p>"; }
         }
 
-        async function loadAdminReviewContent() {
-            const div = document.getElementById('admin-review-list');
-            div.innerHTML = '<p class="text-center text-gray-400">تحميل...</p>';
-            const q = await getDocs(query(collection(db, "pending_questions")));
-            if(q.empty) { div.innerHTML = "<p class='text-center py-10 text-gray-400'>لا يوجد شيء للمراجعة</p>"; return; }
-            let html = "";
-            q.forEach(d => {
-               const val = d.data();
-               const author = val.authorName || 'مجهول';
-               html += `
-                <div class="bg-white rounded-xl p-4 mb-3 shadow-sm border border-gray-100" id="review-card-${d.id}">
-                    <div class="flex justify-between items-start mb-2">
-                         <span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-lg font-bold">${val.grade} | ${val.subject}</span>
-                         <span class="text-xs text-gray-400">بواسطة: ${author}</span>
-                    </div>
-                    <p class="font-bold mb-3 text-gray-800 text-sm leading-6">${val.question}</p>
-                    <div class="bg-gray-50 p-3 rounded-lg mb-3 text-xs space-y-1 border border-gray-100">
-                         <p class="font-bold text-gray-500">الخيارات:</p>
-                         ${val.type==='mcq' ? 
-                           `<ul class="list-disc list-inside text-gray-600">
-                                <li>${val.answers[0]}</li>
-                                <li>${val.answers[1]}</li>
-                                <li>${val.answers[2]}</li>
-                            </ul>` : 
-                           `<p>صح / خطأ</p>`
-                         }
-                         <p class="mt-2 text-green-600 font-bold">الجواب الصحيح: ${val.type==='mcq' ? val.answers[val.correct] : (val.correct==='true'?'صح':'خطأ')}</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="approveQ('${d.id}')" class="flex-1 bg-green-500 text-white text-xs py-3 rounded-lg font-bold shadow-md hover:bg-green-600 transition">قبول (+5)</button>
-                        <button onclick="rejectQ('${d.id}')" class="flex-1 bg-red-500 text-white text-xs py-3 rounded-lg font-bold shadow-md hover:bg-red-600 transition">رفض</button>
-                    </div>
-                </div>`; 
-            });
-            div.innerHTML = html;
-        }
+        // --- NEW ADMIN FEATURES ---
 
+        // 1. ADVANCED EDITOR (ALL QUESTIONS)
         async function loadAdminAllContent() {
              const div = document.getElementById('admin-all-list');
              div.innerHTML = '<p class="text-center text-gray-400">جاري جلب كل الأسئلة...</p>';
@@ -1700,15 +1603,18 @@
             let html = "";
             list.slice(0, 50).forEach(q => { 
                 html += `
-                <div class="bg-white rounded-xl p-3 mb-2 border border-gray-100 shadow-sm flex justify-between items-center">
-                    <div class="overflow-hidden w-2/3">
-                        <p class="text-xs text-indigo-400 font-bold">${q.subject}</p>
-                        <input type="text" value="${q.question}" id="q-edit-${q.id}" class="w-full text-sm font-bold text-gray-700 border-b border-dashed border-gray-300 focus:border-indigo-500 outline-none bg-transparent">
+                <div class="bg-white rounded-xl p-3 mb-2 border border-gray-100 shadow-sm flex flex-col gap-2">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded font-bold">${q.grade || 'غير محدد'} | ${q.subject}</span>
+                            <span class="text-xs text-gray-400 ml-2">${q.type==='mcq'?'اختيارات':'صح/خطأ'}</span>
+                        </div>
+                        <div class="flex gap-1">
+                            <button onclick="openEditModal('${q.id}')" class="bg-blue-100 text-blue-600 px-3 py-1 rounded-lg text-xs font-bold hover:bg-blue-200 transition"><i class="fas fa-edit ml-1"></i>تعديل</button>
+                            <button onclick="deleteApprovedQ('${q.id}')" class="bg-red-100 text-red-600 px-3 py-1 rounded-lg text-xs font-bold hover:bg-red-200 transition"><i class="fas fa-trash"></i></button>
+                        </div>
                     </div>
-                    <div class="flex gap-1">
-                        <button onclick="saveEditQ('${q.id}')" class="bg-blue-100 text-blue-600 w-8 h-8 rounded-lg flex items-center justify-center"><i class="fas fa-save"></i></button>
-                        <button onclick="deleteApprovedQ('${q.id}')" class="bg-red-100 text-red-600 w-8 h-8 rounded-lg flex items-center justify-center"><i class="fas fa-trash"></i></button>
-                    </div>
+                    <p class="font-bold text-gray-700 text-sm leading-6 border-r-2 border-indigo-200 pr-2">${q.question}</p>
                 </div>`;
             });
             div.innerHTML = html;
@@ -1716,22 +1622,158 @@
 
         window.filterAdminQuestions = () => {
             const txt = document.getElementById('admin-search-all').value.toLowerCase();
-            const filtered = allAdminQuestions.filter(q => q.question.toLowerCase().includes(txt) || q.subject.includes(txt));
+            const gr = document.getElementById('admin-filter-grade').value;
+            
+            const filtered = allAdminQuestions.filter(q => {
+                const matchesText = q.question.toLowerCase().includes(txt) || q.subject.includes(txt);
+                const matchesGrade = gr ? (q.grade === gr) : true;
+                return matchesText && matchesGrade;
+            });
             renderAdminAllList(filtered);
         };
 
-        window.saveEditQ = async (id) => {
-            const newTxt = document.getElementById(`q-edit-${id}`).value;
-            await updateDoc(doc(db, "questions", id), { question: newTxt });
-            alert("تم التعديل");
+        window.openEditModal = (id) => {
+            const q = allAdminQuestions.find(i => i.id === id);
+            if(!q) return;
+
+            document.getElementById('edit-q-id').value = id;
+            document.getElementById('edit-q-text').value = q.question;
+            document.getElementById('edit-q-grade').value = q.grade || '6sci';
+            
+            // Populate Subjects based on grade
+            const subSel = document.getElementById('edit-q-subject');
+            subSel.innerHTML = "";
+            subjects[q.grade || '6sci'].forEach(s => subSel.innerHTML += `<option value="${s}">${s}</option>`);
+            subSel.value = q.subject;
+
+            document.getElementById('edit-q-grade').onchange = () => {
+                const g = document.getElementById('edit-q-grade').value;
+                subSel.innerHTML = "";
+                subjects[g].forEach(s => subSel.innerHTML += `<option value="${s}">${s}</option>`);
+            };
+
+            if(q.type === 'mcq') {
+                document.getElementById('edit-mcq-fields').classList.remove('hidden');
+                document.getElementById('edit-tf-fields').classList.add('hidden');
+                
+                document.getElementById('edit-ans-0').value = q.answers[0];
+                document.getElementById('edit-ans-1').value = q.answers[1];
+                document.getElementById('edit-ans-2').value = q.answers[2];
+                document.getElementById('edit-correct-mcq').value = q.correct;
+            } else {
+                document.getElementById('edit-mcq-fields').classList.add('hidden');
+                document.getElementById('edit-tf-fields').classList.remove('hidden');
+                document.getElementById('edit-correct-tf').value = q.correct;
+            }
+
+            document.getElementById('edit-modal').classList.remove('hidden');
+        };
+
+        window.saveFullEditQ = async () => {
+            const id = document.getElementById('edit-q-id').value;
+            const originalQ = allAdminQuestions.find(i => i.id === id);
+            const type = originalQ.type;
+
+            const updates = {
+                question: document.getElementById('edit-q-text').value,
+                grade: document.getElementById('edit-q-grade').value,
+                subject: document.getElementById('edit-q-subject').value,
+            };
+
+            if(type === 'mcq') {
+                updates.answers = [
+                    document.getElementById('edit-ans-0').value,
+                    document.getElementById('edit-ans-1').value,
+                    document.getElementById('edit-ans-2').value
+                ];
+                updates.correct = parseInt(document.getElementById('edit-correct-mcq').value);
+            } else {
+                updates.correct = document.getElementById('edit-correct-tf').value;
+            }
+
+            await updateDoc(doc(db, "questions", id), updates);
+            
+            // Update local list
+            const idx = allAdminQuestions.findIndex(i => i.id === id);
+            if(idx !== -1) {
+                allAdminQuestions[idx] = { ...allAdminQuestions[idx], ...updates };
+            }
+            
+            filterAdminQuestions(); // Re-render
+            document.getElementById('edit-modal').classList.add('hidden');
+            alert("تم حفظ التعديلات بنجاح!");
         };
 
         window.deleteApprovedQ = async (id) => {
-            if(confirm("هل أنت متأكد من حذف هذا السؤال؟")) {
+            if(confirm("هل أنت متأكد من حذف هذا السؤال نهائياً؟")) {
                 await deleteDoc(doc(db, "questions", id));
-                document.getElementById(`q-edit-${id}`).parentElement.parentElement.remove();
+                allAdminQuestions = allAdminQuestions.filter(q => q.id !== id);
+                filterAdminQuestions();
             }
         };
+
+        // 2. QUESTION COUNTS (STATS) - FIXED LOGIC
+        window.calculateQuestionCounts = async () => {
+             const container = document.getElementById('counts-result-container');
+             container.innerHTML = '<p class="text-center text-gray-400">جاري الحساب من قاعدة البيانات...</p>';
+             
+             const grade = document.getElementById('count-grade-select').value;
+             const type = document.getElementById('count-type-select').value;
+             const allSubjs = subjects[grade];
+
+             // Fetch REAL approved questions from DB
+             const q = query(collection(db, "questions"), where("grade", "==", grade), where("type", "==", type));
+             const snap = await getDocs(q);
+             
+             // Count logic (Dynamic)
+             let counts = {};
+             let totalCount = 0;
+
+             // Initialize expected subjects with 0
+             allSubjs.forEach(s => counts[s] = 0);
+             
+             snap.forEach(d => {
+                 const data = d.data();
+                 // Count accurately even if subject is new/different
+                 counts[data.subject] = (counts[data.subject] || 0) + 1;
+                 totalCount++;
+             });
+
+             let html = `<div class="bg-indigo-50 border-2 border-indigo-200 p-4 rounded-xl mb-4 text-center">
+                <p class="text-sm font-bold text-gray-600">المجموع الكلي للأسئلة المعتمدة</p>
+                <p class="text-3xl font-black text-indigo-700">${totalCount}</p>
+             </div>`;
+
+             // Render Subjects List
+             // Use Set to ensure we cover both expected subjects AND any extra found in DB
+             const allFoundSubjects = new Set([...allSubjs, ...Object.keys(counts)]);
+
+             allFoundSubjects.forEach(s => {
+                 const c = counts[s] || 0;
+                 html += `
+                 <div class="bg-white p-4 rounded-xl shadow-sm flex justify-between items-center border-r-4 border-indigo-500 mb-2">
+                      <span class="font-bold text-gray-700">${s}</span>
+                      <span class="bg-indigo-100 text-indigo-700 font-black px-3 py-1 rounded-full text-sm">${c} سؤال</span>
+                 </div>`;
+             });
+             
+             container.innerHTML = html;
+        };
+
+        // ------------------------------------
+
+        async function loadAdminReviewContent() {
+            const div = document.getElementById('admin-review-list');
+            div.innerHTML = '<p class="text-center text-gray-400">تحميل...</p>';
+            const q = await getDocs(query(collection(db, "pending_questions")));
+            if(q.empty) { div.innerHTML = "<p class='text-center py-10 text-gray-400'>لا يوجد شيء للمراجعة</p>"; return; }
+            let html = "";
+            q.forEach(d => {
+               const val = d.data(); const author = val.authorName || 'مجهول';
+               html += `<div class="bg-white rounded-xl p-4 mb-3 shadow-sm border border-gray-100" id="review-card-${d.id}"><div class="flex justify-between items-start mb-2"><span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-lg font-bold">${val.grade} | ${val.subject}</span><span class="text-xs text-gray-400">بواسطة: ${author}</span></div><p class="font-bold mb-3 text-gray-800 text-sm leading-6">${val.question}</p><div class="bg-gray-50 p-3 rounded-lg mb-3 text-xs space-y-1 border border-gray-100"><p class="font-bold text-gray-500">الخيارات:</p>${val.type==='mcq' ? `<ul class="list-disc list-inside text-gray-600"><li>${val.answers[0]}</li><li>${val.answers[1]}</li><li>${val.answers[2]}</li></ul>` : `<p>صح / خطأ</p>`}<p class="mt-2 text-green-600 font-bold">الجواب الصحيح: ${val.type==='mcq' ? val.answers[val.correct] : (val.correct==='true'?'صح':'خطأ')}</p></div><div class="flex gap-2"><button onclick="approveQ('${d.id}')" class="flex-1 bg-green-500 text-white text-xs py-3 rounded-lg font-bold shadow-md hover:bg-green-600 transition">قبول (+5)</button><button onclick="rejectQ('${d.id}')" class="flex-1 bg-red-500 text-white text-xs py-3 rounded-lg font-bold shadow-md hover:bg-red-600 transition">رفض</button></div></div>`; 
+            });
+            div.innerHTML = html;
+        }
 
         window.checkAdminNotifications = () => {
             const q = query(collection(db, "pending_questions"));
@@ -1739,13 +1781,8 @@
                 const count = snapshot.size;
                 const badgeTab = document.getElementById('profile-tab-badge');
                 const badgeBtn = document.getElementById('admin-btn-badge');
-                if (count > 0) {
-                    badgeTab.classList.add('visible');
-                    badgeBtn.classList.add('visible');
-                } else {
-                    badgeTab.classList.remove('visible');
-                    badgeBtn.classList.remove('visible');
-                }
+                if (count > 0) { badgeTab.classList.add('visible'); badgeBtn.classList.add('visible'); } 
+                else { badgeTab.classList.remove('visible'); badgeBtn.classList.remove('visible'); }
             });
         };
 
@@ -1764,75 +1801,36 @@
         async function loadLeaderboard() {
             const div = document.getElementById('leaderboard-list');
             div.innerHTML = '<p class="text-center text-gray-400 mt-10">تحميل...</p>';
-            
-            // INCREASED LIMIT TO 100
             const q = query(collection(db, "users"), limit(100));
             const snap = await getDocs(q);
-            
             let users = [];
-            snap.forEach(d => {
-                const u = d.data();
-                if (u.hiddenFromLeaderboard !== true) users.push(u);
-            });
-
+            snap.forEach(d => { const u = d.data(); if (u.hiddenFromLeaderboard !== true) users.push(u); });
             users.sort((a, b) => {
-                const pointsA = parseInt(a.points || 0);
-                const pointsB = parseInt(b.points || 0);
+                const pointsA = parseInt(a.points || 0); const pointsB = parseInt(b.points || 0);
                 if (pointsB !== pointsA) return pointsB - pointsA;
                 return (a.name || "").localeCompare((b.name || ""), 'ar');
             });
 
             const myIndex = users.findIndex(u => u.uid === currentUser.uid);
-            if(myIndex !== -1) {
-                document.getElementById('my-rank-text').innerText = "#" + (myIndex + 1);
-            } else {
-                document.getElementById('my-rank-text').innerText = "غير مصنف";
-            }
+            if(myIndex !== -1) document.getElementById('my-rank-text').innerText = "#" + (myIndex + 1);
+            else document.getElementById('my-rank-text').innerText = "غير مصنف";
 
-            div.innerHTML = '';
-            let i = 1;
-
+            div.innerHTML = ''; let i = 1;
             users.forEach(u => {
-                let medal = "";
-                let bgStyle = "bg-white"; // default
-                let extraClass = "";
-
-                if(i===1) medal = "🥇";
-                if(i===2) medal = "🥈";
-                if(i===3) medal = "🥉";
-                if(i>=4 && i<=10) medal = "🎖️";
-
-                // Admin Reset Button Visibility
+                let medal = ""; 
+                if(i===1) medal = "🥇"; if(i===2) medal = "🥈"; if(i===3) medal = "🥉"; if(i>=4 && i<=10) medal = "🎖️";
                 let resetBtn = "";
-                if (currentUser.email === ADMIN_EMAIL) {
-                    resetBtn = `<button onclick="resetUserPoints('${u.uid}', '${u.name}')" class="w-6 h-6 rounded bg-red-100 text-red-500 flex items-center justify-center mr-2"><i class="fas fa-trash-alt text-xs"></i></button>`;
-                }
-
-                div.innerHTML += `
-                    <div class="rank-item flex items-center justify-between bg-white p-4 rounded-xl shadow-sm mb-3 relative overflow-hidden">
-                        <div class="flex items-center gap-4 z-10">
-                            <span class="rank-num font-black text-gray-300 w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-sm border">${i}</span>
-                            <img src="${u.photo}" class="w-12 h-12 rounded-full border-2 border-white shadow-sm object-cover">
-                            <div>
-                                <p class="font-bold text-gray-800 text-sm flex items-center">${u.name} ${medal}</p>
-                                <p class="text-[10px] text-gray-400">ID: ${u.uniqueId}</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center z-10">
-                            ${resetBtn}
-                            <span class="font-black text-indigo-600 text-lg">${u.points} 💎</span>
-                        </div>
-                    </div>`;
+                if (currentUser.email === ADMIN_EMAIL) resetBtn = `<button onclick="resetUserPoints('${u.uid}', '${u.name}')" class="w-6 h-6 rounded bg-red-100 text-red-500 flex items-center justify-center mr-2"><i class="fas fa-trash-alt text-xs"></i></button>`;
+                div.innerHTML += `<div class="rank-item flex items-center justify-between bg-white p-4 rounded-xl shadow-sm mb-3 relative overflow-hidden"><div class="flex items-center gap-4 z-10"><span class="rank-num font-black text-gray-300 w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-sm border">${i}</span><img src="${u.photo}" class="w-12 h-12 rounded-full border-2 border-white shadow-sm object-cover"><div><p class="font-bold text-gray-800 text-sm flex items-center">${u.name} ${medal}</p><p class="text-[10px] text-gray-400">ID: ${u.uniqueId}</p></div></div><div class="flex items-center z-10">${resetBtn}<span class="font-black text-indigo-600 text-lg">${u.points} 💎</span></div></div>`;
                 i++;
             });
         }
 
-        // --- ADMIN RESET POINTS FUNCTION ---
         window.resetUserPoints = async (uid, name) => {
             if(confirm(`هل أنت متأكد من تصفير نقاط الطالب: ${name}؟\n(النقاط ستعود للصفر فقط)`)) {
                 await updateDoc(doc(db, "users", uid), { points: 0 });
                 alert("تم تصفير النقاط بنجاح!");
-                loadLeaderboard(); // Refresh list
+                loadLeaderboard(); 
             }
         };
 
