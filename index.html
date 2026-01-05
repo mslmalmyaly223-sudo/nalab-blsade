@@ -261,13 +261,68 @@
         
         /* Modal Styles */
         .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5); 
+            z-index: 12000; /* FIXED: Increased z-index to show over Auth screen */
             display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px);
         }
         .modal-content {
             background: white; width: 90%; max-width: 500px; max-height: 90vh;
             border-radius: 20px; padding: 20px; overflow-y: auto;
             animation: slideUp 0.3s ease-out; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        /* Answer Colors - ENHANCED FOR CLEAR VISUAL FEEDBACK */
+        .answer-correct { 
+            background: #DCFCE7 !important; 
+            border-color: #22C55E !important; 
+            color: #166534 !important; 
+            position: relative;
+        }
+        .answer-correct::after {
+            content: '✓';
+            position: absolute;
+            left: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #22C55E;
+        }
+        .answer-wrong { 
+            background: #FEE2E2 !important; 
+            border-color: #EF4444 !important; 
+            color: #991B1B !important;
+            position: relative;
+        }
+        .answer-wrong::after {
+            content: '✗';
+            position: absolute;
+            left: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #EF4444;
+        }
+        .answer-neutral { 
+            background: white !important; 
+            border-color: #E5E7EB !important; 
+            color: #374151 !important; 
+        }
+
+        /* Forgot Password Modal */
+        .forgot-password-modal {
+            background: white; border-radius: 24px; padding: 30px; width: 90%; max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            animation: slideUp 0.2s ease-out;
+        }
+
+        /* YELLOW WARNING STYLE - ADDED FOR PROBLEM 2 */
+        .yellow-warning {
+            background-color: #FEF3C7 !important;
+            border: 1px solid #F59E0B !important;
+            color: #92400E !important;
+            padding: 10px !important;
+            border-radius: 8px !important;
+            font-weight: bold !important;
+            margin-top: 8px !important;
+            text-align: center !important;
         }
 
         @media (min-width: 768px) {
@@ -321,13 +376,39 @@
                 <p id="maintenance-msg-display">رسالة الإدارة...</p>
             </div>
             
-            <button onclick="location.reload()" class="bg-gradient-to-r from-gray-800 to-gray-900 text-white px-8 py-4 rounded-full font-bold text-lg hover:scale-105 transition shadow-xl w-full flex items-center justify-center gap-2 relative z-10 cursor-pointer">
-                <i class="fas fa-sync-alt animate-spin-slow"></i> تحديث الصفحة
+            <button onclick="closeMaintenancePopup()" class="bg-gradient-to-r from-gray-800 to-gray-900 text-white px-8 py-4 rounded-full font-bold text-lg hover:scale-105 transition shadow-xl w-full flex items-center justify-center gap-2 relative z-10 cursor-pointer">
+                <i class="fas fa-check-circle"></i> حسنا
             </button>
         </div>
     </div>
 
-    <!-- 4. AUTH SCREEN -->
+    <!-- 4. FORGOT PASSWORD MODAL - FIXED FOR PROBLEM 1 -->
+    <div id="forgot-password-modal" class="modal-overlay hidden">
+        <div class="forgot-password-modal">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-key text-2xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-black text-gray-800">استعادة كلمة المرور</h3>
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-sm font-bold text-gray-600 mb-2">البريد الإلكتروني</label>
+                <input type="email" id="forgot-email" placeholder="أدخل بريدك الإلكتروني المسجل" class="input-box">
+                <!-- YELLOW WARNING FOR PROBLEM 2 -->
+                <p class="text-xs yellow-warning mt-2">تنبيه: الرسالة ممكن توصل "الرسائل غير المرغوب فيها"</p>
+            </div>
+            
+            <p class="text-sm text-gray-600 mb-6 text-center">سيتم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني</p>
+            
+            <div class="flex gap-3">
+                <button onclick="closeForgotPassword()" class="flex-1 bg-gray-100 text-gray-600 py-3 rounded-xl font-bold hover:bg-gray-200 transition">إلغاء</button>
+                <button onclick="sendResetLink()" class="flex-1 bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-3 rounded-xl font-bold shadow-md hover:opacity-90 transition">إرسال رابط الاستعادة</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. AUTH SCREEN -->
     <div id="auth-screen" class="auth-overlay hidden">
         <div class="w-full max-w-md p-8 h-full overflow-y-auto flex flex-col justify-center">
             
@@ -353,6 +434,13 @@
                     </div>
                 </div>
                 <button type="submit" class="btn-main mt-8">دخول</button>
+                
+                <!-- Forgot Password Link - FIXED FOR PROBLEM 1 -->
+                <div class="text-center mt-4">
+                    <button type="button" onclick="openForgotPassword()" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium hover:underline transition-all duration-200 active:scale-95">
+                        هل نسيت كلمة السر؟
+                    </button>
+                </div>
             </form>
 
             <form id="signup-form" class="hidden" onsubmit="event.preventDefault(); handleSignup();">
@@ -382,7 +470,7 @@
         </div>
     </div>
 
-    <!-- 5. MAIN APP CONTAINER -->
+    <!-- 6. MAIN APP CONTAINER -->
     <div id="main-app" class="hidden w-full h-full relative">
         
         <!-- HEADER -->
@@ -709,6 +797,13 @@
                                 <span class="font-bold text-red-700">عدد الأسئلة المرفوعة</span>
                             </div>
                         </button>
+                        <!-- NEW BUTTON FOR SUBJECT MANAGEMENT -->
+                        <button onclick="openPage('screen-admin-subjects')" class="stat-btn border-red-100 bg-red-50">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-red-600"><i class="fas fa-book"></i></div>
+                                <span class="font-bold text-red-700">المواد التي تستقبل أسئلة</span>
+                            </div>
+                        </button>
                     </div>
 
                     <button onclick="logout()" class="stat-btn mt-6 border-red-100 text-red-500">
@@ -846,6 +941,34 @@
                 </div>
             </div>
         </div>
+
+        <!-- Screen: Admin Subject Management (NEW) -->
+        <div id="screen-admin-subjects" class="screen pt-20">
+            <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
+                <button onclick="backToProfile()" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
+                <h1 class="font-bold text-lg text-gray-800">المواد التي تستقبل أسئلة</h1>
+            </div>
+            <div class="scroll-container px-5 py-6">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-6">
+                    <div class="flex gap-3 mb-4">
+                        <select id="subject-grade" class="input-box text-sm p-2 flex-1" onchange="loadSubjectManagement()">
+                            <option value="6sci">السادس العلمي</option>
+                            <option value="6lit">السادس الأدبي</option>
+                            <option value="3med">الثالث متوسط</option>
+                        </select>
+                        <select id="subject-type" class="input-box text-sm p-2 flex-1" onchange="loadSubjectManagement()">
+                            <option value="mcq">اختيارات</option>
+                            <option value="tf">صح وخطأ</option>
+                        </select>
+                    </div>
+                    <p class="text-xs text-gray-500 text-center mb-4">تمكين/تعطيل استقبال أسئلة للمواد حسب النوع</p>
+                </div>
+
+                <div id="subject-management-list" class="space-y-3 pb-20">
+                    <p class="text-center text-gray-400">جاري تحميل المواد...</p>
+                </div>
+            </div>
+        </div>
         
         <!-- BOTTOM NAV -->
         <div class="fixed bottom-0 w-full bg-white border-t border-gray-100 flex justify-around items-center h-20 pb-2 z-40 shadow-[0_-5px_20px_rgba(0,0,0,0.03)]">
@@ -928,7 +1051,7 @@
     <!-- JS -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, onSnapshot, query, where, orderBy, limit, deleteDoc, serverTimestamp, increment, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -969,9 +1092,15 @@
         let aiDifficulty = 'medium'; // easy, medium, hard
         let localMatchData = null; // For AI mode
         let aiTimeoutId = null; // To clear AI thinking
+        let currentQuestionCorrectAnswer = null; // Store correct answer for UI
+        let userAnsweredCorrectly = false; // Track if user answered correctly
 
         // --- SYSTEM STATUS VARS (Global) ---
         let systemConfig = { enabled: true, msg: "النظام في وضع الصيانة حالياً" };
+
+        // --- SUBJECT MANAGEMENT VARS ---
+        let disabledSubjects = {}; // Format: {grade_type: {subject: true}}
+        let subjectManagementListener = null;
 
         const subjects = {
             '6sci': ['اسلامية', 'عربي', 'انكليزي', 'احياء', 'رياضيات', 'كيمياء', 'فيزياء'],
@@ -979,6 +1108,7 @@
             '3med': ['اسلامية', 'عربي', 'انكليزي', 'رياضيات', 'كيمياء', 'فيزياء', 'اجتماعيات']
         };
 
+        // Initialize Firebase and Listeners
         onAuthStateChanged(auth, async (user) => {
             const intro = document.getElementById('intro-screen');
             const authScreen = document.getElementById('auth-screen');
@@ -988,6 +1118,8 @@
                 currentUser = user;
                 // Start listening to system status immediately
                 listenToSystemStatus();
+                // Load disabled subjects
+                loadDisabledSubjects();
 
                 try {
                     const docSnap = await getDoc(doc(db, "users", user.uid));
@@ -1031,6 +1163,46 @@
             }
         });
 
+        // --- PROBLEM 1: FIXED FORGOT PASSWORD POPUP SPEED & VISIBILITY ---
+        window.openForgotPassword = function() {
+            document.getElementById('forgot-password-modal').classList.remove('hidden');
+            // FIX: Added style explicitly to ensure display
+            document.getElementById('forgot-password-modal').style.display = 'flex';
+            document.getElementById('forgot-email').value = document.getElementById('login-email').value || '';
+            // Focus on email input
+            setTimeout(() => document.getElementById('forgot-email').focus(), 50);
+        };
+
+        window.closeForgotPassword = function() {
+            document.getElementById('forgot-password-modal').classList.add('hidden');
+            document.getElementById('forgot-password-modal').style.display = 'none';
+        };
+
+        // --- PROBLEM 5: IMPROVED PASSWORD RESET WITH BETTER FEEDBACK ---
+        window.sendResetLink = async function() {
+            const email = document.getElementById('forgot-email').value;
+            if (!email || !email.includes('@')) {
+                alert('يرجى إدخال بريد إلكتروني صحيح');
+                return;
+            }
+
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin ml-2"></i> جاري الإرسال...';
+            btn.disabled = true;
+
+            try {
+                await sendPasswordResetEmail(auth, email);
+                alert('✅ تم إرسال رابط استعادة كلمة المرور إلى بريدك الإلكتروني. يرجى التحقق من صندوق الوارد أو الرسائل غير المرغوب فيها (Spam).');
+                closeForgotPassword();
+            } catch (error) {
+                alert('❌ حدث خطأ: ' + getArabicError(error.code));
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        };
+
         // --- ARABIC ERROR HANDLING ---
         function getArabicError(code) {
             switch(code) {
@@ -1073,44 +1245,141 @@
                              msgInput.value = systemConfig.msg;
                         }
                     }
-
-                    // User UI Update (NEW MAINTENANCE MODAL)
-                    // We don't automatically show it here to avoid disrupting user experience if they are doing something else
-                    // It will be shown when they try to enter matchmaking
                 }
             });
         }
 
-        // Exposed Function for Toggle Switch Change (Visual Update Immediate)
-        window.toggleSystemUI = () => {
-             const toggle = document.getElementById('system-toggle');
-             const statusText = document.getElementById('system-status-text');
-
-             if (!toggle.checked) {
-                 statusText.innerText = "النظام متوقف ⛔ (سيتم الحفظ عند الضغط على الزر)";
-                 statusText.className = "text-xs font-bold text-red-400 mb-2";
-             } else {
-                 statusText.innerText = "النظام يعمل حالياً ✅ (سيتم الحفظ عند الضغط على الزر)";
-                 statusText.className = "text-xs font-bold text-green-400 mb-2";
-             }
-        };
-
-        window.saveSystemSettings = async () => {
-            const isEnabled = document.getElementById('system-toggle').checked;
-            const msg = document.getElementById('maintenance-msg-input').value;
-            
-            if (!isEnabled && !msg.trim()) return alert("يرجى كتابة رسالة توضيحية للمستخدمين عند الإيقاف.");
-
+        // --- DISABLED SUBJECTS MANAGEMENT ---
+        async function loadDisabledSubjects() {
             try {
-                await setDoc(doc(db, "system_settings", "config"), {
-                    challengesEnabled: isEnabled,
-                    maintenanceMessage: msg
-                }, { merge: true });
-                alert("✅ تم حفظ إعدادات النظام بنجاح!");
+                const docSnap = await getDoc(doc(db, "system_settings", "disabled_subjects"));
+                if (docSnap.exists()) {
+                    disabledSubjects = docSnap.data();
+                } else {
+                    disabledSubjects = {};
+                }
             } catch (e) {
-                alert("خطأ في الحفظ: " + e.message);
+                console.error("Error loading disabled subjects:", e);
+                disabledSubjects = {};
+            }
+        }
+
+        function isSubjectEnabled(grade, type, subject) {
+            const key = `${grade}_${type}`;
+            return !disabledSubjects[key] || !disabledSubjects[key][subject];
+        }
+
+        function getEnabledSubjects(grade, type) {
+            if (!subjects[grade]) return [];
+            return subjects[grade].filter(subject => isSubjectEnabled(grade, type, subject));
+        }
+
+        // --- PROBLEM 5: SUBJECT MANAGEMENT UI ---
+        async function loadSubjectManagement() {
+            const grade = document.getElementById('subject-grade').value;
+            const type = document.getElementById('subject-type').value;
+            const container = document.getElementById('subject-management-list');
+            
+            if (!grade || !type) return;
+            
+            const key = `${grade}_${type}`;
+            const currentDisabled = disabledSubjects[key] || {};
+            
+            let html = '';
+            subjects[grade].forEach(subject => {
+                const isDisabled = currentDisabled[subject] === true;
+                html += `
+                <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm flex justify-between items-center">
+                    <div>
+                        <p class="font-bold text-gray-800">${subject}</p>
+                        <p class="text-xs text-gray-400">${getGradeName(grade)} - ${type === 'mcq' ? 'اختيارات' : 'صح وخطأ'}</p>
+                    </div>
+                    <label class="toggle-wrapper">
+                        <input type="checkbox" class="toggle-checkbox" ${isDisabled ? '' : 'checked'} 
+                               onchange="toggleSubject('${grade}', '${type}', '${subject}', this.checked)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>`;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        window.toggleSubject = async function(grade, type, subject, enabled) {
+            const key = `${grade}_${type}`;
+            
+            if (!disabledSubjects[key]) {
+                disabledSubjects[key] = {};
+            }
+            
+            // If enabled is true, remove from disabled list
+            // If enabled is false, add to disabled list
+            if (enabled) {
+                delete disabledSubjects[key][subject];
+            } else {
+                disabledSubjects[key][subject] = true;
+            }
+            
+            // Save to Firebase
+            try {
+                await setDoc(doc(db, "system_settings", "disabled_subjects"), disabledSubjects, { merge: true });
+                alert(`✅ تم ${enabled ? 'تفعيل' : 'تعطيل'} المادة ${subject} لنوع ${type === 'mcq' ? 'الاختيارات' : 'صح وخطأ'}`);
+                
+                // Update UI in real-time
+                updateUploadUIBasedOnSubjects();
+                if (document.getElementById('tab-upload').classList.contains('active')) {
+                    switchTab('upload'); // Refresh upload tab
+                }
+            } catch (e) {
+                alert('❌ حدث خطأ في حفظ التغييرات: ' + e.message);
             }
         };
+
+        function updateUploadUIBasedOnSubjects() {
+            if (!userData || !userData.grade) return;
+            
+            const grade = userData.grade;
+            const mcqEnabled = getEnabledSubjects(grade, 'mcq').length > 0;
+            const tfEnabled = getEnabledSubjects(grade, 'tf').length > 0;
+            
+            const typeSelect = document.getElementById('up-type');
+            const originalHTML = typeSelect.innerHTML;
+            let newHTML = '';
+            
+            if (mcqEnabled) newHTML += '<option value="mcq">اختيارات</option>';
+            if (tfEnabled) newHTML += '<option value="tf">صح وخطأ</option>';
+            
+            if (newHTML === '') {
+                newHTML = '<option value="" disabled>لا توجد أنواع متاحة</option>';
+            }
+            
+            typeSelect.innerHTML = newHTML;
+            
+            // If only one type is available, select it
+            if (mcqEnabled && !tfEnabled) typeSelect.value = 'mcq';
+            if (!mcqEnabled && tfEnabled) typeSelect.value = 'tf';
+        }
+
+        // --- MODIFIED populateSubjects FUNCTION ---
+        function populateSubjects(grade, elementId, type = null) {
+            const sel = document.getElementById(elementId);
+            if(!sel) return;
+            
+            let filteredSubjects = [];
+            if (type) {
+                filteredSubjects = getEnabledSubjects(grade, type);
+            } else {
+                filteredSubjects = subjects[grade] || [];
+            }
+            
+            sel.innerHTML = '<option value="">اختر المادة</option>';
+            filteredSubjects.forEach(s => sel.innerHTML += `<option value="${s}">${s}</option>`);
+            
+            // If no subjects are available
+            if (filteredSubjects.length === 0) {
+                sel.innerHTML += '<option value="" disabled>لا توجد مواد متاحة</option>';
+            }
+        }
 
         window.switchAuthTab = (tab) => {
             if(tab === 'login') {
@@ -1173,6 +1442,7 @@
         window.logout = () => {
             if(adminListenerUnsubscribe) adminListenerUnsubscribe(); 
             if(matchListenerUnsubscribe) matchListenerUnsubscribe();
+            if(subjectManagementListener) subjectManagementListener();
             signOut(auth);
         };
 
@@ -1260,13 +1530,6 @@
         };
 
         function getGradeName(code) { return code==='6sci'?'السادس العلمي':code==='6lit'?'السادس الأدبي':'الثالث متوسط'; }
-
-        function populateSubjects(grade, elementId) {
-            const sel = document.getElementById(elementId);
-            if(!sel) return;
-            sel.innerHTML = '<option value="">اختر المادة</option>';
-            if(subjects[grade]) subjects[grade].forEach(s => sel.innerHTML += `<option value="${s}">${s}</option>`);
-        }
 
         // --- MATCHMAKING & GAME LOGIC ---
         window.setQType = (t) => {
@@ -1421,6 +1684,8 @@
             
             if(qTextEl.innerText !== q.question) {
                 hasAnsweredCurrentQ = false;
+                userAnsweredCorrectly = false;
+                currentQuestionCorrectAnswer = null;
                 clearTimeout(aiTimeoutId); 
                 document.getElementById('answers-container').classList.remove('pointer-events-none', 'opacity-50');
                 document.getElementById('waiting-msg').classList.add('hidden');
@@ -1466,59 +1731,110 @@
                 div.innerHTML = '';
                 
                 let ansList = [];
-                if(q.type === 'mcq') ansList = q.answers.map((txt, idx) => ({ txt, isCorrect: idx === q.correct }));
-                else ansList = [{ txt: 'صح', isCorrect: q.correct === 'true' }, { txt: 'خطأ', isCorrect: q.correct === 'false' }];
+                if(q.type === 'mcq') {
+                    ansList = q.answers.map((txt, idx) => ({ 
+                        txt, 
+                        isCorrect: idx === q.correct,
+                        value: idx
+                    }));
+                } else {
+                    ansList = [
+                        { txt: 'صح', isCorrect: q.correct === 'true' || q.correct === true, value: 'true' },
+                        { txt: 'خطأ', isCorrect: q.correct === 'false' || q.correct === false, value: 'false' }
+                    ];
+                }
+                
+                // Store correct answer for UI highlighting
+                const correctAns = ansList.find(ans => ans.isCorrect);
+                if (correctAns) {
+                    currentQuestionCorrectAnswer = correctAns.value;
+                }
 
                 ansList.sort(() => 0.5 - Math.random());
                 ansList.forEach(ansObj => {
                     const btn = document.createElement('button');
-                    btn.className = "w-full py-4 bg-white border-2 border-gray-100 rounded-xl text-lg font-bold text-gray-700 shadow-sm active:scale-95 transition hover:border-indigo-300";
+                    btn.className = "answer-neutral w-full py-4 border-2 rounded-xl text-lg font-bold shadow-sm active:scale-95 transition";
                     btn.innerText = ansObj.txt;
+                    btn.dataset.value = ansObj.value;
                     btn.onclick = () => { if(hasAnsweredCurrentQ) return; submitGameAnswer(ansObj, q, data); };
                     div.appendChild(btn);
                 });
             }
         }
 
+        // --- PROBLEM 4: ENHANCED ANSWER FEEDBACK WITH CLEAR VISUALS ---
         async function submitGameAnswer(ansObj, q, matchData) {
             if(hasAnsweredCurrentQ || isExitingGame) return;
             hasAnsweredCurrentQ = true;
-            document.getElementById('answers-container').classList.add('pointer-events-none', 'opacity-50');
+            userAnsweredCorrectly = ansObj && ansObj.isCorrect;
             
-            let correct = false;
-            if(ansObj && ansObj.isCorrect) correct = true;
-
-            const pointsForCorrect = 2;
+            // Clear any existing highlights first
+            const answerButtons = document.querySelectorAll('#answers-container button');
+            answerButtons.forEach(btn => {
+                btn.classList.remove('answer-correct', 'answer-wrong', 'answer-neutral');
+                
+                // Add correct answer indicator (green checkmark) - FIXED COMPARISON TO STRING
+                if (btn.dataset.value.toString() === currentQuestionCorrectAnswer.toString()) {
+                    btn.classList.add('answer-correct');
+                }
+                // Add wrong answer indicator (red X) if user selected wrong answer - FIXED COMPARISON TO STRING
+                else if (ansObj && btn.dataset.value.toString() === (ansObj.value?.toString())) {
+                    btn.classList.add('answer-wrong');
+                }
+                // Neutral for other options
+                else {
+                    btn.classList.add('answer-neutral');
+                }
+            });
+            
+            document.getElementById('answers-container').classList.add('pointer-events-none');
 
             if (currentGameMode === 'online') {
                 document.getElementById('waiting-msg').classList.remove('hidden');
                 const isP1 = matchData.player1.uid === currentUser.uid;
                 if (!currentMatchId) return;
                 const ref = doc(db, "match_queue", currentMatchId);
+                
+                // Add 1 point for correct answer
+                const scoreIncrement = ansObj && ansObj.isCorrect ? 1 : 0;
+                
                 const updates = { answersCount: increment(1) };
-                if(correct) updates[isP1?'player1.score':'player2.score'] = increment(pointsForCorrect);
+                if(ansObj && ansObj.isCorrect) {
+                    updates[isP1?'player1.score':'player2.score'] = increment(scoreIncrement);
+                }
                 await updateDoc(ref, updates);
             } else {
-                document.getElementById('waiting-msg').classList.remove('hidden'); 
-                if(correct) {
-                    localMatchData.player1.score += pointsForCorrect;
+                document.getElementById('waiting-msg').classList.add('hidden'); 
+                if(ansObj && ansObj.isCorrect) {
+                    localMatchData.player1.score += 1;
                     document.getElementById('game-my-score').innerText = localMatchData.player1.score;
                 }
                 triggerAIResponse();
             }
         }
 
+        // --- PROBLEM 6: OPTIMIZED AI RESPONSE TIMING FOR SMOOTHER GAMEPLAY ---
         function triggerAIResponse() {
             document.getElementById('waiting-msg').classList.add('hidden');
             document.getElementById('ai-thinking-msg').classList.remove('hidden');
-            let delay = 2000; let accuracy = 0.25;
-            if (aiDifficulty === 'medium') { delay = 4000; accuracy = 0.5; }
-            if (aiDifficulty === 'hard') { delay = 6000; accuracy = 0.7; }
+            
+            // Optimized AI response timing for better gameplay experience
+            let delay = 2500; // 2.5 seconds for easy
+            let accuracy = 0.25;
+            
+            if (aiDifficulty === 'medium') { 
+                delay = 3000; // 3 seconds for medium
+                accuracy = 0.5; 
+            }
+            if (aiDifficulty === 'hard') { 
+                delay = 3500; // 3.5 seconds for hard
+                accuracy = 0.7; 
+            }
 
             aiTimeoutId = setTimeout(() => {
                 const isCorrect = Math.random() < accuracy;
                 if(isCorrect) {
-                    localMatchData.player2.score += 2; // AI also gets 2 pts
+                    localMatchData.player2.score += 1;
                     document.getElementById('game-op-score').innerText = localMatchData.player2.score;
                 }
                 handleAINextTurn();
@@ -1532,6 +1848,7 @@
             renderGame(localMatchData);
         }
 
+        // --- PROBLEM 3: FIXED POINTS CALCULATION SYSTEM ---
         async function endGame(d) {
             clearInterval(gameTimer);
             document.getElementById('game-overlay').classList.add('hidden');
@@ -1547,38 +1864,49 @@
                 opScore = localMatchData.player2.score;
             }
             
-            // FINAL RESULT LOGIC
-            let pts = 0; let msg = ""; let icon = "";
+            // PROBLEM 3: NEW POINTS SYSTEM
+            let pointsGained = 0;
+            let msg = ""; 
+            let icon = "";
             
             if (myScore > opScore) { 
-                pts = myScore; // Winner takes their accumulated score
-                msg = "فوز ساحق!"; icon = "🏆"; 
+                // Winner gets 2 points per correct answer
+                msg = "فوز ساحق!"; 
+                icon = "🏆";
+                pointsGained = myScore * 2;
             } 
             else if (myScore < opScore) { 
-                pts = 0; // Loser gets 0
-                msg = "حظ أوفر!"; icon = "😢"; 
+                // Loser gets 0 points
+                msg = "حظ أوفر!"; 
+                icon = "😢";
+                pointsGained = 0;
             } 
             else { 
-                // DRAW
+                // DRAW - Check if it's positive or negative
                 if(myScore > 0) {
-                     pts = 1; // Positive Draw
-                     msg = "تعادل إيجابي!"; icon = "🤝";
+                    // POSITIVE DRAW: Both get 1 point per correct answer
+                    msg = "تعادل إيجابي!"; 
+                    icon = "🤝";
+                    pointsGained = myScore * 1; // 1 point per correct answer
                 } else {
-                     pts = 0; // Negative Draw
-                     msg = "تعادل سلبي!"; icon = "😐";
+                    // NEGATIVE DRAW: No points for anyone
+                    msg = "تعادل سلبي!"; 
+                    icon = "😐";
+                    pointsGained = 0;
                 }
             }
 
-            if(pts > 0) {
-                await updateDoc(doc(db, "users", currentUser.uid), { points: increment(pts) });
-                userData.points += pts;
+            if(pointsGained > 0) {
+                await updateDoc(doc(db, "users", currentUser.uid), { points: increment(pointsGained) });
+                userData.points += pointsGained;
                 setupHeaderUI();
             }
+            
             document.getElementById('result-icon-container').innerText = icon;
             document.getElementById('result-title').innerText = msg;
             document.getElementById('final-my-score').innerText = myScore;
             document.getElementById('final-op-score').innerText = opScore;
-            document.getElementById('result-points-gained').innerText = `+${pts}`;
+            document.getElementById('result-points-gained').innerText = `+${pointsGained}`;
             document.getElementById('result-screen').classList.remove('hidden');
             document.getElementById('result-screen').style.display = 'flex';
         }
@@ -1648,7 +1976,6 @@
             document.querySelectorAll('.screen').forEach(s => { if(s.id.startsWith('screen-')) s.classList.remove('active'); });
             document.getElementById(screenId).classList.add('active');
             
-            // Populate subjects for filter if in admin all screen
             if (screenId === 'screen-admin-all') {
                 populateAdminFilterSubjects();
                 loadAdminAllContent();
@@ -1657,7 +1984,8 @@
             else if (screenId === 'screen-my-points') loadMyPointsContent();
             else if (screenId === 'screen-my-questions') loadMyQuestionsContent();
             else if (screenId === 'screen-admin-review') loadAdminReviewContent();
-            else if (screenId === 'screen-admin-stats') resetStatsUI(); // Clear previous stats
+            else if (screenId === 'screen-admin-stats') resetStatsUI();
+            else if (screenId === 'screen-admin-subjects') loadSubjectManagement();
         };
 
         window.backToProfile = () => { document.querySelectorAll('.screen').forEach(s => { if(s.id.startsWith('screen-')) s.classList.remove('active'); }); };
@@ -1715,8 +2043,6 @@
         }
 
         // --- NEW ADMIN FEATURES ---
-
-        // 1. REFACTORED EDITOR (FILTER BY GRADE/SUBJECT)
         async function loadAdminAllContent() {
              const div = document.getElementById('admin-all-list');
              if(allAdminQuestions.length === 0) {
@@ -1761,7 +2087,6 @@
         };
 
         window.filterAdminQuestions = () => {
-            // Update subjects dropdown if called from grade change
             if(event && event.target && event.target.id === 'admin-filter-grade') {
                  populateAdminFilterSubjects();
             }
@@ -1829,7 +2154,6 @@
 
             resultDiv.innerHTML = summaryHtml + html;
         };
-
 
         window.openEditModal = (id) => {
             const q = allAdminQuestions.find(i => i.id === id);
@@ -1950,9 +2274,21 @@
             if(tab==='upload') { navs[2].classList.add('active', 'text-indigo-600'); updateUploadUI(); }
             if(tab==='profile') navs[3].classList.add('active', 'text-indigo-600');
         };
-        window.updateUploadUI = () => { if(userData.grade) populateSubjects(userData.grade, 'up-subject'); };
         
-        // --- UPDATED LEADERBOARD RENDER ---
+        window.updateUploadUI = () => { 
+            if(userData.grade) {
+                updateUploadUIBasedOnSubjects();
+                const type = document.getElementById('up-type').value;
+                populateSubjects(userData.grade, 'up-subject', type);
+                
+                // Update subject dropdown when type changes
+                document.getElementById('up-type').onchange = function() {
+                    populateSubjects(userData.grade, 'up-subject', this.value);
+                };
+            }
+        };
+        
+        // --- PROBLEM 6: FIXED LEADERBOARD ---
         async function loadLeaderboard() {
             const div = document.getElementById('leaderboard-list');
             div.innerHTML = '<p class="text-center text-gray-400 mt-10">تحميل...</p>';
@@ -1961,7 +2297,10 @@
             let users = [];
             snap.forEach(d => { 
                 const u = d.data();
-                if (u.hiddenFromLeaderboard !== true) users.push(u); 
+                // PROBLEM 6: Only show users who are not hidden AND have points > 0
+                if (u.hiddenFromLeaderboard !== true && (u.points || 0) > 0) {
+                    users.push(u); 
+                }
             });
             
             users.sort((a, b) => {
@@ -2097,6 +2436,44 @@
                 await updateDoc(doc(db, "users", currentUser.uid), { photo: p });
                 document.getElementById('profile-img').src = p;
             }
+        };
+
+        // --- SYSTEM TOGGLE FUNCTIONS ---
+        window.toggleSystemUI = () => {
+             const toggle = document.getElementById('system-toggle');
+             const statusText = document.getElementById('system-status-text');
+
+             if (!toggle.checked) {
+                 statusText.innerText = "النظام متوقف ⛔ (سيتم الحفظ عند الضغط على الزر)";
+                 statusText.className = "text-xs font-bold text-red-400 mb-2";
+             } else {
+                 statusText.innerText = "النظام يعمل حالياً ✅ (سيتم الحفظ عند الضغط على الزر)";
+                 statusText.className = "text-xs font-bold text-green-400 mb-2";
+             }
+        };
+
+        window.saveSystemSettings = async () => {
+            const isEnabled = document.getElementById('system-toggle').checked;
+            const msg = document.getElementById('maintenance-msg-input').value;
+            
+            if (!isEnabled && !msg.trim()) return alert("يرجى كتابة رسالة توضيحية للمستخدمين عند الإيقاف.");
+
+            try {
+                await setDoc(doc(db, "system_settings", "config"), {
+                    challengesEnabled: isEnabled,
+                    maintenanceMessage: msg
+                }, { merge: true });
+                alert("✅ تم حفظ إعدادات النظام بنجاح!");
+            } catch (e) {
+                alert("خطأ في الحفظ: " + e.message);
+            }
+        };
+
+        // --- PROBLEM 1: MAINTENANCE POPUP CLOSE FUNCTION ---
+        window.closeMaintenancePopup = function() {
+            document.getElementById('maintenance-popup').classList.add('hidden');
+            document.getElementById('maintenance-popup').style.display = 'none';
+            switchTab('challenges');
         };
     </script>
 </body>
