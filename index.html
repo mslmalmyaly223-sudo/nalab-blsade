@@ -38,7 +38,7 @@
             position: absolute; top: 0; left: 0; background: var(--bg-app); z-index: 10;
             opacity: 0; transition: opacity 0.3s ease-in-out;
         }
-        .screen.active { display: block; z-index: 20; opacity: 1; }
+        .screen.active { display: flex; flex-direction: column; z-index: 20; opacity: 1; }
 
         /* --- Intro Animation --- */
         .intro-container {
@@ -77,6 +77,7 @@
         .scroll-container {
             height: 100%; overflow-y: auto;
             -webkit-overflow-scrolling: touch; padding-bottom: 250px;
+            flex: 1;
         }
         .scroll-container::-webkit-scrollbar { display: none; }
         .scroll-container { -ms-overflow-style: none; scrollbar-width: none; }
@@ -222,9 +223,171 @@
             text-align: center !important;
         }
 
+        /* NEW: Withdrawal Button Style */
+        .withdraw-btn {
+            background: linear-gradient(to right, #EF4444, #DC2626) !important;
+            color: white !important;
+            font-weight: bold !important;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
+        }
+        .withdraw-btn:hover {
+            background: linear-gradient(to right, #DC2626, #B91C1C) !important;
+            transform: translateY(-2px) !important;
+        }
+
+        /* NEW: Responsive Design for All Devices */
+        @media (min-width: 640px) {
+            .container-padding { padding-left: 2rem; padding-right: 2rem; }
+            .game-overlay-header { padding-left: 3rem; padding-right: 3rem; }
+            .hacker-text { font-size: 3rem; }
+        }
+
         @media (min-width: 768px) {
             .input-box { font-size: 1.1rem; }
             .auth-overlay > div { max-width: 500px; }
+            .screen { padding: 0 2rem; }
+            .game-overlay-header { height: 100px; }
+            .player-vs-card { width: 140px; height: 140px; }
+            .vs-text { font-size: 7rem; }
+        }
+
+        @media (min-width: 1024px) {
+            .screen { padding: 0 4rem; }
+            .hacker-text { font-size: 3.5rem; }
+            .game-overlay-header { height: 120px; }
+            .player-vs-card { width: 160px; height: 160px; }
+            .vs-text { font-size: 8rem; }
+            .reward-grid { grid-template-columns: repeat(7, 1fr); }
+        }
+
+        @media (min-width: 1280px) {
+            .screen { max-width: 1200px; margin: 0 auto; }
+        }
+
+        /* NEW: Game Overlay Improvements */
+        .game-overlay-header {
+            background: white;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+            flex-shrink: 0;
+        }
+
+        .player-game-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 30%;
+        }
+
+        .player-game-img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 3px solid;
+            object-fit: cover;
+            margin-bottom: 5px;
+        }
+
+        @media (min-width: 768px) {
+            .player-game-img {
+                width: 60px;
+                height: 60px;
+            }
+        }
+
+        /* NEW: Withdrawal Confirmation Modal */
+        .withdraw-confirm-modal {
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 24px;
+            padding: 30px 25px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .withdraw-icon-wrapper {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4);
+            border: 4px solid white;
+        }
+
+        .withdraw-icon-wrapper i {
+            font-size: 32px;
+            color: white;
+        }
+
+        /* NEW: Game Exit Button */
+        .game-exit-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(to right, #EF4444, #DC2626);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 30px;
+            font-weight: bold;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .game-exit-btn:hover {
+            background: linear-gradient(to right, #DC2626, #B91C1C);
+            transform: translateX(-50%) translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+        }
+
+        .game-exit-btn:active {
+            transform: translateX(-50%) scale(0.98);
+        }
+
+        /* NEW: Game Exit Confirmation */
+        .exit-confirm-modal {
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 24px;
+            padding: 30px 25px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .exit-icon-wrapper {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #4F46E5 0%, #3730A3 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.4);
+            border: 4px solid white;
+        }
+
+        .exit-icon-wrapper i {
+            font-size: 32px;
+            color: white;
         }
     </style>
 </head>
@@ -240,11 +403,11 @@
     <div id="vs-screen" class="vs-overlay hidden">
         <div class="flex justify-between items-center w-full px-8 mb-10">
             <div class="text-center">
-                <img id="vs-p1-img" src="" class="player-vs-card mb-4 border-indigo-500">
+                <img id="vs-p1-img" src="" class="player-vs-card mb-4 border-indigo-500" onerror="this.src='https://ui-avatars.com/api/?name=Player&background=random&size=128'">
                 <h3 id="vs-p1-name" class="text-white font-bold text-xl">...</h3>
             </div>
             <div class="text-center">
-                <img id="vs-p2-img" src="" class="player-vs-card mb-4 border-red-500">
+                <img id="vs-p2-img" src="" class="player-vs-card mb-4 border-red-500" onerror="this.src='https://ui-avatars.com/api/?name=Opponent&background=random&size=128'">
                 <h3 id="vs-p2-name" class="text-white font-bold text-xl">...</h3>
             </div>
         </div>
@@ -257,6 +420,7 @@
         <i class="fas fa-ban text-6xl text-red-500 mb-6"></i>
         <h1 class="text-3xl font-bold mb-2">تم حظر حسابك</h1>
         <p class="text-gray-400">لقد تم منعك من استخدام التطبيق من قبل الإدارة.</p>
+        <p class="text-gray-400 mt-2 text-sm">لن تتمكن من استخدام التطبيق حتى إلغاء الحظر.</p>
     </div>
 
     <!-- 1. LOADING SCREEN -->
@@ -368,7 +532,7 @@
             <form id="signup-form" class="hidden" onsubmit="event.preventDefault(); handleSignup();">
                 <div class="flex justify-center mb-6">
                     <div class="relative cursor-pointer group" onclick="document.getElementById('signup-img').click()">
-                        <img id="preview-img" src="https://ui-avatars.com/api/?name=User&background=random&size=128" class="w-24 h-24 rounded-full object-cover border-4 border-gray-100 shadow-md transition group-hover:border-indigo-200">
+                        <img id="preview-img" src="https://ui-avatars.com/api/?name=User&background=random&size=128" class="w-24 h-24 rounded-full object-cover border-4 border-gray-100 shadow-md transition group-hover:border-indigo-200" onerror="this.src='https://ui-avatars.com/api/?name=User&background=random&size=128'">
                         <div class="absolute bottom-0 right-0 bg-indigo-600 w-8 h-8 rounded-full flex items-center justify-center text-white border-2 border-white shadow-sm">
                             <i class="fas fa-camera text-xs"></i>
                         </div>
@@ -509,23 +673,24 @@
 
         <!-- GAME OVERLAY (UPDATED WITH IMAGES) -->
         <div id="game-overlay" class="fixed inset-0 bg-gray-50 z-[100] hidden flex-col">
-            <div class="bg-white p-4 shadow-sm flex justify-between items-center z-10 h-24">
-                <div class="text-center w-1/3 flex flex-col items-center">
-                    <img id="p1-img-game" src="" class="w-10 h-10 rounded-full border-2 border-indigo-500 mb-1">
-                    <p id="p1-name" class="text-xs text-gray-500 font-bold truncate w-full">...</p>
+            <div class="game-overlay-header">
+                <div class="player-game-info">
+                    <img id="p1-img-game" src="" class="player-game-img border-indigo-500" onerror="this.src='https://ui-avatars.com/api/?name=Player&background=random&size=128'">
+                    <p id="p1-name" class="text-xs text-gray-500 font-bold truncate w-full text-center">...</p>
                     <p id="game-my-score" class="text-2xl font-bold text-indigo-600 leading-none">0</p>
                 </div>
-                <div class="w-1/3 flex justify-center">
+                <div class="flex flex-col items-center">
                     <div id="game-timer" class="w-12 h-12 bg-gray-800 text-white rounded-full flex items-center justify-center font-bold text-lg">15</div>
+                    <p class="text-xs text-gray-400 mt-1">ثانية</p>
                 </div>
-                <div class="text-center w-1/3 flex flex-col items-center">
-                     <img id="p2-img-game" src="" class="w-10 h-10 rounded-full border-2 border-red-500 mb-1">
-                    <p id="p2-name" class="text-xs text-gray-500 font-bold truncate w-full">...</p>
+                <div class="player-game-info">
+                    <img id="p2-img-game" src="" class="player-game-img border-red-500" onerror="this.src='https://ui-avatars.com/api/?name=Opponent&background=random&size=128'">
+                    <p id="p2-name" class="text-xs text-gray-500 font-bold truncate w-full text-center">...</p>
                     <p id="game-op-score" class="text-2xl font-bold text-red-500 leading-none">0</p>
                 </div>
             </div>
 
-            <div class="flex-1 overflow-y-auto p-5 pb-20">
+            <div class="flex-1 overflow-y-auto p-5 pb-32">
                 <div class="bg-white p-6 rounded-2xl shadow-sm mb-6 text-center border-t-4 border-indigo-500 relative mt-4">
                     <span id="q-progress" class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-3 py-1 rounded-full">1 / 10</span>
                     <p id="q-text" class="text-lg font-bold text-gray-800 leading-relaxed mt-2">...</p>
@@ -533,6 +698,36 @@
                 <div id="answers-container" class="space-y-3"></div>
                 <p id="waiting-msg" class="text-center text-gray-400 text-sm hidden animate-pulse mt-4">بانتظار إجابة الخصم...</p>
                 <p id="ai-thinking-msg" class="text-center text-green-600 text-sm hidden animate-pulse mt-4 font-bold">الروبوت يفكر...</p>
+            </div>
+
+            <!-- NEW: Exit/Withdraw Button -->
+            <button id="game-exit-btn" class="game-exit-btn hidden" onclick="showExitConfirmation()">
+                <i class="fas fa-sign-out-alt ml-2"></i> انسحاب
+            </button>
+        </div>
+
+        <!-- EXIT CONFIRMATION MODAL -->
+        <div id="exit-confirmation-modal" class="modal-overlay hidden">
+            <div class="exit-confirm-modal">
+                <div class="exit-icon-wrapper">
+                    <i class="fas fa-sign-out-alt"></i>
+                </div>
+                <h2 class="text-2xl font-black text-gray-800 mb-2">تأكيد الانسحاب</h2>
+                <p class="text-sm text-red-500 font-bold mb-4 tracking-wide">سيتم خصم 5 نقاط من رصيدك!</p>
+                
+                <div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 font-bold text-red-700 text-sm">
+                    <p>⚠️ عند الانسحاب:</p>
+                    <ul class="list-disc list-inside mt-2 text-right">
+                        <li>ستخسر 5 نقاط من رصيدك</li>
+                        <li>سيتم إضافة 5 نقاط لخصمك</li>
+                        <li>ستخسر التحدي تلقائياً</li>
+                    </ul>
+                </div>
+                
+                <div class="flex gap-3">
+                    <button onclick="cancelExit()" class="flex-1 bg-gray-100 text-gray-600 py-3 rounded-xl font-bold hover:bg-gray-200 transition">إلغاء</button>
+                    <button onclick="confirmExit()" class="flex-1 bg-gradient-to-r from-red-500 to-red-600 text-white py-3 rounded-xl font-bold shadow-md hover:opacity-90 transition">تأكيد الانسحاب</button>
+                </div>
             </div>
         </div>
 
@@ -581,7 +776,7 @@
                         <p class="text-xs text-gray-400 font-bold mb-1">الجوائز الأسبوعية توزع بعد:</p>
                         <!-- تم تعديل التنسيق: إزالة كلمة "يوم" -->
                         <div id="weekly-timer" class="text-2xl font-mono font-bold text-yellow-400">00:00:00:00</div>
-                        <p class="text-[10px] text-gray-500 mt-1">يوم الخميس 12:00 ليلاً بتوقيت العراق</p>
+                        <p class="text-[10px] text-gray-500 mt-1">يوم الخميس 12:00 ليلاً بتوقيت العراق (السيرفر)</p>
                     </div>
                 </div>
 
@@ -677,7 +872,7 @@
                 <div class="bg-white p-6 rounded-3xl shadow-sm text-center mb-6 mt-4 relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-full h-16 bg-gradient-to-r from-indigo-500 to-purple-500 opacity-10"></div>
                     <div class="relative z-10">
-                        <img id="profile-img" src="" class="w-24 h-24 rounded-full mx-auto border-4 border-white shadow-md mb-3 object-cover">
+                        <img id="profile-img" src="" class="w-24 h-24 rounded-full mx-auto border-4 border-white shadow-md mb-3 object-cover" onerror="this.src='https://ui-avatars.com/api/?name=User&background=random&size=128'">
                         <h2 id="profile-name-text" class="text-xl font-bold text-gray-800">...</h2>
                         <p class="text-xs text-gray-400 mt-1" id="profile-id-text">ID: ...</p>
                         <button onclick="document.getElementById('edit-pic-input').click()" class="text-indigo-600 text-xs font-bold mt-2 hover:underline">تغيير الصورة</button>
@@ -841,11 +1036,37 @@
                     <p class="text-xs opacity-70">كل 50 دولار تساوي 5$ بالأموال العراقية</p>
                 </div>
 
-                <button id="withdraw-btn" onclick="window.open('https://t.me/mslmh19', '_blank')" class="w-full bg-gray-200 text-gray-400 py-4 rounded-xl font-bold shadow-none cursor-not-allowed mb-6" disabled>
+                <button id="withdraw-btn" onclick="showWithdrawalConfirmation()" class="w-full withdraw-btn text-white py-4 rounded-xl font-bold shadow-lg hover:scale-[1.02] transition mb-6">
+                    <i class="fas fa-money-bill-wave ml-2"></i>
                     المطالبة بالأموال
                 </button>
                 
                 <p class="text-xs text-gray-400">يتم تجميع الرصيد من الجوائز الأسبوعية في قائمة التصنيف.</p>
+            </div>
+        </div>
+
+        <!-- WITHDRAWAL CONFIRMATION MODAL -->
+        <div id="withdrawal-confirmation-modal" class="modal-overlay hidden">
+            <div class="withdraw-confirm-modal">
+                <div class="withdraw-icon-wrapper">
+                    <i class="fas fa-money-check-alt"></i>
+                </div>
+                <h2 class="text-2xl font-black text-gray-800 mb-2">تأكيد السحب</h2>
+                <p class="text-sm text-green-500 font-bold mb-4 tracking-wide">سيتم تحويلك لتطبيق التليجرام</p>
+                
+                <div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 font-bold text-green-700 text-sm">
+                    <p>📋 شروط السحب:</p>
+                    <ul class="list-disc list-inside mt-2 text-right">
+                        <li>يجب أن يكون رصيدك 100$ على الأقل</li>
+                        <li>يتم التحويل عبر التليجرام</li>
+                        <li>سيتم خصم المبلغ من رصيدك فور التأكيد</li>
+                    </ul>
+                </div>
+                
+                <div class="flex gap-3">
+                    <button onclick="cancelWithdrawal()" class="flex-1 bg-gray-100 text-gray-600 py-3 rounded-xl font-bold hover:bg-gray-200 transition">إلغاء</button>
+                    <button onclick="confirmWithdrawal()" class="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-xl font-bold shadow-md hover:opacity-90 transition">تأكيد وفتح التليجرام</button>
+                </div>
             </div>
         </div>
 
@@ -862,7 +1083,7 @@
                 </div>
                 
                 <div id="admin-user-result" class="hidden bg-white p-5 rounded-2xl shadow-lg border border-gray-200">
-                    <img id="admin-u-img" src="" class="w-16 h-16 rounded-full mx-auto mb-3">
+                    <img id="admin-u-img" src="" class="w-16 h-16 rounded-full mx-auto mb-3" onerror="this.src='https://ui-avatars.com/api/?name=User&background=random&size=128'">
                     <h3 id="admin-u-name" class="text-center font-bold text-lg mb-1">...</h3>
                     <p id="admin-u-id" class="text-center text-xs text-gray-400 mb-4">ID: ...</p>
                     
@@ -874,6 +1095,7 @@
                     <div class="space-y-2">
                         <button id="btn-ban-toggle" onclick="toggleBan()" class="w-full py-3 rounded-xl font-bold text-white transition"></button>
                         <button id="btn-reset-money" onclick="resetUserMoney()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-xl font-bold">تصفير الأموال</button>
+                        <button onclick="resetUserPointsAdmin()" class="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl font-bold">تصفير النقاط</button>
                     </div>
                 </div>
             </div>
@@ -1155,6 +1377,10 @@
         let disabledSubjects = {};
         let searchedUser = null; // Admin searching
 
+        // --- WEEKLY REWARD VARS ---
+        let weeklyRewardDistributed = false;
+        let lastRewardCheck = null;
+
         const subjects = {
             '6sci': ['اسلامية', 'عربي', 'انكليزي', 'احياء', 'رياضيات', 'كيمياء', 'فيزياء'],
             '6lit': ['اسلامية', 'عربي', 'انكليزي', 'تاريخ', 'رياضيات', 'جغرافية', 'اقتصاد'],
@@ -1172,20 +1398,25 @@
                 currentUser = user;
                 listenToSystemStatus();
                 loadDisabledSubjects();
+                checkWeeklyRewards(); // Check for weekly rewards
 
                 try {
                     const docSnap = await getDoc(doc(db, "users", user.uid));
                     if (docSnap.exists()) {
                         userData = docSnap.data();
                         
-                        // BAN CHECK
+                        // BAN CHECK - FIXED: Proper ban check that prevents re-entry
                         if(userData.isBanned) {
                             document.getElementById('banned-screen').classList.remove('hidden');
                             await signOut(auth);
                             return;
                         }
 
-                        updateDoc(doc(db, "users", user.uid), { lastActive: serverTimestamp() });
+                        // Update last active with server timestamp
+                        await updateDoc(doc(db, "users", user.uid), { 
+                            lastActive: serverTimestamp(),
+                            lastLogin: serverTimestamp()
+                        });
                         
                         setupProfileUI();
                         setupHeaderUI();
@@ -1205,8 +1436,12 @@
                             document.getElementById('header-grade-badge').classList.add('hidden');
                         }
                         
-                        setTimeout(() => { introAnim.style.display = 'none'; }, 2000); 
+                        setTimeout(() => { 
+                            introAnim.style.display = 'none'; 
+                            introAnim.classList.add('hidden');
+                        }, 2000); 
                         intro.style.display = 'none';
+                        intro.classList.add('hidden');
                         authScreen.classList.add('hidden');
                         mainApp.classList.remove('hidden');
                         if(!document.querySelector('.screen.active')) switchTab('challenges');
@@ -1215,10 +1450,17 @@
                         await signOut(auth);
                         location.reload();
                     }
-                } catch(e) { console.error("Auth Data Error:", e); }
+                } catch(e) { 
+                    console.error("Auth Data Error:", e); 
+                    alert("حدث خطأ في تحميل بيانات المستخدم");
+                }
             } else {
-                setTimeout(() => { introAnim.style.display = 'none'; }, 2000);
+                setTimeout(() => { 
+                    introAnim.style.display = 'none'; 
+                    introAnim.classList.add('hidden');
+                }, 2000);
                 intro.style.display = 'none';
+                intro.classList.add('hidden');
                 mainApp.classList.add('hidden');
                 authScreen.classList.remove('hidden');
                 window.switchAuthTab('login');
@@ -1227,7 +1469,7 @@
 
         // --- WEEKLY TIMER FUNCTION (تم التعديل حسب طلبك) ---
         function updateWeeklyTimer() {
-            // Target: Thursday 00:00 AM (Iraq Time)
+            // Target: Thursday 00:00 AM (Iraq Time - Server Time)
             const now = new Date();
             const iraqOffset = 3 * 60; // UTC+3 in minutes
             const localOffset = now.getTimezoneOffset(); // in minutes
@@ -1244,8 +1486,9 @@
 
             const diff = target - iraqTime;
             
-            if (diff <= 1000 && diff > -5000) { 
-               // Trigger Reset Logic
+            // Check if it's time to distribute rewards (Thursday 00:00)
+            if (diff <= 1000 && diff > -5000 && !weeklyRewardDistributed) { 
+                distributeWeeklyRewards();
             }
 
             const d = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -1266,15 +1509,113 @@
         setInterval(updateWeeklyTimer, 1000);
         updateWeeklyTimer(); // Initial call
 
+        // --- WEEKLY REWARDS DISTRIBUTION FUNCTION ---
+        async function checkWeeklyRewards() {
+            // Check if rewards were already distributed this week
+            const lastDistributed = localStorage.getItem('lastWeeklyRewardDistribution');
+            const currentWeek = getCurrentWeekNumber();
+            
+            if (lastDistributed && parseInt(lastDistributed) === currentWeek) {
+                weeklyRewardDistributed = true;
+                return;
+            }
+            
+            weeklyRewardDistributed = false;
+        }
+
+        async function distributeWeeklyRewards() {
+            if (weeklyRewardDistributed) return;
+            
+            try {
+                // Get top 5 users ordered by points
+                const q = query(collection(db, "users"), orderBy("points", "desc"), limit(5));
+                const snapshot = await getDocs(q);
+                
+                const topUsers = [];
+                snapshot.forEach((doc, index) => {
+                    topUsers.push({
+                        id: doc.id,
+                        data: doc.data(),
+                        rank: index + 1
+                    });
+                });
+                
+                // Define prizes based on rank
+                const prizes = {
+                    1: 10, // $10 for 1st place
+                    2: 7,  // $7 for 2nd place
+                    3: 5,  // $5 for 3rd place
+                    4: 3,  // $3 for 4th place
+                    5: 2   // $2 for 5th place
+                };
+                
+                // Distribute prizes to top 5 users
+                const batch = writeBatch(db);
+                
+                topUsers.forEach(user => {
+                    const prizeAmount = prizes[user.rank] || 0;
+                    if (prizeAmount > 0) {
+                        const userRef = doc(db, "users", user.id);
+                        batch.update(userRef, {
+                            walletBalance: increment(prizeAmount),
+                            lastWeeklyPrize: prizeAmount,
+                            lastWeeklyRank: user.rank
+                        });
+                    }
+                });
+                
+                // Reset all users' points to 0
+                const allUsersQuery = query(collection(db, "users"));
+                const allUsersSnapshot = await getDocs(allUsersQuery);
+                
+                allUsersSnapshot.forEach(docSnap => {
+                    const userRef = doc(db, "users", docSnap.id);
+                    batch.update(userRef, {
+                        points: 0
+                    });
+                });
+                
+                // Execute batch writes
+                await batch.commit();
+                
+                // Update local flag
+                weeklyRewardDistributed = true;
+                localStorage.setItem('lastWeeklyRewardDistribution', getCurrentWeekNumber().toString());
+                
+                console.log("Weekly rewards distributed successfully!");
+                
+            } catch (error) {
+                console.error("Error distributing weekly rewards:", error);
+            }
+        }
+
+        function getCurrentWeekNumber() {
+            const now = new Date();
+            const startOfYear = new Date(now.getFullYear(), 0, 1);
+            const pastDaysOfYear = (now - startOfYear) / 86400000;
+            return Math.ceil((pastDaysOfYear + startOfYear.getDay() + 1) / 7);
+        }
+
         // --- 1. SMOOTH NAVIGATION ---
         window.openPage = async (screenId) => {
             const screens = document.querySelectorAll('.screen');
-            screens.forEach(s => s.classList.remove('active'));
+            screens.forEach(s => {
+                s.classList.remove('active');
+                // Reset scroll position when leaving screen
+                const scrollContainer = s.querySelector('.scroll-container');
+                if (scrollContainer) {
+                    scrollContainer.scrollTop = 0;
+                }
+            });
             const target = document.getElementById(screenId);
             target.classList.add('active');
             
-            // Logic dispatch
-            if (screenId === 'screen-admin-users') { /* loaded by default */ }
+            // Logic dispatch with auto-refresh
+            if (screenId === 'screen-admin-users') { 
+                // Reset search when opening
+                document.getElementById('admin-search-id').value = '';
+                document.getElementById('admin-user-result').classList.add('hidden');
+            }
             else if (screenId === 'screen-stats') loadStatsContent();
             else if (screenId === 'screen-my-points') loadMyPointsContent();
             else if (screenId === 'screen-my-questions') loadMyQuestionsContent();
@@ -1287,29 +1628,89 @@
             }
             else if (screenId === 'screen-admin-stats') resetStatsUI();
             else if (screenId === 'screen-admin-subjects') loadSubjectManagement();
+            
+            // Force refresh of any data that might be stale
+            if (userData) {
+                setTimeout(() => {
+                    refreshUserData();
+                }, 300);
+            }
         };
 
+        async function refreshUserData() {
+            try {
+                const docSnap = await getDoc(doc(db, "users", currentUser.uid));
+                if (docSnap.exists()) {
+                    userData = docSnap.data();
+                    setupHeaderUI();
+                    setupProfileUI();
+                    
+                    // Update current screen if needed
+                    const activeScreen = document.querySelector('.screen.active');
+                    if (activeScreen) {
+                        const screenId = activeScreen.id;
+                        if (screenId === 'screen-referral') loadReferralData();
+                        if (screenId === 'screen-money') loadWalletData();
+                        if (screenId === 'screen-my-points') loadMyPointsContent();
+                        if (screenId === 'tab-leaderboard') loadLeaderboard();
+                    }
+                }
+            } catch (e) {
+                console.error("Error refreshing user data:", e);
+            }
+        }
+
         window.switchTab = (tab) => {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.screen').forEach(s => {
+                s.classList.remove('active');
+                // Reset scroll position when leaving tab
+                const scrollContainer = s.querySelector('.scroll-container');
+                if (scrollContainer) {
+                    scrollContainer.scrollTop = 0;
+                }
+            });
             document.getElementById('tab-'+tab).classList.add('active');
             
-            document.querySelectorAll('.nav-item').forEach(n => { n.classList.remove('active'); n.classList.remove('text-indigo-600'); n.classList.add('text-gray-400'); });
+            document.querySelectorAll('.nav-item').forEach(n => { 
+                n.classList.remove('active'); 
+                n.classList.remove('text-indigo-600'); 
+                n.classList.add('text-gray-400'); 
+            });
             const navs = document.querySelectorAll('.nav-item');
-            if(tab==='challenges') navs[0].classList.add('active', 'text-indigo-600');
-            if(tab==='leaderboard') { navs[1].classList.add('active', 'text-indigo-600'); loadLeaderboard(); }
-            if(tab==='upload') { navs[2].classList.add('active', 'text-indigo-600'); updateUploadUI(); }
+            if(tab==='challenges') {
+                navs[0].classList.add('active', 'text-indigo-600');
+                // Refresh challenge subjects
+                if (userData && userData.grade) {
+                    populateSubjects(userData.grade, 'challenge-subject');
+                }
+            }
+            if(tab==='leaderboard') { 
+                navs[1].classList.add('active', 'text-indigo-600'); 
+                loadLeaderboard(); 
+            }
+            if(tab==='upload') { 
+                navs[2].classList.add('active', 'text-indigo-600'); 
+                updateUploadUI(); 
+            }
             if(tab==='profile') navs[3].classList.add('active', 'text-indigo-600');
         };
 
         window.backToProfile = () => { 
             const screens = document.querySelectorAll('.screen');
             screens.forEach(s => { 
-                if(s.id.startsWith('screen-')) s.classList.remove('active'); 
+                if(s.id.startsWith('screen-')) {
+                    s.classList.remove('active');
+                    // Reset scroll position
+                    const scrollContainer = s.querySelector('.scroll-container');
+                    if (scrollContainer) {
+                        scrollContainer.scrollTop = 0;
+                    }
+                } 
             });
             switchTab('profile');
         };
 
-        // --- AUTH & SIGNUP WITH RESTRICTIONS ---
+        // --- AUTH & SIGNUP WITH RESTRICTIONS - FIXED REFERRAL SYSTEM ---
         window.handleSignup = async () => {
             // DEVICE RESTRICTION (LocalStorage)
             let accountsCount = localStorage.getItem('hacker_accounts_count') || 0;
@@ -1319,8 +1720,8 @@
             }
 
             try {
-                const name = document.getElementById('signup-name').value;
-                const email = document.getElementById('signup-email').value;
+                const name = document.getElementById('signup-name').value.trim();
+                const email = document.getElementById('signup-email').value.trim();
                 const pass = document.getElementById('signup-pass').value;
                 const refCode = document.getElementById('signup-referral').value.trim().toUpperCase();
                 const imgFile = document.getElementById('signup-img').files[0];
@@ -1329,17 +1730,35 @@
                 if(!email.endsWith("@gmail.com")) return alert("يجب استخدام ايميل Gmail");
                 if(pass.length < 6) return alert("كلمة المرور قصيرة جداً");
 
-                // CHECK REFERRAL CODE
+                // CHECK REFERRAL CODE - FIXED PERMISSIONS
                 let referrerId = null;
+                let referrerData = null;
                 if (refCode) {
                     const qRef = query(collection(db, "users"), where("uniqueId", "==", refCode));
                     const snap = await getDocs(qRef);
-                    if (snap.empty) return alert("رمز الدعوة غير صحيح");
+                    if (snap.empty) {
+                        alert("رمز الدعوة غير صحيح");
+                        return;
+                    }
                     referrerId = snap.docs[0].id;
+                    referrerData = snap.docs[0].data();
+                    
+                    // Check if referrer is banned
+                    if (referrerData.isBanned) {
+                        alert("لا يمكن استخدام رمز دعوة من مستخدم محظور");
+                        return;
+                    }
                 }
 
-                let photoURL = `https://ui-avatars.com/api/?name=${name}&background=random&size=128`;
-                if(imgFile) photoURL = await compressImage(imgFile);
+                let photoURL = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&size=128`;
+                if(imgFile) {
+                    try {
+                        photoURL = await compressImage(imgFile);
+                    } catch (e) {
+                        console.error("Error compressing image:", e);
+                        // Use default avatar if compression fails
+                    }
+                }
 
                 const cred = await createUserWithEmailAndPassword(auth, email, pass);
                 
@@ -1347,11 +1766,12 @@
                 localStorage.setItem('hacker_accounts_count', parseInt(accountsCount) + 1);
 
                 const newId = generateId();
-                // User Data
+                // User Data - FIXED: Start with 25 points if using referral code
                 let startPoints = 0;
                 if (referrerId) startPoints = 25; // Bonus for new user
 
-                await setDoc(doc(db, "users", cred.user.uid), {
+                // Create user document with proper data structure
+                const userDocData = {
                     uid: cred.user.uid,
                     name: name,
                     email: email,
@@ -1360,29 +1780,58 @@
                     points: startPoints,
                     role: 'user',
                     createdAt: serverTimestamp(),
+                    lastActive: serverTimestamp(),
                     isBanned: false,
                     walletBalance: 0,
                     referrals: 0,
                     referredBy: referrerId || null,
+                    grade: null,
                     // Rewards
                     lastRewardDayKey: null, 
                     rewardMonthKey: null,   
-                    daysClaimedInMonth: 0,  
-                });
+                    daysClaimedInMonth: 0,
+                    deviceId: localStorage.getItem('deviceId') || generateDeviceId()
+                };
 
-                // Reward Referrer
+                await setDoc(doc(db, "users", cred.user.uid), userDocData);
+
+                // Reward Referrer - FIXED: Use transaction for consistency
                 if (referrerId) {
-                    await updateDoc(doc(db, "users", referrerId), {
-                        points: increment(50),
-                        referrals: increment(1)
-                    });
+                    try {
+                        // Add 50 points to referrer
+                        await updateDoc(doc(db, "users", referrerId), {
+                            points: increment(50),
+                            referrals: increment(1),
+                            lastReferral: serverTimestamp()
+                        });
+                        
+                        // Also update local referrer data if it's the current user
+                        if (currentUser && currentUser.uid === referrerId) {
+                            userData.points += 50;
+                            userData.referrals = (userData.referrals || 0) + 1;
+                            setupHeaderUI();
+                        }
+                        
+                        console.log("Referral reward processed successfully");
+                    } catch (referralError) {
+                        console.error("Error processing referral reward:", referralError);
+                        // Don't fail the signup if referral reward fails
+                    }
                 }
 
-            } catch (e) { alert(getArabicError(e.code)); }
+                alert("✅ تم إنشاء الحساب بنجاح! يمكنك تسجيل الدخول الآن.");
+                window.switchAuthTab('login');
+
+            } catch (e) { 
+                console.error("Signup error:", e);
+                alert(getArabicError(e.code)); 
+            }
         };
 
         // --- NEW DAILY REWARDS LOGIC ---
         window.checkDailyReward = async () => {
+            if (!currentUser || !userData) return;
+            
             const iraqDate = new Date().toLocaleString("en-US", {timeZone: "Asia/Baghdad"});
             const d = new Date(iraqDate);
             const currentDayKey = `${d.getDate()}-${d.getMonth()}-${d.getFullYear()}`;
@@ -1439,14 +1888,16 @@
             setupHeaderUI();
             document.getElementById('daily-reward-screen').classList.add('hidden');
             document.getElementById('daily-reward-screen').style.display = 'none';
+            alert(`🎉 مبروك! لقد حصلت على ${rewardAmount} نقاط مكافأة اليوم!`);
         };
 
-        // --- VS SCREEN & MATCHMAKING ---
+        // --- VS SCREEN & MATCHMAKING - IMPROVED WITH BETTER ERROR HANDLING ---
         window.startMatchmaking = async (mode) => {
             if (!systemConfig.enabled) {
                 const modal = document.getElementById('maintenance-popup');
                 document.getElementById('maintenance-msg-display').innerText = systemConfig.msg;
-                modal.classList.remove('hidden'); modal.style.display = 'flex';
+                modal.classList.remove('hidden'); 
+                modal.style.display = 'flex';
                 return;
             }
             const sub = document.getElementById('challenge-subject').value;
@@ -1464,61 +1915,142 @@
             let group = `${grade}_${sub}`;
             if(['اسلامية','عربي','انكليزي'].includes(sub) && grade.startsWith('6')) group = `6shared_${sub}`;
 
-            if (mode === 'online') startOnlineMatch(group, sub);
-            else startAIMatch(sub);
+            if (mode === 'online') {
+                await startOnlineMatch(group, sub);
+            } else {
+                startAIMatch(sub);
+            }
         };
 
         async function startOnlineMatch(group, sub) {
             try {
                 const qRef = collection(db, "match_queue");
-                // Clean old sessions
+                // Clean old sessions for this user
                 const oldDocs = await getDocs(query(qRef, where("player1.uid", "==", currentUser.uid), where("status", "==", "waiting")));
-                oldDocs.forEach(async (d) => { await deleteDoc(d.ref); });
+                const deletePromises = [];
+                oldDocs.forEach(async (d) => { 
+                    deletePromises.push(deleteDoc(d.ref));
+                });
+                await Promise.all(deletePromises);
 
+                // Look for existing match
                 const qWait = query(qRef, where("group", "==", group), where("status", "==", "waiting"), limit(10));
                 const snap = await getDocs(qWait);
                 let foundMatchId = null;
-                snap.forEach((doc) => { if (doc.data().player1.uid !== currentUser.uid) foundMatchId = doc.id; });
+                let opponentData = null;
+                
+                snap.forEach((doc) => { 
+                    if (doc.data().player1.uid !== currentUser.uid) {
+                        foundMatchId = doc.id;
+                        opponentData = doc.data().player1;
+                    }
+                });
 
-                if(foundMatchId) {
+                if(foundMatchId && opponentData) {
                     currentMatchId = foundMatchId;
+                    // Get questions for the match
+                    const qDocs = await getQuestions(sub, selectedQType);
+                    if(qDocs.length === 0) { 
+                        alert("لا توجد أسئلة كافية"); 
+                        cancelSearch(); 
+                        return; 
+                    }
+                    const shuffledQs = qDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
+                    
                     await updateDoc(doc(db, "match_queue", foundMatchId), {
-                        player2: { uid: currentUser.uid, name: userData.name, photo: userData.photo, score: 0 },
-                        status: 'active', answersCount: 0 
+                        player2: { 
+                            uid: currentUser.uid, 
+                            name: userData.name, 
+                            photo: userData.photo, 
+                            score: 0 
+                        },
+                        questions: shuffledQs,
+                        status: 'active', 
+                        answersCount: 0,
+                        startedAt: serverTimestamp()
                     });
                     listenToMatch(foundMatchId);
                 } else {
+                    // Create new match
                     const qDocs = await getQuestions(sub, selectedQType);
-                    if(qDocs.length === 0) { alert("لا توجد أسئلة كافية"); cancelSearch(); return; }
+                    if(qDocs.length === 0) { 
+                        alert("لا توجد أسئلة كافية"); 
+                        cancelSearch(); 
+                        return; 
+                    }
                     const shuffledQs = qDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
                     const newMatch = await addDoc(qRef, {
-                        group: group, status: 'waiting',
-                        player1: { uid: currentUser.uid, name: userData.name, photo: userData.photo, score: 0 },
-                        questions: shuffledQs, currentIdx: 0, answersCount: 0
+                        group: group, 
+                        status: 'waiting',
+                        player1: { 
+                            uid: currentUser.uid, 
+                            name: userData.name, 
+                            photo: userData.photo, 
+                            score: 0 
+                        },
+                        questions: shuffledQs, 
+                        currentIdx: 0, 
+                        answersCount: 0,
+                        createdAt: serverTimestamp(),
+                        subject: sub,
+                        type: selectedQType
                     });
                     currentMatchId = newMatch.id;
                     listenToMatch(newMatch.id);
+                    
+                    // Set timeout to cancel match if no one joins
+                    setTimeout(async () => {
+                        if (currentMatchId === newMatch.id) {
+                            const matchDoc = await getDoc(doc(db, "match_queue", newMatch.id));
+                            if (matchDoc.exists() && matchDoc.data().status === 'waiting') {
+                                cancelSearch();
+                                alert("لم يتم العثور على منافس. حاول مرة أخرى.");
+                            }
+                        }
+                    }, 30000); // 30 seconds timeout
                 }
-            } catch(e) { console.error(e); cancelSearch(); }
+            } catch(e) { 
+                console.error("Matchmaking error:", e); 
+                cancelSearch(); 
+                alert("حدث خطأ أثناء البحث عن منافس");
+            }
         }
 
         async function startAIMatch(sub) {
             const qDocs = await getQuestions(sub, selectedQType);
-            if(qDocs.length === 0) { alert("لا توجد أسئلة كافية"); cancelSearch(); return; }
+            if(qDocs.length === 0) { 
+                alert("لا توجد أسئلة كافية"); 
+                cancelSearch(); 
+                return; 
+            }
             const shuffledQs = qDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
             
             let botPhoto = "https://cdn-icons-png.flaticon.com/512/4712/4712035.png"; 
 
             localMatchData = {
                 status: 'active',
-                player1: { uid: currentUser.uid, name: userData.name, photo: userData.photo, score: 0 },
-                player2: { uid: 'AI_BOT', name: "الذكاء الاصطناعي 🤖", photo: botPhoto, score: 0 },
-                questions: shuffledQs, currentIdx: 0, answersCount: 0
+                player1: { 
+                    uid: currentUser.uid, 
+                    name: userData.name, 
+                    photo: userData.photo, 
+                    score: 0 
+                },
+                player2: { 
+                    uid: 'AI_BOT', 
+                    name: "الذكاء الاصطناعي 🤖", 
+                    photo: botPhoto, 
+                    score: 0 
+                },
+                questions: shuffledQs, 
+                currentIdx: 0, 
+                answersCount: 0,
+                startedAt: new Date().toISOString()
             };
             
             showVSScreen(userData, localMatchData.player2, () => {
                 document.getElementById('game-overlay').classList.remove('hidden');
                 document.getElementById('game-overlay').style.display = 'flex';
+                document.getElementById('game-exit-btn').classList.remove('hidden');
                 renderGame(localMatchData);
             });
         }
@@ -1527,29 +2059,47 @@
             if(matchListenerUnsubscribe) matchListenerUnsubscribe(); 
             matchListenerUnsubscribe = onSnapshot(doc(db, "match_queue", id), (snap) => {
                 if(isExitingGame) return;
-                if(!snap.exists()) return;
+                if(!snap.exists()) {
+                    // Match was deleted (opponent left)
+                    if (!isExitingGame) {
+                        alert("غادر المنافس المباراة");
+                        cancelSearch();
+                        switchTab('challenges');
+                    }
+                    return;
+                }
                 const d = snap.data();
                 if(d.status === 'active') {
                     if (document.getElementById('vs-screen').classList.contains('hidden') && document.getElementById('game-overlay').classList.contains('hidden')) {
                          showVSScreen(d.player1, d.player2, () => {
                             document.getElementById('game-overlay').classList.remove('hidden');
                             document.getElementById('game-overlay').style.display = 'flex';
+                            document.getElementById('game-exit-btn').classList.remove('hidden');
                             renderGame(d);
                          });
                     } else if (!document.getElementById('game-overlay').classList.contains('hidden')) {
                         renderGame(d);
                     }
+                } else if (d.status === 'completed') {
+                    // Game ended naturally
+                    endGame(d);
                 }
+            }, (error) => {
+                console.error("Match listener error:", error);
             });
         }
 
         function showVSScreen(p1, p2, callback) {
             document.getElementById('searching-ui').classList.add('hidden');
             const vs = document.getElementById('vs-screen');
+            
+            // Set player 1 data
             document.getElementById('vs-p1-img').src = p1.photo || userData.photo;
-            document.getElementById('vs-p1-name').innerText = p1.name;
-            document.getElementById('vs-p2-img').src = p2.photo;
-            document.getElementById('vs-p2-name').innerText = p2.name;
+            document.getElementById('vs-p1-name').innerText = p1.name || "لاعب";
+            
+            // Set player 2 data
+            document.getElementById('vs-p2-img').src = p2.photo || "https://ui-avatars.com/api/?name=Opponent&background=random&size=128";
+            document.getElementById('vs-p2-name').innerText = p2.name || "الخصم";
             
             vs.classList.remove('hidden');
             setTimeout(() => {
@@ -1563,65 +2113,108 @@
             const div = document.getElementById('leaderboard-list');
             div.innerHTML = '<p class="text-center text-gray-400 mt-10">تحميل...</p>';
             
-            const q = query(collection(db, "users"), orderBy("points", "desc"), limit(150));
-            const snap = await getDocs(q);
-            let users = [];
-            snap.forEach(d => users.push(d.data()));
+            try {
+                const q = query(collection(db, "users"), orderBy("points", "desc"), limit(150));
+                const snap = await getDocs(q);
+                let users = [];
+                snap.forEach(d => {
+                    const data = d.data();
+                    if (data && !data.isBanned) {
+                        users.push(data);
+                    }
+                });
 
-            const myIndex = users.findIndex(u => u.uid === currentUser.uid);
-            if(myIndex !== -1) document.getElementById('my-rank-text').innerText = "#" + (myIndex + 1);
-            else document.getElementById('my-rank-text').innerText = "غير مصنف";
+                const myIndex = users.findIndex(u => u.uid === currentUser.uid);
+                if(myIndex !== -1) document.getElementById('my-rank-text').innerText = "#" + (myIndex + 1);
+                else document.getElementById('my-rank-text').innerText = "غير مصنف";
 
-            div.innerHTML = ''; 
-            let i = 1;
+                div.innerHTML = ''; 
+                let i = 1;
 
-            users.forEach(u => {
-                let frameClass = "frame-rank-common";
-                let crown = "";
-                let rankBadge = `<div class="rank-badge-top">${i}</div>`;
-                let raysHtml = "";
-                let prizeHtml = "";
+                users.forEach(u => {
+                    let frameClass = "frame-rank-common";
+                    let crown = "";
+                    let rankBadge = `<div class="rank-badge-top">${i}</div>`;
+                    let raysHtml = "";
+                    let prizeHtml = "";
 
-                if (i === 1) { frameClass = "frame-rank-1"; crown = `<i class="fas fa-crown text-yellow-500 name-crown"></i>`; raysHtml = `<div class="rank-rays rays-gold"></div>`; prizeHtml=`<span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded ml-2 font-bold">$10</span>`; }
-                else if (i === 2) { frameClass = "frame-rank-2"; raysHtml = `<div class="rank-rays rays-silver"></div>`; prizeHtml=`<span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded ml-2 font-bold">$7</span>`; }
-                else if (i === 3) { frameClass = "frame-rank-3"; raysHtml = `<div class="rank-rays rays-bronze"></div>`; prizeHtml=`<span class="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded ml-2 font-bold">$5</span>`; }
-                else if (i === 4) { frameClass = "frame-rank-other-top"; raysHtml = `<div class="rank-rays rays-blue"></div>`; prizeHtml=`<span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded ml-2 font-bold">$3</span>`; }
-                else if (i === 5) { frameClass = "frame-rank-other-top"; raysHtml = `<div class="rank-rays rays-red"></div>`; prizeHtml=`<span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded ml-2 font-bold">$2</span>`; }
-                else if (i <= 10) { frameClass = "frame-rank-other-top"; raysHtml = `<div class="rank-rays rays-purple"></div>`; }
+                    if (i === 1) { 
+                        frameClass = "frame-rank-1"; 
+                        crown = `<i class="fas fa-crown text-yellow-500 name-crown"></i>`; 
+                        raysHtml = `<div class="rank-rays rays-gold"></div>`; 
+                        prizeHtml=`<span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded ml-2 font-bold">$10</span>`; 
+                    }
+                    else if (i === 2) { 
+                        frameClass = "frame-rank-2"; 
+                        raysHtml = `<div class="rank-rays rays-silver"></div>`; 
+                        prizeHtml=`<span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded ml-2 font-bold">$7</span>`; 
+                    }
+                    else if (i === 3) { 
+                        frameClass = "frame-rank-3"; 
+                        raysHtml = `<div class="rank-rays rays-bronze"></div>`; 
+                        prizeHtml=`<span class="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded ml-2 font-bold">$5</span>`; 
+                    }
+                    else if (i === 4) { 
+                        frameClass = "frame-rank-other-top"; 
+                        raysHtml = `<div class="rank-rays rays-blue"></div>`; 
+                        prizeHtml=`<span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded ml-2 font-bold">$3</span>`; 
+                    }
+                    else if (i === 5) { 
+                        frameClass = "frame-rank-other-top"; 
+                        raysHtml = `<div class="rank-rays rays-red"></div>`; 
+                        prizeHtml=`<span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded ml-2 font-bold">$2</span>`; 
+                    }
+                    else if (i <= 10) { 
+                        frameClass = "frame-rank-other-top"; 
+                        raysHtml = `<div class="rank-rays rays-purple"></div>`; 
+                    }
 
-                // NEW: ADD RESET BUTTON FOR ADMIN
-                let resetBtn = "";
-                if (currentUser && userData.email === ADMIN_EMAIL) {
-                    resetBtn = `<button onclick="resetUserPoints('${u.uid}', '${u.name}')" class="w-6 h-6 rounded bg-red-100 text-red-500 flex items-center justify-center mr-2"><i class="fas fa-trash-alt text-xs"></i></button>`;
+                    // NEW: ADD RESET BUTTON FOR ADMIN
+                    let resetBtn = "";
+                    if (currentUser && userData.email === ADMIN_EMAIL) {
+                        resetBtn = `<button onclick="resetUserPoints('${u.uid}', '${u.name}')" class="w-6 h-6 rounded bg-red-100 text-red-500 flex items-center justify-center mr-2"><i class="fas fa-trash-alt text-xs"></i></button>`;
+                    }
+
+                    div.innerHTML += `
+                        <div class="flex items-center justify-between bg-white p-4 rounded-xl shadow-sm mb-3 relative overflow-hidden">
+                            <div class="flex items-center gap-4 z-10">
+                                <div class="rank-img-container">
+                                    ${rankBadge} ${raysHtml}
+                                    <img src="${u.photo}" class="rank-img ${frameClass}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=random&size=128'">
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-800 text-sm flex items-center">${crown} ${u.name} ${prizeHtml}</p>
+                                    <p class="text-[10px] text-gray-400">ID: ${u.uniqueId}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center z-10">
+                                ${resetBtn}
+                                <span class="font-black text-indigo-600 text-lg">${u.points} 💎</span>
+                            </div>
+                        </div>`;
+                    i++;
+                });
+                
+                if (users.length === 0) {
+                    div.innerHTML = '<p class="text-center text-gray-400 mt-10">لا يوجد مستخدمين بعد</p>';
                 }
-
-                div.innerHTML += `
-                    <div class="flex items-center justify-between bg-white p-4 rounded-xl shadow-sm mb-3 relative overflow-hidden">
-                        <div class="flex items-center gap-4 z-10">
-                            <div class="rank-img-container">
-                                ${rankBadge} ${raysHtml}
-                                <img src="${u.photo}" class="rank-img ${frameClass}">
-                            </div>
-                            <div>
-                                <p class="font-bold text-gray-800 text-sm flex items-center">${crown} ${u.name} ${prizeHtml}</p>
-                                <p class="text-[10px] text-gray-400">ID: ${u.uniqueId}</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center z-10">
-                            ${resetBtn}
-                            <span class="font-black text-indigo-600 text-lg">${u.points} 💎</span>
-                        </div>
-                    </div>`;
-                i++;
-            });
+            } catch (error) {
+                console.error("Error loading leaderboard:", error);
+                div.innerHTML = '<p class="text-center text-red-500 mt-10">حدث خطأ في تحميل التصنيف</p>';
+            }
         }
 
         // --- NEW: RESET USER POINTS FUNCTION (من الكود الثاني) ---
         window.resetUserPoints = async (uid, name) => {
             if(confirm(`هل أنت متأكد من تصفير نقاط الطالب: ${name}؟\n(النقاط ستعود للصفر فقط ولن يختفي من القائمة)`)) {
-                await updateDoc(doc(db, "users", uid), { points: 0 });
-                alert("تم تصفير النقاط بنجاح!");
-                loadLeaderboard(); 
+                try {
+                    await updateDoc(doc(db, "users", uid), { points: 0 });
+                    alert("تم تصفير النقاط بنجاح!");
+                    loadLeaderboard(); 
+                } catch (error) {
+                    alert("حدث خطأ أثناء تصفير النقاط");
+                    console.error("Error resetting points:", error);
+                }
             }
         };
 
@@ -1631,503 +2224,633 @@
              const btn = document.getElementById('withdraw-btn');
              if((userData.walletBalance || 0) >= 100) {
                  btn.disabled = false;
-                 btn.classList.remove('bg-gray-200', 'text-gray-400', 'cursor-not-allowed');
-                 btn.classList.add('bg-indigo-600', 'text-white', 'hover:bg-indigo-700');
+                 btn.classList.remove('bg-gray-200', 'text-gray-400', 'cursor-not-allowed', 'shadow-none');
+                 btn.classList.add('withdraw-btn', 'text-white', 'hover:scale-[1.02]');
              } else {
                  btn.disabled = true;
-                 btn.classList.add('bg-gray-200', 'text-gray-400', 'cursor-not-allowed');
-                 btn.classList.remove('bg-indigo-600', 'text-white');
+                 btn.classList.add('bg-gray-200', 'text-gray-400', 'cursor-not-allowed', 'shadow-none');
+                 btn.classList.remove('withdraw-btn', 'text-white', 'hover:scale-[1.02]');
              }
+        };
+
+        // --- WITHDRAWAL FUNCTIONS ---
+        window.showWithdrawalConfirmation = () => {
+            if ((userData.walletBalance || 0) < 100) {
+                alert("يجب أن يكون رصيدك 100$ على الأقل لسحب الأموال");
+                return;
+            }
+            document.getElementById('withdrawal-confirmation-modal').classList.remove('hidden');
+        };
+
+        window.cancelWithdrawal = () => {
+            document.getElementById('withdrawal-confirmation-modal').classList.add('hidden');
+        };
+
+        window.confirmWithdrawal = async () => {
+            try {
+                // Deduct 100 from wallet balance
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    walletBalance: increment(-100)
+                });
+                
+                userData.walletBalance = Math.max(0, (userData.walletBalance || 0) - 100);
+                loadWalletData();
+                
+                document.getElementById('withdrawal-confirmation-modal').classList.add('hidden');
+                
+                // Open Telegram
+                window.open('https://t.me/mslmh19', '_blank');
+                
+                alert("✅ تم خصم 100$ من رصيدك. راسلنا على التليجرام لإتمام عملية السحب.");
+                
+            } catch (error) {
+                alert("حدث خطأ أثناء معالجة طلب السحب");
+                console.error("Withdrawal error:", error);
+            }
         };
 
         // --- REFERRAL PAGE ---
         window.loadReferralData = () => {
-             document.getElementById('my-referral-code').innerText = userData.uniqueId;
+             document.getElementById('my-referral-code').innerText = userData.uniqueId || "غير متوفر";
              document.getElementById('ref-count-display').innerText = userData.referrals || 0;
              document.getElementById('ref-earnings').innerText = (userData.referrals || 0) * 50;
         };
 
         window.copyReferral = () => {
-             navigator.clipboard.writeText(userData.uniqueId);
-             alert("تم نسخ رمز الدعوة!");
+             const code = userData.uniqueId;
+             if (!code) {
+                 alert("لا يوجد رمز دعوة");
+                 return;
+             }
+             navigator.clipboard.writeText(code).then(() => {
+                 alert("تم نسخ رمز الدعوة!");
+             }).catch(err => {
+                 alert("تعذر نسخ الرمز. يمكنك نسخه يدوياً: " + code);
+             });
         };
 
         // --- ADMIN USER MANAGEMENT ---
         window.adminSearchUser = async () => {
              const id = document.getElementById('admin-search-id').value.trim().toUpperCase();
-             if(!id) return;
-             const q = query(collection(db, "users"), where("uniqueId", "==", id));
-             const snap = await getDocs(q);
-             
-             if(snap.empty) { alert("المستخدم غير موجود"); return; }
-             
-             const d = snap.docs[0];
-             searchedUser = { id: d.id, ...d.data() };
-             
-             document.getElementById('admin-user-result').classList.remove('hidden');
-             document.getElementById('admin-u-img').src = searchedUser.photo;
-             document.getElementById('admin-u-name').innerText = searchedUser.name;
-             document.getElementById('admin-u-id').innerText = "ID: " + searchedUser.uniqueId;
-             document.getElementById('admin-u-balance').innerText = searchedUser.walletBalance || 0;
-             
-             const statusEl = document.getElementById('admin-u-status');
-             if ((searchedUser.walletBalance || 0) >= 100) {
-                 statusEl.innerText = "يستحق السحب ✅"; statusEl.className = "text-xs font-bold text-green-600";
-             } else {
-                 statusEl.innerText = "لا يستحق ❌"; statusEl.className = "text-xs font-bold text-red-600";
+             if(!id) {
+                 alert("يرجى إدخال معرف المستخدم");
+                 return;
              }
+             
+             try {
+                 const q = query(collection(db, "users"), where("uniqueId", "==", id));
+                 const snap = await getDocs(q);
+                 
+                 if(snap.empty) { 
+                     alert("المستخدم غير موجود"); 
+                     return; 
+                 }
+                 
+                 const d = snap.docs[0];
+                 searchedUser = { id: d.id, ...d.data() };
+                 
+                 document.getElementById('admin-user-result').classList.remove('hidden');
+                 document.getElementById('admin-u-img').src = searchedUser.photo || "https://ui-avatars.com/api/?name=User&background=random&size=128";
+                 document.getElementById('admin-u-name').innerText = searchedUser.name || "غير معروف";
+                 document.getElementById('admin-u-id').innerText = "ID: " + (searchedUser.uniqueId || "غير معروف");
+                 document.getElementById('admin-u-balance').innerText = searchedUser.walletBalance || 0;
+                 
+                 const statusEl = document.getElementById('admin-u-status');
+                 if (searchedUser.isBanned) {
+                     statusEl.innerText = "محظور ⛔"; 
+                     statusEl.className = "text-xs font-bold text-red-600";
+                 } else if ((searchedUser.walletBalance || 0) >= 100) {
+                     statusEl.innerText = "يستحق السحب ✅"; 
+                     statusEl.className = "text-xs font-bold text-green-600";
+                 } else {
+                     statusEl.innerText = "لا يستحق السحب ❌"; 
+                     statusEl.className = "text-xs font-bold text-gray-600";
+                 }
 
-             updateBanButton();
+                 updateBanButton();
+             } catch (error) {
+                 console.error("Error searching user:", error);
+                 alert("حدث خطأ أثناء البحث عن المستخدم");
+             }
         };
 
         function updateBanButton() {
+             if (!searchedUser) return;
+             
              const btn = document.getElementById('btn-ban-toggle');
              if(searchedUser.isBanned) {
                  btn.innerText = "إلغاء الحظر (Unban)";
-                 btn.className = "w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl font-bold mb-2";
+                 btn.className = "w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl font-bold mb-2 transition";
              } else {
                  btn.innerText = "حظر المستخدم (Ban)";
-                 btn.className = "w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-bold mb-2";
+                 btn.className = "w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-bold mb-2 transition";
              }
         }
 
         window.toggleBan = async () => {
              if(!searchedUser) return;
+             
              const newStatus = !searchedUser.isBanned;
-             await updateDoc(doc(db, "users", searchedUser.id), { isBanned: newStatus });
-             searchedUser.isBanned = newStatus;
-             updateBanButton();
-             alert(newStatus ? "تم حظر المستخدم" : "تم إلغاء الحظر");
+             const action = newStatus ? "حظر" : "إلغاء حظر";
+             
+             if(!confirm(`هل أنت متأكد من ${action} المستخدم ${searchedUser.name}؟`)) {
+                 return;
+             }
+             
+             try {
+                 await updateDoc(doc(db, "users", searchedUser.id), { 
+                     isBanned: newStatus,
+                     banUpdatedAt: serverTimestamp()
+                 });
+                 searchedUser.isBanned = newStatus;
+                 updateBanButton();
+                 
+                 // If banning current user, log them out
+                 if (currentUser && currentUser.uid === searchedUser.id && newStatus === true) {
+                     alert("تم حظر حسابك. سيتم تسجيل خروجك الآن.");
+                     await signOut(auth);
+                     location.reload();
+                 } else {
+                     alert(newStatus ? "تم حظر المستخدم بنجاح" : "تم إلغاء حظر المستخدم بنجاح");
+                 }
+                 
+             } catch (error) {
+                 alert("حدث خطأ أثناء تحديث حالة الحظر");
+                 console.error("Ban toggle error:", error);
+             }
         };
 
         window.resetUserMoney = async () => {
              if(!searchedUser) return;
-             if(confirm("هل أنت متأكد من تصفير أموال هذا المستخدم إلى 0؟")) {
-                 await updateDoc(doc(db, "users", searchedUser.id), { walletBalance: 0 });
-                 document.getElementById('admin-u-balance').innerText = "0";
-                 alert("تم تصفير الرصيد.");
+             
+             if(confirm(`هل أنت متأكد من تصفير أموال المستخدم ${searchedUser.name} إلى 0؟`)) {
+                 try {
+                     await updateDoc(doc(db, "users", searchedUser.id), { 
+                         walletBalance: 0,
+                         walletResetAt: serverTimestamp()
+                     });
+                     document.getElementById('admin-u-balance').innerText = "0";
+                     searchedUser.walletBalance = 0;
+                     alert("تم تصفير الرصيد بنجاح.");
+                 } catch (error) {
+                     alert("حدث خطأ أثناء تصفير الرصيد");
+                     console.error("Reset money error:", error);
+                 }
              }
+        };
+
+        window.resetUserPointsAdmin = async () => {
+            if(!searchedUser) return;
+            
+            if(confirm(`هل أنت متأكد من تصفير نقاط المستخدم ${searchedUser.name} إلى 0؟`)) {
+                try {
+                    await updateDoc(doc(db, "users", searchedUser.id), { 
+                        points: 0,
+                        pointsResetAt: serverTimestamp()
+                    });
+                    searchedUser.points = 0;
+                    alert("تم تصفير النقاط بنجاح.");
+                } catch (error) {
+                    alert("حدث خطأ أثناء تصفير النقاط");
+                    console.error("Reset points error:", error);
+                }
+            }
         };
 
         // --- STATISTICS CONTENT ---
         async function loadStatsContent() {
              const div = document.getElementById('stats-content');
-             const usersSnap = await getDocs(collection(db, "users"));
-             const total = usersSnap.size;
-             const today = new Date(); today.setHours(0,0,0,0);
-             let newUsers = 0; let activeNow = 0; const now = new Date();
-             usersSnap.forEach(d => {
-                 const u = d.data();
-                 if(!u) return;
-                 if(u.createdAt && u.createdAt.toDate && u.createdAt.toDate() >= today) newUsers++;
-                 if (u.lastActive && u.lastActive.toDate && (now - u.lastActive.toDate()) < 15 * 60 * 1000) activeNow++;
-             });
-             if(activeNow === 0) activeNow = 1; 
-             div.innerHTML = `
-                <div class="bg-white p-5 rounded-2xl shadow-sm flex justify-between items-center"><div><p class="text-sm text-gray-500">المستخدمين الكلي</p><p class="text-2xl font-bold text-gray-800">${total}</p></div><div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600"><i class="fas fa-users"></i></div></div>
-                <div class="bg-white p-5 rounded-2xl shadow-sm flex justify-between items-center"><div><p class="text-sm text-gray-500">نشطين الآن</p><p class="text-2xl font-bold text-green-500">${activeNow}</p></div><div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600"><i class="fas fa-wifi"></i></div></div>
-                <div class="bg-white p-5 rounded-2xl shadow-sm flex justify-between items-center"><div><p class="text-sm text-gray-500">سجلوا اليوم</p><p class="text-2xl font-bold text-purple-500">${newUsers}</p></div><div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600"><i class="fas fa-user-plus"></i></div></div>`;
+             div.innerHTML = '<p class="text-center text-gray-400">جاري تحميل الإحصائيات...</p>';
+             
+             try {
+                 const usersSnap = await getDocs(collection(db, "users"));
+                 const total = usersSnap.size;
+                 const today = new Date(); 
+                 today.setHours(0,0,0,0);
+                 
+                 let newUsers = 0; 
+                 let activeNow = 0; 
+                 let bannedUsers = 0;
+                 const now = new Date();
+                 
+                 usersSnap.forEach(d => {
+                     const u = d.data();
+                     if(!u) return;
+                     
+                     // Count new users today
+                     if(u.createdAt && u.createdAt.toDate && u.createdAt.toDate() >= today) newUsers++;
+                     
+                     // Count active users (last 15 minutes)
+                     if (u.lastActive && u.lastActive.toDate && (now - u.lastActive.toDate()) < 15 * 60 * 1000) activeNow++;
+                     
+                     // Count banned users
+                     if (u.isBanned) bannedUsers++;
+                 });
+                 
+                 // Ensure activeNow is at least 1 if there are users
+                 if(activeNow === 0 && total > 0) activeNow = 1; 
+                 
+                 div.innerHTML = `
+                    <div class="bg-white p-5 rounded-2xl shadow-sm flex justify-between items-center">
+                        <div>
+                            <p class="text-sm text-gray-500">المستخدمين الكلي</p>
+                            <p class="text-2xl font-bold text-gray-800">${total}</p>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-5 rounded-2xl shadow-sm flex justify-between items-center">
+                        <div>
+                            <p class="text-sm text-gray-500">نشطين الآن</p>
+                            <p class="text-2xl font-bold text-green-500">${activeNow}</p>
+                        </div>
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+                            <i class="fas fa-wifi"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-5 rounded-2xl shadow-sm flex justify-between items-center">
+                        <div>
+                            <p class="text-sm text-gray-500">سجلوا اليوم</p>
+                            <p class="text-2xl font-bold text-purple-500">${newUsers}</p>
+                        </div>
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-5 rounded-2xl shadow-sm flex justify-between items-center">
+                        <div>
+                            <p class="text-sm text-gray-500">المحظورين</p>
+                            <p class="text-2xl font-bold text-red-500">${bannedUsers}</p>
+                        </div>
+                        <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center text-red-600">
+                            <i class="fas fa-ban"></i>
+                        </div>
+                    </div>`;
+                 
+             } catch (error) {
+                 console.error("Error loading stats:", error);
+                 div.innerHTML = '<p class="text-center text-red-500">حدث خطأ في تحميل الإحصائيات</p>';
+             }
         }
 
         async function loadMyPointsContent() {
-             document.getElementById('detail-points').innerText = userData.points;
+             document.getElementById('detail-points').innerText = userData.points || 0;
              const joinDate = userData.createdAt ? userData.createdAt.toDate() : new Date();
-             document.getElementById('detail-join-date').innerText = joinDate.toLocaleDateString('ar-EG');
+             document.getElementById('detail-join-date').innerText = joinDate.toLocaleDateString('ar-EG', {
+                 year: 'numeric',
+                 month: 'long',
+                 day: 'numeric'
+             });
              const diffTime = Math.abs(new Date() - joinDate);
              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-             document.getElementById('detail-days').innerText = diffDays + " يوم";
+             document.getElementById('detail-days').innerText = diffDays;
         }
 
         async function loadMyQuestionsContent() {
             const div = document.getElementById('my-questions-list');
             div.innerHTML = '<p class="text-center text-gray-400">تحميل...</p>';
-            const q1 = query(collection(db, "pending_questions"), where("authorId", "==", currentUser.uid));
+            
             try {
+                const q1 = query(collection(db, "pending_questions"), where("authorId", "==", currentUser.uid));
                 const s1 = await getDocs(q1);
                 let html = "";
                 let qs = [];
-                s1.forEach(d => qs.push(d.data()));
+                s1.forEach(d => qs.push({id: d.id, ...d.data()}));
                 
                 qs.sort((a,b) => (b.createdAt?.toDate() || 0) - (a.createdAt?.toDate() || 0));
 
-                qs.forEach(q => { 
-                    let statusBadge = "";
-                    if(q.status === 'approved') statusBadge = `<span class="text-xs bg-green-100 text-green-600 px-2 rounded font-bold">تمت الموافقة (+10)</span>`;
-                    else if (q.status === 'rejected') statusBadge = `<span class="text-xs bg-red-100 text-red-600 px-2 rounded font-bold">مرفوض</span>`;
-                    else statusBadge = `<span class="text-xs bg-yellow-100 text-yellow-600 px-2 rounded font-bold">قيد المراجعة</span>`;
+                if (qs.length === 0) {
+                    html = "<p class='text-center text-gray-400 mt-10'>لم تقم برفع أي أسئلة حتى الآن.</p>";
+                } else {
+                    qs.forEach(q => { 
+                        let statusBadge = "";
+                        let statusColor = "";
+                        
+                        if(q.status === 'approved') {
+                            statusBadge = "تمت الموافقة (+10)";
+                            statusColor = "green";
+                        } else if (q.status === 'rejected') {
+                            statusBadge = "مرفوض";
+                            statusColor = "red";
+                        } else {
+                            statusBadge = "قيد المراجعة";
+                            statusColor = "yellow";
+                        }
 
-                    html += `<div class="bg-white p-4 rounded-xl border border-gray-100 mb-2 shadow-sm"><div class="flex justify-between mb-2"><span class="text-xs text-gray-400 font-bold">${q.subject}</span>${statusBadge}</div><p class="font-bold text-gray-800 text-sm">${q.question}</p></div>`; 
-                });
-                if(html === "") html = "<p class='text-center text-gray-400 mt-10'>لم تقم برفع أي أسئلة حتى الآن.</p>";
+                        const dateStr = q.createdAt?.toDate ? 
+                            q.createdAt.toDate().toLocaleDateString('ar-EG') : 
+                            "تاريخ غير معروف";
+                        
+                        html += `
+                        <div class="bg-white p-4 rounded-xl border border-gray-100 mb-3 shadow-sm">
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded font-bold">${q.subject || 'غير محدد'}</span>
+                                    <span class="text-xs text-gray-400">${dateStr}</span>
+                                </div>
+                                <span class="text-xs bg-${statusColor}-100 text-${statusColor}-600 px-2 py-1 rounded font-bold">${statusBadge}</span>
+                            </div>
+                            <p class="font-bold text-gray-800 text-sm mb-2">${q.question || 'بدون نص'}</p>
+                            ${q.type === 'mcq' ? `
+                            <div class="bg-gray-50 p-3 rounded-lg text-xs space-y-1">
+                                <p class="font-bold text-gray-500 mb-1">الخيارات:</p>
+                                <div class="space-y-1">
+                                    ${q.answers?.map((ans, idx) => `
+                                    <div class="flex items-center gap-2 ${idx === q.correct ? 'bg-green-50 text-green-700' : ''} p-1 rounded">
+                                        <span class="w-4 h-4 rounded-full ${idx === q.correct ? 'bg-green-500' : 'bg-gray-300'}"></span>
+                                        <span>${ans || 'خيار فارغ'}</span>
+                                    </div>
+                                    `).join('') || ''}
+                                </div>
+                            </div>
+                            ` : ''}
+                        </div>`; 
+                    });
+                }
+                
                 div.innerHTML = html;
-            } catch(e) { div.innerHTML = "<p class='text-red-500'>حدث خطأ في جلب البيانات.</p>"; }
+                
+            } catch(e) { 
+                console.error("Error loading my questions:", e);
+                div.innerHTML = "<p class='text-red-500 text-center'>حدث خطأ في جلب البيانات.</p>"; 
+            }
         }
 
         // --- FIXED: مراجعة الأسئلة (زر قبول/رفض) ---
         async function loadAdminReviewContent() {
             const div = document.getElementById('admin-review-list');
             div.innerHTML = '<p class="text-center text-gray-400">تحميل...</p>';
-            const q = await getDocs(query(collection(db, "pending_questions"), where("status", "==", "pending")));
-            if(q.empty) { div.innerHTML = "<p class='text-center py-10 text-gray-400'>لا يوجد شيء للمراجعة</p>"; return; }
-            let html = "";
-            q.forEach(d => {
-               const val = d.data(); const author = val.authorName || 'مجهول';
-               html += `<div class="bg-white rounded-xl p-4 mb-3 shadow-sm border border-gray-100" id="review-card-${d.id}"><div class="flex justify-between items-start mb-2"><span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-lg font-bold">${val.grade} | ${val.subject}</span><span class="text-xs text-gray-400">بواسطة: ${author}</span></div><p class="font-bold mb-3 text-gray-800 text-sm leading-6">${val.question}</p><div class="bg-gray-50 p-3 rounded-lg mb-3 text-xs space-y-1 border border-gray-100"><p class="font-bold text-gray-500">الخيارات:</p>${val.type==='mcq' ? `<ul class="list-disc list-inside text-gray-600"><li>${val.answers[0]}</li><li>${val.answers[1]}</li><li>${val.answers[2]}</li></ul>` : `<p>صح / خطأ</p>`}<p class="mt-2 text-green-600 font-bold">الجواب الصحيح: ${val.type==='mcq' ? val.answers[val.correct] : (val.correct==='true'?'صح':'خطأ')}</p></div><div class="flex gap-2"><button onclick="approveQ('${d.id}')" class="flex-1 bg-green-500 text-white text-xs py-3 rounded-lg font-bold shadow-md hover:bg-green-600 transition">قبول (+10)</button><button onclick="rejectQ('${d.id}')" class="flex-1 bg-red-500 text-white text-xs py-3 rounded-lg font-bold shadow-md hover:bg-red-600 transition">رفض</button></div></div>`; 
-            });
-            div.innerHTML = html;
+            
+            try {
+                const q = await getDocs(query(collection(db, "pending_questions"), where("status", "==", "pending")));
+                
+                if(q.empty) { 
+                    div.innerHTML = "<p class='text-center py-10 text-gray-400'>لا يوجد شيء للمراجعة ✅</p>"; 
+                    return; 
+                }
+                
+                let html = "";
+                q.forEach(d => {
+                   const val = d.data(); 
+                   const author = val.authorName || 'مجهول';
+                   const dateStr = val.createdAt?.toDate ? 
+                       val.createdAt.toDate().toLocaleDateString('ar-EG') : 
+                       "تاريخ غير معروف";
+                   
+                   html += `
+                   <div class="bg-white rounded-xl p-4 mb-4 shadow-sm border border-gray-100" id="review-card-${d.id}">
+                       <div class="flex justify-between items-start mb-3">
+                           <div class="flex items-center gap-2">
+                               <span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-lg font-bold">${val.grade || 'غير محدد'} | ${val.subject || 'غير محدد'}</span>
+                               <span class="text-xs text-gray-500">${dateStr}</span>
+                           </div>
+                           <span class="text-xs text-gray-400">بواسطة: ${author}</span>
+                       </div>
+                       
+                       <p class="font-bold mb-3 text-gray-800 text-sm leading-6 border-r-2 border-indigo-200 pr-2">${val.question || 'بدون نص'}</p>
+                       
+                       <div class="bg-gray-50 p-3 rounded-lg mb-4 text-xs space-y-2 border border-gray-100">
+                           <p class="font-bold text-gray-500">${val.type==='mcq'?'الخيارات':'نوع السؤال'}:</p>
+                           ${val.type==='mcq' ? `
+                           <ul class="space-y-1">
+                               ${val.answers?.map((ans, idx) => `
+                               <li class="flex items-center gap-2 p-1 rounded ${idx === val.correct ? 'bg-green-50 text-green-700 font-bold' : 'text-gray-600'}">
+                                   <span class="w-3 h-3 rounded-full ${idx === val.correct ? 'bg-green-500' : 'bg-gray-300'}"></span>
+                                   <span>${ans || 'خيار فارغ'}</span>
+                               </li>
+                               `).join('') || ''}
+                           </ul>
+                           ` : `<p class="text-center font-bold ${val.correct==='true'?'text-green-600':'text-red-600'}">${val.correct==='true'?'صح':'خطأ'}</p>`}
+                           
+                           <p class="mt-2 text-green-600 font-bold text-center">
+                               الجواب الصحيح: ${val.type==='mcq' ? (val.answers && val.answers[val.correct]) || 'غير محدد' : (val.correct==='true'?'صح':'خطأ')}
+                           </p>
+                       </div>
+                       
+                       <div class="flex gap-2">
+                           <button onclick="approveQ('${d.id}')" class="flex-1 bg-green-500 text-white text-xs py-3 rounded-lg font-bold shadow-md hover:bg-green-600 transition flex items-center justify-center gap-1">
+                               <i class="fas fa-check"></i> قبول (+10)
+                           </button>
+                           <button onclick="rejectQ('${d.id}')" class="flex-1 bg-red-500 text-white text-xs py-3 rounded-lg font-bold shadow-md hover:bg-red-600 transition flex items-center justify-center gap-1">
+                               <i class="fas fa-times"></i> رفض
+                           </button>
+                       </div>
+                   </div>`; 
+                });
+                
+                div.innerHTML = html;
+                
+            } catch (error) {
+                console.error("Error loading review content:", error);
+                div.innerHTML = '<p class="text-center text-red-500">حدث خطأ في تحميل الأسئلة للمراجعة</p>';
+            }
         }
 
         // --- FIXED: وظائف قبول ورفض الأسئلة ---
         window.approveQ = async (id) => {
-            const card = document.getElementById(`review-card-${id}`);
-            if(card) card.remove();
-            const ref = doc(db, "pending_questions", id);
-            const d = (await getDoc(ref)).data();
+            if (!confirm("هل أنت متأكد من قبول هذا السؤال؟ سيحصل المؤلف على 10 نقاط.")) {
+                return;
+            }
             
-            // Add to active questions
-            await addDoc(collection(db, "questions"), {...d, status:'approved'});
-            
-            // Reward 10 Points
-            await updateDoc(doc(db, "users", d.authorId), { points: increment(10) });
-            
-            // Update pending doc status (DON'T DELETE)
-            await updateDoc(ref, { status: 'approved' });
-            
-            alert("تم قبول السؤال وتم منح 10 نقاط للمستخدم!");
+            try {
+                const card = document.getElementById(`review-card-${id}`);
+                if (card) {
+                    card.style.opacity = '0.5';
+                    card.style.pointerEvents = 'none';
+                }
+                
+                const ref = doc(db, "pending_questions", id);
+                const d = (await getDoc(ref)).data();
+                
+                if (!d) {
+                    alert("لم يتم العثور على السؤال");
+                    return;
+                }
+                
+                // Add to active questions
+                await addDoc(collection(db, "questions"), {
+                    ...d, 
+                    status: 'approved',
+                    approvedAt: serverTimestamp(),
+                    approvedBy: currentUser.uid
+                });
+                
+                // Reward 10 Points to author
+                if (d.authorId) {
+                    await updateDoc(doc(db, "users", d.authorId), { 
+                        points: increment(10),
+                        lastQuestionApproved: serverTimestamp()
+                    });
+                }
+                
+                // Update pending doc status to approved
+                await updateDoc(ref, { 
+                    status: 'approved',
+                    reviewedAt: serverTimestamp(),
+                    reviewedBy: currentUser.uid
+                });
+                
+                // Remove card from UI
+                if (card) {
+                    card.remove();
+                }
+                
+                alert("✅ تم قبول السؤال وتم منح 10 نقاط للمستخدم!");
+                
+                // Update badge count
+                checkAdminNotifications();
+                
+            } catch (error) {
+                console.error("Error approving question:", error);
+                alert("حدث خطأ أثناء قبول السؤال");
+            }
         };
 
         window.rejectQ = async (id) => {
-            const card = document.getElementById(`review-card-${id}`);
-            if(card) card.remove();
-            // Update status (DON'T DELETE)
-            await updateDoc(doc(db, "pending_questions", id), { status: 'rejected' });
-            alert("تم رفض السؤال!");
+            if (!confirm("هل أنت متأكد من رفض هذا السؤال؟")) {
+                return;
+            }
+            
+            try {
+                const card = document.getElementById(`review-card-${id}`);
+                if (card) {
+                    card.style.opacity = '0.5';
+                    card.style.pointerEvents = 'none';
+                }
+                
+                // Update status to rejected
+                await updateDoc(doc(db, "pending_questions", id), { 
+                    status: 'rejected',
+                    reviewedAt: serverTimestamp(),
+                    reviewedBy: currentUser.uid
+                });
+                
+                // Remove card from UI
+                if (card) {
+                    card.remove();
+                }
+                
+                alert("تم رفض السؤال!");
+                
+                // Update badge count
+                checkAdminNotifications();
+                
+            } catch (error) {
+                console.error("Error rejecting question:", error);
+                alert("حدث خطأ أثناء رفض السؤال");
+            }
         };
 
         window.checkAdminNotifications = () => {
+            if (!currentUser || userData.email !== ADMIN_EMAIL) return;
+            
             const q = query(collection(db, "pending_questions"), where("status", "==", "pending"));
+            
+            if (adminListenerUnsubscribe) {
+                adminListenerUnsubscribe();
+            }
+            
             adminListenerUnsubscribe = onSnapshot(q, (snapshot) => {
                 const count = snapshot.size;
                 const badgeTab = document.getElementById('profile-tab-badge');
                 const badgeBtn = document.getElementById('admin-btn-badge');
-                if (count > 0) { badgeTab.classList.add('visible'); badgeBtn.classList.add('visible'); } 
-                else { badgeTab.classList.remove('visible'); badgeBtn.classList.remove('visible'); }
-            });
-        };
-
-        window.switchTab = (tab) => {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById('tab-'+tab).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n => { n.classList.remove('active'); n.classList.remove('text-indigo-600'); n.classList.add('text-gray-400'); });
-            const navs = document.querySelectorAll('.nav-item');
-            if(tab==='challenges') navs[0].classList.add('active', 'text-indigo-600');
-            if(tab==='leaderboard') { navs[1].classList.add('active', 'text-indigo-600'); loadLeaderboard(); }
-            if(tab==='upload') { navs[2].classList.add('active', 'text-indigo-600'); updateUploadUI(); }
-            if(tab==='profile') navs[3].classList.add('active', 'text-indigo-600');
-        };
-        
-        window.updateUploadUI = () => { 
-            if(userData.grade) {
-                updateUploadUIBasedOnSubjects();
-                const type = document.getElementById('up-type').value;
-                populateSubjects(userData.grade, 'up-subject', type);
                 
-                // Update subject dropdown when type changes
-                document.getElementById('up-type').onchange = function() {
-                    populateSubjects(userData.grade, 'up-subject', this.value);
-                };
-            }
-        };
-        
-        // --- NEW ADMIN FEATURES FROM SECOND CODE ---
-        async function loadAdminAllContent() {
-             const div = document.getElementById('admin-all-list');
-             if(allAdminQuestions.length === 0) {
-                 div.innerHTML = '<p class="text-center text-gray-400">جاري جلب كل الأسئلة من قاعدة البيانات...</p>';
-                 const q = await getDocs(collection(db, "questions"));
-                 allAdminQuestions = [];
-                 q.forEach(d => allAdminQuestions.push({id: d.id, ...d.data()}));
-             }
-             filterAdminQuestions();
-        }
-
-        window.populateAdminFilterSubjects = () => {
-            const grade = document.getElementById('admin-filter-grade').value;
-            const subSel = document.getElementById('admin-filter-subject');
-            subSel.innerHTML = '<option value="">كل المواد</option>';
-            if(grade && subjects[grade]) {
-                subjects[grade].forEach(s => subSel.innerHTML += `<option value="${s}">${s}</option>`);
-            }
-        }
-
-        window.renderAdminAllList = (list) => {
-            const div = document.getElementById('admin-all-list');
-            if(list.length === 0) { div.innerHTML = "<p class='text-center text-gray-400 mt-4'>لا توجد نتائج</p>"; return; }
-            let html = `<p class="text-xs text-gray-400 mb-2">تم العثور على: ${list.length} سؤال</p>`;
-            list.slice(0, 50).forEach(q => { 
-                html += `
-                <div class="bg-white rounded-xl p-3 mb-2 border border-gray-100 shadow-sm flex flex-col gap-2">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded font-bold">${q.grade || 'غير محدد'} | ${q.subject}</span>
-                            <span class="text-xs text-gray-400 ml-2">${q.type==='mcq'?'اختيارات':'صح/خطأ'}</span>
-                        </div>
-                        <div class="flex gap-1">
-                            <button onclick="openEditModal('${q.id}')" class="bg-blue-100 text-blue-600 px-3 py-1 rounded-lg text-xs font-bold hover:bg-blue-200 transition"><i class="fas fa-edit ml-1"></i>تعديل</button>
-                            <button onclick="deleteApprovedQ('${q.id}')" class="bg-red-100 text-red-600 px-3 py-1 rounded-lg text-xs font-bold hover:bg-red-200 transition"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>
-                    <p class="font-bold text-gray-700 text-sm leading-6 border-r-2 border-indigo-200 pr-2">${q.question}</p>
-                </div>`;
-            });
-            div.innerHTML = html;
-        };
-
-        window.filterAdminQuestions = () => {
-            if(event && event.target && event.target.id === 'admin-filter-grade') {
-                 populateAdminFilterSubjects();
-            }
-
-            const gr = document.getElementById('admin-filter-grade').value;
-            const sub = document.getElementById('admin-filter-subject').value;
-            
-            const filtered = allAdminQuestions.filter(q => {
-                const matchesGrade = gr ? (q.grade === gr) : true;
-                const matchesSubject = sub ? (q.subject === sub) : true;
-                return matchesGrade && matchesSubject;
-            });
-            renderAdminAllList(filtered);
-        };
-
-        // QUESTION STATS
-        window.resetStatsUI = () => {
-             document.getElementById('stats-result-container').innerHTML = '<p class="text-center text-gray-400 text-sm mt-10">اختر البيانات واضغط حساب</p>';
-        }
-
-        window.calculateQuestionStats = async () => {
-            const grade = document.getElementById('stat-grade').value;
-            const type = document.getElementById('stat-type').value;
-            const resultDiv = document.getElementById('stats-result-container');
-            
-            resultDiv.innerHTML = '<p class="text-center text-gray-400">جاري الحساب بدقة...</p>';
-
-            if(allAdminQuestions.length === 0) {
-                 const q = await getDocs(collection(db, "questions"));
-                 allAdminQuestions = [];
-                 q.forEach(d => allAdminQuestions.push({id: d.id, ...d.data()}));
-            }
-
-            const gradeSubjects = subjects[grade];
-            
-            let html = "";
-            let totalForGrade = 0;
-
-            gradeSubjects.forEach(sub => {
-                const count = allAdminQuestions.filter(q => 
-                    q.grade === grade && 
-                    q.type === type && 
-                    q.subject === sub &&
-                    (q.status === 'approved' || !q.status)
-                ).length;
-
-                totalForGrade += count;
-
-                html += `
-                <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-gray-100">
-                    <span class="font-bold text-gray-700">${sub}</span>
-                    <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-lg font-bold text-sm">${count}</span>
-                </div>`;
-            });
-
-            const summaryHtml = `
-            <div class="bg-indigo-50 p-3 rounded-xl mb-3 border border-indigo-100 text-center">
-                <p class="text-xs text-indigo-500 font-bold">المجموع الكلي لهذا القسم</p>
-                <p class="text-2xl font-black text-indigo-800">${totalForGrade}</p>
-            </div>
-            `;
-
-            resultDiv.innerHTML = summaryHtml + html;
-        };
-
-        // SUBJECT MANAGEMENT
-        async function loadSubjectManagement() {
-            const grade = document.getElementById('subject-grade').value;
-            const type = document.getElementById('subject-type').value;
-            const container = document.getElementById('subject-management-list');
-            
-            if (!grade || !type) return;
-            
-            const key = `${grade}_${type}`;
-            const currentDisabled = disabledSubjects[key] || {};
-            
-            let html = '';
-            subjects[grade].forEach(subject => {
-                const isDisabled = currentDisabled[subject] === true;
-                html += `
-                <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm flex justify-between items-center">
-                    <div>
-                        <p class="font-bold text-gray-800">${subject}</p>
-                        <p class="text-xs text-gray-400">${getGradeName(grade)} - ${type === 'mcq' ? 'اختيارات' : 'صح وخطأ'}</p>
-                    </div>
-                    <label class="toggle-wrapper">
-                        <input type="checkbox" class="toggle-checkbox" ${isDisabled ? '' : 'checked'} 
-                               onchange="toggleSubject('${grade}', '${type}', '${subject}', this.checked)">
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>`;
-            });
-            
-            container.innerHTML = html;
-        }
-
-        window.toggleSubject = async function(grade, type, subject, enabled) {
-            const key = `${grade}_${type}`;
-            
-            if (!disabledSubjects[key]) {
-                disabledSubjects[key] = {};
-            }
-            
-            if (enabled) {
-                delete disabledSubjects[key][subject];
-            } else {
-                disabledSubjects[key][subject] = true;
-            }
-            
-            try {
-                await setDoc(doc(db, "system_settings", "disabled_subjects"), disabledSubjects, { merge: true });
-                alert(`✅ تم ${enabled ? 'تفعيل' : 'تعطيل'} المادة ${subject} لنوع ${type === 'mcq' ? 'الاختيارات' : 'صح وخطأ'}`);
-                
-                updateUploadUIBasedOnSubjects();
-                if (document.getElementById('tab-upload').classList.contains('active')) {
-                    switchTab('upload');
+                if (count > 0) { 
+                    badgeTab.classList.add('visible'); 
+                    badgeBtn.classList.add('visible'); 
+                } else { 
+                    badgeTab.classList.remove('visible'); 
+                    badgeBtn.classList.remove('visible'); 
                 }
-            } catch (e) {
-                alert('❌ حدث خطأ في حفظ التغييرات: ' + e.message);
-            }
+            }, (error) => {
+                console.error("Admin notifications error:", error);
+            });
         };
 
-        // EDIT QUESTION MODAL FUNCTIONS
-        window.openEditModal = (id) => {
-            const q = allAdminQuestions.find(i => i.id === id);
-            if(!q) return;
+        // --- GAME FUNCTIONS - IMPROVED WITH EXIT BUTTON ---
+        window.showExitConfirmation = () => {
+            document.getElementById('exit-confirmation-modal').classList.remove('hidden');
+        };
 
-            document.getElementById('edit-q-id').value = id;
-            document.getElementById('edit-q-text').value = q.question;
-            document.getElementById('edit-q-grade').value = q.grade || '6sci';
+        window.cancelExit = () => {
+            document.getElementById('exit-confirmation-modal').classList.add('hidden');
+        };
+
+        window.confirmExit = async () => {
+            document.getElementById('exit-confirmation-modal').classList.add('hidden');
             
-            const subSel = document.getElementById('edit-q-subject');
-            subSel.innerHTML = "";
-            subjects[q.grade || '6sci'].forEach(s => subSel.innerHTML += `<option value="${s}">${s}</option>`);
-            subSel.value = q.subject;
-
-            document.getElementById('edit-q-grade').onchange = () => {
-                const g = document.getElementById('edit-q-grade').value;
-                subSel.innerHTML = "";
-                subjects[g].forEach(s => subSel.innerHTML += `<option value="${s}">${s}</option>`);
-            };
-
-            if(q.type === 'mcq') {
-                document.getElementById('edit-mcq-fields').classList.remove('hidden');
-                document.getElementById('edit-tf-fields').classList.add('hidden');
+            // Deduct 5 points from current user
+            try {
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    points: increment(-5)
+                });
+                userData.points = Math.max(0, userData.points - 5);
+                setupHeaderUI();
                 
-                document.getElementById('edit-ans-0').value = q.answers[0];
-                document.getElementById('edit-ans-1').value = q.answers[1];
-                document.getElementById('edit-ans-2').value = q.answers[2];
-                document.getElementById('edit-correct-mcq').value = q.correct;
-            } else {
-                document.getElementById('edit-mcq-fields').classList.add('hidden');
-                document.getElementById('edit-tf-fields').classList.remove('hidden');
-                document.getElementById('edit-correct-tf').value = q.correct;
-            }
-
-            document.getElementById('edit-modal').classList.remove('hidden');
-        };
-
-        window.saveFullEditQ = async () => {
-            const id = document.getElementById('edit-q-id').value;
-            const originalQ = allAdminQuestions.find(i => i.id === id);
-            const type = originalQ.type;
-
-            const updates = {
-                question: document.getElementById('edit-q-text').value,
-                grade: document.getElementById('edit-q-grade').value,
-                subject: document.getElementById('edit-q-subject').value,
-            };
-
-            if(type === 'mcq') {
-                updates.answers = [
-                    document.getElementById('edit-ans-0').value,
-                    document.getElementById('edit-ans-1').value,
-                    document.getElementById('edit-ans-2').value
-                ];
-                updates.correct = parseInt(document.getElementById('edit-correct-mcq').value);
-            } else {
-                updates.correct = document.getElementById('edit-correct-tf').value;
-            }
-
-            await updateDoc(doc(db, "questions", id), updates);
-            
-            const idx = allAdminQuestions.findIndex(i => i.id === id);
-            if(idx !== -1) {
-                allAdminQuestions[idx] = { ...allAdminQuestions[idx], ...updates };
+                // Add 5 points to opponent if online mode
+                if (currentGameMode === 'online' && currentMatchId) {
+                    const matchDoc = await getDoc(doc(db, "match_queue", currentMatchId));
+                    if (matchDoc.exists()) {
+                        const matchData = matchDoc.data();
+                        const isP1 = matchData.player1.uid === currentUser.uid;
+                        const opponentId = isP1 ? matchData.player2.uid : matchData.player1.uid;
+                        
+                        if (opponentId && opponentId !== 'AI_BOT') {
+                            await updateDoc(doc(db, "users", opponentId), {
+                                points: increment(5)
+                            });
+                        }
+                    }
+                    
+                    // Delete the match from queue
+                    await deleteDoc(doc(db, "match_queue", currentMatchId));
+                }
+                
+                alert("تم الانسحاب. تم خصم 5 نقاط من رصيدك وإضافتها للمنافس.");
+                
+            } catch (error) {
+                console.error("Exit error:", error);
+                alert("حدث خطأ أثناء الانسحاب");
             }
             
-            const activeScreen = document.querySelector('.screen.active').id;
-            if (activeScreen === 'screen-admin-all') filterAdminQuestions();
-            if (activeScreen === 'screen-admin-stats') calculateQuestionStats();
-
-            document.getElementById('edit-modal').classList.add('hidden');
-            alert("تم حفظ التعديلات بنجاح!");
-        };
-
-        window.deleteApprovedQ = async (id) => {
-            if(confirm("هل أنت متأكد من حذف هذا السؤال نهائياً؟")) {
-                await deleteDoc(doc(db, "questions", id));
-                allAdminQuestions = allAdminQuestions.filter(q => q.id !== id);
-                filterAdminQuestions();
-                calculateQuestionStats();
-            }
-        };
-
-        // --- HELPER FUNCTIONS ---
-        function getGradeName(code) { return code==='6sci'?'السادس العلمي':code==='6lit'?'السادس الأدبي':'الثالث متوسط'; }
-        
-        async function getQuestions(sub, type) {
-            const q = query(collection(db, "questions"), where("subject", "==", sub), where("type", "==", type), limit(50));
-            const snap = await getDocs(q);
-            const list = [];
-            snap.forEach(d => list.push(d.data()));
-            return list;
-        }
-
-        window.setQType = (t) => {
-            selectedQType = t;
-            document.getElementById('btn-mcq').className = `py-3 rounded-xl border-2 font-bold transition flex-1 ${t==='mcq'?'border-indigo-600 bg-indigo-50 text-indigo-600':'border-indigo-100 text-gray-500'}`;
-            document.getElementById('btn-tf').className = `py-3 rounded-xl border-2 font-bold transition flex-1 ${t==='tf'?'border-indigo-600 bg-indigo-50 text-indigo-600':'border-indigo-100 text-gray-500'}`;
+            // Close game and return to challenges
+            closeResultScreen();
         };
 
         function renderGame(data) {
              if (isExitingGame) return;
-             if(!data.questions || data.currentIdx >= data.questions.length) { endGame(data); return; }
+             if(!data.questions || data.currentIdx >= data.questions.length) { 
+                 endGame(data); 
+                 return; 
+             }
              
+             // Update player info
              if (currentGameMode === 'online') {
                 const isP1 = data.player1.uid === currentUser.uid;
+                
+                // Player 1 (current user or opponent)
                 document.getElementById('p1-name').innerText = userData.name;
-                document.getElementById('p1-img-game').src = userData.photo;
-                
-                document.getElementById('p2-name').innerText = isP1 ? data.player2.name : data.player1.name;
-                document.getElementById('p2-img-game').src = isP1 ? data.player2.photo : data.player1.photo;
-                
+                document.getElementById('p1-img-game').src = userData.photo || "https://ui-avatars.com/api/?name=User&background=random&size=128";
                 document.getElementById('game-my-score').innerText = isP1 ? data.player1.score : data.player2.score;
+                
+                // Player 2 (opponent)
+                const opponent = isP1 ? data.player2 : data.player1;
+                document.getElementById('p2-name').innerText = opponent.name || "الخصم";
+                document.getElementById('p2-img-game').src = opponent.photo || "https://ui-avatars.com/api/?name=Opponent&background=random&size=128";
                 document.getElementById('game-op-score').innerText = isP1 ? data.player2.score : data.player1.score;
+                
             } else {
+                // AI mode
                 document.getElementById('p1-name').innerText = userData.name;
-                document.getElementById('p1-img-game').src = userData.photo;
+                document.getElementById('p1-img-game').src = userData.photo || "https://ui-avatars.com/api/?name=User&background=random&size=128";
+                document.getElementById('game-my-score').innerText = data.player1.score;
                 
                 document.getElementById('p2-name').innerText = data.player2.name;
                 document.getElementById('p2-img-game').src = data.player2.photo;
-                
-                document.getElementById('game-my-score').innerText = data.player1.score;
                 document.getElementById('game-op-score').innerText = data.player2.score;
             }
 
@@ -2135,41 +2858,81 @@
              const qTextEl = document.getElementById('q-text');
 
              if(qTextEl.innerText !== q.question) {
-                hasAnsweredCurrentQ = false; userAnsweredCorrectly = false; currentQuestionCorrectAnswer = null;
+                hasAnsweredCurrentQ = false; 
+                userAnsweredCorrectly = false; 
+                currentQuestionCorrectAnswer = null;
                 clearTimeout(aiTimeoutId);
+                
+                // Enable answers
                 document.getElementById('answers-container').classList.remove('pointer-events-none', 'opacity-50');
                 document.getElementById('waiting-msg').classList.add('hidden');
                 document.getElementById('ai-thinking-msg').classList.add('hidden');
                 
+                // Start timer
                 clearInterval(gameTimer);
                 let t = 15;
                 document.getElementById('game-timer').innerText = t;
                 gameTimer = setInterval(() => {
-                    if (isExitingGame) { clearInterval(gameTimer); return; }
-                    t--; document.getElementById('game-timer').innerText = t;
-                    if(t <= 0) { clearInterval(gameTimer); if(!hasAnsweredCurrentQ) submitGameAnswer(null, q, data); else if (currentGameMode === 'ai') handleAINextTurn(); }
+                    if (isExitingGame) { 
+                        clearInterval(gameTimer); 
+                        return; 
+                    }
+                    t--; 
+                    document.getElementById('game-timer').innerText = t;
+                    
+                    // Update timer color when time is running out
+                    if (t <= 5) {
+                        document.getElementById('game-timer').classList.add('bg-red-600');
+                        document.getElementById('game-timer').classList.remove('bg-gray-800');
+                    }
+                    
+                    if(t <= 0) { 
+                        clearInterval(gameTimer); 
+                        if(!hasAnsweredCurrentQ) {
+                            submitGameAnswer(null, q, data); 
+                        } else if (currentGameMode === 'ai') {
+                            handleAINextTurn(); 
+                        }
+                    }
                 }, 1000);
                 
+                // Update progress
                 document.getElementById('q-progress').innerText = `${data.currentIdx + 1} / 10`;
-                qTextEl.innerText = q.question;
+                qTextEl.innerText = q.question || "سؤال بدون نص";
                 
+                // Create answer buttons
                 const div = document.getElementById('answers-container');
                 div.innerHTML = '';
                 let ansList = [];
+                
                 if(q.type === 'mcq') {
-                    ansList = q.answers.map((txt, idx) => ({ txt, isCorrect: idx === q.correct, value: idx }));
+                    ansList = q.answers.map((txt, idx) => ({ 
+                        txt: txt || `الخيار ${idx + 1}`, 
+                        isCorrect: idx === q.correct, 
+                        value: idx 
+                    }));
                 } else {
-                    ansList = [ { txt: 'صح', isCorrect: q.correct === 'true' || q.correct === true, value: 'true' }, { txt: 'خطأ', isCorrect: q.correct === 'false' || q.correct === false, value: 'false' } ];
+                    ansList = [ 
+                        { txt: 'صح', isCorrect: q.correct === 'true' || q.correct === true, value: 'true' }, 
+                        { txt: 'خطأ', isCorrect: q.correct === 'false' || q.correct === false, value: 'false' } 
+                    ];
                 }
+                
                 const correctAns = ansList.find(ans => ans.isCorrect);
                 if (correctAns) currentQuestionCorrectAnswer = correctAns.value;
+                
+                // Shuffle answers
                 ansList.sort(() => 0.5 - Math.random());
+                
                 ansList.forEach(ansObj => {
                     const btn = document.createElement('button');
-                    btn.className = "answer-neutral w-full py-4 border-2 rounded-xl text-lg font-bold shadow-sm active:scale-95 transition";
+                    btn.className = "answer-neutral w-full py-4 border-2 rounded-xl text-lg font-bold shadow-sm active:scale-95 transition hover:bg-gray-50";
                     btn.innerText = ansObj.txt;
                     btn.dataset.value = ansObj.value;
-                    btn.onclick = () => { if(hasAnsweredCurrentQ) return; submitGameAnswer(ansObj, q, data); };
+                    btn.onclick = () => { 
+                        if(hasAnsweredCurrentQ) return; 
+                        submitGameAnswer(ansObj, q, data); 
+                    };
                     div.appendChild(btn);
                 });
              }
@@ -2182,22 +2945,53 @@
             
             const answerButtons = document.querySelectorAll('#answers-container button');
             answerButtons.forEach(btn => {
-                btn.classList.remove('answer-correct', 'answer-wrong', 'answer-neutral');
-                if (btn.dataset.value.toString() === currentQuestionCorrectAnswer.toString()) btn.classList.add('answer-correct');
-                else if (ansObj && btn.dataset.value.toString() === (ansObj.value?.toString())) btn.classList.add('answer-wrong');
-                else btn.classList.add('answer-neutral');
+                btn.classList.remove('answer-correct', 'answer-wrong', 'answer-neutral', 'hover:bg-gray-50');
+                if (btn.dataset.value.toString() === currentQuestionCorrectAnswer.toString()) {
+                    btn.classList.add('answer-correct');
+                } else if (ansObj && btn.dataset.value.toString() === (ansObj.value?.toString())) {
+                    btn.classList.add('answer-wrong');
+                } else {
+                    btn.classList.add('answer-neutral');
+                }
+                btn.style.pointerEvents = 'none';
             });
-            document.getElementById('answers-container').classList.add('pointer-events-none');
+            
+            document.getElementById('answers-container').classList.add('pointer-events-none', 'opacity-90');
             
             if (currentGameMode === 'online') {
                 document.getElementById('waiting-msg').classList.remove('hidden');
                 if (!currentMatchId) return;
+                
                 const isP1 = matchData.player1.uid === currentUser.uid;
                 const scoreIncrement = ansObj && ansObj.isCorrect ? 1 : 0;
-                const updates = { answersCount: increment(1) };
-                if(ansObj && ansObj.isCorrect) updates[isP1?'player1.score':'player2.score'] = increment(scoreIncrement);
+                const updates = { 
+                    answersCount: increment(1),
+                    lastAnswerAt: serverTimestamp()
+                };
+                
+                if(ansObj && ansObj.isCorrect) {
+                    updates[isP1 ? 'player1.score' : 'player2.score'] = increment(scoreIncrement);
+                }
+                
                 await updateDoc(doc(db, "match_queue", currentMatchId), updates);
+                
+                // Check if both players have answered
+                const newAnswersCount = (matchData.answersCount || 0) + 1;
+                if (newAnswersCount >= 2) {
+                    // Move to next question after short delay
+                    setTimeout(async () => {
+                        if (isExitingGame) return;
+                        
+                        const nextIdx = (matchData.currentIdx || 0) + 1;
+                        await updateDoc(doc(db, "match_queue", currentMatchId), {
+                            currentIdx: nextIdx,
+                            answersCount: 0
+                        });
+                    }, 2000);
+                }
+                
             } else {
+                // AI mode
                 document.getElementById('waiting-msg').classList.add('hidden');
                 if(ansObj && ansObj.isCorrect) {
                     localMatchData.player1.score += 1;
@@ -2210,9 +3004,18 @@
         function triggerAIResponse() {
             document.getElementById('waiting-msg').classList.add('hidden');
             document.getElementById('ai-thinking-msg').classList.remove('hidden');
-            let delay = 3000; let accuracy = 0.5;
-            if (aiDifficulty === 'hard') { delay = 3500; accuracy = 0.7; }
-            if (aiDifficulty === 'easy') { delay = 2500; accuracy = 0.25; }
+            
+            let delay = 3000; 
+            let accuracy = 0.5;
+            
+            if (aiDifficulty === 'hard') { 
+                delay = 3500; 
+                accuracy = 0.7; 
+            }
+            if (aiDifficulty === 'easy') { 
+                delay = 2500; 
+                accuracy = 0.25; 
+            }
             
             aiTimeoutId = setTimeout(() => {
                 if(Math.random() < accuracy) {
@@ -2225,32 +3028,88 @@
             }, delay);
         }
 
+        function handleAINextTurn() {
+            localMatchData.currentIdx += 1;
+            localMatchData.answersCount = 0;
+            renderGame(localMatchData);
+        }
+
         async function endGame(d) {
             clearInterval(gameTimer);
-            document.getElementById('game-overlay').classList.add('hidden');
+            clearTimeout(aiTimeoutId);
+            
             if (isExitingGame) return;
-            let myScore, opScore;
+            
+            let myScore, opScore, opponentId = null;
+            
             if (currentGameMode === 'online') {
                 const isP1 = d.player1.uid === currentUser.uid;
-                myScore = isP1 ? d.player1.score : d.player2.score; opScore = isP1 ? d.player2.score : d.player1.score;
+                myScore = isP1 ? d.player1.score : d.player2.score; 
+                opScore = isP1 ? d.player2.score : d.player1.score;
+                opponentId = isP1 ? d.player2.uid : d.player1.uid;
+                
+                // Mark match as completed
+                if (currentMatchId) {
+                    try {
+                        await updateDoc(doc(db, "match_queue", currentMatchId), {
+                            status: 'completed',
+                            completedAt: serverTimestamp(),
+                            winner: myScore > opScore ? currentUser.uid : (myScore < opScore ? opponentId : 'draw')
+                        });
+                    } catch (e) {
+                        console.error("Error marking match as completed:", e);
+                    }
+                }
             } else {
-                myScore = localMatchData.player1.score; opScore = localMatchData.player2.score;
+                myScore = localMatchData.player1.score; 
+                opScore = localMatchData.player2.score;
             }
-            let pointsGained = 0; let msg = ""; let icon = "";
-            if (myScore > opScore) { msg = "فوز ساحق!"; icon = "🏆"; pointsGained = myScore * 2; } 
-            else if (myScore < opScore) { msg = "حظ أوفر!"; icon = "😢"; pointsGained = 0; } 
-            else { if(myScore > 0) { msg = "تعادل إيجابي!"; icon = "🤝"; pointsGained = myScore; } else { msg = "تعادل سلبي!"; icon = "😐"; pointsGained = 0; } }
+            
+            let pointsGained = 0; 
+            let msg = ""; 
+            let icon = "";
+            
+            if (myScore > opScore) { 
+                msg = "فوز ساحق!"; 
+                icon = "🏆"; 
+                pointsGained = myScore * 2; 
+            } else if (myScore < opScore) { 
+                msg = "حظ أوفر!"; 
+                icon = "😢"; 
+                pointsGained = Math.floor(myScore / 2); // Some points even if you lose
+            } else { 
+                if(myScore > 0) { 
+                    msg = "تعادل إيجابي!"; 
+                    icon = "🤝"; 
+                    pointsGained = myScore; 
+                } else { 
+                    msg = "تعادل سلبي!"; 
+                    icon = "😐"; 
+                    pointsGained = 0; 
+                } 
+            }
 
             if(pointsGained > 0) {
-                await updateDoc(doc(db, "users", currentUser.uid), { points: increment(pointsGained) });
-                userData.points += pointsGained;
-                setupHeaderUI();
+                try {
+                    await updateDoc(doc(db, "users", currentUser.uid), { 
+                        points: increment(pointsGained),
+                        lastGamePoints: pointsGained,
+                        lastGamePlayed: serverTimestamp()
+                    });
+                    userData.points += pointsGained;
+                    setupHeaderUI();
+                } catch (e) {
+                    console.error("Error updating points:", e);
+                }
             }
+            
             document.getElementById('result-icon-container').innerText = icon;
             document.getElementById('result-title').innerText = msg;
             document.getElementById('final-my-score').innerText = myScore;
             document.getElementById('final-op-score').innerText = opScore;
             document.getElementById('result-points-gained').innerText = `+${pointsGained}`;
+            
+            document.getElementById('game-overlay').classList.add('hidden');
             document.getElementById('result-screen').classList.remove('hidden');
             document.getElementById('result-screen').style.display = 'flex';
         }
@@ -2258,11 +3117,28 @@
         // --- FIXED: زر العودة وX عند انتهاء التحدي (تم إصلاحه تماماً) ---
         window.closeResultScreen = async () => {
              isExitingGame = true;
-             if (matchListenerUnsubscribe) { matchListenerUnsubscribe(); matchListenerUnsubscribe = null; }
-             clearInterval(gameTimer); clearTimeout(aiTimeoutId);
+             
+             if (matchListenerUnsubscribe) { 
+                 matchListenerUnsubscribe(); 
+                 matchListenerUnsubscribe = null; 
+             }
+             
+             if (adminListenerUnsubscribe && userData.email === ADMIN_EMAIL) {
+                 // Keep admin listener if user is admin
+             } else if (adminListenerUnsubscribe) {
+                 adminListenerUnsubscribe();
+                 adminListenerUnsubscribe = null;
+             }
+             
+             clearInterval(gameTimer); 
+             clearTimeout(aiTimeoutId);
+             
+             // Hide all game related screens
              document.getElementById('result-screen').classList.add('hidden');
              document.getElementById('game-overlay').classList.add('hidden');
              document.getElementById('searching-ui').classList.add('hidden');
+             document.getElementById('vs-screen').classList.add('hidden');
+             document.getElementById('exit-confirmation-modal').classList.add('hidden');
              
              // Reset all game variables
              currentMatchId = null; 
@@ -2276,7 +3152,7 @@
              // Show challenge card
              document.getElementById('challenge-active-card').classList.remove('hidden');
              
-             // Refresh user data if needed
+             // Refresh user data
              if(currentUser) {
                  try {
                      const userDoc = await getDoc(doc(db, "users", currentUser.uid));
@@ -2297,65 +3173,196 @@
              // Reset exiting flag after delay
              setTimeout(() => { 
                  isExitingGame = false; 
+                 
                  // Ensure all overlays are hidden
                  document.getElementById('game-overlay').style.display = 'none';
                  document.getElementById('result-screen').style.display = 'none';
                  document.getElementById('searching-ui').style.display = 'none';
-                 document.getElementById('vs-screen').classList.add('hidden');
+                 document.getElementById('vs-screen').style.display = 'none';
+                 document.getElementById('exit-confirmation-modal').style.display = 'none';
+                 
+                 // Reset timer color
+                 const timerEl = document.getElementById('game-timer');
+                 if (timerEl) {
+                     timerEl.classList.remove('bg-red-600');
+                     timerEl.classList.add('bg-gray-800');
+                 }
+                 
              }, 100);
         };
         
         window.cancelSearch = async () => {
-            if(currentMatchId && currentGameMode === 'online') { try { await deleteDoc(doc(db, "match_queue", currentMatchId)); } catch(e){} }
+            if(currentMatchId && currentGameMode === 'online') { 
+                try { 
+                    await deleteDoc(doc(db, "match_queue", currentMatchId)); 
+                } catch(e) {
+                    console.error("Error deleting match:", e);
+                }
+            }
+            
             document.getElementById('searching-ui').classList.add('hidden');
             document.getElementById('challenge-active-card').classList.remove('hidden');
+            
+            // Reset match variables
+            currentMatchId = null;
+            isExitingGame = false;
         };
 
         // --- AUTH & OTHER HELPERS ---
-        window.handleLogin = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('login-email').value, document.getElementById('login-pass').value); } catch (e) { alert(getArabicError(e.code)); } };
-        window.switchAuthTab = (tab) => {
-            if(tab === 'login') { document.getElementById('login-form').classList.remove('hidden'); document.getElementById('signup-form').classList.add('hidden'); document.getElementById('tab-login-btn').classList.add('active'); document.getElementById('tab-signup-btn').classList.remove('active'); } 
-            else { document.getElementById('login-form').classList.add('hidden'); document.getElementById('signup-form').classList.remove('hidden'); document.getElementById('tab-login-btn').classList.remove('active'); document.getElementById('tab-signup-btn').classList.add('active'); }
+        window.handleLogin = async () => { 
+            try { 
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-pass').value;
+                
+                if (!email || !password) {
+                    alert("يرجى ملء كافة الحقول");
+                    return;
+                }
+                
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (e) { 
+                console.error("Login error:", e);
+                alert(getArabicError(e.code)); 
+            } 
         };
-        window.openForgotPassword = () => { document.getElementById('forgot-password-modal').classList.remove('hidden'); document.getElementById('forgot-password-modal').style.display = 'flex'; };
-        window.closeForgotPassword = () => { document.getElementById('forgot-password-modal').classList.add('hidden'); };
+        
+        window.switchAuthTab = (tab) => {
+            if(tab === 'login') { 
+                document.getElementById('login-form').classList.remove('hidden'); 
+                document.getElementById('signup-form').classList.add('hidden'); 
+                document.getElementById('tab-login-btn').classList.add('active'); 
+                document.getElementById('tab-signup-btn').classList.remove('active'); 
+            } else { 
+                document.getElementById('login-form').classList.add('hidden'); 
+                document.getElementById('signup-form').classList.remove('hidden'); 
+                document.getElementById('tab-login-btn').classList.remove('active'); 
+                document.getElementById('tab-signup-btn').classList.add('active'); 
+            }
+        };
+        
+        window.openForgotPassword = () => { 
+            document.getElementById('forgot-password-modal').classList.remove('hidden'); 
+            document.getElementById('forgot-password-modal').style.display = 'flex'; 
+        };
+        
+        window.closeForgotPassword = () => { 
+            document.getElementById('forgot-password-modal').classList.add('hidden'); 
+        };
+        
         window.sendResetLink = async () => {
             const email = document.getElementById('forgot-email').value;
-            try { await sendPasswordResetEmail(auth, email); alert('✅ تم الإرسال'); closeForgotPassword(); } catch(e) { alert(getArabicError(e.code)); }
+            if (!email) {
+                alert("يرجى إدخال البريد الإلكتروني");
+                return;
+            }
+            
+            try { 
+                await sendPasswordResetEmail(auth, email); 
+                alert('✅ تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني'); 
+                closeForgotPassword(); 
+            } catch(e) { 
+                console.error("Password reset error:", e);
+                alert(getArabicError(e.code)); 
+            }
         };
-        window.logout = () => { if(adminListenerUnsubscribe) adminListenerUnsubscribe(); signOut(auth); };
+        
+        window.logout = () => { 
+            if(adminListenerUnsubscribe) adminListenerUnsubscribe(); 
+            if(matchListenerUnsubscribe) matchListenerUnsubscribe();
+            signOut(auth); 
+        };
         
         function getArabicError(code) {
              switch(code) {
                 case 'auth/email-already-in-use': return 'البريد الإلكتروني مستخدم بالفعل';
                 case 'auth/user-disabled': return 'تم تعطيل هذا الحساب';
+                case 'auth/user-not-found': return 'المستخدم غير موجود';
                 case 'auth/wrong-password': return 'كلمة المرور غير صحيحة';
+                case 'auth/too-many-requests': return 'تم تجاوز عدد المحاولات المسموح بها. حاول مرة أخرى لاحقاً';
+                case 'auth/network-request-failed': return 'خطأ في الشبكة. تحقق من اتصال الإنترنت';
+                case 'auth/invalid-email': return 'البريد الإلكتروني غير صالح';
+                case 'auth/weak-password': return 'كلمة المرور ضعيفة جداً';
                 default: return 'حدث خطأ: ' + code;
              }
         }
+        
         function compressImage(file) {
-            return new Promise((resolve) => {
-                const r = new FileReader(); r.readAsDataURL(file);
-                r.onload = (e) => { const i = new Image(); i.src = e.target.result; i.onload = () => { const c = document.createElement('canvas'); c.width=200; c.height=200; const ctx = c.getContext('2d'); ctx.drawImage(i,0,0,200,200); resolve(c.toDataURL('image/jpeg', 0.6)); }; };
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (e) => { 
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        // Set maximum dimensions
+                        let width = img.width;
+                        let height = img.height;
+                        const maxWidth = 400;
+                        const maxHeight = 400;
+                        
+                        if (width > height) {
+                            if (width > maxWidth) {
+                                height = height * (maxWidth / width);
+                                width = maxWidth;
+                            }
+                        } else {
+                            if (height > maxHeight) {
+                                width = width * (maxHeight / height);
+                                height = maxHeight;
+                            }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        resolve(canvas.toDataURL('image/jpeg', 0.7));
+                    };
+                    img.onerror = reject;
+                };
+                reader.onerror = reject;
             });
         }
-        function generateId() { return Math.random().toString(36).substr(2, 6).toUpperCase(); }
-        window.handleImagePreview = (input) => { if(input.files[0]) { const r = new FileReader(); r.onload = (e) => document.getElementById('preview-img').src = e.target.result; r.readAsDataURL(input.files[0]); } };
+        
+        function generateId() { 
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = '';
+            for (let i = 0; i < 6; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+        
+        function generateDeviceId() {
+            return 'DEV_' + Math.random().toString(36).substr(2, 9).toUpperCase();
+        }
+        
+        window.handleImagePreview = (input) => { 
+            if(input.files && input.files[0]) { 
+                const reader = new FileReader(); 
+                reader.onload = (e) => {
+                    const img = document.getElementById('preview-img');
+                    img.src = e.target.result;
+                    img.onerror = () => {
+                        img.src = 'https://ui-avatars.com/api/?name=User&background=random&size=128';
+                    };
+                }; 
+                reader.readAsDataURL(input.files[0]); 
+            } 
+        };
         
         // --- ADMIN UI SETUP ---
         function setupAdminUI() { 
             if (userData.email === ADMIN_EMAIL) { 
                 document.getElementById('admin-buttons').classList.remove('hidden'); 
                 document.getElementById('admin-challenge-controls').classList.remove('hidden');
+                checkAdminNotifications();
             } 
         }
-        window.checkAdminNotifications = () => {
-             const q = query(collection(db, "pending_questions"), where("status", "==", "pending"));
-             adminListenerUnsubscribe = onSnapshot(q, (snap) => {
-                 const count = snap.size; const b1 = document.getElementById('profile-tab-badge'); const b2 = document.getElementById('admin-btn-badge');
-                 if (count > 0) { b1.classList.add('visible'); b2.classList.add('visible'); } else { b1.classList.remove('visible'); b2.classList.remove('visible'); }
-             });
-        };
+        
         function listenToSystemStatus() {
              onSnapshot(doc(db, "system_settings", "config"), (docSnap) => {
                  if (docSnap.exists()) { 
@@ -2381,14 +3388,18 @@
                          }
                      }
                  }
+             }, (error) => {
+                 console.error("System status listener error:", error);
              });
         }
+        
         async function loadDisabledSubjects() { 
             try { 
                 const d = await getDoc(doc(db, "system_settings", "disabled_subjects")); 
                 disabledSubjects = d.exists() ? d.data() : {}; 
             } catch(e){ 
-                disabledSubjects={}; 
+                console.error("Error loading disabled subjects:", e);
+                disabledSubjects = {}; 
             } 
         }
 
@@ -2424,27 +3435,99 @@
             
             if (mcqEnabled && !tfEnabled) typeSelect.value = 'mcq';
             if (!mcqEnabled && tfEnabled) typeSelect.value = 'tf';
+            
+            // Update subject dropdown based on selected type
+            const selectedType = typeSelect.value;
+            populateSubjects(userData.grade, 'up-subject', selectedType);
         }
 
         // --- UPLOAD ---
         window.nextUploadStep = () => {
-             const sub = document.getElementById('up-subject').value; if (!sub) return alert("يرجى اختيار المادة");
-             document.getElementById('up-step-1').classList.add('hidden'); document.getElementById('up-step-2').classList.remove('hidden');
+             const sub = document.getElementById('up-subject').value; 
+             if (!sub) {
+                 alert("يرجى اختيار المادة");
+                 return;
+             }
+             
+             document.getElementById('up-step-1').classList.add('hidden'); 
+             document.getElementById('up-step-2').classList.remove('hidden');
+             
              const type = document.getElementById('up-type').value;
-             if(type === 'mcq') { document.getElementById('up-mcq-container').classList.remove('hidden'); document.getElementById('up-tf-container').classList.add('hidden'); }
-             else { document.getElementById('up-mcq-container').classList.add('hidden'); document.getElementById('up-tf-container').classList.remove('hidden'); }
+             if(type === 'mcq') { 
+                 document.getElementById('up-mcq-container').classList.remove('hidden'); 
+                 document.getElementById('up-tf-container').classList.add('hidden'); 
+             } else { 
+                 document.getElementById('up-mcq-container').classList.add('hidden'); 
+                 document.getElementById('up-tf-container').classList.remove('hidden'); 
+             }
         };
+        
         window.submitUploadQuestion = async () => {
-             const sub = document.getElementById('up-subject').value; const type = document.getElementById('up-type').value; const txt = document.getElementById('up-q-text').value;
-             if(!txt) return alert("يرجى كتابة نص السؤال");
-             let q = { grade: userData.grade, subject: sub, type, question: txt, authorId: currentUser.uid, authorName: userData.name, createdAt: serverTimestamp(), status: 'pending' };
-             if(type==='mcq') { const a0 = document.getElementById('ans-0').value; const a1 = document.getElementById('ans-1').value; const a2 = document.getElementById('ans-2').value; if(!a0 || !a1 || !a2) return alert("الخيارات"); q.answers = [a0, a1, a2]; q.correct = parseInt(document.querySelector('input[name="correct"]:checked').value); }
-             else { q.correct = document.getElementById('up-tf-val').value; }
-             await addDoc(collection(db, "pending_questions"), q); alert("تم الارسال للمراجعة");
-             document.getElementById('up-q-text').value = ""; document.getElementById('up-step-2').classList.add('hidden'); document.getElementById('up-step-1').classList.remove('hidden');
+             const sub = document.getElementById('up-subject').value; 
+             const type = document.getElementById('up-type').value; 
+             const txt = document.getElementById('up-q-text').value.trim();
+             
+             if(!txt) {
+                 alert("يرجى كتابة نص السؤال");
+                 return;
+             }
+             
+             if(txt.length < 5) {
+                 alert("نص السؤال قصير جداً");
+                 return;
+             }
+             
+             let q = { 
+                 grade: userData.grade, 
+                 subject: sub, 
+                 type, 
+                 question: txt, 
+                 authorId: currentUser.uid, 
+                 authorName: userData.name, 
+                 createdAt: serverTimestamp(), 
+                 status: 'pending' 
+             };
+             
+             if(type === 'mcq') { 
+                 const a0 = document.getElementById('ans-0').value.trim();
+                 const a1 = document.getElementById('ans-1').value.trim();
+                 const a2 = document.getElementById('ans-2').value.trim();
+                 
+                 if(!a0 || !a1 || !a2) {
+                     alert("يرجى ملء جميع الخيارات");
+                     return;
+                 }
+                 
+                 q.answers = [a0, a1, a2]; 
+                 q.correct = parseInt(document.querySelector('input[name="correct"]:checked').value); 
+             } else { 
+                 q.correct = document.getElementById('up-tf-val').value; 
+             }
+             
+             try {
+                 await addDoc(collection(db, "pending_questions"), q);
+                 
+                 // Reset form
+                 document.getElementById('up-q-text').value = "";
+                 if (type === 'mcq') {
+                     document.getElementById('ans-0').value = "";
+                     document.getElementById('ans-1').value = "";
+                     document.getElementById('ans-2').value = "";
+                 }
+                 
+                 document.getElementById('up-step-2').classList.add('hidden'); 
+                 document.getElementById('up-step-1').classList.remove('hidden');
+                 
+                 alert("✅ تم إرسال السؤال بنجاح للمراجعة!");
+                 
+             } catch (error) {
+                 console.error("Error submitting question:", error);
+                 alert("حدث خطأ أثناء إرسال السؤال");
+             }
         };
+        
         function updateUploadUI() { 
-            if(userData.grade) { 
+            if(userData && userData.grade) { 
                 updateUploadUIBasedOnSubjects();
                 const type = document.getElementById('up-type').value;
                 populateSubjects(userData.grade, 'up-subject', type);
@@ -2454,6 +3537,7 @@
                 };
             } 
         }
+        
         function populateSubjects(grade, elementId, type = null) {
             const sel = document.getElementById(elementId);
             if(!sel) return;
@@ -2472,12 +3556,42 @@
                 sel.innerHTML += '<option value="" disabled>لا توجد مواد متاحة</option>';
             }
         }
-        window.saveUserGrade = async () => { const g = document.getElementById('grade-select').value; if (!g) return; await updateDoc(doc(db, "users", currentUser.uid), { grade: g }); location.reload(); };
-        window.updateProfilePic = async (input) => { if(input.files[0]) { const p = await compressImage(input.files[0]); await updateDoc(doc(db, "users", currentUser.uid), { photo: p }); document.getElementById('profile-img').src = p; } };
         
-        // --- Setup UI Helpers ---
-        function setupProfileUI() { document.getElementById('profile-name-text').innerText = userData.name; document.getElementById('profile-id-text').innerText = "ID: " + userData.uniqueId; document.getElementById('profile-img').src = userData.photo; }
-        function setupHeaderUI() { document.getElementById('header-points').innerText = userData.points; }
+        window.saveUserGrade = async () => { 
+            const g = document.getElementById('grade-select').value; 
+            if (!g) {
+                alert("يرجى اختيار المرحلة");
+                return;
+            }
+            
+            try {
+                await updateDoc(doc(db, "users", currentUser.uid), { 
+                    grade: g,
+                    gradeSetAt: serverTimestamp()
+                });
+                location.reload();
+            } catch (error) {
+                alert("حدث خطأ أثناء حفظ المرحلة");
+                console.error("Save grade error:", error);
+            }
+        };
+        
+        window.updateProfilePic = async (input) => { 
+            if(input.files && input.files[0]) { 
+                try {
+                    const p = await compressImage(input.files[0]);
+                    await updateDoc(doc(db, "users", currentUser.uid), { 
+                        photo: p,
+                        photoUpdatedAt: serverTimestamp()
+                    });
+                    document.getElementById('profile-img').src = p;
+                    alert("✅ تم تحديث الصورة بنجاح!");
+                } catch (error) {
+                    console.error("Error updating profile picture:", error);
+                    alert("حدث خطأ أثناء تحديث الصورة");
+                }
+            } 
+        };
         
         // --- FIXED: زر "حسنا" في نافذة الإيقاف (تم إصلاحه تماماً) ---
         window.closeMaintenancePopup = () => { 
@@ -2502,20 +3616,451 @@
 
         window.saveSystemSettings = async () => {
             const isEnabled = document.getElementById('system-toggle').checked;
-            const msg = document.getElementById('maintenance-msg-input').value;
+            const msg = document.getElementById('maintenance-msg-input').value.trim();
             
-            if (!isEnabled && !msg.trim()) return alert("يرجى كتابة رسالة توضيحية للمستخدمين عند الإيقاف.");
+            if (!isEnabled && !msg) {
+                alert("يرجى كتابة رسالة توضيحية للمستخدمين عند إيقاف النظام.");
+                return;
+            }
 
             try {
                 await setDoc(doc(db, "system_settings", "config"), {
                     challengesEnabled: isEnabled,
-                    maintenanceMessage: msg
+                    maintenanceMessage: msg,
+                    updatedAt: serverTimestamp(),
+                    updatedBy: currentUser.uid
                 }, { merge: true });
+                
                 alert("✅ تم حفظ إعدادات النظام بنجاح!");
+                
             } catch (e) {
+                console.error("Error saving system settings:", e);
                 alert("خطأ في الحفظ: " + e.message);
             }
         };
+
+        // --- NEW ADMIN FEATURES FROM SECOND CODE ---
+        async function loadAdminAllContent() {
+             const div = document.getElementById('admin-all-list');
+             if(allAdminQuestions.length === 0) {
+                 div.innerHTML = '<p class="text-center text-gray-400">جاري جلب كل الأسئلة من قاعدة البيانات...</p>';
+                 try {
+                     const q = await getDocs(collection(db, "questions"));
+                     allAdminQuestions = [];
+                     q.forEach(d => allAdminQuestions.push({id: d.id, ...d.data()}));
+                     filterAdminQuestions();
+                 } catch (error) {
+                     console.error("Error loading admin questions:", error);
+                     div.innerHTML = '<p class="text-center text-red-500">حدث خطأ في تحميل الأسئلة</p>';
+                 }
+             } else {
+                 filterAdminQuestions();
+             }
+        }
+
+        window.populateAdminFilterSubjects = () => {
+            const grade = document.getElementById('admin-filter-grade').value;
+            const subSel = document.getElementById('admin-filter-subject');
+            subSel.innerHTML = '<option value="">كل المواد</option>';
+            if(grade && subjects[grade]) {
+                subjects[grade].forEach(s => subSel.innerHTML += `<option value="${s}">${s}</option>`);
+            }
+        }
+
+        window.renderAdminAllList = (list) => {
+            const div = document.getElementById('admin-all-list');
+            if(list.length === 0) { 
+                div.innerHTML = "<p class='text-center text-gray-400 mt-4'>لا توجد نتائج</p>"; 
+                return; 
+            }
+            
+            let html = `<p class="text-xs text-gray-400 mb-2">تم العثور على: ${list.length} سؤال</p>`;
+            
+            list.slice(0, 50).forEach(q => { 
+                const dateStr = q.createdAt?.toDate ? 
+                    q.createdAt.toDate().toLocaleDateString('ar-EG') : 
+                    "تاريخ غير معروف";
+                    
+                html += `
+                <div class="bg-white rounded-xl p-3 mb-3 border border-gray-100 shadow-sm flex flex-col gap-2">
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded font-bold">${q.grade || 'غير محدد'} | ${q.subject || 'غير محدد'}</span>
+                            <span class="text-xs text-gray-400">${q.type==='mcq'?'اختيارات':'صح/خطأ'}</span>
+                            <span class="text-xs text-gray-400">${dateStr}</span>
+                        </div>
+                        <div class="flex gap-1">
+                            <button onclick="openEditModal('${q.id}')" class="bg-blue-100 text-blue-600 px-3 py-1 rounded-lg text-xs font-bold hover:bg-blue-200 transition flex items-center gap-1">
+                                <i class="fas fa-edit"></i> تعديل
+                            </button>
+                            <button onclick="deleteApprovedQ('${q.id}')" class="bg-red-100 text-red-600 px-3 py-1 rounded-lg text-xs font-bold hover:bg-red-200 transition flex items-center gap-1">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="font-bold text-gray-700 text-sm leading-6 border-r-2 border-indigo-200 pr-2">${q.question || 'بدون نص'}</p>
+                </div>`;
+            });
+            
+            div.innerHTML = html;
+        };
+
+        window.filterAdminQuestions = () => {
+            if(event && event.target && event.target.id === 'admin-filter-grade') {
+                 populateAdminFilterSubjects();
+            }
+
+            const gr = document.getElementById('admin-filter-grade').value;
+            const sub = document.getElementById('admin-filter-subject').value;
+            
+            const filtered = allAdminQuestions.filter(q => {
+                const matchesGrade = gr ? (q.grade === gr) : true;
+                const matchesSubject = sub ? (q.subject === sub) : true;
+                return matchesGrade && matchesSubject;
+            });
+            
+            renderAdminAllList(filtered);
+        };
+
+        // QUESTION STATS
+        window.resetStatsUI = () => {
+             document.getElementById('stats-result-container').innerHTML = '<p class="text-center text-gray-400 text-sm mt-10">اختر البيانات واضغط حساب</p>';
+        }
+
+        window.calculateQuestionStats = async () => {
+            const grade = document.getElementById('stat-grade').value;
+            const type = document.getElementById('stat-type').value;
+            const resultDiv = document.getElementById('stats-result-container');
+            
+            resultDiv.innerHTML = '<p class="text-center text-gray-400">جاري الحساب بدقة...</p>';
+
+            try {
+                if(allAdminQuestions.length === 0) {
+                     const q = await getDocs(collection(db, "questions"));
+                     allAdminQuestions = [];
+                     q.forEach(d => allAdminQuestions.push({id: d.id, ...d.data()}));
+                }
+
+                const gradeSubjects = subjects[grade] || [];
+                
+                let html = "";
+                let totalForGrade = 0;
+
+                gradeSubjects.forEach(sub => {
+                    const count = allAdminQuestions.filter(q => 
+                        q.grade === grade && 
+                        q.type === type && 
+                        q.subject === sub &&
+                        (q.status === 'approved' || !q.status)
+                    ).length;
+
+                    totalForGrade += count;
+
+                    html += `
+                    <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-gray-100">
+                        <span class="font-bold text-gray-700">${sub}</span>
+                        <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-lg font-bold text-sm">${count}</span>
+                    </div>`;
+                });
+
+                const summaryHtml = `
+                <div class="bg-indigo-50 p-3 rounded-xl mb-3 border border-indigo-100 text-center">
+                    <p class="text-xs text-indigo-500 font-bold">المجموع الكلي لهذا القسم</p>
+                    <p class="text-2xl font-black text-indigo-800">${totalForGrade}</p>
+                    <p class="text-xs text-indigo-400 mt-1">${getGradeName(grade)} - ${type === 'mcq' ? 'اختيارات' : 'صح وخطأ'}</p>
+                </div>
+                `;
+
+                resultDiv.innerHTML = summaryHtml + (html || '<p class="text-center text-gray-400">لا توجد أسئلة</p>');
+                
+            } catch (error) {
+                console.error("Error calculating stats:", error);
+                resultDiv.innerHTML = '<p class="text-center text-red-500">حدث خطأ في الحساب</p>';
+            }
+        };
+
+        // SUBJECT MANAGEMENT
+        async function loadSubjectManagement() {
+            const grade = document.getElementById('subject-grade').value;
+            const type = document.getElementById('subject-type').value;
+            const container = document.getElementById('subject-management-list');
+            
+            if (!grade || !type) return;
+            
+            container.innerHTML = '<p class="text-center text-gray-400">جاري تحميل المواد...</p>';
+            
+            try {
+                const key = `${grade}_${type}`;
+                const currentDisabled = disabledSubjects[key] || {};
+                
+                let html = '';
+                const gradeSubjects = subjects[grade] || [];
+                
+                gradeSubjects.forEach(subject => {
+                    const isDisabled = currentDisabled[subject] === true;
+                    html += `
+                    <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm flex justify-between items-center">
+                        <div>
+                            <p class="font-bold text-gray-800">${subject}</p>
+                            <p class="text-xs text-gray-400">${getGradeName(grade)} - ${type === 'mcq' ? 'اختيارات' : 'صح وخطأ'}</p>
+                        </div>
+                        <label class="toggle-wrapper">
+                            <input type="checkbox" class="toggle-checkbox" ${isDisabled ? '' : 'checked'} 
+                                   onchange="toggleSubject('${grade}', '${type}', '${subject}', this.checked)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>`;
+                });
+                
+                if (gradeSubjects.length === 0) {
+                    html = '<p class="text-center text-gray-400">لا توجد مواد لهذه المرحلة</p>';
+                }
+                
+                container.innerHTML = html;
+                
+            } catch (error) {
+                console.error("Error loading subject management:", error);
+                container.innerHTML = '<p class="text-center text-red-500">حدث خطأ في تحميل المواد</p>';
+            }
+        }
+
+        window.toggleSubject = async function(grade, type, subject, enabled) {
+            const key = `${grade}_${type}`;
+            
+            if (!disabledSubjects[key]) {
+                disabledSubjects[key] = {};
+            }
+            
+            if (enabled) {
+                delete disabledSubjects[key][subject];
+            } else {
+                disabledSubjects[key][subject] = true;
+            }
+            
+            try {
+                await setDoc(doc(db, "system_settings", "disabled_subjects"), disabledSubjects, { merge: true });
+                alert(`✅ تم ${enabled ? 'تفعيل' : 'تعطيل'} المادة ${subject} لنوع ${type === 'mcq' ? 'الاختيارات' : 'صح وخطأ'}`);
+                
+                // Reload the management list
+                loadSubjectManagement();
+                
+                // Update upload UI if user is on upload tab
+                updateUploadUIBasedOnSubjects();
+                if (document.getElementById('tab-upload').classList.contains('active')) {
+                    const currentType = document.getElementById('up-type').value;
+                    populateSubjects(userData.grade, 'up-subject', currentType);
+                }
+                
+            } catch (e) {
+                console.error("Error toggling subject:", e);
+                alert('❌ حدث خطأ في حفظ التغييرات: ' + e.message);
+            }
+        };
+
+        // EDIT QUESTION MODAL FUNCTIONS
+        window.openEditModal = (id) => {
+            const q = allAdminQuestions.find(i => i.id === id);
+            if(!q) {
+                alert("لم يتم العثور على السؤال");
+                return;
+            }
+
+            document.getElementById('edit-q-id').value = id;
+            document.getElementById('edit-q-text').value = q.question || '';
+            document.getElementById('edit-q-grade').value = q.grade || '6sci';
+            
+            const subSel = document.getElementById('edit-q-subject');
+            subSel.innerHTML = "";
+            const gradeSubjects = subjects[q.grade || '6sci'] || [];
+            gradeSubjects.forEach(s => subSel.innerHTML += `<option value="${s}">${s}</option>`);
+            subSel.value = q.subject || '';
+
+            // Update subject dropdown when grade changes
+            document.getElementById('edit-q-grade').onchange = () => {
+                const g = document.getElementById('edit-q-grade').value;
+                subSel.innerHTML = "";
+                const subjectsList = subjects[g] || [];
+                subjectsList.forEach(s => subSel.innerHTML += `<option value="${s}">${s}</option>`);
+            };
+
+            if(q.type === 'mcq') {
+                document.getElementById('edit-mcq-fields').classList.remove('hidden');
+                document.getElementById('edit-tf-fields').classList.add('hidden');
+                
+                document.getElementById('edit-ans-0').value = q.answers ? q.answers[0] || '' : '';
+                document.getElementById('edit-ans-1').value = q.answers ? q.answers[1] || '' : '';
+                document.getElementById('edit-ans-2').value = q.answers ? q.answers[2] || '' : '';
+                document.getElementById('edit-correct-mcq').value = q.correct || '0';
+            } else {
+                document.getElementById('edit-mcq-fields').classList.add('hidden');
+                document.getElementById('edit-tf-fields').classList.remove('hidden');
+                document.getElementById('edit-correct-tf').value = q.correct || 'true';
+            }
+
+            document.getElementById('edit-modal').classList.remove('hidden');
+        };
+
+        window.saveFullEditQ = async () => {
+            const id = document.getElementById('edit-q-id').value;
+            const originalQ = allAdminQuestions.find(i => i.id === id);
+            
+            if (!originalQ) {
+                alert("لم يتم العثور على السؤال");
+                return;
+            }
+            
+            const type = originalQ.type;
+            const questionText = document.getElementById('edit-q-text').value.trim();
+            
+            if (!questionText) {
+                alert("يرجى إدخال نص السؤال");
+                return;
+            }
+
+            const updates = {
+                question: questionText,
+                grade: document.getElementById('edit-q-grade').value,
+                subject: document.getElementById('edit-q-subject').value,
+                updatedAt: serverTimestamp(),
+                updatedBy: currentUser.uid
+            };
+
+            if(type === 'mcq') {
+                const ans0 = document.getElementById('edit-ans-0').value.trim();
+                const ans1 = document.getElementById('edit-ans-1').value.trim();
+                const ans2 = document.getElementById('edit-ans-2').value.trim();
+                
+                if (!ans0 || !ans1 || !ans2) {
+                    alert("يرجى ملء جميع الخيارات");
+                    return;
+                }
+                
+                updates.answers = [ans0, ans1, ans2];
+                updates.correct = parseInt(document.getElementById('edit-correct-mcq').value);
+            } else {
+                updates.correct = document.getElementById('edit-correct-tf').value;
+            }
+
+            try {
+                await updateDoc(doc(db, "questions", id), updates);
+                
+                // Update local array
+                const idx = allAdminQuestions.findIndex(i => i.id === id);
+                if(idx !== -1) {
+                    allAdminQuestions[idx] = { ...allAdminQuestions[idx], ...updates };
+                }
+                
+                // Refresh current view
+                const activeScreen = document.querySelector('.screen.active').id;
+                if (activeScreen === 'screen-admin-all') filterAdminQuestions();
+                if (activeScreen === 'screen-admin-stats') calculateQuestionStats();
+
+                document.getElementById('edit-modal').classList.add('hidden');
+                alert("✅ تم حفظ التعديلات بنجاح!");
+                
+            } catch (error) {
+                console.error("Error saving edit:", error);
+                alert("حدث خطأ أثناء حفظ التعديلات");
+            }
+        };
+
+        window.deleteApprovedQ = async (id) => {
+            if(!confirm("هل أنت متأكد من حذف هذا السؤال نهائياً؟ لا يمكن التراجع عن هذا الإجراء.")) {
+                return;
+            }
+            
+            try {
+                await deleteDoc(doc(db, "questions", id));
+                allAdminQuestions = allAdminQuestions.filter(q => q.id !== id);
+                
+                // Refresh views
+                filterAdminQuestions();
+                calculateQuestionStats();
+                
+                alert("✅ تم حذف السؤال بنجاح!");
+                
+            } catch (error) {
+                console.error("Error deleting question:", error);
+                alert("حدث خطأ أثناء حذف السؤال");
+            }
+        };
+
+        // --- Setup UI Helpers ---
+        function setupProfileUI() { 
+            document.getElementById('profile-name-text').innerText = userData.name || "غير معروف";
+            document.getElementById('profile-id-text').innerText = "ID: " + (userData.uniqueId || "غير معروف");
+            document.getElementById('profile-img').src = userData.photo || "https://ui-avatars.com/api/?name=User&background=random&size=128";
+        }
+        
+        function setupHeaderUI() { 
+            document.getElementById('header-points').innerText = userData.points || 0; 
+        }
+        
+        function getGradeName(code) { 
+            return code==='6sci'?'السادس العلمي':code==='6lit'?'السادس الأدبي':code==='3med'?'الثالث متوسط':'غير محدد'; 
+        }
+        
+        async function getQuestions(sub, type) {
+            try {
+                const q = query(collection(db, "questions"), 
+                    where("subject", "==", sub), 
+                    where("type", "==", type), 
+                    limit(50));
+                const snap = await getDocs(q);
+                const list = [];
+                snap.forEach(d => {
+                    const data = d.data();
+                    if (data && (data.status === 'approved' || !data.status)) {
+                        list.push(data);
+                    }
+                });
+                return list;
+            } catch (error) {
+                console.error("Error getting questions:", error);
+                return [];
+            }
+        }
+
+        window.setQType = (t) => {
+            selectedQType = t;
+            document.getElementById('btn-mcq').className = `py-3 rounded-xl border-2 font-bold transition flex-1 ${t==='mcq'?'border-indigo-600 bg-indigo-50 text-indigo-600':'border-indigo-100 text-gray-500'}`;
+            document.getElementById('btn-tf').className = `py-3 rounded-xl border-2 font-bold transition flex-1 ${t==='tf'?'border-indigo-600 bg-indigo-50 text-indigo-600':'border-indigo-100 text-gray-500'}`;
+            
+            // Update subjects based on selected type
+            if (userData && userData.grade) {
+                populateSubjects(userData.grade, 'challenge-subject', t);
+            }
+        };
+
+        // Initialize subjects when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add error handling for images
+            document.querySelectorAll('img').forEach(img => {
+                img.onerror = function() {
+                    const name = this.alt || 'User';
+                    this.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&size=128`;
+                };
+            });
+            
+            // Initialize tooltips if needed
+            if (userData && userData.grade) {
+                setTimeout(() => {
+                    if (document.getElementById('challenge-subject')) {
+                        populateSubjects(userData.grade, 'challenge-subject');
+                    }
+                }, 1000);
+            }
+        });
+
+        // Add responsive behavior
+        function handleResize() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+
+        window.addEventListener('resize', handleResize);
+        handleResize();
+
     </script>
 </body>
 </html>
