@@ -32,12 +32,51 @@
             margin: 0; padding: 0;
         }
 
+        /* --- Smooth Transitions --- */
+        .screen {
+            display: none; height: 100vh; width: 100vw;
+            position: absolute; top: 0; left: 0; background: var(--bg-app); z-index: 10;
+            opacity: 0; transition: opacity 0.3s ease-in-out;
+        }
+        .screen.active { display: block; z-index: 20; opacity: 1; }
+
+        /* --- Intro Animation --- */
+        .intro-container {
+            position: fixed; inset: 0; background: #0f172a; z-index: 20000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .intro-logo {
+            font-size: 3.5rem; font-weight: 900;
+            background: linear-gradient(to right, #6366f1, #a855f7, #ec4899);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: introScale 2s infinite alternate;
+            text-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+        }
+        .intro-sub { color: #94a3b8; margin-top: 10px; animation: fadeInUp 1s ease-out; }
+        
+        @keyframes introScale { from { transform: scale(1); filter: blur(0px); } to { transform: scale(1.1); filter: blur(1px); } }
+
+        /* --- VS Screen Animation --- */
+        .vs-overlay {
+            position: fixed; inset: 0; background: #000; z-index: 15000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .vs-text {
+            font-size: 6rem; font-weight: 900; color: #ef4444;
+            text-shadow: 0 0 30px #ef4444; animation: vsPulse 0.5s infinite alternate;
+            font-style: italic;
+        }
+        .player-vs-card {
+            width: 120px; height: 120px; border-radius: 50%; border: 4px solid white;
+            object-fit: cover; box-shadow: 0 0 20px rgba(255,255,255,0.5);
+            animation: slideInSide 1s ease-out;
+        }
+        @keyframes vsPulse { from { transform: scale(1); } to { transform: scale(1.2); } }
+
         /* --- Custom Scroll --- */
         .scroll-container {
-            height: 100%;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 250px; /* Increased padding for better scrolling */
+            height: 100%; overflow-y: auto;
+            -webkit-overflow-scrolling: touch; padding-bottom: 250px;
         }
         .scroll-container::-webkit-scrollbar { display: none; }
         .scroll-container { -ms-overflow-style: none; scrollbar-width: none; }
@@ -47,21 +86,14 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes pulse-border { 0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(79, 70, 229, 0); } 100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); } }
         @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes glow-gold { 0% { box-shadow: 0 0 5px #FFD700, 0 0 10px #FFD700; } 50% { box-shadow: 0 0 20px #FFD700, 0 0 30px #FFD700; } 100% { box-shadow: 0 0 5px #FFD700, 0 0 10px #FFD700; } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
         /* --- Components --- */
-        .screen {
-            display: none; height: 100vh; width: 100vw;
-            position: absolute; top: 0; left: 0; background: var(--bg-app); z-index: 10;
-        }
-        .screen.active { display: block; z-index: 20; }
-
         .auth-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: white; z-index: 9999; display: flex;
             align-items: center; justify-content: center;
         }
-
         .input-box {
             background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
             padding: 14px; width: 100%; outline: none; font-size: 1rem; transition: border-color 0.2s;
@@ -106,63 +138,20 @@
             animation: slideUp 1s ease-out;
         }
 
-        .auth-tabs {
-            display: flex; background: #f1f5f9; padding: 4px;
-            border-radius: 14px; margin-bottom: 24px;
-        }
+        .auth-tabs { display: flex; background: #f1f5f9; padding: 4px; border-radius: 14px; margin-bottom: 24px; }
         .auth-tab {
             flex: 1; text-align: center; padding: 10px;
             font-weight: bold; color: #64748b; cursor: pointer;
             border-radius: 10px; transition: all 0.3s; font-size: 0.95rem;
         }
-        .auth-tab.active {
-            background: white; color: var(--primary);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
+        .auth-tab.active { background: white; color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-        /* --- RANKING FRAMES & RAYS (UPDATED FOR TOP 10) --- */
-        .rank-img-container { 
-            position: relative; 
-            display: flex; /* Changed to flex to center content */
-            align-items: center; 
-            justify-content: center;
-            width: 60px; /* Fixed width for rays space */
-            height: 60px; /* Fixed height for rays space */
-            margin-right: 5px;
-        }
+        /* --- RANKING STYLES --- */
+        .rank-img-container { position: relative; display: flex; align-items: center; justify-content: center; width: 60px; height: 60px; margin-right: 5px; }
+        .rank-img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; padding: 2px; background: white; position: relative; z-index: 5; }
+        .rank-badge-top { position: absolute; top: -5px; left: 50%; transform: translateX(-50%); background: #1f2937; color: white; font-size: 10px; font-weight: 900; padding: 2px 6px; border-radius: 8px; border: 2px solid white; z-index: 20; min-width: 20px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .rank-rays { position: absolute; inset: 0; border-radius: 50%; z-index: 1; animation: spin-slow 10s linear infinite; mask-image: radial-gradient(transparent 58%, black 60%); -webkit-mask-image: radial-gradient(transparent 58%, black 60%); opacity: 0.8; }
         
-        /* The Image Itself */
-        .rank-img { 
-            width: 48px; height: 48px; 
-            border-radius: 50%; 
-            object-cover: cover; 
-            padding: 2px; 
-            background: white; 
-            position: relative; 
-            z-index: 5; /* Ensure image is above rays */
-        }
-        
-        /* Rank Number Badge */
-        .rank-badge-top {
-            position: absolute; top: -5px; left: 50%; transform: translateX(-50%);
-            background: #1f2937; color: white; font-size: 10px; font-weight: 900;
-            padding: 2px 6px; border-radius: 8px; border: 2px solid white; z-index: 20;
-            min-width: 20px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        /* SUN RAYS ANIMATION FOR TOP 10 */
-        .rank-rays {
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
-            z-index: 1; /* Behind image */
-            animation: spin-slow 10s linear infinite;
-            mask-image: radial-gradient(transparent 58%, black 60%); /* Hide center part */
-            -webkit-mask-image: radial-gradient(transparent 58%, black 60%);
-            opacity: 0.8;
-        }
-
-        /* Ray Colors by Rank */
         .rays-gold { background: repeating-conic-gradient(from 0deg, #FFD700 0deg 10deg, transparent 10deg 20deg); }
         .rays-silver { background: repeating-conic-gradient(from 0deg, #C0C0C0 0deg 10deg, transparent 10deg 20deg); }
         .rays-bronze { background: repeating-conic-gradient(from 0deg, #CD7F32 0deg 10deg, transparent 10deg 20deg); }
@@ -171,25 +160,17 @@
         .rays-green { background: repeating-conic-gradient(from 0deg, #10b981 0deg 10deg, transparent 10deg 20deg); }
         .rays-purple { background: repeating-conic-gradient(from 0deg, #8b5cf6 0deg 10deg, transparent 10deg 20deg); }
 
-        /* Borders for images */
         .frame-rank-1 { border: 3px solid #FFD700; }
         .frame-rank-2 { border: 3px solid #C0C0C0; }
         .frame-rank-3 { border: 3px solid #CD7F32; }
         .frame-rank-common { border: 2px solid #e2e8f0; }
         .frame-rank-other-top { border: 2px solid #6366f1; }
-
-        /* Crown beside name */
         .name-crown { margin-right: 6px; font-size: 14px; animation: bounce 2s infinite; display: inline-block; }
 
-        /* Subway Surfers Style Daily Reward */
+        /* --- Daily Reward --- */
         .reward-overlay { background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); }
         .reward-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 20px; }
-        .day-box {
-            background: #f1f5f9; border-radius: 8px; padding: 6px 2px;
-            text-align: center; position: relative; border: 2px solid transparent;
-            transition: all 0.2s; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; min-height: 50px;
-        }
+        .day-box { background: #f1f5f9; border-radius: 8px; padding: 6px 2px; text-align: center; position: relative; border: 2px solid transparent; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 50px; }
         .day-box p { font-size: 0.6rem; color: #94a3b8; font-weight: bold; margin-bottom: 2px; }
         .day-box span { font-size: 0.7rem; font-weight: 900; display: block; line-height: 1.1; }
         .day-box.claimed { background: #10B981; border-color: #059669; }
@@ -200,56 +181,16 @@
         .day-box.active p { color: #D97706; }
         .day-box.locked { opacity: 0.6; }
 
-        /* --- NEW MAINTENANCE MODAL (Super Beautiful & Fixed) --- */
-        .new-maintenance-overlay {
-            position: fixed; inset: 0; z-index: 11000;
-            background: rgba(15, 23, 42, 0.95); /* Darker overlay */
-            backdrop-filter: blur(15px);
-            display: flex; align-items: center; justify-content: center;
-        }
-        .new-maintenance-card {
-            background: linear-gradient(145deg, #ffffff, #f8fafc);
-            border: 2px solid rgba(255, 255, 255, 0.8);
-            border-radius: 32px;
-            padding: 40px 30px;
-            width: 90%; max-width: 400px;
-            text-align: center;
-            box-shadow: 
-                0 20px 50px rgba(0, 0, 0, 0.5),
-                inset 0 0 20px rgba(255, 255, 255, 0.8);
-            position: relative;
-            overflow: hidden;
-            animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .new-maintenance-card::before {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
-            animation: spin-slow 20s linear infinite;
-            z-index: 0; pointer-events: none;
-        }
-        .maint-icon-wrapper {
-            position: relative; z-index: 1;
-            width: 100px; height: 100px; margin: 0 auto 20px;
-            background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.5);
-            border: 4px solid white;
-        }
+        /* --- Maintenance Modal --- */
+        .new-maintenance-overlay { position: fixed; inset: 0; z-index: 11000; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(15px); display: flex; align-items: center; justify-content: center; }
+        .new-maintenance-card { background: linear-gradient(145deg, #ffffff, #f8fafc); border: 2px solid rgba(255, 255, 255, 0.8); border-radius: 32px; padding: 40px 30px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); position: relative; overflow: hidden; animation: slideUp 0.5s; }
+        .maint-icon-wrapper { width: 100px; height: 100px; margin: 0 auto 20px; background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(239, 68, 68, 0.5); border: 4px solid white; }
         .maint-icon-wrapper i { font-size: 40px; color: white; animation: pulse-border 2s infinite; }
-        .maint-title { 
-            position: relative; z-index: 1; 
-            font-size: 1.8rem; font-weight: 900; color: #1e293b; margin-bottom: 10px; 
-            background: linear-gradient(to right, #EF4444, #B91C1C);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-        .maint-msg-box {
-            position: relative; z-index: 1;
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid #e2e8f0;
-            border-radius: 16px; padding: 20px; margin-bottom: 25px;
-            font-size: 1rem; line-height: 1.6; color: #334155; font-weight: 700;
-        }
+        .maint-title { font-size: 1.8rem; font-weight: 900; color: #1e293b; margin-bottom: 10px; background: linear-gradient(to right, #EF4444, #B91C1C); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* --- General Modals --- */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 12000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-content { background: white; width: 90%; max-width: 500px; max-height: 90vh; border-radius: 20px; padding: 20px; overflow-y: auto; animation: slideUp 0.3s ease-out; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
 
         /* Toggle Switch */
         .toggle-wrapper { position: relative; width: 50px; height: 26px; }
@@ -258,62 +199,18 @@
         .toggle-slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
         .toggle-checkbox:checked + .toggle-slider { background-color: #10B981; }
         .toggle-checkbox:checked + .toggle-slider:before { transform: translateX(24px); }
-        
-        /* Modal Styles */
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.5); 
-            z-index: 12000; /* FIXED: Increased z-index to show over Auth screen */
-            display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px);
-        }
-        .modal-content {
-            background: white; width: 90%; max-width: 500px; max-height: 90vh;
-            border-radius: 20px; padding: 20px; overflow-y: auto;
-            animation: slideUp 0.3s ease-out; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
 
-        /* Answer Colors - ENHANCED FOR CLEAR VISUAL FEEDBACK */
-        .answer-correct { 
-            background: #DCFCE7 !important; 
-            border-color: #22C55E !important; 
-            color: #166534 !important; 
-            position: relative;
-        }
-        .answer-correct::after {
-            content: '✓';
-            position: absolute;
-            left: 15px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #22C55E;
-        }
-        .answer-wrong { 
-            background: #FEE2E2 !important; 
-            border-color: #EF4444 !important; 
-            color: #991B1B !important;
-            position: relative;
-        }
-        .answer-wrong::after {
-            content: '✗';
-            position: absolute;
-            left: 15px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #EF4444;
-        }
-        .answer-neutral { 
-            background: white !important; 
-            border-color: #E5E7EB !important; 
-            color: #374151 !important; 
-        }
+        /* Answer Colors */
+        .answer-correct { background: #DCFCE7 !important; border-color: #22C55E !important; color: #166534 !important; position: relative; }
+        .answer-correct::after { content: '✓'; position: absolute; left: 15px; font-size: 1.2rem; font-weight: bold; color: #22C55E; }
+        .answer-wrong { background: #FEE2E2 !important; border-color: #EF4444 !important; color: #991B1B !important; position: relative; }
+        .answer-wrong::after { content: '✗'; position: absolute; left: 15px; font-size: 1.2rem; font-weight: bold; color: #EF4444; }
+        .answer-neutral { background: white !important; border-color: #E5E7EB !important; color: #374151 !important; }
 
-        /* Forgot Password Modal */
-        .forgot-password-modal {
-            background: white; border-radius: 24px; padding: 30px; width: 90%; max-width: 400px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            animation: slideUp 0.2s ease-out;
-        }
+        /* Banned Screen */
+        .banned-overlay { position: fixed; inset: 0; z-index: 25000; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; }
 
-        /* YELLOW WARNING STYLE - ADDED FOR PROBLEM 2 */
+        /* YELLOW WARNING STYLE */
         .yellow-warning {
             background-color: #FEF3C7 !important;
             border: 1px solid #F59E0B !important;
@@ -333,19 +230,48 @@
 </head>
 <body>
 
+    <!-- 0. INTRO ANIMATION (NEW) -->
+    <div id="intro-animation" class="intro-container">
+        <h1 class="intro-logo">هكر الوزاري</h1>
+        <p class="intro-sub">بوابتك للتفوق والتميز</p>
+    </div>
+
+    <!-- 0.5 VS SCREEN (NEW) -->
+    <div id="vs-screen" class="vs-overlay hidden">
+        <div class="flex justify-between items-center w-full px-8 mb-10">
+            <div class="text-center">
+                <img id="vs-p1-img" src="" class="player-vs-card mb-4 border-indigo-500">
+                <h3 id="vs-p1-name" class="text-white font-bold text-xl">...</h3>
+            </div>
+            <div class="text-center">
+                <img id="vs-p2-img" src="" class="player-vs-card mb-4 border-red-500">
+                <h3 id="vs-p2-name" class="text-white font-bold text-xl">...</h3>
+            </div>
+        </div>
+        <div class="vs-text">VS</div>
+        <p class="text-gray-400 mt-8 font-bold animate-pulse">جاري بدء التحدي...</p>
+    </div>
+
+    <!-- BANNED SCREEN (NEW) -->
+    <div id="banned-screen" class="banned-overlay hidden">
+        <i class="fas fa-ban text-6xl text-red-500 mb-6"></i>
+        <h1 class="text-3xl font-bold mb-2">تم حظر حسابك</h1>
+        <p class="text-gray-400">لقد تم منعك من استخدام التطبيق من قبل الإدارة.</p>
+    </div>
+
     <!-- 1. LOADING SCREEN -->
-    <div id="intro-screen" class="auth-overlay flex-col" style="z-index: 10000;">
+    <div id="intro-screen" class="auth-overlay flex-col" style="z-index: 10000; display: none;">
         <h1 class="hacker-text mb-4">هكر الوزاري</h1>
         <div class="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
         <p class="mt-4 text-gray-500 font-medium animate-pulse">جاري التحميل...</p>
     </div>
 
-    <!-- 2. DAILY REWARD POPUP -->
+    <!-- 2. DAILY REWARD POPUP (MODIFIED) -->
     <div id="daily-reward-screen" class="fixed inset-0 reward-overlay z-[9000] hidden flex flex-col items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl relative overflow-hidden animate-[slideUp_0.4s_ease-out]">
             <div class="text-center mb-4">
                 <h2 class="text-2xl font-black text-indigo-800">سجل الحضور اليومي 📅</h2>
-                <p class="text-xs text-gray-500">التوقيت حسب بغداد (12:00 ص)</p>
+                <p class="text-xs text-gray-500">مكافآت متصاعدة (5-10-15 نقطة)</p>
             </div>
             
             <div id="reward-grid-container" class="reward-grid"></div>
@@ -363,7 +289,7 @@
         </div>
     </div>
 
-    <!-- 3. NEW BEAUTIFUL MAINTENANCE MODAL (FIXED) -->
+    <!-- 3. MAINTENANCE MODAL -->
     <div id="maintenance-popup" class="new-maintenance-overlay hidden">
         <div class="new-maintenance-card">
             <div class="maint-icon-wrapper">
@@ -372,7 +298,7 @@
             <h2 class="maint-title">النظام تحت الصيانة</h2>
             <p class="text-sm text-red-500 font-bold mb-6 tracking-wide uppercase">System Maintenance</p>
             
-            <div class="maint-msg-box">
+            <div class="bg-white/90 border border-slate-200 rounded-xl p-5 mb-6 font-bold text-slate-700">
                 <p id="maintenance-msg-display">رسالة الإدارة...</p>
             </div>
             
@@ -382,9 +308,9 @@
         </div>
     </div>
 
-    <!-- 4. FORGOT PASSWORD MODAL - FIXED FOR PROBLEM 1 -->
+    <!-- 4. FORGOT PASSWORD MODAL -->
     <div id="forgot-password-modal" class="modal-overlay hidden">
-        <div class="forgot-password-modal">
+        <div class="modal-content">
             <div class="text-center mb-6">
                 <div class="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-3">
                     <i class="fas fa-key text-2xl text-white"></i>
@@ -395,15 +321,12 @@
             <div class="mb-6">
                 <label class="block text-sm font-bold text-gray-600 mb-2">البريد الإلكتروني</label>
                 <input type="email" id="forgot-email" placeholder="أدخل بريدك الإلكتروني المسجل" class="input-box">
-                <!-- YELLOW WARNING FOR PROBLEM 2 -->
                 <p class="text-xs yellow-warning mt-2">تنبيه: الرسالة ممكن توصل "الرسائل غير المرغوب فيها"</p>
             </div>
             
-            <p class="text-sm text-gray-600 mb-6 text-center">سيتم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني</p>
-            
             <div class="flex gap-3">
                 <button onclick="closeForgotPassword()" class="flex-1 bg-gray-100 text-gray-600 py-3 rounded-xl font-bold hover:bg-gray-200 transition">إلغاء</button>
-                <button onclick="sendResetLink()" class="flex-1 bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-3 rounded-xl font-bold shadow-md hover:opacity-90 transition">إرسال رابط الاستعادة</button>
+                <button onclick="sendResetLink()" class="flex-1 bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-3 rounded-xl font-bold shadow-md hover:opacity-90 transition">إرسال</button>
             </div>
         </div>
     </div>
@@ -435,9 +358,8 @@
                 </div>
                 <button type="submit" class="btn-main mt-8">دخول</button>
                 
-                <!-- Forgot Password Link - FIXED FOR PROBLEM 1 -->
                 <div class="text-center mt-4">
-                    <button type="button" onclick="openForgotPassword()" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium hover:underline transition-all duration-200 active:scale-95">
+                    <button type="button" onclick="openForgotPassword()" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium hover:underline transition-all duration-200">
                         هل نسيت كلمة السر؟
                     </button>
                 </div>
@@ -455,17 +377,22 @@
                 </div>
                 <div class="space-y-3">
                     <div>
-                        <input type="text" id="signup-name" placeholder="الاسم الظاهر في التصنيف" class="input-box" required>
+                        <input type="text" id="signup-name" placeholder="الاسم الظاهر" class="input-box" required>
                     </div>
                     <div>
-                        <input type="email" id="signup-email" placeholder="البريد الإلكتروني (@gmail.com)" class="input-box" required>
+                        <input type="email" id="signup-email" placeholder="البريد الإلكتروني" class="input-box" required>
                     </div>
                     <div>
-                        <input type="password" id="signup-pass" placeholder="كلمة المرور (6 أحرف ع الأقل)" class="input-box" required>
+                        <input type="password" id="signup-pass" placeholder="كلمة المرور" class="input-box" required>
+                    </div>
+                    <!-- NEW REFERRAL FIELD -->
+                    <div>
+                         <label class="block text-xs font-bold text-indigo-600 mb-1 mr-1">رمز الحالة (اختياري)</label>
+                        <input type="text" id="signup-referral" placeholder="أدخل رمز الدعوة لربح 25 نقطة" class="input-box border-dashed border-indigo-300 bg-indigo-50">
                     </div>
                 </div>
                 <button type="submit" class="btn-main mt-6 bg-indigo-600">إنشاء حساب جديد</button>
-                <p class="text-xs text-center text-gray-400 mt-4">الصورة الشخصية اختيارية</p>
+                <p class="text-xs text-center text-gray-400 mt-4">سيتم ربط هذا الحساب بجهازك الحالي</p>
             </form>
         </div>
     </div>
@@ -537,20 +464,9 @@
                             </select>
                         </div>
                     </div>
-
                 </div>
 
-                <!-- Searching UI -->
-                <div id="searching-ui" class="hidden flex-col items-center justify-center py-10 min-h-[300px]">
-                    <div class="w-24 h-24 rounded-full bg-indigo-50 flex items-center justify-center relative mb-6">
-                        <div class="absolute inset-0 rounded-full border-4 border-indigo-500 opacity-20 animate-ping"></div>
-                        <i class="fas fa-search text-3xl text-indigo-600"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800" id="search-msg">جاري البحث...</h3>
-                    <button onclick="cancelSearch()" class="mt-8 text-red-500 font-bold text-sm bg-red-50 px-4 py-2 rounded-full">إلغاء</button>
-                </div>
-
-                <!-- === ADMIN CONTROL PANEL === -->
+                <!-- ADMIN CONTROL PANEL -->
                 <div id="admin-challenge-controls" class="hidden mt-8 mb-6 bg-gray-900 rounded-2xl p-5 border-2 border-indigo-600 shadow-xl relative overflow-hidden">
                     <div class="absolute top-0 right-0 w-20 h-20 bg-indigo-600 opacity-20 rounded-full -mr-10 -mt-10"></div>
                     
@@ -569,7 +485,6 @@
 
                     <p id="system-status-text" class="text-xs font-bold text-green-400 mb-2">النظام يعمل حالياً ✅</p>
                     
-                    <!-- Always visible settings container -->
                     <div class="mt-4">
                         <label class="block text-xs font-bold text-gray-400 mb-2">رسالة التنبيه للطلاب (سبب الإيقاف):</label>
                         <textarea id="maintenance-msg-input" class="w-full bg-gray-800 border border-gray-600 text-white rounded-xl p-3 text-sm focus:border-indigo-500 outline-none h-20 mb-3" placeholder="مثلاً: توقف للصيانة، نعود بعد ساعة..."></textarea>
@@ -579,23 +494,34 @@
                         </button>
                     </div>
                 </div>
-                <!-- ============================================== -->
+
+                <!-- Searching UI -->
+                <div id="searching-ui" class="hidden flex-col items-center justify-center py-10 min-h-[300px]">
+                    <div class="w-24 h-24 rounded-full bg-indigo-50 flex items-center justify-center relative mb-6">
+                        <div class="absolute inset-0 rounded-full border-4 border-indigo-500 opacity-20 animate-ping"></div>
+                        <i class="fas fa-search text-3xl text-indigo-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800" id="search-msg">جاري البحث...</h3>
+                    <button onclick="cancelSearch()" class="mt-8 text-red-500 font-bold text-sm bg-red-50 px-4 py-2 rounded-full">إلغاء</button>
+                </div>
             </div>
         </div>
 
-        <!-- GAME OVERLAY -->
+        <!-- GAME OVERLAY (UPDATED WITH IMAGES) -->
         <div id="game-overlay" class="fixed inset-0 bg-gray-50 z-[100] hidden flex-col">
-            <div class="bg-white p-4 shadow-sm flex justify-between items-center z-10">
-                <div class="text-center w-1/3 overflow-hidden">
-                    <p id="p1-name" class="text-xs text-gray-500 font-bold truncate">...</p>
-                    <p id="game-my-score" class="text-2xl font-bold text-indigo-600">0</p>
+            <div class="bg-white p-4 shadow-sm flex justify-between items-center z-10 h-24">
+                <div class="text-center w-1/3 flex flex-col items-center">
+                    <img id="p1-img-game" src="" class="w-10 h-10 rounded-full border-2 border-indigo-500 mb-1">
+                    <p id="p1-name" class="text-xs text-gray-500 font-bold truncate w-full">...</p>
+                    <p id="game-my-score" class="text-2xl font-bold text-indigo-600 leading-none">0</p>
                 </div>
                 <div class="w-1/3 flex justify-center">
                     <div id="game-timer" class="w-12 h-12 bg-gray-800 text-white rounded-full flex items-center justify-center font-bold text-lg">15</div>
                 </div>
-                <div class="text-center w-1/3 overflow-hidden">
-                    <p id="p2-name" class="text-xs text-gray-500 font-bold truncate">...</p>
-                    <p id="game-op-score" class="text-2xl font-bold text-red-500">0</p>
+                <div class="text-center w-1/3 flex flex-col items-center">
+                     <img id="p2-img-game" src="" class="w-10 h-10 rounded-full border-2 border-red-500 mb-1">
+                    <p id="p2-name" class="text-xs text-gray-500 font-bold truncate w-full">...</p>
+                    <p id="game-op-score" class="text-2xl font-bold text-red-500 leading-none">0</p>
                 </div>
             </div>
 
@@ -606,7 +532,7 @@
                 </div>
                 <div id="answers-container" class="space-y-3"></div>
                 <p id="waiting-msg" class="text-center text-gray-400 text-sm hidden animate-pulse mt-4">بانتظار إجابة الخصم...</p>
-                <p id="ai-thinking-msg" class="text-center text-green-600 text-sm hidden animate-pulse mt-4 font-bold">الذكاء الاصطناعي يفكر...</p>
+                <p id="ai-thinking-msg" class="text-center text-green-600 text-sm hidden animate-pulse mt-4 font-bold">الروبوت يفكر...</p>
             </div>
         </div>
 
@@ -644,9 +570,21 @@
             </button>
         </div>
 
-        <!-- TAB 2: LEADERBOARD -->
+        <!-- TAB 2: LEADERBOARD (UPDATED WITH WEEKLY TIMER) -->
         <div id="tab-leaderboard" class="screen pt-20">
             <div class="scroll-container px-4">
+                
+                <!-- NEW WEEKLY RESET TIMER -->
+                <div class="bg-gray-900 rounded-2xl p-4 mb-4 text-white text-center relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-indigo-900 to-purple-900 opacity-50"></div>
+                    <div class="relative z-10">
+                        <p class="text-xs text-gray-400 font-bold mb-1">الجوائز الأسبوعية توزع بعد:</p>
+                        <!-- تم تعديل التنسيق: إزالة كلمة "يوم" -->
+                        <div id="weekly-timer" class="text-2xl font-mono font-bold text-yellow-400">00:00:00:00</div>
+                        <p class="text-[10px] text-gray-500 mt-1">يوم الخميس 12:00 ليلاً بتوقيت العراق</p>
+                    </div>
+                </div>
+
                 <div class="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white p-4 rounded-2xl mb-4 shadow-lg flex items-center justify-between">
                     <div>
                         <p class="font-bold text-sm opacity-90">ترتيبك الحالي</p>
@@ -661,13 +599,12 @@
         <!-- TAB 3: UPLOAD -->
         <div id="tab-upload" class="screen pt-20">
             <div class="scroll-container px-5 py-6">
-                <!-- NOTES SECTION ADDED -->
+                <!-- NOTES SECTION -->
                 <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
                     <h3 class="font-bold text-blue-800 text-sm mb-2"><i class="fas fa-info-circle ml-1"></i> تعليمات رفع الأسئلة:</h3>
                     <ul class="text-xs text-blue-700 space-y-1 list-decimal list-inside font-medium">
-                        <li>يجب ان تكون الأسئلة المضافة من ضمن المنهج ليتم قبولها.</li>
+                        <li>يجب ان تكون الأسئلة المضافة من ضمن المنهج.</li>
                         <li>يجب التأكد من اختيار الجواب الصحيح بدقة.</li>
-                        <li>يجب التفريق بين نوع الأسئلة (اختيارات) و (صح وخطأ).</li>
                     </ul>
                 </div>
 
@@ -749,6 +686,25 @@
                 </div>
 
                 <div class="space-y-3 pb-20">
+                    <!-- NEW MONEY BUTTON (11) -->
+                    <button onclick="openPage('screen-money')" class="stat-btn border-green-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600"><i class="fas fa-wallet"></i></div>
+                            <span class="font-bold text-gray-700">أموالي</span>
+                        </div>
+                        <i class="fas fa-chevron-left text-gray-300"></i>
+                    </button>
+
+                    <!-- NEW REFERRAL BUTTON (6) -->
+                    <button onclick="openPage('screen-referral')" class="stat-btn border-indigo-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600"><i class="fas fa-share-alt"></i></div>
+                            <span class="font-bold text-gray-700">رمز الحالة $</span>
+                        </div>
+                        <i class="fas fa-chevron-left text-gray-300"></i>
+                    </button>
+
+                    <!-- إحصائيات التطبيق -->
                     <button onclick="openPage('screen-stats')" class="stat-btn">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600"><i class="fas fa-chart-pie"></i></div>
@@ -757,6 +713,7 @@
                         <i class="fas fa-chevron-left text-gray-300"></i>
                     </button>
 
+                    <!-- نقاطي وتاريخي -->
                     <button onclick="openPage('screen-my-points')" class="stat-btn">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600"><i class="fas fa-star"></i></div>
@@ -765,6 +722,7 @@
                         <i class="fas fa-chevron-left text-gray-300"></i>
                     </button>
 
+                    <!-- أسئلتي المرفوعة -->
                     <button onclick="openPage('screen-my-questions')" class="stat-btn">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600"><i class="fas fa-question"></i></div>
@@ -775,29 +733,43 @@
                     
                     <div id="admin-buttons" class="hidden space-y-3 border-t pt-3 mt-3">
                         <p class="text-xs text-red-400 font-bold px-2">لوحة التحكم</p>
+                        
+                        <!-- NEW USER MANAGEMENT BUTTON (8) -->
+                        <button onclick="openPage('screen-admin-users')" class="stat-btn border-red-100 bg-red-50">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-red-600"><i class="fas fa-users-cog"></i></div>
+                                <span class="font-bold text-red-700">إدارة المستخدمين</span>
+                            </div>
+                        </button>
+
+                        <!-- مراجعة الأسئلة -->
                         <button onclick="openPage('screen-admin-review')" class="stat-btn border-red-100 bg-red-50">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-red-600 relative">
                                     <i class="fas fa-gavel"></i>
-                                    <div id="admin-btn-badge" class="btn-dot"></div>
+                                    <div id="admin-btn-badge" class="red-dot"></div>
                                 </div>
                                 <span class="font-bold text-red-700">مراجعة الأسئلة</span>
                             </div>
                         </button>
+                        
+                        <!-- تعديل الأسئلة المرفوعة -->
                         <button onclick="openPage('screen-admin-all')" class="stat-btn border-red-100 bg-red-50">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-red-600"><i class="fas fa-edit"></i></div>
                                 <span class="font-bold text-red-700">تعديل الأسئلة المرفوعة</span>
                             </div>
                         </button>
-                        <!-- NEW BUTTON FOR QUESTION STATS -->
+                        
+                        <!-- عدد الأسئلة المرفوعة -->
                         <button onclick="openPage('screen-admin-stats')" class="stat-btn border-red-100 bg-red-50">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-red-600"><i class="fas fa-list-ol"></i></div>
                                 <span class="font-bold text-red-700">عدد الأسئلة المرفوعة</span>
                             </div>
                         </button>
-                        <!-- NEW BUTTON FOR SUBJECT MANAGEMENT -->
+                        
+                        <!-- المواد التي تستقبل أسئلة -->
                         <button onclick="openPage('screen-admin-subjects')" class="stat-btn border-red-100 bg-red-50">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-red-600"><i class="fas fa-book"></i></div>
@@ -816,7 +788,96 @@
             </div>
         </div>
 
-        <!-- === SUB SCREENS (FREE PAGES) === -->
+        <!-- === SUB SCREENS === -->
+        
+        <!-- Screen: Referral (NEW) -->
+        <div id="screen-referral" class="screen pt-20">
+            <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
+                <button onclick="backToProfile()" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
+                <h1 class="font-bold text-lg text-gray-800">رمز الحالة $</h1>
+            </div>
+            <div class="scroll-container px-5 py-6 text-center">
+                <div class="bg-indigo-600 rounded-3xl p-8 text-white mb-6 shadow-xl relative overflow-hidden">
+                    <div class="relative z-10">
+                        <p class="text-indigo-200 text-sm mb-2">رمزك الخاص</p>
+                        <h1 id="my-referral-code" class="text-4xl font-black mb-4 tracking-widest">...</h1>
+                        <button onclick="copyReferral()" class="bg-white text-indigo-600 px-6 py-2 rounded-full font-bold text-sm hover:scale-105 transition shadow-lg">نسخ الرمز</button>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                        <p class="text-xs text-gray-400 mb-1">المدعوين</p>
+                        <p id="ref-count-display" class="text-2xl font-bold text-gray-800">0</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                        <p class="text-xs text-gray-400 mb-1">الأرباح</p>
+                        <p class="text-2xl font-bold text-green-600">+<span id="ref-earnings">0</span></p>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 p-4 rounded-xl text-right text-xs text-yellow-800 leading-6 border border-yellow-200">
+                    <p class="font-bold mb-2">💡 كيف يعمل؟</p>
+                    <ul class="list-disc list-inside">
+                        <li>شارك الرمز مع أصدقائك.</li>
+                        <li>عند تسجيلهم بالرمز: يحصلون على <b>25 نقطة</b>.</li>
+                        <li>أنت تحصل على <b>50 نقطة</b> فوراً.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen: Money (NEW) -->
+        <div id="screen-money" class="screen pt-20">
+            <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
+                <button onclick="backToProfile()" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
+                <h1 class="font-bold text-lg text-gray-800">أموالي</h1>
+            </div>
+            <div class="scroll-container px-5 py-6 text-center">
+                <div class="bg-emerald-600 rounded-3xl p-8 text-white mb-6 shadow-xl">
+                    <p class="text-emerald-200 text-sm mb-2">الرصيد الكلي</p>
+                    <h1 class="text-5xl font-black mb-1">$<span id="wallet-balance">0</span></h1>
+                    <p class="text-xs opacity-70 mt-4">يمكن سحب أقل شي 100$</p>
+                    <p class="text-xs opacity-70">كل 50 دولار تساوي 5$ بالأموال العراقية</p>
+                </div>
+
+                <button id="withdraw-btn" onclick="window.open('https://t.me/mslmh19', '_blank')" class="w-full bg-gray-200 text-gray-400 py-4 rounded-xl font-bold shadow-none cursor-not-allowed mb-6" disabled>
+                    المطالبة بالأموال
+                </button>
+                
+                <p class="text-xs text-gray-400">يتم تجميع الرصيد من الجوائز الأسبوعية في قائمة التصنيف.</p>
+            </div>
+        </div>
+
+        <!-- Screen: Admin Users (NEW) -->
+        <div id="screen-admin-users" class="screen pt-20">
+            <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
+                <button onclick="backToProfile()" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
+                <h1 class="font-bold text-lg text-gray-800">إدارة المستخدمين</h1>
+            </div>
+            <div class="scroll-container px-5 py-6">
+                <div class="flex gap-2 mb-6">
+                    <input type="text" id="admin-search-id" placeholder="أدخل معرف المستخدم (ID)" class="input-box text-center uppercase">
+                    <button onclick="adminSearchUser()" class="btn-main w-auto px-6"><i class="fas fa-search"></i></button>
+                </div>
+                
+                <div id="admin-user-result" class="hidden bg-white p-5 rounded-2xl shadow-lg border border-gray-200">
+                    <img id="admin-u-img" src="" class="w-16 h-16 rounded-full mx-auto mb-3">
+                    <h3 id="admin-u-name" class="text-center font-bold text-lg mb-1">...</h3>
+                    <p id="admin-u-id" class="text-center text-xs text-gray-400 mb-4">ID: ...</p>
+                    
+                    <div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg mb-4">
+                        <span class="text-sm font-bold text-gray-600">الرصيد: $<span id="admin-u-balance">0</span></span>
+                        <span id="admin-u-status" class="text-xs font-bold">...</span>
+                    </div>
+
+                    <div class="space-y-2">
+                        <button id="btn-ban-toggle" onclick="toggleBan()" class="w-full py-3 rounded-xl font-bold text-white transition"></button>
+                        <button id="btn-reset-money" onclick="resetUserMoney()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-xl font-bold">تصفير الأموال</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Screen: App Stats -->
         <div id="screen-stats" class="screen pt-20">
@@ -881,8 +942,8 @@
             </div>
         </div>
 
-         <!-- Screen: Admin ALL Questions (Refactored) -->
-         <div id="screen-admin-all" class="screen pt-20">
+        <!-- Screen: Admin ALL Questions -->
+        <div id="screen-admin-all" class="screen pt-20">
             <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
                 <button onclick="backToProfile()" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
                 <h1 class="font-bold text-lg text-gray-800">تعديل الأسئلة المرفوعة</h1>
@@ -900,7 +961,6 @@
                         </select>
                         <select id="admin-filter-subject" class="input-box text-sm p-2" onchange="filterAdminQuestions()">
                             <option value="">كل المواد</option>
-                            <!-- Populated dynamically via JS when grade changes -->
                         </select>
                     </div>
                 </div>
@@ -909,7 +969,7 @@
             </div>
         </div>
 
-        <!-- Screen: Admin Question Stats (FIXED SCROLLING) -->
+        <!-- Screen: Admin Question Stats -->
         <div id="screen-admin-stats" class="screen pt-20">
             <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
                 <button onclick="backToProfile()" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
@@ -936,13 +996,12 @@
                 </div>
 
                 <div id="stats-result-container" class="space-y-2 pb-40">
-                    <!-- Results will appear here with EXTRA PADDING at bottom -->
                     <p class="text-center text-gray-400 text-sm mt-10">اختر البيانات واضغط حساب</p>
                 </div>
             </div>
         </div>
 
-        <!-- Screen: Admin Subject Management (NEW) -->
+        <!-- Screen: Admin Subject Management -->
         <div id="screen-admin-subjects" class="screen pt-20">
             <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
                 <button onclick="backToProfile()" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
@@ -970,25 +1029,6 @@
             </div>
         </div>
         
-        <!-- BOTTOM NAV -->
-        <div class="fixed bottom-0 w-full bg-white border-t border-gray-100 flex justify-around items-center h-20 pb-2 z-40 shadow-[0_-5px_20px_rgba(0,0,0,0.03)]">
-            <div onclick="switchTab('challenges')" class="nav-item active flex-1 flex flex-col items-center justify-center h-full cursor-pointer">
-                <i class="fas fa-gamepad text-xl mb-1"></i><span class="text-[10px] font-bold">التحديات</span>
-            </div>
-            <div onclick="switchTab('leaderboard')" class="nav-item flex-1 flex flex-col items-center justify-center h-full cursor-pointer text-gray-400">
-                <i class="fas fa-trophy text-xl mb-1"></i><span class="text-[10px] font-bold">التصنيف</span>
-            </div>
-            <div onclick="switchTab('upload')" class="nav-item flex-1 flex flex-col items-center justify-center h-full cursor-pointer text-gray-400">
-                <div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white shadow-lg -mt-6 border-4 border-gray-50"><i class="fas fa-plus"></i></div>
-                <span class="text-[10px] font-bold mt-1">رفع</span>
-            </div>
-            <div onclick="switchTab('profile')" class="nav-item flex-1 flex flex-col items-center justify-center h-full cursor-pointer text-gray-400">
-                <i class="fas fa-user text-xl mb-1"></i><span class="text-[10px] font-bold">حسابي</span>
-                <!-- Notification Badge -->
-                <div id="profile-tab-badge" class="red-dot"></div>
-            </div>
-        </div>
-        
         <!-- EDIT QUESTION MODAL -->
         <div id="edit-modal" class="modal-overlay hidden">
             <div class="modal-content relative">
@@ -1012,7 +1052,6 @@
                      <div class="flex-1">
                         <label class="block text-xs font-bold text-gray-500 mb-1">المادة</label>
                         <select id="edit-q-subject" class="input-box text-sm p-2">
-                             <!-- Populated by JS -->
                         </select>
                      </div>
                 </div>
@@ -1046,13 +1085,32 @@
                 <button onclick="saveFullEditQ()" class="btn-main mt-6 bg-indigo-600 text-sm">حفظ التعديلات</button>
             </div>
         </div>
+        
+        <!-- BOTTOM NAV -->
+        <div class="fixed bottom-0 w-full bg-white border-t border-gray-100 flex justify-around items-center h-20 pb-2 z-40 shadow-[0_-5px_20px_rgba(0,0,0,0.03)]">
+            <div onclick="switchTab('challenges')" class="nav-item active flex-1 flex flex-col items-center justify-center h-full cursor-pointer">
+                <i class="fas fa-gamepad text-xl mb-1"></i><span class="text-[10px] font-bold">التحديات</span>
+            </div>
+            <div onclick="switchTab('leaderboard')" class="nav-item flex-1 flex flex-col items-center justify-center h-full cursor-pointer text-gray-400">
+                <i class="fas fa-trophy text-xl mb-1"></i><span class="text-[10px] font-bold">التصنيف</span>
+            </div>
+            <div onclick="switchTab('upload')" class="nav-item flex-1 flex flex-col items-center justify-center h-full cursor-pointer text-gray-400">
+                <div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white shadow-lg -mt-6 border-4 border-gray-50"><i class="fas fa-plus"></i></div>
+                <span class="text-[10px] font-bold mt-1">رفع</span>
+            </div>
+            <div onclick="switchTab('profile')" class="nav-item flex-1 flex flex-col items-center justify-center h-full cursor-pointer text-gray-400">
+                <i class="fas fa-user text-xl mb-1"></i><span class="text-[10px] font-bold">حسابي</span>
+                <div id="profile-tab-badge" class="red-dot"></div>
+            </div>
+        </div>
+
     </div>
 
     <!-- JS -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, onSnapshot, query, where, orderBy, limit, deleteDoc, serverTimestamp, increment, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, onSnapshot, query, where, orderBy, limit, deleteDoc, serverTimestamp, increment, getDoc, writeBatch } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAfLOjiPiSQW9opdiIgQif3pAp8zsezy58",
@@ -1069,10 +1127,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         
-        // ******************************************************
-        // ⚠️⚠️⚠️ غير هذا الايميل الى ايميلك انت (الادمن) ⚠️⚠️⚠️
         const ADMIN_EMAIL = "mslmalmyaly223@gmail.com";
-        // ******************************************************
 
         setPersistence(auth, browserLocalPersistence).catch(e => console.error("Persistence Error", e));
 
@@ -1082,25 +1137,23 @@
         let currentMatchId = null;
         let gameTimer = null;
         let hasAnsweredCurrentQ = false;
-        let allAdminQuestions = []; // Stores all fetched questions for admin
+        let allAdminQuestions = [];
         let adminListenerUnsubscribe = null;
         let matchListenerUnsubscribe = null; 
         
         // --- GAME LOGIC VARS ---
         let isExitingGame = false;
-        let currentGameMode = 'online'; // 'online' or 'ai'
-        let aiDifficulty = 'medium'; // easy, medium, hard
-        let localMatchData = null; // For AI mode
-        let aiTimeoutId = null; // To clear AI thinking
-        let currentQuestionCorrectAnswer = null; // Store correct answer for UI
-        let userAnsweredCorrectly = false; // Track if user answered correctly
+        let currentGameMode = 'online'; 
+        let aiDifficulty = 'medium'; 
+        let localMatchData = null; 
+        let aiTimeoutId = null; 
+        let currentQuestionCorrectAnswer = null; 
+        let userAnsweredCorrectly = false; 
 
-        // --- SYSTEM STATUS VARS (Global) ---
+        // --- SYSTEM VARS ---
         let systemConfig = { enabled: true, msg: "النظام في وضع الصيانة حالياً" };
-
-        // --- SUBJECT MANAGEMENT VARS ---
-        let disabledSubjects = {}; // Format: {grade_type: {subject: true}}
-        let subjectManagementListener = null;
+        let disabledSubjects = {};
+        let searchedUser = null; // Admin searching
 
         const subjects = {
             '6sci': ['اسلامية', 'عربي', 'انكليزي', 'احياء', 'رياضيات', 'كيمياء', 'فيزياء'],
@@ -1108,23 +1161,30 @@
             '3med': ['اسلامية', 'عربي', 'انكليزي', 'رياضيات', 'كيمياء', 'فيزياء', 'اجتماعيات']
         };
 
-        // Initialize Firebase and Listeners
+        // Initialize
         onAuthStateChanged(auth, async (user) => {
             const intro = document.getElementById('intro-screen');
+            const introAnim = document.getElementById('intro-animation');
             const authScreen = document.getElementById('auth-screen');
             const mainApp = document.getElementById('main-app');
 
             if (user) {
                 currentUser = user;
-                // Start listening to system status immediately
                 listenToSystemStatus();
-                // Load disabled subjects
                 loadDisabledSubjects();
 
                 try {
                     const docSnap = await getDoc(doc(db, "users", user.uid));
                     if (docSnap.exists()) {
                         userData = docSnap.data();
+                        
+                        // BAN CHECK
+                        if(userData.isBanned) {
+                            document.getElementById('banned-screen').classList.remove('hidden');
+                            await signOut(auth);
+                            return;
+                        }
+
                         updateDoc(doc(db, "users", user.uid), { lastActive: serverTimestamp() });
                         
                         setupProfileUI();
@@ -1145,7 +1205,8 @@
                             document.getElementById('header-grade-badge').classList.add('hidden');
                         }
                         
-                        intro.classList.add('hidden');
+                        setTimeout(() => { introAnim.style.display = 'none'; }, 2000); 
+                        intro.style.display = 'none';
                         authScreen.classList.add('hidden');
                         mainApp.classList.remove('hidden');
                         if(!document.querySelector('.screen.active')) switchTab('challenges');
@@ -1156,306 +1217,176 @@
                     }
                 } catch(e) { console.error("Auth Data Error:", e); }
             } else {
-                intro.classList.add('hidden');
+                setTimeout(() => { introAnim.style.display = 'none'; }, 2000);
+                intro.style.display = 'none';
                 mainApp.classList.add('hidden');
                 authScreen.classList.remove('hidden');
                 window.switchAuthTab('login');
             }
         });
 
-        // --- PROBLEM 1: FIXED FORGOT PASSWORD POPUP SPEED & VISIBILITY ---
-        window.openForgotPassword = function() {
-            document.getElementById('forgot-password-modal').classList.remove('hidden');
-            // FIX: Added style explicitly to ensure display
-            document.getElementById('forgot-password-modal').style.display = 'flex';
-            document.getElementById('forgot-email').value = document.getElementById('login-email').value || '';
-            // Focus on email input
-            setTimeout(() => document.getElementById('forgot-email').focus(), 50);
+        // --- WEEKLY TIMER FUNCTION (تم التعديل حسب طلبك) ---
+        function updateWeeklyTimer() {
+            // Target: Thursday 00:00 AM (Iraq Time)
+            const now = new Date();
+            const iraqOffset = 3 * 60; // UTC+3 in minutes
+            const localOffset = now.getTimezoneOffset(); // in minutes
+            const iraqTime = new Date(now.getTime() + (iraqOffset + localOffset) * 60000);
+
+            // Find next Thursday
+            const day = iraqTime.getDay(); // 0=Sun, 4=Thu
+            let daysUntilThu = 4 - day;
+            if (daysUntilThu < 0) daysUntilThu += 7;
+            
+            const target = new Date(iraqTime);
+            target.setDate(iraqTime.getDate() + daysUntilThu);
+            target.setHours(24, 0, 0, 0); // Midnight Thursday/Friday
+
+            const diff = target - iraqTime;
+            
+            if (diff <= 1000 && diff > -5000) { 
+               // Trigger Reset Logic
+            }
+
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            // تم التعديل هنا ليكون بالتنسيق: أيام:ساعات:دقايق:ثواني (بدون كلمة يوم)
+            const daysStr = d.toString().padStart(2, '0');
+            const hoursStr = h.toString().padStart(2, '0');
+            const minutesStr = m.toString().padStart(2, '0');
+            const secondsStr = s.toString().padStart(2, '0');
+            
+            document.getElementById('weekly-timer').innerText = `${daysStr}:${hoursStr}:${minutesStr}:${secondsStr}`;
+        }
+
+        // Run timer every second
+        setInterval(updateWeeklyTimer, 1000);
+        updateWeeklyTimer(); // Initial call
+
+        // --- 1. SMOOTH NAVIGATION ---
+        window.openPage = async (screenId) => {
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(s => s.classList.remove('active'));
+            const target = document.getElementById(screenId);
+            target.classList.add('active');
+            
+            // Logic dispatch
+            if (screenId === 'screen-admin-users') { /* loaded by default */ }
+            else if (screenId === 'screen-stats') loadStatsContent();
+            else if (screenId === 'screen-my-points') loadMyPointsContent();
+            else if (screenId === 'screen-my-questions') loadMyQuestionsContent();
+            else if (screenId === 'screen-admin-review') loadAdminReviewContent();
+            else if (screenId === 'screen-referral') loadReferralData();
+            else if (screenId === 'screen-money') loadWalletData();
+            else if (screenId === 'screen-admin-all') {
+                populateAdminFilterSubjects();
+                loadAdminAllContent();
+            }
+            else if (screenId === 'screen-admin-stats') resetStatsUI();
+            else if (screenId === 'screen-admin-subjects') loadSubjectManagement();
         };
 
-        window.closeForgotPassword = function() {
-            document.getElementById('forgot-password-modal').classList.add('hidden');
-            document.getElementById('forgot-password-modal').style.display = 'none';
+        window.switchTab = (tab) => {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('tab-'+tab).classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach(n => { n.classList.remove('active'); n.classList.remove('text-indigo-600'); n.classList.add('text-gray-400'); });
+            const navs = document.querySelectorAll('.nav-item');
+            if(tab==='challenges') navs[0].classList.add('active', 'text-indigo-600');
+            if(tab==='leaderboard') { navs[1].classList.add('active', 'text-indigo-600'); loadLeaderboard(); }
+            if(tab==='upload') { navs[2].classList.add('active', 'text-indigo-600'); updateUploadUI(); }
+            if(tab==='profile') navs[3].classList.add('active', 'text-indigo-600');
         };
 
-        // --- PROBLEM 5: IMPROVED PASSWORD RESET WITH BETTER FEEDBACK ---
-        window.sendResetLink = async function() {
-            const email = document.getElementById('forgot-email').value;
-            if (!email || !email.includes('@')) {
-                alert('يرجى إدخال بريد إلكتروني صحيح');
+        window.backToProfile = () => { 
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(s => { 
+                if(s.id.startsWith('screen-')) s.classList.remove('active'); 
+            });
+            switchTab('profile');
+        };
+
+        // --- AUTH & SIGNUP WITH RESTRICTIONS ---
+        window.handleSignup = async () => {
+            // DEVICE RESTRICTION (LocalStorage)
+            let accountsCount = localStorage.getItem('hacker_accounts_count') || 0;
+            if (parseInt(accountsCount) >= 2) {
+                alert("⛔ عذراً، لا يمكن إنشاء أكثر من حسابين على نفس الجهاز.");
                 return;
             }
 
-            const btn = event.target;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin ml-2"></i> جاري الإرسال...';
-            btn.disabled = true;
-
-            try {
-                await sendPasswordResetEmail(auth, email);
-                alert('✅ تم إرسال رابط استعادة كلمة المرور إلى بريدك الإلكتروني. يرجى التحقق من صندوق الوارد أو الرسائل غير المرغوب فيها (Spam).');
-                closeForgotPassword();
-            } catch (error) {
-                alert('❌ حدث خطأ: ' + getArabicError(error.code));
-            } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        };
-
-        // --- ARABIC ERROR HANDLING ---
-        function getArabicError(code) {
-            switch(code) {
-                case 'auth/email-already-in-use': return 'البريد الإلكتروني مستخدم بالفعل';
-                case 'auth/invalid-email': return 'البريد الإلكتروني غير صالح';
-                case 'auth/operation-not-allowed': return 'العملية غير مسموح بها';
-                case 'auth/weak-password': return 'كلمة المرور ضعيفة (يجب أن تكون 6 أحرف أو أكثر)';
-                case 'auth/user-disabled': return 'تم تعطيل هذا الحساب';
-                case 'auth/user-not-found': return 'المستخدم غير موجود';
-                case 'auth/wrong-password': return 'كلمة المرور غير صحيحة';
-                case 'auth/too-many-requests': return 'محاولات كثيرة جداً، يرجى الانتظار قليلاً';
-                case 'auth/network-request-failed': return 'مشكلة في الاتصال بالإنترنت';
-                default: return 'حدث خطأ: ' + code;
-            }
-        }
-
-        // --- SYSTEM STATUS LISTENER ---
-        function listenToSystemStatus() {
-            onSnapshot(doc(db, "system_settings", "config"), (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    systemConfig.enabled = data.challengesEnabled !== undefined ? data.challengesEnabled : true;
-                    systemConfig.msg = data.maintenanceMessage || "النظام في وضع الصيانة حالياً، يرجى المحاولة لاحقاً.";
-                    
-                    // Admin UI Update
-                    const toggle = document.getElementById('system-toggle');
-                    const statusText = document.getElementById('system-status-text');
-                    const msgInput = document.getElementById('maintenance-msg-input');
-                    
-                    if (toggle) {
-                        toggle.checked = systemConfig.enabled;
-                        if (!systemConfig.enabled) {
-                            statusText.innerText = "النظام متوقف ⛔ (الطلاب يرون الرسالة)";
-                            statusText.className = "text-xs font-bold text-red-400 mb-2";
-                        } else {
-                            statusText.innerText = "النظام يعمل حالياً ✅";
-                            statusText.className = "text-xs font-bold text-green-400 mb-2";
-                        }
-                        if (msgInput && document.activeElement !== msgInput) {
-                             msgInput.value = systemConfig.msg;
-                        }
-                    }
-                }
-            });
-        }
-
-        // --- DISABLED SUBJECTS MANAGEMENT ---
-        async function loadDisabledSubjects() {
-            try {
-                const docSnap = await getDoc(doc(db, "system_settings", "disabled_subjects"));
-                if (docSnap.exists()) {
-                    disabledSubjects = docSnap.data();
-                } else {
-                    disabledSubjects = {};
-                }
-            } catch (e) {
-                console.error("Error loading disabled subjects:", e);
-                disabledSubjects = {};
-            }
-        }
-
-        function isSubjectEnabled(grade, type, subject) {
-            const key = `${grade}_${type}`;
-            return !disabledSubjects[key] || !disabledSubjects[key][subject];
-        }
-
-        function getEnabledSubjects(grade, type) {
-            if (!subjects[grade]) return [];
-            return subjects[grade].filter(subject => isSubjectEnabled(grade, type, subject));
-        }
-
-        // --- PROBLEM 5: SUBJECT MANAGEMENT UI ---
-        async function loadSubjectManagement() {
-            const grade = document.getElementById('subject-grade').value;
-            const type = document.getElementById('subject-type').value;
-            const container = document.getElementById('subject-management-list');
-            
-            if (!grade || !type) return;
-            
-            const key = `${grade}_${type}`;
-            const currentDisabled = disabledSubjects[key] || {};
-            
-            let html = '';
-            subjects[grade].forEach(subject => {
-                const isDisabled = currentDisabled[subject] === true;
-                html += `
-                <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm flex justify-between items-center">
-                    <div>
-                        <p class="font-bold text-gray-800">${subject}</p>
-                        <p class="text-xs text-gray-400">${getGradeName(grade)} - ${type === 'mcq' ? 'اختيارات' : 'صح وخطأ'}</p>
-                    </div>
-                    <label class="toggle-wrapper">
-                        <input type="checkbox" class="toggle-checkbox" ${isDisabled ? '' : 'checked'} 
-                               onchange="toggleSubject('${grade}', '${type}', '${subject}', this.checked)">
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>`;
-            });
-            
-            container.innerHTML = html;
-        }
-
-        window.toggleSubject = async function(grade, type, subject, enabled) {
-            const key = `${grade}_${type}`;
-            
-            if (!disabledSubjects[key]) {
-                disabledSubjects[key] = {};
-            }
-            
-            // If enabled is true, remove from disabled list
-            // If enabled is false, add to disabled list
-            if (enabled) {
-                delete disabledSubjects[key][subject];
-            } else {
-                disabledSubjects[key][subject] = true;
-            }
-            
-            // Save to Firebase
-            try {
-                await setDoc(doc(db, "system_settings", "disabled_subjects"), disabledSubjects, { merge: true });
-                alert(`✅ تم ${enabled ? 'تفعيل' : 'تعطيل'} المادة ${subject} لنوع ${type === 'mcq' ? 'الاختيارات' : 'صح وخطأ'}`);
-                
-                // Update UI in real-time
-                updateUploadUIBasedOnSubjects();
-                if (document.getElementById('tab-upload').classList.contains('active')) {
-                    switchTab('upload'); // Refresh upload tab
-                }
-            } catch (e) {
-                alert('❌ حدث خطأ في حفظ التغييرات: ' + e.message);
-            }
-        };
-
-        function updateUploadUIBasedOnSubjects() {
-            if (!userData || !userData.grade) return;
-            
-            const grade = userData.grade;
-            const mcqEnabled = getEnabledSubjects(grade, 'mcq').length > 0;
-            const tfEnabled = getEnabledSubjects(grade, 'tf').length > 0;
-            
-            const typeSelect = document.getElementById('up-type');
-            const originalHTML = typeSelect.innerHTML;
-            let newHTML = '';
-            
-            if (mcqEnabled) newHTML += '<option value="mcq">اختيارات</option>';
-            if (tfEnabled) newHTML += '<option value="tf">صح وخطأ</option>';
-            
-            if (newHTML === '') {
-                newHTML = '<option value="" disabled>لا توجد أنواع متاحة</option>';
-            }
-            
-            typeSelect.innerHTML = newHTML;
-            
-            // If only one type is available, select it
-            if (mcqEnabled && !tfEnabled) typeSelect.value = 'mcq';
-            if (!mcqEnabled && tfEnabled) typeSelect.value = 'tf';
-        }
-
-        // --- MODIFIED populateSubjects FUNCTION ---
-        function populateSubjects(grade, elementId, type = null) {
-            const sel = document.getElementById(elementId);
-            if(!sel) return;
-            
-            let filteredSubjects = [];
-            if (type) {
-                filteredSubjects = getEnabledSubjects(grade, type);
-            } else {
-                filteredSubjects = subjects[grade] || [];
-            }
-            
-            sel.innerHTML = '<option value="">اختر المادة</option>';
-            filteredSubjects.forEach(s => sel.innerHTML += `<option value="${s}">${s}</option>`);
-            
-            // If no subjects are available
-            if (filteredSubjects.length === 0) {
-                sel.innerHTML += '<option value="" disabled>لا توجد مواد متاحة</option>';
-            }
-        }
-
-        window.switchAuthTab = (tab) => {
-            if(tab === 'login') {
-                document.getElementById('login-form').classList.remove('hidden');
-                document.getElementById('signup-form').classList.add('hidden');
-                document.getElementById('tab-login-btn').classList.add('active');
-                document.getElementById('tab-signup-btn').classList.remove('active');
-            } else {
-                document.getElementById('login-form').classList.add('hidden');
-                document.getElementById('signup-form').classList.remove('hidden');
-                document.getElementById('tab-login-btn').classList.remove('active');
-                document.getElementById('tab-signup-btn').classList.add('active');
-            }
-        };
-
-        window.handleLogin = async () => {
-            try {
-                const email = document.getElementById('login-email').value;
-                const pass = document.getElementById('login-pass').value;
-                await signInWithEmailAndPassword(auth, email, pass);
-            } catch (e) { alert(getArabicError(e.code)); }
-        };
-
-        window.handleSignup = async () => {
             try {
                 const name = document.getElementById('signup-name').value;
                 const email = document.getElementById('signup-email').value;
                 const pass = document.getElementById('signup-pass').value;
+                const refCode = document.getElementById('signup-referral').value.trim().toUpperCase();
                 const imgFile = document.getElementById('signup-img').files[0];
                 
                 if(!name || !email || !pass) return alert("يرجى ملء كافة الحقول");
                 if(!email.endsWith("@gmail.com")) return alert("يجب استخدام ايميل Gmail");
                 if(pass.length < 6) return alert("كلمة المرور قصيرة جداً");
 
+                // CHECK REFERRAL CODE
+                let referrerId = null;
+                if (refCode) {
+                    const qRef = query(collection(db, "users"), where("uniqueId", "==", refCode));
+                    const snap = await getDocs(qRef);
+                    if (snap.empty) return alert("رمز الدعوة غير صحيح");
+                    referrerId = snap.docs[0].id;
+                }
+
                 let photoURL = `https://ui-avatars.com/api/?name=${name}&background=random&size=128`;
                 if(imgFile) photoURL = await compressImage(imgFile);
 
                 const cred = await createUserWithEmailAndPassword(auth, email, pass);
                 
+                // Increase local account count
+                localStorage.setItem('hacker_accounts_count', parseInt(accountsCount) + 1);
+
+                const newId = generateId();
+                // User Data
+                let startPoints = 0;
+                if (referrerId) startPoints = 25; // Bonus for new user
+
                 await setDoc(doc(db, "users", cred.user.uid), {
                     uid: cred.user.uid,
                     name: name,
                     email: email,
                     photo: photoURL,
-                    uniqueId: generateId(),
-                    points: 0,
+                    uniqueId: newId,
+                    points: startPoints,
                     role: 'user',
                     createdAt: serverTimestamp(),
-                    
-                    // Daily Reward Fields
+                    isBanned: false,
+                    walletBalance: 0,
+                    referrals: 0,
+                    referredBy: referrerId || null,
+                    // Rewards
                     lastRewardDayKey: null, 
                     rewardMonthKey: null,   
                     daysClaimedInMonth: 0,  
-
-                    hiddenFromLeaderboard: false 
                 });
+
+                // Reward Referrer
+                if (referrerId) {
+                    await updateDoc(doc(db, "users", referrerId), {
+                        points: increment(50),
+                        referrals: increment(1)
+                    });
+                }
+
             } catch (e) { alert(getArabicError(e.code)); }
         };
 
-        window.logout = () => {
-            if(adminListenerUnsubscribe) adminListenerUnsubscribe(); 
-            if(matchListenerUnsubscribe) matchListenerUnsubscribe();
-            if(subjectManagementListener) subjectManagementListener();
-            signOut(auth);
-        };
-
-        // --- DAILY REWARD LOGIC ---
-        function getIraqDate() {
-            const dateStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Baghdad"});
-            return new Date(dateStr);
-        }
-
+        // --- NEW DAILY REWARDS LOGIC ---
         window.checkDailyReward = async () => {
-            const iraqDate = getIraqDate();
-            const currentDayKey = `${iraqDate.getDate()}-${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
-            const currentMonthKey = `${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
+            const iraqDate = new Date().toLocaleString("en-US", {timeZone: "Asia/Baghdad"});
+            const d = new Date(iraqDate);
+            const currentDayKey = `${d.getDate()}-${d.getMonth()}-${d.getFullYear()}`;
+            const currentMonthKey = `${d.getMonth()}-${d.getFullYear()}`;
 
             if (userData.lastRewardDayKey === currentDayKey) return; 
 
@@ -1465,28 +1396,35 @@
             const nextDayToClaim = userDaysClaimed + 1;
             const grid = document.getElementById('reward-grid-container');
             grid.innerHTML = '';
+            
             for(let i=1; i<=30; i++) {
-                const pts = 10 + ((i - 1) * 5);
+                let pts = 5;
+                if(i > 10) pts = 10;
+                if(i > 20) pts = 15;
+
                 let cls = "day-box";
                 if (i < nextDayToClaim) cls += " claimed"; 
                 else if (i === nextDayToClaim) cls += " active"; 
                 else cls += " locked"; 
-                grid.innerHTML += `<div class="${cls}"><p>يوم ${i}</p><span>${pts} نقاط</span></div>`;
+                grid.innerHTML += `<div class="${cls}"><p>يوم ${i}</p><span>${pts}</span></div>`;
             }
             document.getElementById('daily-reward-screen').classList.remove('hidden');
             document.getElementById('daily-reward-screen').style.display = 'flex';
         };
 
         window.claimReward = async () => {
-            const iraqDate = getIraqDate();
-            const currentDayKey = `${iraqDate.getDate()}-${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
-            const currentMonthKey = `${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
+            const iraqDate = new Date().toLocaleString("en-US", {timeZone: "Asia/Baghdad"});
+            const d = new Date(iraqDate);
+            const currentDayKey = `${d.getDate()}-${d.getMonth()}-${d.getFullYear()}`;
+            const currentMonthKey = `${d.getMonth()}-${d.getFullYear()}`;
 
             let userDaysClaimed = userData.daysClaimedInMonth || 0;
             if (userData.rewardMonthKey !== currentMonthKey) userDaysClaimed = 0;
-
             const dayToClaim = userDaysClaimed + 1;
-            const rewardAmount = 10 + ((dayToClaim - 1) * 5);
+            
+            let rewardAmount = 5;
+            if(dayToClaim > 10) rewardAmount = 10;
+            if(dayToClaim > 20) rewardAmount = 15;
 
             await updateDoc(doc(db, "users", currentUser.uid), {
                 points: increment(rewardAmount),
@@ -1503,51 +1441,14 @@
             document.getElementById('daily-reward-screen').style.display = 'none';
         };
 
-        // --- UI ---
-        function setupProfileUI() {
-            document.getElementById('profile-name-text').innerText = userData.name;
-            document.getElementById('profile-id-text').innerText = "ID: " + userData.uniqueId;
-            document.getElementById('profile-img').src = userData.photo;
-        }
-        function setupHeaderUI() { document.getElementById('header-points').innerText = userData.points; }
-        function setupAdminUI() { 
-            if (userData.email === ADMIN_EMAIL) {
-                document.getElementById('admin-buttons').classList.remove('hidden'); 
-                document.getElementById('admin-challenge-controls').classList.remove('hidden');
-            }
-        }
-
-        window.saveUserGrade = async () => {
-            const g = document.getElementById('grade-select').value;
-            if (!g) return alert("اختر المرحلة");
-            await updateDoc(doc(db, "users", currentUser.uid), { grade: g });
-            userData.grade = g;
-            document.getElementById('grade-selector-card').classList.add('hidden');
-            document.getElementById('challenge-active-card').classList.remove('hidden');
-            document.getElementById('header-grade-badge').innerText = getGradeName(g);
-            document.getElementById('header-grade-badge').classList.remove('hidden');
-            populateSubjects(g, 'challenge-subject');
-        };
-
-        function getGradeName(code) { return code==='6sci'?'السادس العلمي':code==='6lit'?'السادس الأدبي':'الثالث متوسط'; }
-
-        // --- MATCHMAKING & GAME LOGIC ---
-        window.setQType = (t) => {
-            selectedQType = t;
-            document.getElementById('btn-mcq').className = `py-3 rounded-xl border-2 font-bold transition flex-1 ${t==='mcq'?'border-indigo-600 bg-indigo-50 text-indigo-600':'border-indigo-100 text-gray-500'}`;
-            document.getElementById('btn-tf').className = `py-3 rounded-xl border-2 font-bold transition flex-1 ${t==='tf'?'border-indigo-600 bg-indigo-50 text-indigo-600':'border-indigo-100 text-gray-500'}`;
-        };
-
+        // --- VS SCREEN & MATCHMAKING ---
         window.startMatchmaking = async (mode) => {
-            // FIX: Maintenance Mode Logic with proper Alert
             if (!systemConfig.enabled) {
                 const modal = document.getElementById('maintenance-popup');
                 document.getElementById('maintenance-msg-display').innerText = systemConfig.msg;
-                modal.classList.remove('hidden');
-                modal.style.display = 'flex';
+                modal.classList.remove('hidden'); modal.style.display = 'flex';
                 return;
             }
-
             const sub = document.getElementById('challenge-subject').value;
             if(!sub || !selectedQType) return alert("يرجى اختيار المادة ونوع الأسئلة");
 
@@ -1563,51 +1464,37 @@
             let group = `${grade}_${sub}`;
             if(['اسلامية','عربي','انكليزي'].includes(sub) && grade.startsWith('6')) group = `6shared_${sub}`;
 
-            if (mode === 'online') {
-                startOnlineMatch(group, sub);
-            } else {
-                startAIMatch(sub);
-            }
+            if (mode === 'online') startOnlineMatch(group, sub);
+            else startAIMatch(sub);
         };
 
         async function startOnlineMatch(group, sub) {
             try {
                 const qRef = collection(db, "match_queue");
-                
-                const oldSessionsQuery = query(qRef, where("player1.uid", "==", currentUser.uid), where("status", "==", "waiting"));
-                const oldDocs = await getDocs(oldSessionsQuery);
+                // Clean old sessions
+                const oldDocs = await getDocs(query(qRef, where("player1.uid", "==", currentUser.uid), where("status", "==", "waiting")));
                 oldDocs.forEach(async (d) => { await deleteDoc(d.ref); });
 
                 const qWait = query(qRef, where("group", "==", group), where("status", "==", "waiting"), limit(10));
                 const snap = await getDocs(qWait);
-
                 let foundMatchId = null;
-                snap.forEach((doc) => {
-                    const d = doc.data();
-                    if (d.player1.uid !== currentUser.uid) { foundMatchId = doc.id; }
-                });
+                snap.forEach((doc) => { if (doc.data().player1.uid !== currentUser.uid) foundMatchId = doc.id; });
 
                 if(foundMatchId) {
                     currentMatchId = foundMatchId;
                     await updateDoc(doc(db, "match_queue", foundMatchId), {
-                        player2: { uid: currentUser.uid, name: userData.name, score: 0 },
-                        status: 'active',
-                        answersCount: 0 
+                        player2: { uid: currentUser.uid, name: userData.name, photo: userData.photo, score: 0 },
+                        status: 'active', answersCount: 0 
                     });
                     listenToMatch(foundMatchId);
                 } else {
                     const qDocs = await getQuestions(sub, selectedQType);
-                    if(qDocs.length === 0) { alert("لا توجد أسئلة كافية في هذا القسم"); cancelSearch(); return; }
-                    
+                    if(qDocs.length === 0) { alert("لا توجد أسئلة كافية"); cancelSearch(); return; }
                     const shuffledQs = qDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
-                    
                     const newMatch = await addDoc(qRef, {
-                        group: group,
-                        status: 'waiting',
-                        player1: { uid: currentUser.uid, name: userData.name, score: 0 },
-                        questions: shuffledQs,
-                        currentIdx: 0,
-                        answersCount: 0
+                        group: group, status: 'waiting',
+                        player1: { uid: currentUser.uid, name: userData.name, photo: userData.photo, score: 0 },
+                        questions: shuffledQs, currentIdx: 0, answersCount: 0
                     });
                     currentMatchId = newMatch.id;
                     listenToMatch(newMatch.id);
@@ -1619,37 +1506,22 @@
             const qDocs = await getQuestions(sub, selectedQType);
             if(qDocs.length === 0) { alert("لا توجد أسئلة كافية"); cancelSearch(); return; }
             const shuffledQs = qDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
+            
+            let botPhoto = "https://cdn-icons-png.flaticon.com/512/4712/4712035.png"; 
 
-            let botName = "الذكاء الاصطناعي 🤖";
             localMatchData = {
                 status: 'active',
-                player1: { uid: currentUser.uid, name: userData.name, score: 0 },
-                player2: { uid: 'AI_BOT', name: botName, score: 0 },
-                questions: shuffledQs,
-                currentIdx: 0,
-                answersCount: 0
+                player1: { uid: currentUser.uid, name: userData.name, photo: userData.photo, score: 0 },
+                player2: { uid: 'AI_BOT', name: "الذكاء الاصطناعي 🤖", photo: botPhoto, score: 0 },
+                questions: shuffledQs, currentIdx: 0, answersCount: 0
             };
-            setTimeout(() => {
+            
+            showVSScreen(userData, localMatchData.player2, () => {
                 document.getElementById('game-overlay').classList.remove('hidden');
                 document.getElementById('game-overlay').style.display = 'flex';
                 renderGame(localMatchData);
-            }, 1000);
+            });
         }
-
-        async function getQuestions(sub, type) {
-            const q = query(collection(db, "questions"), where("subject", "==", sub), where("type", "==", type), limit(50));
-            const snap = await getDocs(q);
-            const list = [];
-            snap.forEach(d => list.push(d.data()));
-            return list;
-        }
-
-        window.cancelSearch = async () => {
-            if(currentMatchId && currentGameMode === 'online') { try { await deleteDoc(doc(db, "match_queue", currentMatchId)); } catch(e){} }
-            document.getElementById('searching-ui').classList.add('hidden');
-            document.getElementById('searching-ui').style.removeProperty('display'); 
-            document.getElementById('challenge-active-card').classList.remove('hidden');
-        };
 
         function listenToMatch(id) {
             if(matchListenerUnsubscribe) matchListenerUnsubscribe(); 
@@ -1658,338 +1530,186 @@
                 if(!snap.exists()) return;
                 const d = snap.data();
                 if(d.status === 'active') {
-                    if(isExitingGame) return;
-                    document.getElementById('game-overlay').classList.remove('hidden');
-                    document.getElementById('game-overlay').style.display = 'flex';
-                    renderGame(d);
-                }
-            });
-        }
-
-        function renderGame(data) {
-            if (isExitingGame) return;
-            if(!data.questions || data.currentIdx >= data.questions.length) { endGame(data); return; }
-
-            if (currentGameMode === 'online' && data.answersCount >= 2) {
-                 if(data.player1.uid === currentUser.uid) {
-                        updateDoc(doc(db, "match_queue", currentMatchId), { currentIdx: increment(1), answersCount: 0 });
-                 }
-                 return;
-            }
-
-            const q = data.questions[data.currentIdx];
-            if (!q) { endGame(data); return; }
-
-            const qTextEl = document.getElementById('q-text');
-            
-            if(qTextEl.innerText !== q.question) {
-                hasAnsweredCurrentQ = false;
-                userAnsweredCorrectly = false;
-                currentQuestionCorrectAnswer = null;
-                clearTimeout(aiTimeoutId); 
-                document.getElementById('answers-container').classList.remove('pointer-events-none', 'opacity-50');
-                document.getElementById('waiting-msg').classList.add('hidden');
-                document.getElementById('ai-thinking-msg').classList.add('hidden');
-                
-                if (currentGameMode === 'online') {
-                    const isP1 = data.player1.uid === currentUser.uid;
-                    document.getElementById('p1-name').innerText = userData.name;
-                    document.getElementById('p2-name').innerText = isP1 ? data.player2.name : data.player1.name;
-                    document.getElementById('game-my-score').innerText = isP1 ? data.player1.score : data.player2.score;
-                    document.getElementById('game-op-score').innerText = isP1 ? data.player2.score : data.player1.score;
-                } else {
-                    document.getElementById('p1-name').innerText = userData.name;
-                    document.getElementById('p2-name').innerText = data.player2.name;
-                    document.getElementById('game-my-score').innerText = data.player1.score;
-                    document.getElementById('game-op-score').innerText = data.player2.score;
-                }
-
-                clearInterval(gameTimer);
-                let t = 15;
-                document.getElementById('game-timer').innerText = t;
-                
-                gameTimer = setInterval(() => {
-                    if (isExitingGame) { clearInterval(gameTimer); return; }
-                    t--;
-                    document.getElementById('game-timer').innerText = t;
-                    if(t <= 0) { 
-                        clearInterval(gameTimer); 
-                        if(!hasAnsweredCurrentQ) submitGameAnswer(null, q, data); 
-                        else if (currentGameMode === 'ai') handleAINextTurn();
+                    if (document.getElementById('vs-screen').classList.contains('hidden') && document.getElementById('game-overlay').classList.contains('hidden')) {
+                         showVSScreen(d.player1, d.player2, () => {
+                            document.getElementById('game-overlay').classList.remove('hidden');
+                            document.getElementById('game-overlay').style.display = 'flex';
+                            renderGame(d);
+                         });
+                    } else if (!document.getElementById('game-overlay').classList.contains('hidden')) {
+                        renderGame(d);
                     }
-                }, 1000);
-            }
-
-            document.getElementById('q-progress').innerText = `${data.currentIdx + 1} / 10`;
-            qTextEl.innerText = q.question;
-            qTextEl.setAttribute('data-qid', q.question);
-
-            const div = document.getElementById('answers-container');
-            
-            if(div.children.length === 0 || div.getAttribute('data-curr-q') !== q.question) {
-                div.setAttribute('data-curr-q', q.question);
-                div.innerHTML = '';
-                
-                let ansList = [];
-                if(q.type === 'mcq') {
-                    ansList = q.answers.map((txt, idx) => ({ 
-                        txt, 
-                        isCorrect: idx === q.correct,
-                        value: idx
-                    }));
-                } else {
-                    ansList = [
-                        { txt: 'صح', isCorrect: q.correct === 'true' || q.correct === true, value: 'true' },
-                        { txt: 'خطأ', isCorrect: q.correct === 'false' || q.correct === false, value: 'false' }
-                    ];
-                }
-                
-                // Store correct answer for UI highlighting
-                const correctAns = ansList.find(ans => ans.isCorrect);
-                if (correctAns) {
-                    currentQuestionCorrectAnswer = correctAns.value;
-                }
-
-                ansList.sort(() => 0.5 - Math.random());
-                ansList.forEach(ansObj => {
-                    const btn = document.createElement('button');
-                    btn.className = "answer-neutral w-full py-4 border-2 rounded-xl text-lg font-bold shadow-sm active:scale-95 transition";
-                    btn.innerText = ansObj.txt;
-                    btn.dataset.value = ansObj.value;
-                    btn.onclick = () => { if(hasAnsweredCurrentQ) return; submitGameAnswer(ansObj, q, data); };
-                    div.appendChild(btn);
-                });
-            }
-        }
-
-        // --- PROBLEM 4: ENHANCED ANSWER FEEDBACK WITH CLEAR VISUALS ---
-        async function submitGameAnswer(ansObj, q, matchData) {
-            if(hasAnsweredCurrentQ || isExitingGame) return;
-            hasAnsweredCurrentQ = true;
-            userAnsweredCorrectly = ansObj && ansObj.isCorrect;
-            
-            // Clear any existing highlights first
-            const answerButtons = document.querySelectorAll('#answers-container button');
-            answerButtons.forEach(btn => {
-                btn.classList.remove('answer-correct', 'answer-wrong', 'answer-neutral');
-                
-                // Add correct answer indicator (green checkmark) - FIXED COMPARISON TO STRING
-                if (btn.dataset.value.toString() === currentQuestionCorrectAnswer.toString()) {
-                    btn.classList.add('answer-correct');
-                }
-                // Add wrong answer indicator (red X) if user selected wrong answer - FIXED COMPARISON TO STRING
-                else if (ansObj && btn.dataset.value.toString() === (ansObj.value?.toString())) {
-                    btn.classList.add('answer-wrong');
-                }
-                // Neutral for other options
-                else {
-                    btn.classList.add('answer-neutral');
                 }
             });
-            
-            document.getElementById('answers-container').classList.add('pointer-events-none');
-
-            if (currentGameMode === 'online') {
-                document.getElementById('waiting-msg').classList.remove('hidden');
-                const isP1 = matchData.player1.uid === currentUser.uid;
-                if (!currentMatchId) return;
-                const ref = doc(db, "match_queue", currentMatchId);
-                
-                // Add 1 point for correct answer
-                const scoreIncrement = ansObj && ansObj.isCorrect ? 1 : 0;
-                
-                const updates = { answersCount: increment(1) };
-                if(ansObj && ansObj.isCorrect) {
-                    updates[isP1?'player1.score':'player2.score'] = increment(scoreIncrement);
-                }
-                await updateDoc(ref, updates);
-            } else {
-                document.getElementById('waiting-msg').classList.add('hidden'); 
-                if(ansObj && ansObj.isCorrect) {
-                    localMatchData.player1.score += 1;
-                    document.getElementById('game-my-score').innerText = localMatchData.player1.score;
-                }
-                triggerAIResponse();
-            }
         }
 
-        // --- PROBLEM 6: OPTIMIZED AI RESPONSE TIMING FOR SMOOTHER GAMEPLAY ---
-        function triggerAIResponse() {
-            document.getElementById('waiting-msg').classList.add('hidden');
-            document.getElementById('ai-thinking-msg').classList.remove('hidden');
+        function showVSScreen(p1, p2, callback) {
+            document.getElementById('searching-ui').classList.add('hidden');
+            const vs = document.getElementById('vs-screen');
+            document.getElementById('vs-p1-img').src = p1.photo || userData.photo;
+            document.getElementById('vs-p1-name').innerText = p1.name;
+            document.getElementById('vs-p2-img').src = p2.photo;
+            document.getElementById('vs-p2-name').innerText = p2.name;
             
-            // Optimized AI response timing for better gameplay experience
-            let delay = 2500; // 2.5 seconds for easy
-            let accuracy = 0.25;
-            
-            if (aiDifficulty === 'medium') { 
-                delay = 3000; // 3 seconds for medium
-                accuracy = 0.5; 
-            }
-            if (aiDifficulty === 'hard') { 
-                delay = 3500; // 3.5 seconds for hard
-                accuracy = 0.7; 
-            }
+            vs.classList.remove('hidden');
+            setTimeout(() => {
+                vs.classList.add('hidden');
+                callback();
+            }, 3000);
+        }
 
-            aiTimeoutId = setTimeout(() => {
-                const isCorrect = Math.random() < accuracy;
-                if(isCorrect) {
-                    localMatchData.player2.score += 1;
-                    document.getElementById('game-op-score').innerText = localMatchData.player2.score;
+        // --- LOAD LEADERBOARD ---
+        async function loadLeaderboard() {
+            const div = document.getElementById('leaderboard-list');
+            div.innerHTML = '<p class="text-center text-gray-400 mt-10">تحميل...</p>';
+            
+            const q = query(collection(db, "users"), orderBy("points", "desc"), limit(150));
+            const snap = await getDocs(q);
+            let users = [];
+            snap.forEach(d => users.push(d.data()));
+
+            const myIndex = users.findIndex(u => u.uid === currentUser.uid);
+            if(myIndex !== -1) document.getElementById('my-rank-text').innerText = "#" + (myIndex + 1);
+            else document.getElementById('my-rank-text').innerText = "غير مصنف";
+
+            div.innerHTML = ''; 
+            let i = 1;
+
+            users.forEach(u => {
+                let frameClass = "frame-rank-common";
+                let crown = "";
+                let rankBadge = `<div class="rank-badge-top">${i}</div>`;
+                let raysHtml = "";
+                let prizeHtml = "";
+
+                if (i === 1) { frameClass = "frame-rank-1"; crown = `<i class="fas fa-crown text-yellow-500 name-crown"></i>`; raysHtml = `<div class="rank-rays rays-gold"></div>`; prizeHtml=`<span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded ml-2 font-bold">$10</span>`; }
+                else if (i === 2) { frameClass = "frame-rank-2"; raysHtml = `<div class="rank-rays rays-silver"></div>`; prizeHtml=`<span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded ml-2 font-bold">$7</span>`; }
+                else if (i === 3) { frameClass = "frame-rank-3"; raysHtml = `<div class="rank-rays rays-bronze"></div>`; prizeHtml=`<span class="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded ml-2 font-bold">$5</span>`; }
+                else if (i === 4) { frameClass = "frame-rank-other-top"; raysHtml = `<div class="rank-rays rays-blue"></div>`; prizeHtml=`<span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded ml-2 font-bold">$3</span>`; }
+                else if (i === 5) { frameClass = "frame-rank-other-top"; raysHtml = `<div class="rank-rays rays-red"></div>`; prizeHtml=`<span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded ml-2 font-bold">$2</span>`; }
+                else if (i <= 10) { frameClass = "frame-rank-other-top"; raysHtml = `<div class="rank-rays rays-purple"></div>`; }
+
+                // NEW: ADD RESET BUTTON FOR ADMIN
+                let resetBtn = "";
+                if (currentUser && userData.email === ADMIN_EMAIL) {
+                    resetBtn = `<button onclick="resetUserPoints('${u.uid}', '${u.name}')" class="w-6 h-6 rounded bg-red-100 text-red-500 flex items-center justify-center mr-2"><i class="fas fa-trash-alt text-xs"></i></button>`;
                 }
-                handleAINextTurn();
-            }, delay);
+
+                div.innerHTML += `
+                    <div class="flex items-center justify-between bg-white p-4 rounded-xl shadow-sm mb-3 relative overflow-hidden">
+                        <div class="flex items-center gap-4 z-10">
+                            <div class="rank-img-container">
+                                ${rankBadge} ${raysHtml}
+                                <img src="${u.photo}" class="rank-img ${frameClass}">
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-800 text-sm flex items-center">${crown} ${u.name} ${prizeHtml}</p>
+                                <p class="text-[10px] text-gray-400">ID: ${u.uniqueId}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center z-10">
+                            ${resetBtn}
+                            <span class="font-black text-indigo-600 text-lg">${u.points} 💎</span>
+                        </div>
+                    </div>`;
+                i++;
+            });
         }
 
-        function handleAINextTurn() {
-            if(isExitingGame) return;
-            localMatchData.currentIdx += 1;
-            localMatchData.answersCount = 0;
-            renderGame(localMatchData);
-        }
-
-        // --- PROBLEM 3: FIXED POINTS CALCULATION SYSTEM ---
-        async function endGame(d) {
-            clearInterval(gameTimer);
-            document.getElementById('game-overlay').classList.add('hidden');
-            if (isExitingGame) return;
-
-            let myScore, opScore;
-            if (currentGameMode === 'online') {
-                const isP1 = d.player1.uid === currentUser.uid;
-                myScore = isP1 ? d.player1.score : d.player2.score;
-                opScore = isP1 ? d.player2.score : d.player1.score;
-            } else {
-                myScore = localMatchData.player1.score;
-                opScore = localMatchData.player2.score;
+        // --- NEW: RESET USER POINTS FUNCTION (من الكود الثاني) ---
+        window.resetUserPoints = async (uid, name) => {
+            if(confirm(`هل أنت متأكد من تصفير نقاط الطالب: ${name}؟\n(النقاط ستعود للصفر فقط ولن يختفي من القائمة)`)) {
+                await updateDoc(doc(db, "users", uid), { points: 0 });
+                alert("تم تصفير النقاط بنجاح!");
+                loadLeaderboard(); 
             }
-            
-            // PROBLEM 3: NEW POINTS SYSTEM
-            let pointsGained = 0;
-            let msg = ""; 
-            let icon = "";
-            
-            if (myScore > opScore) { 
-                // Winner gets 2 points per correct answer
-                msg = "فوز ساحق!"; 
-                icon = "🏆";
-                pointsGained = myScore * 2;
-            } 
-            else if (myScore < opScore) { 
-                // Loser gets 0 points
-                msg = "حظ أوفر!"; 
-                icon = "😢";
-                pointsGained = 0;
-            } 
-            else { 
-                // DRAW - Check if it's positive or negative
-                if(myScore > 0) {
-                    // POSITIVE DRAW: Both get 1 point per correct answer
-                    msg = "تعادل إيجابي!"; 
-                    icon = "🤝";
-                    pointsGained = myScore * 1; // 1 point per correct answer
-                } else {
-                    // NEGATIVE DRAW: No points for anyone
-                    msg = "تعادل سلبي!"; 
-                    icon = "😐";
-                    pointsGained = 0;
-                }
-            }
+        };
 
-            if(pointsGained > 0) {
-                await updateDoc(doc(db, "users", currentUser.uid), { points: increment(pointsGained) });
-                userData.points += pointsGained;
-                setupHeaderUI();
-            }
-            
-            document.getElementById('result-icon-container').innerText = icon;
-            document.getElementById('result-title').innerText = msg;
-            document.getElementById('final-my-score').innerText = myScore;
-            document.getElementById('final-op-score').innerText = opScore;
-            document.getElementById('result-points-gained').innerText = `+${pointsGained}`;
-            document.getElementById('result-screen').classList.remove('hidden');
-            document.getElementById('result-screen').style.display = 'flex';
-        }
-
-        window.closeResultScreen = async () => {
-             isExitingGame = true;
-             if (matchListenerUnsubscribe) { matchListenerUnsubscribe(); matchListenerUnsubscribe = null; }
-             clearInterval(gameTimer); clearTimeout(aiTimeoutId);
-             document.getElementById('result-screen').classList.add('hidden');
-             document.getElementById('result-screen').style.display = 'none'; 
-             document.getElementById('game-overlay').classList.add('hidden');
-             document.getElementById('game-overlay').style.display = 'none';
-             document.getElementById('searching-ui').classList.add('hidden');
-             document.getElementById('searching-ui').style.removeProperty('display');
-
-             currentMatchId = null; localMatchData = null; hasAnsweredCurrentQ = false;
-             document.getElementById('challenge-active-card').classList.remove('hidden');
-             if(currentUser) {
-                 const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-                 if(userDoc.exists()) { userData = userDoc.data(); setupHeaderUI(); setupProfileUI(); }
-                 loadLeaderboard();
+        // --- WALLET LOGIC ---
+        window.loadWalletData = () => {
+             document.getElementById('wallet-balance').innerText = userData.walletBalance || 0;
+             const btn = document.getElementById('withdraw-btn');
+             if((userData.walletBalance || 0) >= 100) {
+                 btn.disabled = false;
+                 btn.classList.remove('bg-gray-200', 'text-gray-400', 'cursor-not-allowed');
+                 btn.classList.add('bg-indigo-600', 'text-white', 'hover:bg-indigo-700');
+             } else {
+                 btn.disabled = true;
+                 btn.classList.add('bg-gray-200', 'text-gray-400', 'cursor-not-allowed');
+                 btn.classList.remove('bg-indigo-600', 'text-white');
              }
-             switchTab('challenges');
-             setTimeout(() => { isExitingGame = false; document.getElementById('game-overlay').classList.add('hidden'); }, 500);
         };
 
-        // --- UPLOAD ---
-        window.nextUploadStep = () => {
-            const sub = document.getElementById('up-subject').value;
-            const type = document.getElementById('up-type').value;
-            if (!sub) return alert("يرجى اختيار المادة");
-            document.getElementById('up-step-1').classList.add('hidden');
-            document.getElementById('up-step-2').classList.remove('hidden');
-            if(type === 'mcq') {
-                document.getElementById('up-mcq-container').classList.remove('hidden');
-                document.getElementById('up-tf-container').classList.add('hidden');
-            } else {
-                document.getElementById('up-mcq-container').classList.add('hidden');
-                document.getElementById('up-tf-container').classList.remove('hidden');
-            }
+        // --- REFERRAL PAGE ---
+        window.loadReferralData = () => {
+             document.getElementById('my-referral-code').innerText = userData.uniqueId;
+             document.getElementById('ref-count-display').innerText = userData.referrals || 0;
+             document.getElementById('ref-earnings').innerText = (userData.referrals || 0) * 50;
         };
 
-        window.submitUploadQuestion = async () => {
-             const sub = document.getElementById('up-subject').value;
-             const type = document.getElementById('up-type').value;
-             const txt = document.getElementById('up-q-text').value;
-             if(!txt) return alert("يرجى كتابة نص السؤال");
+        window.copyReferral = () => {
+             navigator.clipboard.writeText(userData.uniqueId);
+             alert("تم نسخ رمز الدعوة!");
+        };
+
+        // --- ADMIN USER MANAGEMENT ---
+        window.adminSearchUser = async () => {
+             const id = document.getElementById('admin-search-id').value.trim().toUpperCase();
+             if(!id) return;
+             const q = query(collection(db, "users"), where("uniqueId", "==", id));
+             const snap = await getDocs(q);
              
-             let q = { grade: userData.grade, subject: sub, type, question: txt, authorId: currentUser.uid, authorName: userData.name, createdAt: serverTimestamp(), status: 'pending' };
-             if(type==='mcq') {
-                 const a0 = document.getElementById('ans-0').value;
-                 const a1 = document.getElementById('ans-1').value;
-                 const a2 = document.getElementById('ans-2').value;
-                 if(!a0 || !a1 || !a2) return alert("يرجى ملء جميع الخيارات");
-                 q.answers = [a0, a1, a2];
-                 q.correct = parseInt(document.querySelector('input[name="correct"]:checked').value);
-             } else { q.correct = document.getElementById('up-tf-val').value; }
+             if(snap.empty) { alert("المستخدم غير موجود"); return; }
+             
+             const d = snap.docs[0];
+             searchedUser = { id: d.id, ...d.data() };
+             
+             document.getElementById('admin-user-result').classList.remove('hidden');
+             document.getElementById('admin-u-img').src = searchedUser.photo;
+             document.getElementById('admin-u-name').innerText = searchedUser.name;
+             document.getElementById('admin-u-id').innerText = "ID: " + searchedUser.uniqueId;
+             document.getElementById('admin-u-balance').innerText = searchedUser.walletBalance || 0;
+             
+             const statusEl = document.getElementById('admin-u-status');
+             if ((searchedUser.walletBalance || 0) >= 100) {
+                 statusEl.innerText = "يستحق السحب ✅"; statusEl.className = "text-xs font-bold text-green-600";
+             } else {
+                 statusEl.innerText = "لا يستحق ❌"; statusEl.className = "text-xs font-bold text-red-600";
+             }
 
-             await addDoc(collection(db, "pending_questions"), q);
-             alert("تم ارسال السؤال للمراجعة بنجاح!");
-             document.getElementById('up-q-text').value = ""; document.getElementById('ans-0').value = ""; document.getElementById('ans-1').value = ""; document.getElementById('ans-2').value = "";
-             document.getElementById('up-step-2').classList.add('hidden'); document.getElementById('up-step-1').classList.remove('hidden');
+             updateBanButton();
         };
 
-        // --- FREE PAGES LOGIC ---
-        window.openPage = async (screenId) => {
-            document.querySelectorAll('.screen').forEach(s => { if(s.id.startsWith('screen-')) s.classList.remove('active'); });
-            document.getElementById(screenId).classList.add('active');
-            
-            if (screenId === 'screen-admin-all') {
-                populateAdminFilterSubjects();
-                loadAdminAllContent();
-            }
-            else if (screenId === 'screen-stats') loadStatsContent();
-            else if (screenId === 'screen-my-points') loadMyPointsContent();
-            else if (screenId === 'screen-my-questions') loadMyQuestionsContent();
-            else if (screenId === 'screen-admin-review') loadAdminReviewContent();
-            else if (screenId === 'screen-admin-stats') resetStatsUI();
-            else if (screenId === 'screen-admin-subjects') loadSubjectManagement();
+        function updateBanButton() {
+             const btn = document.getElementById('btn-ban-toggle');
+             if(searchedUser.isBanned) {
+                 btn.innerText = "إلغاء الحظر (Unban)";
+                 btn.className = "w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl font-bold mb-2";
+             } else {
+                 btn.innerText = "حظر المستخدم (Ban)";
+                 btn.className = "w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-bold mb-2";
+             }
+        }
+
+        window.toggleBan = async () => {
+             if(!searchedUser) return;
+             const newStatus = !searchedUser.isBanned;
+             await updateDoc(doc(db, "users", searchedUser.id), { isBanned: newStatus });
+             searchedUser.isBanned = newStatus;
+             updateBanButton();
+             alert(newStatus ? "تم حظر المستخدم" : "تم إلغاء الحظر");
         };
 
-        window.backToProfile = () => { document.querySelectorAll('.screen').forEach(s => { if(s.id.startsWith('screen-')) s.classList.remove('active'); }); };
+        window.resetUserMoney = async () => {
+             if(!searchedUser) return;
+             if(confirm("هل أنت متأكد من تصفير أموال هذا المستخدم إلى 0؟")) {
+                 await updateDoc(doc(db, "users", searchedUser.id), { walletBalance: 0 });
+                 document.getElementById('admin-u-balance').innerText = "0";
+                 alert("تم تصفير الرصيد.");
+             }
+        };
 
+        // --- STATISTICS CONTENT ---
         async function loadStatsContent() {
              const div = document.getElementById('stats-content');
              const usersSnap = await getDocs(collection(db, "users"));
@@ -2008,6 +1728,7 @@
                 <div class="bg-white p-5 rounded-2xl shadow-sm flex justify-between items-center"><div><p class="text-sm text-gray-500">نشطين الآن</p><p class="text-2xl font-bold text-green-500">${activeNow}</p></div><div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600"><i class="fas fa-wifi"></i></div></div>
                 <div class="bg-white p-5 rounded-2xl shadow-sm flex justify-between items-center"><div><p class="text-sm text-gray-500">سجلوا اليوم</p><p class="text-2xl font-bold text-purple-500">${newUsers}</p></div><div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600"><i class="fas fa-user-plus"></i></div></div>`;
         }
+
         async function loadMyPointsContent() {
              document.getElementById('detail-points').innerText = userData.points;
              const joinDate = userData.createdAt ? userData.createdAt.toDate() : new Date();
@@ -2042,7 +1763,83 @@
             } catch(e) { div.innerHTML = "<p class='text-red-500'>حدث خطأ في جلب البيانات.</p>"; }
         }
 
-        // --- NEW ADMIN FEATURES ---
+        // --- FIXED: مراجعة الأسئلة (زر قبول/رفض) ---
+        async function loadAdminReviewContent() {
+            const div = document.getElementById('admin-review-list');
+            div.innerHTML = '<p class="text-center text-gray-400">تحميل...</p>';
+            const q = await getDocs(query(collection(db, "pending_questions"), where("status", "==", "pending")));
+            if(q.empty) { div.innerHTML = "<p class='text-center py-10 text-gray-400'>لا يوجد شيء للمراجعة</p>"; return; }
+            let html = "";
+            q.forEach(d => {
+               const val = d.data(); const author = val.authorName || 'مجهول';
+               html += `<div class="bg-white rounded-xl p-4 mb-3 shadow-sm border border-gray-100" id="review-card-${d.id}"><div class="flex justify-between items-start mb-2"><span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-lg font-bold">${val.grade} | ${val.subject}</span><span class="text-xs text-gray-400">بواسطة: ${author}</span></div><p class="font-bold mb-3 text-gray-800 text-sm leading-6">${val.question}</p><div class="bg-gray-50 p-3 rounded-lg mb-3 text-xs space-y-1 border border-gray-100"><p class="font-bold text-gray-500">الخيارات:</p>${val.type==='mcq' ? `<ul class="list-disc list-inside text-gray-600"><li>${val.answers[0]}</li><li>${val.answers[1]}</li><li>${val.answers[2]}</li></ul>` : `<p>صح / خطأ</p>`}<p class="mt-2 text-green-600 font-bold">الجواب الصحيح: ${val.type==='mcq' ? val.answers[val.correct] : (val.correct==='true'?'صح':'خطأ')}</p></div><div class="flex gap-2"><button onclick="approveQ('${d.id}')" class="flex-1 bg-green-500 text-white text-xs py-3 rounded-lg font-bold shadow-md hover:bg-green-600 transition">قبول (+10)</button><button onclick="rejectQ('${d.id}')" class="flex-1 bg-red-500 text-white text-xs py-3 rounded-lg font-bold shadow-md hover:bg-red-600 transition">رفض</button></div></div>`; 
+            });
+            div.innerHTML = html;
+        }
+
+        // --- FIXED: وظائف قبول ورفض الأسئلة ---
+        window.approveQ = async (id) => {
+            const card = document.getElementById(`review-card-${id}`);
+            if(card) card.remove();
+            const ref = doc(db, "pending_questions", id);
+            const d = (await getDoc(ref)).data();
+            
+            // Add to active questions
+            await addDoc(collection(db, "questions"), {...d, status:'approved'});
+            
+            // Reward 10 Points
+            await updateDoc(doc(db, "users", d.authorId), { points: increment(10) });
+            
+            // Update pending doc status (DON'T DELETE)
+            await updateDoc(ref, { status: 'approved' });
+            
+            alert("تم قبول السؤال وتم منح 10 نقاط للمستخدم!");
+        };
+
+        window.rejectQ = async (id) => {
+            const card = document.getElementById(`review-card-${id}`);
+            if(card) card.remove();
+            // Update status (DON'T DELETE)
+            await updateDoc(doc(db, "pending_questions", id), { status: 'rejected' });
+            alert("تم رفض السؤال!");
+        };
+
+        window.checkAdminNotifications = () => {
+            const q = query(collection(db, "pending_questions"), where("status", "==", "pending"));
+            adminListenerUnsubscribe = onSnapshot(q, (snapshot) => {
+                const count = snapshot.size;
+                const badgeTab = document.getElementById('profile-tab-badge');
+                const badgeBtn = document.getElementById('admin-btn-badge');
+                if (count > 0) { badgeTab.classList.add('visible'); badgeBtn.classList.add('visible'); } 
+                else { badgeTab.classList.remove('visible'); badgeBtn.classList.remove('visible'); }
+            });
+        };
+
+        window.switchTab = (tab) => {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('tab-'+tab).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => { n.classList.remove('active'); n.classList.remove('text-indigo-600'); n.classList.add('text-gray-400'); });
+            const navs = document.querySelectorAll('.nav-item');
+            if(tab==='challenges') navs[0].classList.add('active', 'text-indigo-600');
+            if(tab==='leaderboard') { navs[1].classList.add('active', 'text-indigo-600'); loadLeaderboard(); }
+            if(tab==='upload') { navs[2].classList.add('active', 'text-indigo-600'); updateUploadUI(); }
+            if(tab==='profile') navs[3].classList.add('active', 'text-indigo-600');
+        };
+        
+        window.updateUploadUI = () => { 
+            if(userData.grade) {
+                updateUploadUIBasedOnSubjects();
+                const type = document.getElementById('up-type').value;
+                populateSubjects(userData.grade, 'up-subject', type);
+                
+                // Update subject dropdown when type changes
+                document.getElementById('up-type').onchange = function() {
+                    populateSubjects(userData.grade, 'up-subject', this.value);
+                };
+            }
+        };
+        
+        // --- NEW ADMIN FEATURES FROM SECOND CODE ---
         async function loadAdminAllContent() {
              const div = document.getElementById('admin-all-list');
              if(allAdminQuestions.length === 0) {
@@ -2051,7 +1848,7 @@
                  allAdminQuestions = [];
                  q.forEach(d => allAdminQuestions.push({id: d.id, ...d.data()}));
              }
-             filterAdminQuestions(); // Render with current filters
+             filterAdminQuestions();
         }
 
         window.populateAdminFilterSubjects = () => {
@@ -2102,7 +1899,7 @@
             renderAdminAllList(filtered);
         };
 
-        // 2. NEW QUESTION STATS (EXACT COUNT)
+        // QUESTION STATS
         window.resetStatsUI = () => {
              document.getElementById('stats-result-container').innerHTML = '<p class="text-center text-gray-400 text-sm mt-10">اختر البيانات واضغط حساب</p>';
         }
@@ -2114,26 +1911,23 @@
             
             resultDiv.innerHTML = '<p class="text-center text-gray-400">جاري الحساب بدقة...</p>';
 
-            // Ensure we have data
             if(allAdminQuestions.length === 0) {
                  const q = await getDocs(collection(db, "questions"));
                  allAdminQuestions = [];
                  q.forEach(d => allAdminQuestions.push({id: d.id, ...d.data()}));
             }
 
-            // Get subjects for selected grade
             const gradeSubjects = subjects[grade];
             
             let html = "";
             let totalForGrade = 0;
 
             gradeSubjects.forEach(sub => {
-                // EXACT FILTERING
                 const count = allAdminQuestions.filter(q => 
                     q.grade === grade && 
                     q.type === type && 
                     q.subject === sub &&
-                    (q.status === 'approved' || !q.status) // Handle legacy docs without status
+                    (q.status === 'approved' || !q.status)
                 ).length;
 
                 totalForGrade += count;
@@ -2155,6 +1949,64 @@
             resultDiv.innerHTML = summaryHtml + html;
         };
 
+        // SUBJECT MANAGEMENT
+        async function loadSubjectManagement() {
+            const grade = document.getElementById('subject-grade').value;
+            const type = document.getElementById('subject-type').value;
+            const container = document.getElementById('subject-management-list');
+            
+            if (!grade || !type) return;
+            
+            const key = `${grade}_${type}`;
+            const currentDisabled = disabledSubjects[key] || {};
+            
+            let html = '';
+            subjects[grade].forEach(subject => {
+                const isDisabled = currentDisabled[subject] === true;
+                html += `
+                <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm flex justify-between items-center">
+                    <div>
+                        <p class="font-bold text-gray-800">${subject}</p>
+                        <p class="text-xs text-gray-400">${getGradeName(grade)} - ${type === 'mcq' ? 'اختيارات' : 'صح وخطأ'}</p>
+                    </div>
+                    <label class="toggle-wrapper">
+                        <input type="checkbox" class="toggle-checkbox" ${isDisabled ? '' : 'checked'} 
+                               onchange="toggleSubject('${grade}', '${type}', '${subject}', this.checked)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>`;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        window.toggleSubject = async function(grade, type, subject, enabled) {
+            const key = `${grade}_${type}`;
+            
+            if (!disabledSubjects[key]) {
+                disabledSubjects[key] = {};
+            }
+            
+            if (enabled) {
+                delete disabledSubjects[key][subject];
+            } else {
+                disabledSubjects[key][subject] = true;
+            }
+            
+            try {
+                await setDoc(doc(db, "system_settings", "disabled_subjects"), disabledSubjects, { merge: true });
+                alert(`✅ تم ${enabled ? 'تفعيل' : 'تعطيل'} المادة ${subject} لنوع ${type === 'mcq' ? 'الاختيارات' : 'صح وخطأ'}`);
+                
+                updateUploadUIBasedOnSubjects();
+                if (document.getElementById('tab-upload').classList.contains('active')) {
+                    switchTab('upload');
+                }
+            } catch (e) {
+                alert('❌ حدث خطأ في حفظ التغييرات: ' + e.message);
+            }
+        };
+
+        // EDIT QUESTION MODAL FUNCTIONS
         window.openEditModal = (id) => {
             const q = allAdminQuestions.find(i => i.id === id);
             if(!q) return;
@@ -2163,7 +2015,6 @@
             document.getElementById('edit-q-text').value = q.question;
             document.getElementById('edit-q-grade').value = q.grade || '6sci';
             
-            // Populate Subjects based on grade
             const subSel = document.getElementById('edit-q-subject');
             subSel.innerHTML = "";
             subjects[q.grade || '6sci'].forEach(s => subSel.innerHTML += `<option value="${s}">${s}</option>`);
@@ -2216,13 +2067,11 @@
 
             await updateDoc(doc(db, "questions", id), updates);
             
-            // Update local list
             const idx = allAdminQuestions.findIndex(i => i.id === id);
             if(idx !== -1) {
                 allAdminQuestions[idx] = { ...allAdminQuestions[idx], ...updates };
             }
             
-            // Re-render
             const activeScreen = document.querySelector('.screen.active').id;
             if (activeScreen === 'screen-admin-all') filterAdminQuestions();
             if (activeScreen === 'screen-admin-stats') calculateQuestionStats();
@@ -2236,206 +2085,405 @@
                 await deleteDoc(doc(db, "questions", id));
                 allAdminQuestions = allAdminQuestions.filter(q => q.id !== id);
                 filterAdminQuestions();
-                calculateQuestionStats(); // update stats if screen is active
+                calculateQuestionStats();
             }
         };
 
-        async function loadAdminReviewContent() {
-            const div = document.getElementById('admin-review-list');
-            div.innerHTML = '<p class="text-center text-gray-400">تحميل...</p>';
-            const q = await getDocs(query(collection(db, "pending_questions"), where("status", "==", "pending")));
-            if(q.empty) { div.innerHTML = "<p class='text-center py-10 text-gray-400'>لا يوجد شيء للمراجعة</p>"; return; }
-            let html = "";
-            q.forEach(d => {
-               const val = d.data(); const author = val.authorName || 'مجهول';
-               html += `<div class="bg-white rounded-xl p-4 mb-3 shadow-sm border border-gray-100" id="review-card-${d.id}"><div class="flex justify-between items-start mb-2"><span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-lg font-bold">${val.grade} | ${val.subject}</span><span class="text-xs text-gray-400">بواسطة: ${author}</span></div><p class="font-bold mb-3 text-gray-800 text-sm leading-6">${val.question}</p><div class="bg-gray-50 p-3 rounded-lg mb-3 text-xs space-y-1 border border-gray-100"><p class="font-bold text-gray-500">الخيارات:</p>${val.type==='mcq' ? `<ul class="list-disc list-inside text-gray-600"><li>${val.answers[0]}</li><li>${val.answers[1]}</li><li>${val.answers[2]}</li></ul>` : `<p>صح / خطأ</p>`}<p class="mt-2 text-green-600 font-bold">الجواب الصحيح: ${val.type==='mcq' ? val.answers[val.correct] : (val.correct==='true'?'صح':'خطأ')}</p></div><div class="flex gap-2"><button onclick="approveQ('${d.id}')" class="flex-1 bg-green-500 text-white text-xs py-3 rounded-lg font-bold shadow-md hover:bg-green-600 transition">قبول (+10)</button><button onclick="rejectQ('${d.id}')" class="flex-1 bg-red-500 text-white text-xs py-3 rounded-lg font-bold shadow-md hover:bg-red-600 transition">رفض</button></div></div>`; 
-            });
-            div.innerHTML = html;
+        // --- HELPER FUNCTIONS ---
+        function getGradeName(code) { return code==='6sci'?'السادس العلمي':code==='6lit'?'السادس الأدبي':'الثالث متوسط'; }
+        
+        async function getQuestions(sub, type) {
+            const q = query(collection(db, "questions"), where("subject", "==", sub), where("type", "==", type), limit(50));
+            const snap = await getDocs(q);
+            const list = [];
+            snap.forEach(d => list.push(d.data()));
+            return list;
         }
 
-        window.checkAdminNotifications = () => {
-            const q = query(collection(db, "pending_questions"), where("status", "==", "pending"));
-            adminListenerUnsubscribe = onSnapshot(q, (snapshot) => {
-                const count = snapshot.size;
-                const badgeTab = document.getElementById('profile-tab-badge');
-                const badgeBtn = document.getElementById('admin-btn-badge');
-                if (count > 0) { badgeTab.classList.add('visible'); badgeBtn.classList.add('visible'); } 
-                else { badgeTab.classList.remove('visible'); badgeBtn.classList.remove('visible'); }
-            });
+        window.setQType = (t) => {
+            selectedQType = t;
+            document.getElementById('btn-mcq').className = `py-3 rounded-xl border-2 font-bold transition flex-1 ${t==='mcq'?'border-indigo-600 bg-indigo-50 text-indigo-600':'border-indigo-100 text-gray-500'}`;
+            document.getElementById('btn-tf').className = `py-3 rounded-xl border-2 font-bold transition flex-1 ${t==='tf'?'border-indigo-600 bg-indigo-50 text-indigo-600':'border-indigo-100 text-gray-500'}`;
         };
 
-        window.switchTab = (tab) => {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById('tab-'+tab).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n => { n.classList.remove('active'); n.classList.remove('text-indigo-600'); n.classList.add('text-gray-400'); });
-            const navs = document.querySelectorAll('.nav-item');
-            if(tab==='challenges') navs[0].classList.add('active', 'text-indigo-600');
-            if(tab==='leaderboard') { navs[1].classList.add('active', 'text-indigo-600'); loadLeaderboard(); }
-            if(tab==='upload') { navs[2].classList.add('active', 'text-indigo-600'); updateUploadUI(); }
-            if(tab==='profile') navs[3].classList.add('active', 'text-indigo-600');
+        function renderGame(data) {
+             if (isExitingGame) return;
+             if(!data.questions || data.currentIdx >= data.questions.length) { endGame(data); return; }
+             
+             if (currentGameMode === 'online') {
+                const isP1 = data.player1.uid === currentUser.uid;
+                document.getElementById('p1-name').innerText = userData.name;
+                document.getElementById('p1-img-game').src = userData.photo;
+                
+                document.getElementById('p2-name').innerText = isP1 ? data.player2.name : data.player1.name;
+                document.getElementById('p2-img-game').src = isP1 ? data.player2.photo : data.player1.photo;
+                
+                document.getElementById('game-my-score').innerText = isP1 ? data.player1.score : data.player2.score;
+                document.getElementById('game-op-score').innerText = isP1 ? data.player2.score : data.player1.score;
+            } else {
+                document.getElementById('p1-name').innerText = userData.name;
+                document.getElementById('p1-img-game').src = userData.photo;
+                
+                document.getElementById('p2-name').innerText = data.player2.name;
+                document.getElementById('p2-img-game').src = data.player2.photo;
+                
+                document.getElementById('game-my-score').innerText = data.player1.score;
+                document.getElementById('game-op-score').innerText = data.player2.score;
+            }
+
+             const q = data.questions[data.currentIdx];
+             const qTextEl = document.getElementById('q-text');
+
+             if(qTextEl.innerText !== q.question) {
+                hasAnsweredCurrentQ = false; userAnsweredCorrectly = false; currentQuestionCorrectAnswer = null;
+                clearTimeout(aiTimeoutId);
+                document.getElementById('answers-container').classList.remove('pointer-events-none', 'opacity-50');
+                document.getElementById('waiting-msg').classList.add('hidden');
+                document.getElementById('ai-thinking-msg').classList.add('hidden');
+                
+                clearInterval(gameTimer);
+                let t = 15;
+                document.getElementById('game-timer').innerText = t;
+                gameTimer = setInterval(() => {
+                    if (isExitingGame) { clearInterval(gameTimer); return; }
+                    t--; document.getElementById('game-timer').innerText = t;
+                    if(t <= 0) { clearInterval(gameTimer); if(!hasAnsweredCurrentQ) submitGameAnswer(null, q, data); else if (currentGameMode === 'ai') handleAINextTurn(); }
+                }, 1000);
+                
+                document.getElementById('q-progress').innerText = `${data.currentIdx + 1} / 10`;
+                qTextEl.innerText = q.question;
+                
+                const div = document.getElementById('answers-container');
+                div.innerHTML = '';
+                let ansList = [];
+                if(q.type === 'mcq') {
+                    ansList = q.answers.map((txt, idx) => ({ txt, isCorrect: idx === q.correct, value: idx }));
+                } else {
+                    ansList = [ { txt: 'صح', isCorrect: q.correct === 'true' || q.correct === true, value: 'true' }, { txt: 'خطأ', isCorrect: q.correct === 'false' || q.correct === false, value: 'false' } ];
+                }
+                const correctAns = ansList.find(ans => ans.isCorrect);
+                if (correctAns) currentQuestionCorrectAnswer = correctAns.value;
+                ansList.sort(() => 0.5 - Math.random());
+                ansList.forEach(ansObj => {
+                    const btn = document.createElement('button');
+                    btn.className = "answer-neutral w-full py-4 border-2 rounded-xl text-lg font-bold shadow-sm active:scale-95 transition";
+                    btn.innerText = ansObj.txt;
+                    btn.dataset.value = ansObj.value;
+                    btn.onclick = () => { if(hasAnsweredCurrentQ) return; submitGameAnswer(ansObj, q, data); };
+                    div.appendChild(btn);
+                });
+             }
+        }
+
+        async function submitGameAnswer(ansObj, q, matchData) {
+            if(hasAnsweredCurrentQ || isExitingGame) return;
+            hasAnsweredCurrentQ = true;
+            userAnsweredCorrectly = ansObj && ansObj.isCorrect;
+            
+            const answerButtons = document.querySelectorAll('#answers-container button');
+            answerButtons.forEach(btn => {
+                btn.classList.remove('answer-correct', 'answer-wrong', 'answer-neutral');
+                if (btn.dataset.value.toString() === currentQuestionCorrectAnswer.toString()) btn.classList.add('answer-correct');
+                else if (ansObj && btn.dataset.value.toString() === (ansObj.value?.toString())) btn.classList.add('answer-wrong');
+                else btn.classList.add('answer-neutral');
+            });
+            document.getElementById('answers-container').classList.add('pointer-events-none');
+            
+            if (currentGameMode === 'online') {
+                document.getElementById('waiting-msg').classList.remove('hidden');
+                if (!currentMatchId) return;
+                const isP1 = matchData.player1.uid === currentUser.uid;
+                const scoreIncrement = ansObj && ansObj.isCorrect ? 1 : 0;
+                const updates = { answersCount: increment(1) };
+                if(ansObj && ansObj.isCorrect) updates[isP1?'player1.score':'player2.score'] = increment(scoreIncrement);
+                await updateDoc(doc(db, "match_queue", currentMatchId), updates);
+            } else {
+                document.getElementById('waiting-msg').classList.add('hidden');
+                if(ansObj && ansObj.isCorrect) {
+                    localMatchData.player1.score += 1;
+                    document.getElementById('game-my-score').innerText = localMatchData.player1.score;
+                }
+                triggerAIResponse();
+            }
+        }
+
+        function triggerAIResponse() {
+            document.getElementById('waiting-msg').classList.add('hidden');
+            document.getElementById('ai-thinking-msg').classList.remove('hidden');
+            let delay = 3000; let accuracy = 0.5;
+            if (aiDifficulty === 'hard') { delay = 3500; accuracy = 0.7; }
+            if (aiDifficulty === 'easy') { delay = 2500; accuracy = 0.25; }
+            
+            aiTimeoutId = setTimeout(() => {
+                if(Math.random() < accuracy) {
+                    localMatchData.player2.score += 1;
+                    document.getElementById('game-op-score').innerText = localMatchData.player2.score;
+                }
+                localMatchData.currentIdx += 1;
+                localMatchData.answersCount = 0;
+                renderGame(localMatchData);
+            }, delay);
+        }
+
+        async function endGame(d) {
+            clearInterval(gameTimer);
+            document.getElementById('game-overlay').classList.add('hidden');
+            if (isExitingGame) return;
+            let myScore, opScore;
+            if (currentGameMode === 'online') {
+                const isP1 = d.player1.uid === currentUser.uid;
+                myScore = isP1 ? d.player1.score : d.player2.score; opScore = isP1 ? d.player2.score : d.player1.score;
+            } else {
+                myScore = localMatchData.player1.score; opScore = localMatchData.player2.score;
+            }
+            let pointsGained = 0; let msg = ""; let icon = "";
+            if (myScore > opScore) { msg = "فوز ساحق!"; icon = "🏆"; pointsGained = myScore * 2; } 
+            else if (myScore < opScore) { msg = "حظ أوفر!"; icon = "😢"; pointsGained = 0; } 
+            else { if(myScore > 0) { msg = "تعادل إيجابي!"; icon = "🤝"; pointsGained = myScore; } else { msg = "تعادل سلبي!"; icon = "😐"; pointsGained = 0; } }
+
+            if(pointsGained > 0) {
+                await updateDoc(doc(db, "users", currentUser.uid), { points: increment(pointsGained) });
+                userData.points += pointsGained;
+                setupHeaderUI();
+            }
+            document.getElementById('result-icon-container').innerText = icon;
+            document.getElementById('result-title').innerText = msg;
+            document.getElementById('final-my-score').innerText = myScore;
+            document.getElementById('final-op-score').innerText = opScore;
+            document.getElementById('result-points-gained').innerText = `+${pointsGained}`;
+            document.getElementById('result-screen').classList.remove('hidden');
+            document.getElementById('result-screen').style.display = 'flex';
+        }
+
+        // --- FIXED: زر العودة وX عند انتهاء التحدي (تم إصلاحه تماماً) ---
+        window.closeResultScreen = async () => {
+             isExitingGame = true;
+             if (matchListenerUnsubscribe) { matchListenerUnsubscribe(); matchListenerUnsubscribe = null; }
+             clearInterval(gameTimer); clearTimeout(aiTimeoutId);
+             document.getElementById('result-screen').classList.add('hidden');
+             document.getElementById('game-overlay').classList.add('hidden');
+             document.getElementById('searching-ui').classList.add('hidden');
+             
+             // Reset all game variables
+             currentMatchId = null; 
+             localMatchData = null; 
+             hasAnsweredCurrentQ = false;
+             currentGameMode = 'online';
+             aiDifficulty = 'medium';
+             currentQuestionCorrectAnswer = null;
+             userAnsweredCorrectly = false;
+             
+             // Show challenge card
+             document.getElementById('challenge-active-card').classList.remove('hidden');
+             
+             // Refresh user data if needed
+             if(currentUser) {
+                 try {
+                     const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+                     if(userDoc.exists()) { 
+                         userData = userDoc.data(); 
+                         setupHeaderUI(); 
+                         setupProfileUI(); 
+                     }
+                     loadLeaderboard();
+                 } catch(e) {
+                     console.error("Error refreshing user data:", e);
+                 }
+             }
+             
+             // Switch back to challenges tab
+             switchTab('challenges');
+             
+             // Reset exiting flag after delay
+             setTimeout(() => { 
+                 isExitingGame = false; 
+                 // Ensure all overlays are hidden
+                 document.getElementById('game-overlay').style.display = 'none';
+                 document.getElementById('result-screen').style.display = 'none';
+                 document.getElementById('searching-ui').style.display = 'none';
+                 document.getElementById('vs-screen').classList.add('hidden');
+             }, 100);
         };
         
-        window.updateUploadUI = () => { 
-            if(userData.grade) {
+        window.cancelSearch = async () => {
+            if(currentMatchId && currentGameMode === 'online') { try { await deleteDoc(doc(db, "match_queue", currentMatchId)); } catch(e){} }
+            document.getElementById('searching-ui').classList.add('hidden');
+            document.getElementById('challenge-active-card').classList.remove('hidden');
+        };
+
+        // --- AUTH & OTHER HELPERS ---
+        window.handleLogin = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('login-email').value, document.getElementById('login-pass').value); } catch (e) { alert(getArabicError(e.code)); } };
+        window.switchAuthTab = (tab) => {
+            if(tab === 'login') { document.getElementById('login-form').classList.remove('hidden'); document.getElementById('signup-form').classList.add('hidden'); document.getElementById('tab-login-btn').classList.add('active'); document.getElementById('tab-signup-btn').classList.remove('active'); } 
+            else { document.getElementById('login-form').classList.add('hidden'); document.getElementById('signup-form').classList.remove('hidden'); document.getElementById('tab-login-btn').classList.remove('active'); document.getElementById('tab-signup-btn').classList.add('active'); }
+        };
+        window.openForgotPassword = () => { document.getElementById('forgot-password-modal').classList.remove('hidden'); document.getElementById('forgot-password-modal').style.display = 'flex'; };
+        window.closeForgotPassword = () => { document.getElementById('forgot-password-modal').classList.add('hidden'); };
+        window.sendResetLink = async () => {
+            const email = document.getElementById('forgot-email').value;
+            try { await sendPasswordResetEmail(auth, email); alert('✅ تم الإرسال'); closeForgotPassword(); } catch(e) { alert(getArabicError(e.code)); }
+        };
+        window.logout = () => { if(adminListenerUnsubscribe) adminListenerUnsubscribe(); signOut(auth); };
+        
+        function getArabicError(code) {
+             switch(code) {
+                case 'auth/email-already-in-use': return 'البريد الإلكتروني مستخدم بالفعل';
+                case 'auth/user-disabled': return 'تم تعطيل هذا الحساب';
+                case 'auth/wrong-password': return 'كلمة المرور غير صحيحة';
+                default: return 'حدث خطأ: ' + code;
+             }
+        }
+        function compressImage(file) {
+            return new Promise((resolve) => {
+                const r = new FileReader(); r.readAsDataURL(file);
+                r.onload = (e) => { const i = new Image(); i.src = e.target.result; i.onload = () => { const c = document.createElement('canvas'); c.width=200; c.height=200; const ctx = c.getContext('2d'); ctx.drawImage(i,0,0,200,200); resolve(c.toDataURL('image/jpeg', 0.6)); }; };
+            });
+        }
+        function generateId() { return Math.random().toString(36).substr(2, 6).toUpperCase(); }
+        window.handleImagePreview = (input) => { if(input.files[0]) { const r = new FileReader(); r.onload = (e) => document.getElementById('preview-img').src = e.target.result; r.readAsDataURL(input.files[0]); } };
+        
+        // --- ADMIN UI SETUP ---
+        function setupAdminUI() { 
+            if (userData.email === ADMIN_EMAIL) { 
+                document.getElementById('admin-buttons').classList.remove('hidden'); 
+                document.getElementById('admin-challenge-controls').classList.remove('hidden');
+            } 
+        }
+        window.checkAdminNotifications = () => {
+             const q = query(collection(db, "pending_questions"), where("status", "==", "pending"));
+             adminListenerUnsubscribe = onSnapshot(q, (snap) => {
+                 const count = snap.size; const b1 = document.getElementById('profile-tab-badge'); const b2 = document.getElementById('admin-btn-badge');
+                 if (count > 0) { b1.classList.add('visible'); b2.classList.add('visible'); } else { b1.classList.remove('visible'); b2.classList.remove('visible'); }
+             });
+        };
+        function listenToSystemStatus() {
+             onSnapshot(doc(db, "system_settings", "config"), (docSnap) => {
+                 if (docSnap.exists()) { 
+                     const d = docSnap.data(); 
+                     systemConfig.enabled = d.challengesEnabled !== undefined ? d.challengesEnabled : true; 
+                     systemConfig.msg = d.maintenanceMessage || "النظام في وضع الصيانة";
+                     
+                     const toggle = document.getElementById('system-toggle');
+                     const statusText = document.getElementById('system-status-text');
+                     const msgInput = document.getElementById('maintenance-msg-input');
+                     
+                     if (toggle) {
+                         toggle.checked = systemConfig.enabled;
+                         if (!systemConfig.enabled) {
+                             statusText.innerText = "النظام متوقف ⛔ (الطلاب يرون الرسالة)";
+                             statusText.className = "text-xs font-bold text-red-400 mb-2";
+                         } else {
+                             statusText.innerText = "النظام يعمل حالياً ✅";
+                             statusText.className = "text-xs font-bold text-green-400 mb-2";
+                         }
+                         if (msgInput && document.activeElement !== msgInput) {
+                              msgInput.value = systemConfig.msg;
+                         }
+                     }
+                 }
+             });
+        }
+        async function loadDisabledSubjects() { 
+            try { 
+                const d = await getDoc(doc(db, "system_settings", "disabled_subjects")); 
+                disabledSubjects = d.exists() ? d.data() : {}; 
+            } catch(e){ 
+                disabledSubjects={}; 
+            } 
+        }
+
+        function isSubjectEnabled(grade, type, subject) {
+            const key = `${grade}_${type}`;
+            return !disabledSubjects[key] || !disabledSubjects[key][subject];
+        }
+
+        function getEnabledSubjects(grade, type) {
+            if (!subjects[grade]) return [];
+            return subjects[grade].filter(subject => isSubjectEnabled(grade, type, subject));
+        }
+
+        function updateUploadUIBasedOnSubjects() {
+            if (!userData || !userData.grade) return;
+            
+            const grade = userData.grade;
+            const mcqEnabled = getEnabledSubjects(grade, 'mcq').length > 0;
+            const tfEnabled = getEnabledSubjects(grade, 'tf').length > 0;
+            
+            const typeSelect = document.getElementById('up-type');
+            const originalHTML = typeSelect.innerHTML;
+            let newHTML = '';
+            
+            if (mcqEnabled) newHTML += '<option value="mcq">اختيارات</option>';
+            if (tfEnabled) newHTML += '<option value="tf">صح وخطأ</option>';
+            
+            if (newHTML === '') {
+                newHTML = '<option value="" disabled>لا توجد أنواع متاحة</option>';
+            }
+            
+            typeSelect.innerHTML = newHTML;
+            
+            if (mcqEnabled && !tfEnabled) typeSelect.value = 'mcq';
+            if (!mcqEnabled && tfEnabled) typeSelect.value = 'tf';
+        }
+
+        // --- UPLOAD ---
+        window.nextUploadStep = () => {
+             const sub = document.getElementById('up-subject').value; if (!sub) return alert("يرجى اختيار المادة");
+             document.getElementById('up-step-1').classList.add('hidden'); document.getElementById('up-step-2').classList.remove('hidden');
+             const type = document.getElementById('up-type').value;
+             if(type === 'mcq') { document.getElementById('up-mcq-container').classList.remove('hidden'); document.getElementById('up-tf-container').classList.add('hidden'); }
+             else { document.getElementById('up-mcq-container').classList.add('hidden'); document.getElementById('up-tf-container').classList.remove('hidden'); }
+        };
+        window.submitUploadQuestion = async () => {
+             const sub = document.getElementById('up-subject').value; const type = document.getElementById('up-type').value; const txt = document.getElementById('up-q-text').value;
+             if(!txt) return alert("يرجى كتابة نص السؤال");
+             let q = { grade: userData.grade, subject: sub, type, question: txt, authorId: currentUser.uid, authorName: userData.name, createdAt: serverTimestamp(), status: 'pending' };
+             if(type==='mcq') { const a0 = document.getElementById('ans-0').value; const a1 = document.getElementById('ans-1').value; const a2 = document.getElementById('ans-2').value; if(!a0 || !a1 || !a2) return alert("الخيارات"); q.answers = [a0, a1, a2]; q.correct = parseInt(document.querySelector('input[name="correct"]:checked').value); }
+             else { q.correct = document.getElementById('up-tf-val').value; }
+             await addDoc(collection(db, "pending_questions"), q); alert("تم الارسال للمراجعة");
+             document.getElementById('up-q-text').value = ""; document.getElementById('up-step-2').classList.add('hidden'); document.getElementById('up-step-1').classList.remove('hidden');
+        };
+        function updateUploadUI() { 
+            if(userData.grade) { 
                 updateUploadUIBasedOnSubjects();
                 const type = document.getElementById('up-type').value;
                 populateSubjects(userData.grade, 'up-subject', type);
                 
-                // Update subject dropdown when type changes
                 document.getElementById('up-type').onchange = function() {
                     populateSubjects(userData.grade, 'up-subject', this.value);
                 };
+            } 
+        }
+        function populateSubjects(grade, elementId, type = null) {
+            const sel = document.getElementById(elementId);
+            if(!sel) return;
+            
+            let filteredSubjects = [];
+            if (type) {
+                filteredSubjects = getEnabledSubjects(grade, type);
+            } else {
+                filteredSubjects = subjects[grade] || [];
             }
-        };
+            
+            sel.innerHTML = '<option value="">اختر المادة</option>';
+            filteredSubjects.forEach(s => sel.innerHTML += `<option value="${s}">${s}</option>`);
+            
+            if (filteredSubjects.length === 0) {
+                sel.innerHTML += '<option value="" disabled>لا توجد مواد متاحة</option>';
+            }
+        }
+        window.saveUserGrade = async () => { const g = document.getElementById('grade-select').value; if (!g) return; await updateDoc(doc(db, "users", currentUser.uid), { grade: g }); location.reload(); };
+        window.updateProfilePic = async (input) => { if(input.files[0]) { const p = await compressImage(input.files[0]); await updateDoc(doc(db, "users", currentUser.uid), { photo: p }); document.getElementById('profile-img').src = p; } };
         
-        // --- PROBLEM 6: FIXED LEADERBOARD ---
-        async function loadLeaderboard() {
-            const div = document.getElementById('leaderboard-list');
-            div.innerHTML = '<p class="text-center text-gray-400 mt-10">تحميل...</p>';
-            const q = query(collection(db, "users"), limit(150));
-            const snap = await getDocs(q);
-            let users = [];
-            snap.forEach(d => { 
-                const u = d.data();
-                // PROBLEM 6: Only show users who are not hidden AND have points > 0
-                if (u.hiddenFromLeaderboard !== true && (u.points || 0) > 0) {
-                    users.push(u); 
-                }
-            });
-            
-            users.sort((a, b) => {
-                const pointsA = parseInt(a.points || 0); const pointsB = parseInt(b.points || 0);
-                if (pointsB !== pointsA) return pointsB - pointsA;
-                return (a.name || "").localeCompare((b.name || ""), 'ar');
-            });
-
-            const myIndex = users.findIndex(u => u.uid === currentUser.uid);
-            if(myIndex !== -1) document.getElementById('my-rank-text').innerText = "#" + (myIndex + 1);
-            else document.getElementById('my-rank-text').innerText = "غير مصنف";
-
-            div.innerHTML = ''; 
-            let i = 1;
-
-            users.forEach(u => {
-                let frameClass = "frame-rank-common";
-                let crown = "";
-                let rankBadge = `<div class="rank-badge-top">${i}</div>`;
-                let raysHtml = ""; // Default no rays
-
-                // Determine Frame, Crown, and Rays (Top 10 Only)
-                if (i === 1) { 
-                    frameClass = "frame-rank-1"; 
-                    crown = `<i class="fas fa-crown text-yellow-500 name-crown"></i>`; 
-                    raysHtml = `<div class="rank-rays rays-gold"></div>`;
-                }
-                else if (i === 2) { 
-                    frameClass = "frame-rank-2"; 
-                    raysHtml = `<div class="rank-rays rays-silver"></div>`;
-                }
-                else if (i === 3) { 
-                    frameClass = "frame-rank-3"; 
-                    raysHtml = `<div class="rank-rays rays-bronze"></div>`;
-                }
-                else if (i <= 10) { 
-                    // Colorful rays for 4-10
-                    const colors = ['rays-blue', 'rays-red', 'rays-green', 'rays-purple', 'rays-blue', 'rays-red', 'rays-green'];
-                    frameClass = "frame-rank-other-top"; 
-                    raysHtml = `<div class="rank-rays ${colors[i-4]}"></div>`;
-                }
-                else { 
-                    frameClass = "frame-rank-common"; 
-                }
-                
-                let resetBtn = "";
-                if (currentUser.email === ADMIN_EMAIL) resetBtn = `<button onclick="resetUserPoints('${u.uid}', '${u.name}')" class="w-6 h-6 rounded bg-red-100 text-red-500 flex items-center justify-center mr-2"><i class="fas fa-trash-alt text-xs"></i></button>`;
-                
-                div.innerHTML += `
-                    <div class="flex items-center justify-between bg-white p-4 rounded-xl shadow-sm mb-3 relative overflow-hidden">
-                        <div class="flex items-center gap-4 z-10">
-                            <!-- Image + Rank Number Top + Rays -->
-                            <div class="rank-img-container">
-                                ${rankBadge}
-                                ${raysHtml}
-                                <img src="${u.photo}" class="rank-img ${frameClass}">
-                            </div>
-                            <div>
-                                <p class="font-bold text-gray-800 text-sm flex items-center">${crown} ${u.name}</p>
-                                <p class="text-[10px] text-gray-400">ID: ${u.uniqueId}</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center z-10">
-                            ${resetBtn}
-                            <span class="font-black text-indigo-600 text-lg">${u.points} 💎</span>
-                        </div>
-                    </div>`;
-                i++;
-            });
-        }
-
-        window.resetUserPoints = async (uid, name) => {
-            if(confirm(`هل أنت متأكد من تصفير نقاط الطالب: ${name}؟\n(النقاط ستعود للصفر فقط ولن يختفي من القائمة)`)) {
-                await updateDoc(doc(db, "users", uid), { points: 0 });
-                alert("تم تصفير النقاط بنجاح!");
-                loadLeaderboard(); 
-            }
-        };
-
-        window.handleImagePreview = (input) => {
-            if(input.files[0]) {
-                const r = new FileReader();
-                r.onload = (e) => document.getElementById('preview-img').src = e.target.result;
-                r.readAsDataURL(input.files[0]);
-            }
-        };
-        function generateId() { return Math.random().toString(36).substr(2, 6).toUpperCase(); }
-        function compressImage(file) {
-            return new Promise((resolve) => {
-                const r = new FileReader();
-                r.readAsDataURL(file);
-                r.onload = (e) => {
-                    const i = new Image();
-                    i.src = e.target.result;
-                    i.onload = () => {
-                        const c = document.createElement('canvas');
-                        c.width=200; c.height=200;
-                        const ctx = c.getContext('2d');
-                        ctx.drawImage(i,0,0,200,200);
-                        resolve(c.toDataURL('image/jpeg', 0.6));
-                    };
-                };
-            });
-        }
-
-        // --- UPDATED APPROVE/REJECT LOGIC (PERSISTENT) ---
-        window.approveQ = async (id) => {
-            const card = document.getElementById(`review-card-${id}`);
-            if(card) card.remove();
-            const ref = doc(db, "pending_questions", id);
-            const d = (await getDoc(ref)).data();
-            
-            // Add to active questions
-            await addDoc(collection(db, "questions"), {...d, status:'approved'});
-            
-            // Reward 10 Points
-            await updateDoc(doc(db, "users", d.authorId), { points: increment(10) });
-            
-            // Update pending doc status (DON'T DELETE)
-            await updateDoc(ref, { status: 'approved' });
-        };
-
-        window.rejectQ = async (id) => {
-            const card = document.getElementById(`review-card-${id}`);
-            if(card) card.remove();
-            // Update status (DON'T DELETE)
-            await updateDoc(doc(db, "pending_questions", id), { status: 'rejected' });
-        };
-
-        window.updateProfilePic = async (input) => {
-            if(input.files[0]) {
-                const p = await compressImage(input.files[0]);
-                await updateDoc(doc(db, "users", currentUser.uid), { photo: p });
-                document.getElementById('profile-img').src = p;
-            }
+        // --- Setup UI Helpers ---
+        function setupProfileUI() { document.getElementById('profile-name-text').innerText = userData.name; document.getElementById('profile-id-text').innerText = "ID: " + userData.uniqueId; document.getElementById('profile-img').src = userData.photo; }
+        function setupHeaderUI() { document.getElementById('header-points').innerText = userData.points; }
+        
+        // --- FIXED: زر "حسنا" في نافذة الإيقاف (تم إصلاحه تماماً) ---
+        window.closeMaintenancePopup = () => { 
+            document.getElementById('maintenance-popup').classList.add('hidden'); 
+            document.getElementById('maintenance-popup').style.display = 'none';
+            switchTab('challenges'); 
         };
 
         // --- SYSTEM TOGGLE FUNCTIONS ---
@@ -2467,13 +2515,6 @@
             } catch (e) {
                 alert("خطأ في الحفظ: " + e.message);
             }
-        };
-
-        // --- PROBLEM 1: MAINTENANCE POPUP CLOSE FUNCTION ---
-        window.closeMaintenancePopup = function() {
-            document.getElementById('maintenance-popup').classList.add('hidden');
-            document.getElementById('maintenance-popup').style.display = 'none';
-            switchTab('challenges');
         };
     </script>
 </body>
