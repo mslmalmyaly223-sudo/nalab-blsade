@@ -11,7 +11,7 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     
- <style>
+    <style>
         /* --- Global Reset & Variables --- */
         :root {
             --primary: #4F46E5;
@@ -1710,123 +1710,137 @@
             switchTab('profile');
         };
 
-        // --- AUTH & SIGNUP WITH RESTRICTIONS - FIXED REFERRAL SYSTEM ---
         window.handleSignup = async () => {
-            // DEVICE RESTRICTION (LocalStorage)
-            let accountsCount = localStorage.getItem('hacker_accounts_count') || 0;
-            if (parseInt(accountsCount) >= 2) {
-                alert("⛔ عذراً، لا يمكن إنشاء أكثر من حسابين على نفس الجهاز.");
-                return;
-            }
+    // DEVICE RESTRICTION
+    let accountsCount = localStorage.getItem('hacker_accounts_count') || 0;
+    if (parseInt(accountsCount) >= 2) {
+        alert("⛔ عذراً، لا يمكن إنشاء أكثر من حسابين على نفس الجهاز.");
+        return;
+    }
 
+    try {
+        const name = document.getElementById('signup-name').value.trim();
+        const email = document.getElementById('signup-email').value.trim();
+        const pass = document.getElementById('signup-pass').value;
+        const refCode = document.getElementById('signup-referral').value.trim().toUpperCase();
+        const imgFile = document.getElementById('signup-img').files[0];
+        
+        if(!name || !email || !pass) return alert("يرجى ملء كافة الحقول");
+        if(!email.endsWith("@gmail.com")) return alert("يجب استخدام ايميل Gmail");
+        if(pass.length < 6) return alert("كلمة المرور قصيرة جداً");
+
+        // ⭐⭐ CHECK REFERRAL CODE - النسخة المعدلة ⭐⭐
+        let referrerId = null;
+        let referrerData = null;
+        if (refCode && refCode.trim() !== "") {
+            console.log("جاري التحقق من رمز الدعوة:", refCode);
+            
             try {
-                const name = document.getElementById('signup-name').value.trim();
-                const email = document.getElementById('signup-email').value.trim();
-                const pass = document.getElementById('signup-pass').value;
-                const refCode = document.getElementById('signup-referral').value.trim().toUpperCase();
-                const imgFile = document.getElementById('signup-img').files[0];
+                const qRef = query(collection(db, "users"), where("uniqueId", "==", refCode));
+                const snap = await getDocs(qRef);
                 
-                if(!name || !email || !pass) return alert("يرجى ملء كافة الحقول");
-                if(!email.endsWith("@gmail.com")) return alert("يجب استخدام ايميل Gmail");
-                if(pass.length < 6) return alert("كلمة المرور قصيرة جداً");
-
-                // CHECK REFERRAL CODE - FIXED PERMISSIONS
-                let referrerId = null;
-                let referrerData = null;
-                if (refCode) {
-                    const qRef = query(collection(db, "users"), where("uniqueId", "==", refCode));
-                    const snap = await getDocs(qRef);
-                    if (snap.empty) {
-                        alert("رمز الدعوة غير صحيح");
-                        return;
-                    }
+                if (!snap.empty) {
                     referrerId = snap.docs[0].id;
                     referrerData = snap.docs[0].data();
                     
-                    // Check if referrer is banned
+                    console.log("تم العثور على المحيل:", referrerData.name);
+                    
                     if (referrerData.isBanned) {
-                        alert("لا يمكن استخدام رمز دعوة من مستخدم محظور");
-                        return;
+                        console.warn("المحيل محظور، تجاهل الرمز");
+                        referrerId = null;
+                        referrerData = null;
                     }
+                } else {
+                    // ⭐⭐ لا نوقف التسجيل، فقط نهمل الرمز ⭐⭐
+                    console.log("رمز الدعوة غير صحيح، المتابعة بدون رمز");
+                    referrerId = null;
+                    referrerData = null;
                 }
-
-                let photoURL = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&size=128`;
-                if(imgFile) {
-                    try {
-                        photoURL = await compressImage(imgFile);
-                    } catch (e) {
-                        console.error("Error compressing image:", e);
-                        // Use default avatar if compression fails
-                    }
-                }
-
-                const cred = await createUserWithEmailAndPassword(auth, email, pass);
-                
-                // Increase local account count
-                localStorage.setItem('hacker_accounts_count', parseInt(accountsCount) + 1);
-
-                const newId = generateId();
-                // User Data - FIXED: Start with 25 points if using referral code
-                let startPoints = 0;
-                if (referrerId) startPoints = 25; // Bonus for new user
-
-                // Create user document with proper data structure
-                const userDocData = {
-                    uid: cred.user.uid,
-                    name: name,
-                    email: email,
-                    photo: photoURL,
-                    uniqueId: newId,
-                    points: startPoints,
-                    role: 'user',
-                    createdAt: serverTimestamp(),
-                    lastActive: serverTimestamp(),
-                    isBanned: false,
-                    walletBalance: 0,
-                    referrals: 0,
-                    referredBy: referrerId || null,
-                    grade: null,
-                    // Rewards
-                    lastRewardDayKey: null, 
-                    rewardMonthKey: null,   
-                    daysClaimedInMonth: 0,
-                    deviceId: localStorage.getItem('deviceId') || generateDeviceId()
-                };
-
-                await setDoc(doc(db, "users", cred.user.uid), userDocData);
-
-                // Reward Referrer - FIXED: Use transaction for consistency
-                if (referrerId) {
-                    try {
-                        // Add 50 points to referrer
-                        await updateDoc(doc(db, "users", referrerId), {
-                            points: increment(50),
-                            referrals: increment(1),
-                            lastReferral: serverTimestamp()
-                        });
-                        
-                        // Also update local referrer data if it's the current user
-                        if (currentUser && currentUser.uid === referrerId) {
-                            userData.points += 50;
-                            userData.referrals = (userData.referrals || 0) + 1;
-                            setupHeaderUI();
-                        }
-                        
-                        console.log("Referral reward processed successfully");
-                    } catch (referralError) {
-                        console.error("Error processing referral reward:", referralError);
-                        // Don't fail the signup if referral reward fails
-                    }
-                }
-
-                alert("✅ تم إنشاء الحساب بنجاح! يمكنك تسجيل الدخول الآن.");
-                window.switchAuthTab('login');
-
-            } catch (e) { 
-                console.error("Signup error:", e);
-                alert(getArabicError(e.code)); 
+            } catch (error) {
+                console.error("خطأ في التحقق من رمز الدعوة:", error);
+                // ⭐⭐ المتابعة بدون رمز في حالة الخطأ ⭐⭐
+                referrerId = null;
+                referrerData = null;
             }
+        }
+
+        let photoURL = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&size=128`;
+        if(imgFile) {
+            try {
+                photoURL = await compressImage(imgFile);
+            } catch (e) {
+                console.error("Error compressing image:", e);
+            }
+        }
+
+        // إنشاء حساب في Firebase Auth
+        const cred = await createUserWithEmailAndPassword(auth, email, pass);
+        console.log("تم إنشاء حساب Auth، UID:", cred.user.uid);
+        
+        // زيادة عداد الحسابات المحلية
+        localStorage.setItem('hacker_accounts_count', parseInt(accountsCount) + 1);
+
+        const newId = generateId();
+        let startPoints = 0;
+        if (referrerId) startPoints = 25; // مكافأة للمستخدم الجديد
+
+        // بيانات المستخدم
+        const userDocData = {
+            uid: cred.user.uid,
+            name: name,
+            email: email,
+            photo: photoURL,
+            uniqueId: newId,
+            points: startPoints,
+            role: 'user',
+            createdAt: serverTimestamp(),
+            lastActive: serverTimestamp(),
+            isBanned: false,
+            walletBalance: 0,
+            referrals: 0,
+            referredBy: referrerId || null, // null إذا لم يكن هناك رمز
+            grade: null,
+            lastRewardDayKey: null,
+            rewardMonthKey: null,
+            daysClaimedInMonth: 0,
+            deviceId: localStorage.getItem('deviceId') || generateDeviceId()
         };
+
+        console.log("بيانات المستخدم النهائية:", userDocData);
+
+        // حفظ في Firestore
+        await setDoc(doc(db, "users", cred.user.uid), userDocData);
+        console.log("تم حفظ بيانات المستخدم في Firestore");
+
+        // ⭐⭐ مكافأة المحيل (إذا كان الرمز صحيحاً) ⭐⭐
+        if (referrerId) {
+            try {
+                await updateDoc(doc(db, "users", referrerId), {
+                    points: increment(50),
+                    referrals: increment(1),
+                    lastReferral: serverTimestamp()
+                });
+                console.log("تمت مكافأة المحيل بنجاح");
+            } catch (referralError) {
+                console.error("خطأ في مكافأة المحيل:", referralError);
+                // لا نوقف العملية إذا فشلت المكافأة
+            }
+        }
+
+        // ⭐⭐ رسالة النجاح حسب حالة رمز الدعوة ⭐⭐
+        if (referrerId) {
+            alert(`✅ تم إنشاء الحساب بنجاح!\n🎁 حصلت على 25 نقطة هدية!\n📊 رمز الدعوة: ${refCode} مفعل`);
+        } else if (refCode && refCode.trim() !== "") {
+            alert(`✅ تم إنشاء الحساب بنجاح!\n⚠️ رمز الدعوة "${refCode}" غير صحيح أو غير فعال\n📝 يمكنك المحاولة لاحقاً`);
+        } else {
+            alert("✅ تم إنشاء الحساب بنجاح! يمكنك تسجيل الدخول الآن.");
+        }
+
+    } catch (e) { 
+        console.error("Signup error:", e);
+        alert(getArabicError(e.code)); 
+    }
+};
 
         // --- NEW DAILY REWARDS LOGIC ---
         window.checkDailyReward = async () => {
