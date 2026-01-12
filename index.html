@@ -519,21 +519,21 @@
                         <button onclick="setQType('tf')" id="btn-tf" class="py-3 rounded-xl border-2 border-indigo-100 text-gray-500 font-bold active:scale-95 transition">صح وخطأ</button>
                     </div>
 
-                    <button onclick="startMatchmaking('online')" class="btn-main bg-gradient-to-r from-indigo-600 to-purple-600 mb-4">
+                    <button onclick="startMatchmaking('online')" class="btn-main bg-gradient-to-r from-indigo-600 to-purple-600 mb-4 h-12">
                         <i class="fas fa-user-graduate ml-2"></i> اللعب ضد طالب (حقيقي)
                     </button>
 
-                    <div class="flex gap-2 items-center">
-                        <button onclick="startMatchmaking('ai')" class="btn-main bg-gradient-to-r from-emerald-500 to-green-600 flex-1">
-                            <i class="fas fa-robot ml-2"></i> ضد الذكاء الاصطناعي
-                        </button>
-                        <div class="w-1/3">
-                            <select id="ai-difficulty" class="input-box text-xs font-bold text-center h-[52px] bg-green-50 border-green-200 text-green-800 focus:border-green-500">
-                                <option value="easy">بسيط (25%)</option>
-                                <option value="medium" selected>متوسط (50%)</option>
-                                <option value="hard">ذكي (70%)</option>
-                            </select>
-                        </div>
+                    <button onclick="startMatchmaking('ai')" class="btn-main bg-gradient-to-r from-emerald-500 to-green-600 mb-3 h-12">
+                        <i class="fas fa-robot ml-2"></i> ضد الذكاء الاصطناعي
+                    </button>
+                    
+                    <div class="w-full">
+                        <label class="text-xs text-gray-400 font-bold mb-1 block text-center">صعوبة الذكاء الاصطناعي</label>
+                        <select id="ai-difficulty" class="input-box text-xs font-bold text-center h-[40px] bg-green-50 border-green-200 text-green-800 focus:border-green-500 w-full">
+                            <option value="easy">بسيط (25%)</option>
+                            <option value="medium" selected>متوسط (50%)</option>
+                            <option value="hard">ذكي (70%)</option>
+                        </select>
                     </div>
                 </div>
 
@@ -703,7 +703,12 @@
                     <div class="absolute top-0 left-0 w-full h-16 bg-gradient-to-r from-indigo-500 to-purple-500 opacity-10"></div>
                     <div class="relative z-10">
                         <img id="profile-img" src="" class="w-24 h-24 rounded-full mx-auto border-4 border-white shadow-md mb-3 object-cover">
-                        <h2 id="profile-name-text" class="text-xl font-bold text-gray-800">...</h2>
+                        <div class="flex items-center justify-center gap-2">
+                            <h2 id="profile-name-text" class="text-xl font-bold text-gray-800">...</h2>
+                            <button onclick="editProfileName()" class="w-6 h-6 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center hover:bg-indigo-100 transition">
+                                <i class="fas fa-pen text-xs"></i>
+                            </button>
+                        </div>
                         <p class="text-xs text-gray-400 mt-1" id="profile-id-text">ID: ...</p>
                         <button onclick="document.getElementById('edit-pic-input').click()" class="text-indigo-600 text-xs font-bold mt-2 hover:underline">تغيير الصورة</button>
                         <input type="file" id="edit-pic-input" hidden accept="image/*" onchange="updateProfilePic(this)">
@@ -787,7 +792,9 @@
                 <div class="bg-gradient-to-br from-green-500 to-emerald-700 text-white p-8 rounded-3xl shadow-lg mb-6">
                     <p class="text-green-100 text-sm mb-2 font-bold">الرصيد الحالي</p>
                     <h1 class="text-5xl font-black mb-1">$<span id="wallet-balance">0</span></h1>
-                    <p class="text-xs text-green-200 mt-4 border-t border-green-400 pt-2">يمكن سحب أقل شي 100$</p>
+                    <p class="text-xs text-green-200 mt-4 border-t border-green-400 pt-2 leading-relaxed">
+                        (يمكن سحب اقل شي 100$ وكل 100$ تساوي 10 الف دينار عراقي)
+                    </p>
                 </div>
                 <div id="withdraw-section" class="hidden">
                      <a href="https://t.me/mslmh19" target="_blank" class="w-full bg-blue-500 text-white py-4 rounded-xl font-bold shadow-lg hover:bg-blue-600 transition flex items-center justify-center gap-2 animate-pulse">
@@ -1215,13 +1222,13 @@
                 target.setHours(23, 59, 59, 999);
                 
                 if (day === 5) {
-                     target.setDate(now.getDate() + 6);
+                      target.setDate(now.getDate() + 6);
                 }
                 
                 const diff = target - now;
                 if (diff < 0) {
-                     timerEl.innerText = "00:00:00:00";
-                     return;
+                      timerEl.innerText = "00:00:00:00";
+                      return;
                 }
 
                 const d = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -1586,9 +1593,10 @@
             currentGameMode = mode;
             if (mode === 'ai') aiDifficulty = document.getElementById('ai-difficulty').value;
 
+            // FIX: Ensure searching UI replaces card fully and visibly
             document.getElementById('challenge-active-card').classList.add('hidden');
             document.getElementById('searching-ui').classList.remove('hidden');
-            document.getElementById('searching-ui').style.display = 'flex';
+            document.getElementById('searching-ui').style.display = 'flex'; // Enforce flex
             document.getElementById('search-msg').innerText = mode === 'online' ? "جاري البحث عن طالب..." : "جاري تحضير البوت...";
 
             const grade = userData.grade;
@@ -1602,7 +1610,6 @@
         async function startOnlineMatch(group, sub) {
             try {
                 const qRef = collection(db, "match_queue");
-                // Cleanup old logic removed for brevity, assume clean state logic exists or handled by server/timeouts
                 
                 const qWait = query(qRef, where("group", "==", group), where("status", "==", "waiting"), limit(10));
                 const snap = await getDocs(qWait);
@@ -1661,7 +1668,9 @@
 
         window.cancelSearch = async () => {
             if(currentMatchId && currentGameMode === 'online') { try { await deleteDoc(doc(db, "match_queue", currentMatchId)); } catch(e){} }
+            // FIX: Ensure UI toggles correctly
             document.getElementById('searching-ui').classList.add('hidden');
+            document.getElementById('searching-ui').style.display = 'none';
             document.getElementById('challenge-active-card').classList.remove('hidden');
         };
 
@@ -1688,7 +1697,9 @@
         // --- NEW VS ANIMATION FUNCTION ---
         function showVSAnimation(p1, p2) {
             return new Promise(resolve => {
+                // FIX: Hide searching UI explicitly
                 document.getElementById('searching-ui').classList.add('hidden');
+                document.getElementById('searching-ui').style.display = 'none';
                 
                 // Determine who is left/right based on current user
                 const isP1 = p1.uid === currentUser.uid;
@@ -1893,7 +1904,10 @@
              clearInterval(gameTimer); clearTimeout(aiTimeoutId);
              document.getElementById('result-screen').classList.add('hidden');
              document.getElementById('game-overlay').classList.add('hidden');
+             // FIX: Hide searching explicitly here too
              document.getElementById('searching-ui').classList.add('hidden');
+             document.getElementById('searching-ui').style.display = 'none';
+
              currentMatchId = null; localMatchData = null; hasAnsweredCurrentQ = false;
              document.getElementById('challenge-active-card').classList.remove('hidden');
              if(currentUser) {
@@ -1961,6 +1975,20 @@
         window.backToProfile = () => { 
              document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
              switchTab('profile');
+        };
+
+        // --- NEW EDIT PROFILE NAME FEATURE ---
+        window.editProfileName = async () => {
+            const newName = prompt("الرجاء إدخال الاسم الجديد:", userData.name);
+            if(newName && newName.trim() !== "") {
+                const cleanName = newName.trim();
+                try {
+                    await updateDoc(doc(db, "users", currentUser.uid), { name: cleanName });
+                    userData.name = cleanName;
+                    setupProfileUI(); // Updates UI
+                    alert("تم تغيير الاسم بنجاح ✅");
+                } catch(e) { alert("حدث خطأ أثناء تغيير الاسم"); }
+            }
         };
 
         async function loadStatsContent() {
