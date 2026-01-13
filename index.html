@@ -2067,72 +2067,143 @@
         };
 
         async function startOnlineMatch(group, sub) {
-            try {
-                const qRef = collection(db, "match_queue");
-                
-                const qWait = query(qRef, where("group", "==", group), where("status", "==", "waiting"), limit(10));
-                const snap = await getDocs(qWait);
-                let foundMatchId = null;
-                snap.forEach((doc) => { if (doc.data().player1.uid !== currentUser.uid) foundMatchId = doc.id; });
+    try {
+        const qRef = collection(db, "match_queue");
+        
+        // البحث عن مباراة بنفس المرحلة
+        const qWait = query(
+            qRef, 
+            where("group", "==", group), 
+            where("status", "==", "waiting"), 
+            limit(10)
+        );
+        
+        const snap = await getDocs(qWait);
+        let foundMatchId = null;
+        
+        snap.forEach((doc) => { 
+            const matchData = doc.data();
+            // تأكد أن اللاعب ليس نفس المستخدم وأن المباراة بنفس المرحلة
+            if (matchData.player1.uid !== currentUser.uid && matchData.grade === userData.grade) {
+                foundMatchId = doc.id;
+            }
+        });
 
-                if(foundMatchId) {
-                    currentMatchId = foundMatchId;
-                    await updateDoc(doc(db, "match_queue", foundMatchId), {
-                        player2: { uid: currentUser.uid, name: userData.name, score: 0, photo: userData.photo },
-                        status: 'active',
-                        answersCount: 0 
-                    });
-                    listenToMatch(foundMatchId);
-                } else {
-                    const qDocs = await getQuestions(sub, selectedQType);
-                    if(qDocs.length === 0) { alert("لا توجد أسئلة كافية في هذا القسم"); cancelSearch(); return; }
-                    const shuffledQs = qDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
-                    const newMatch = await addDoc(qRef, {
-                        group: group, status: 'waiting',
-                        player1: { uid: currentUser.uid, name: userData.name, score: 0, photo: userData.photo },
-                        questions: shuffledQs, currentIdx: 0, answersCount: 0
-                    });
-                    currentMatchId = newMatch.id;
-                    listenToMatch(newMatch.id);
-                }
-            } catch(e) { console.error(e); cancelSearch(); }
+        if(foundMatchId) {
+            currentMatchId = foundMatchId;
+            await updateDoc(doc(db, "match_queue", foundMatchId), {
+                player2: { 
+                    uid: currentUser.uid, 
+                    name: userData.name, 
+                    score: 0, 
+                    photo: userData.photo,
+                    grade: userData.grade // إضافة المرحلة
+                },
+                status: 'active',
+                answersCount: 0 
+            });
+            listenToMatch(foundMatchId);
+        } else {
+            // جلب الأسئلة بنفس المرحلة فقط
+            const qDocs = await getQuestions(sub, selectedQType);
+            if(qDocs.length === 0) { 
+                alert("لا توجد أسئلة كافية في هذا القسم لهذه المرحلة"); 
+                cancelSearch(); 
+                return; 
+            }
+            
+            const shuffledQs = qDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
+            const newMatch = await addDoc(qRef, {
+                group: group, 
+                status: 'waiting',
+                grade: userData.grade, // حفظ المرحلة في المباراة
+                player1: { 
+                    uid: currentUser.uid, 
+                    name: userData.name, 
+                    score: 0, 
+                    photo: userData.photo,
+                    grade: userData.grade // إضافة المرحلة
+                },
+                questions: shuffledQs, 
+                currentIdx: 0, 
+                answersCount: 0
+            });
+            currentMatchId = newMatch.id;
+            listenToMatch(newMatch.id);
         }
+    } catch(e) { 
+        console.error("خطأ في البحث عن مباراة:", e); 
+        cancelSearch(); 
+    }
+}
 
         async function startAIMatch(sub) {
-            const qDocs = await getQuestions(sub, selectedQType);
-            if(qDocs.length === 0) { alert("لا توجد أسئلة كافية"); cancelSearch(); return; }
-            
-            // PREMIUM LOGIC: 15 Questions if Premium
-            let limit = 10;
-            if (isPremiumValid(userData)) limit = 15;
+    // جلب الأسئلة بنفس المرحلة فقط
+    const qDocs = await getQuestions(sub, selectedQType);
+    if(qDocs.length === 0) { 
+        alert("لا توجد أسئلة كافية في هذا القسم لهذه المرحلة"); 
+        cancelSearch(); 
+        return; 
+    }
+    
+    // PREMIUM LOGIC: 15 Questions if Premium
+    let limit = 10;
+    if (isPremiumValid(userData)) limit = 15;
 
-            const shuffledQs = qDocs.sort(() => 0.5 - Math.random()).slice(0, limit);
-            localMatchData = {
-                status: 'active',
-                player1: { uid: currentUser.uid, name: userData.name, score: 0, photo: userData.photo },
-                player2: { uid: 'AI_BOT', name: "الذكاء الاصطناعي", score: 0, photo: 'https://cdn-icons-png.flaticon.com/512/4712/4712027.png' },
-                questions: shuffledQs, currentIdx: 0, answersCount: 0
-            };
-            
-            await showVSAnimation(localMatchData.player1, localMatchData.player2);
-            document.getElementById('game-overlay').classList.remove('hidden');
-            renderGame(localMatchData);
-        }
+    const shuffledQs = qDocs.sort(() => 0.5 - Math.random()).slice(0, limit);
+    localMatchData = {
+        status: 'active',
+        grade: userData.grade, // إضافة المرحلة
+        player1: { 
+            uid: currentUser.uid, 
+            name: userData.name, 
+            score: 0, 
+            photo: userData.photo,
+            grade: userData.grade // إضافة المرحلة
+        },
+        player2: { 
+            uid: 'AI_BOT', 
+            name: "الذكاء الاصطناعي", 
+            score: 0, 
+            photo: 'https://cdn-icons-png.flaticon.com/512/4712/4712027.png',
+            grade: userData.grade // إضافة المرحلة للبوت أيضًا
+        },
+        questions: shuffledQs, 
+        currentIdx: 0, 
+        answersCount: 0
+    };
+    
+    await showVSAnimation(localMatchData.player1, localMatchData.player2);
+    document.getElementById('game-overlay').classList.remove('hidden');
+    renderGame(localMatchData);
+}
 
         async function getQuestions(sub, type) {
-            const q = query(collection(db, "questions"), where("subject", "==", sub), where("type", "==", type), limit(50));
-            const snap = await getDocs(q);
-            const list = [];
-            snap.forEach(d => list.push(d.data()));
-            return list;
+    if (!userData.grade) {
+        console.error("لا توجد مرحلة محددة للمستخدم");
+        return [];
+    }
+    
+    // نبحث عن الأسئلة بنفس المرحلة والمادة والنوع
+    const q = query(
+        collection(db, "questions"), 
+        where("grade", "==", userData.grade),  // هذه هي الإضافة الأساسية
+        where("subject", "==", sub), 
+        where("type", "==", type), 
+        limit(50)
+    );
+    
+    const snap = await getDocs(q);
+    const list = [];
+    snap.forEach(d => {
+        const data = d.data();
+        // تأكيد إضافي: نتحقق أن السؤال من نفس المرحلة
+        if (data.grade === userData.grade) {
+            list.push(data);
         }
-
-        window.cancelSearch = async () => {
-            if(currentMatchId && currentGameMode === 'online') { try { await deleteDoc(doc(db, "match_queue", currentMatchId)); } catch(e){} }
-            document.getElementById('searching-ui').classList.add('hidden');
-            document.getElementById('searching-ui').style.display = 'none';
-            document.getElementById('challenge-active-card').classList.remove('hidden');
-        };
+    });
+    return list;
+}
 
         function listenToMatch(id) {
             if(matchListenerUnsubscribe) matchListenerUnsubscribe(); 
@@ -2392,24 +2463,45 @@
         };
 
         window.submitUploadQuestion = async () => {
-             const sub = document.getElementById('up-subject').value;
-             const type = document.getElementById('up-type').value;
-             const txt = document.getElementById('up-q-text').value;
-             if(!txt) return alert("يرجى كتابة نص السؤال");
-             let q = { grade: userData.grade, subject: sub, type, question: txt, authorId: currentUser.uid, authorName: userData.name, createdAt: serverTimestamp(), status: 'pending' };
-             if(type==='mcq') {
-                 const a0 = document.getElementById('ans-0').value;
-                 const a1 = document.getElementById('ans-1').value;
-                 const a2 = document.getElementById('ans-2').value;
-                 if(!a0 || !a1 || !a2) return alert("يرجى ملء جميع الخيارات");
-                 q.answers = [a0, a1, a2];
-                 q.correct = parseInt(document.querySelector('input[name="correct"]:checked').value);
-             } else { q.correct = document.getElementById('up-tf-val').value; }
-             await addDoc(collection(db, "pending_questions"), q);
-             alert("تم ارسال السؤال للمراجعة بنجاح!");
-             document.getElementById('up-q-text').value = ""; document.getElementById('ans-0').value = ""; document.getElementById('ans-1').value = ""; document.getElementById('ans-2').value = "";
-             document.getElementById('up-step-2').classList.add('hidden'); document.getElementById('up-step-1').classList.remove('hidden');
-        };
+    const sub = document.getElementById('up-subject').value;
+    const type = document.getElementById('up-type').value;
+    const txt = document.getElementById('up-q-text').value;
+    
+    if(!txt) return alert("يرجى كتابة نص السؤال");
+    
+    let q = { 
+        grade: userData.grade, // تأكد أن المرحلة مضافة
+        subject: sub, 
+        type, 
+        question: txt, 
+        authorId: currentUser.uid, 
+        authorName: userData.name, 
+        createdAt: serverTimestamp(), 
+        status: 'pending' 
+    };
+    
+    if(type==='mcq') {
+        const a0 = document.getElementById('ans-0').value;
+        const a1 = document.getElementById('ans-1').value;
+        const a2 = document.getElementById('ans-2').value;
+        if(!a0 || !a1 || !a2) return alert("يرجى ملء جميع الخيارات");
+        q.answers = [a0, a1, a2];
+        q.correct = parseInt(document.querySelector('input[name="correct"]:checked').value);
+    } else { 
+        q.correct = document.getElementById('up-tf-val').value; 
+    }
+    
+    await addDoc(collection(db, "pending_questions"), q);
+    alert("تم ارسال السؤال للمراجعة بنجاح!");
+    
+    // تنظيف الحقول
+    document.getElementById('up-q-text').value = ""; 
+    document.getElementById('ans-0').value = ""; 
+    document.getElementById('ans-1').value = ""; 
+    document.getElementById('ans-2').value = "";
+    document.getElementById('up-step-2').classList.add('hidden'); 
+    document.getElementById('up-step-1').classList.remove('hidden');
+};
 
         // --- NAVIGATION & SCREENS ---
         window.openPage = async (screenId) => {
@@ -2881,14 +2973,32 @@
         }
 
         window.approveQ = async (id) => {
-            const card = document.getElementById(`review-card-${id}`);
-            if(card) card.remove();
-            const ref = doc(db, "pending_questions", id);
-            const d = (await getDoc(ref)).data();
-            await addDoc(collection(db, "questions"), {...d, status:'approved'});
-            await updateDoc(doc(db, "users", d.authorId), { points: increment(10) });
-            await updateDoc(ref, { status: 'approved' });
-        };
+    const card = document.getElementById(`review-card-${id}`);
+    if(card) card.remove();
+    
+    const ref = doc(db, "pending_questions", id);
+    const d = (await getDoc(ref)).data();
+    
+    // تأكد أن بيانات السؤال تحتوي على المرحلة
+    if (!d.grade) {
+        // إذا لم تكن هناك مرحلة، استخدم مرحلة من رفع السؤال أو استعلم عنها
+        const authorDoc = await getDoc(doc(db, "users", d.authorId));
+        if (authorDoc.exists()) {
+            d.grade = authorDoc.data().grade || '6sci';
+        } else {
+            d.grade = '6sci'; // قيمة افتراضية
+        }
+    }
+    
+    await addDoc(collection(db, "questions"), {
+        ...d, 
+        status: 'approved',
+        grade: d.grade // تأكد من وجود المرحلة
+    });
+    
+    await updateDoc(doc(db, "users", d.authorId), { points: increment(10) });
+    await updateDoc(ref, { status: 'approved' });
+};
 
         window.rejectQ = async (id) => {
             const card = document.getElementById(`review-card-${id}`);
