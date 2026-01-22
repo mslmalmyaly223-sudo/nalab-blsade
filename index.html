@@ -1478,39 +1478,156 @@
         });
 
         // --- WEEKLY COUNTDOWN ---
-        function startWeeklyCountdown() {
-            if(countdownInterval) clearInterval(countdownInterval);
-            const timerEl = document.getElementById('weekly-timer');
-            
-            function updateTimer() {
-                const now = new Date();
-                const day = now.getDay(); // 0=Sun, 4=Thu, 5=Fri
-                const daysUntilThu = (4 - day + 7) % 7; 
-                
-                const target = new Date(now);
-                target.setDate(now.getDate() + daysUntilThu);
-                target.setHours(23, 59, 59, 999);
-                
-                if (day === 5) {
-                      target.setDate(now.getDate() + 6);
-                }
-                
-                const diff = target - now;
-                if (diff < 0) {
-                      timerEl.innerText = "00:00:00:00";
-                      return;
-                }
-
-                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const s = Math.floor((diff % (1000 * 60)) / 1000);
-
-                timerEl.innerText = `${d}:${h<10?'0'+h:h}:${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
-            }
-            updateTimer();
-            countdownInterval = setInterval(updateTimer, 1000);
+function startWeeklyCountdown() {
+    if(countdownInterval) clearInterval(countdownInterval);
+    const timerEl = document.getElementById('weekly-timer');
+    
+    function updateTimer() {
+        const now = new Date();
+        const day = now.getDay(); // 0=Sun, 4=Thu, 5=Fri
+        const daysUntilThu = (4 - day + 7) % 7; 
+        
+        const target = new Date(now);
+        target.setDate(now.getDate() + daysUntilThu);
+        target.setHours(23, 59, 59, 999);
+        
+        if (day === 5) {
+              target.setDate(now.getDate() + 6);
         }
+        
+        const diff = target - now;
+        
+        // إذا انتهى الوقت (العرض للعبة)
+        if (diff < 0) {
+            timerEl.innerText = "00:00:00:00";
+            // تنفيذ التوزيع التلقائي مرة واحدة فقط
+            if (!window.weeklyRewardDistributed) {
+                window.weeklyRewardDistributed = true;
+                setTimeout(() => autoDistributeWeeklyPrizes(), 1000); // تأخير ثانية واحدة
+            }
+            return;
+        }
+
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+        timerEl.innerText = `${d}:${h<10?'0'+h:h}:${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
+        
+        // إذا بقي أقل من دقيقة واحدة، نشغل الفحص كل ثانية للتوزيع التلقائي
+        if (d === 0 && h === 0 && m === 0 && s < 60) {
+            // إعادة تعيين العلامة عندما نكون قريبين من الانتهاء
+            window.weeklyRewardDistributed = false;
+        }
+    }
+    updateTimer();
+    countdownInterval = setInterval(updateTimer, 1000);
+}
+
+// دالة التوزيع التلقائي للجوائز الأسبوعية
+async function autoDistributeWeeklyPrizes() {
+    try {
+        console.log("بدء التوزيع التلقائي للجوائز الأسبوعية...");
+        
+        // الحصول على أفضل 5 لاعبين
+        const q = query(collection(db, "users"), orderBy("points", "desc"), limit(5));
+        const snap = await getDocs(q);
+        const prizes = [10, 7, 5, 3, 2]; // $ الجوائز
+        
+        let batch = writeBatch(db);
+        
+        // توزيع الجوائز على الخمسة الأوائل
+        snap.docs.forEach((d, index) => {
+            if(index < 5) {
+                const prize = prizes[index];
+                const newBalance = (d.data().balance || 0) + prize;
+                batch.update(doc(db, "users", d.id), { 
+                    balance: newBalance,
+                    // إضافة إشعار للاعب بأنه حصل على جائزة
+                    lastWeeklyPrize: prize,
+                    lastWeeklyRank: index + 1
+                });
+            }
+        });
+        await batch.commit();
+
+        // تصفير النقاط لأفضل 150 لاعب
+        const qReset = query(collection(db, "users"), orderBy("points", "desc"), limit(150));
+        const snapReset = await getDocs(qReset);
+        
+        let resetBatch = writeBatch(db);
+        snapReset.docs.forEach(d => {
+            resetBatch.update(doc(db, "users", d.id), { 
+                points: 0,
+                // حفظ النقاط السابقة للإحصائيات
+                previousPoints: d.data().points || 0
+            });
+        });
+        await resetBatch.commit();
+        
+        // تسجيل وقت آخر توزيع
+        await setDoc(doc(db, "system_settings", "last_weekly_distribution"), {
+            timestamp: serverTimestamp(),
+            distributedBy: 'auto-system'
+        }, { merge: true });
+        
+        console.log("✅ تم التوزيع التلقائي للجوائز وتصفير النقاط بنجاح!");
+        
+        // إعادة تحميل لوحة المتصدرين
+        if (document.getElementById('tab-leaderboard').classList.contains('active')) {
+            loadLeaderboard();
+        }
+        
+        // إشعار للمستخدمين المميزين (المشرفين)
+        if (userData && userData.email === ADMIN_EMAIL) {
+            alert("✅ تم التوزيع التلقائي للجوائز الأسبوعية وتصفير النقاط!");
+        }
+        
+    } catch (error) {
+        console.error("❌ خطأ في التوزيع التلقائي:", error);
+        // محاولة مرة أخرى بعد 5 دقائق في حالة الفشل
+        setTimeout(() => {
+            if (!window.retryWeeklyDistribution) {
+                window.retryWeeklyDistribution = true;
+                autoDistributeWeeklyPrizes();
+            }
+        }, 5 * 60 * 1000);
+    }
+}
+
+// دالة للتحقق من آخر توزيع وضمان عدم التكرار
+async function checkAndRunWeeklyDistribution() {
+    try {
+        const lastDistDoc = await getDoc(doc(db, "system_settings", "last_weekly_distribution"));
+        const now = new Date();
+        const lastThursday = new Date(now);
+        
+        // حساب يوم الخميس الماضي
+        const day = now.getDay();
+        const diff = day >= 4 ? day - 4 : day + 3;
+        lastThursday.setDate(now.getDate() - diff);
+        lastThursday.setHours(23, 59, 59, 999);
+        
+        let shouldDistribute = false;
+        
+        if (!lastDistDoc.exists()) {
+            shouldDistribute = true;
+        } else {
+            const lastDistTime = lastDistDoc.data().timestamp.toDate();
+            if (lastDistTime < lastThursday) {
+                shouldDistribute = true;
+            }
+        }
+        
+        if (shouldDistribute) {
+            console.log("اكتشاف حاجة للتوزيع الأسبوعي...");
+            await autoDistributeWeeklyPrizes();
+        }
+    } catch (error) {
+        console.error("خطأ في التحقق من التوزيع:", error);
+    }
+}
 
         // --- FORGOT PASSWORD ---
         window.openForgotPassword = function() {
