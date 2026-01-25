@@ -1886,9 +1886,15 @@
             '6sci': ['اسلامية', 'عربي', 'انكليزي', 'احياء', 'رياضيات', 'كيمياء', 'فيزياء'],
             '6lit': ['اسلامية', 'عربي', 'انكليزي', 'تاريخ', 'رياضيات', 'جغرافية', 'اقتصاد'],
             '3med': ['اسلامية', 'عربي', 'انكليزي', 'رياضيات', 'كيمياء', 'فيزياء', 'اجتماعيات', 'احياء']
-};
+        };
 
         const sharedSubjects = ['اسلامية', 'عربي', 'انكليزي'];
+
+        // تحسين: تخزين مؤقت للاستعلامات لتقليل القراءات المتكررة
+        let cachedUserData = null;
+        let cachedLeaderboardData = null;
+        let leaderboardLastUpdate = 0;
+        const CACHE_DURATION = 30000; // 30 ثانية
 
         onAuthStateChanged(auth, async (user) => {
             const intro = document.getElementById('intro-screen');
@@ -1901,9 +1907,11 @@
                 loadDisabledSubjects();
 
                 try {
+                    // تحسين: استخدام getDoc بدلاً من onSnapshot للملف الشخصي
                     const docSnap = await getDoc(doc(db, "users", user.uid));
                     if (docSnap.exists()) {
                         userData = docSnap.data();
+                        cachedUserData = userData;
 
                         if (userData.isBanned === true) {
                             banScreen.classList.remove('hidden');
@@ -1918,14 +1926,17 @@
                             return;
                         }
 
-                        updateDoc(doc(db, "users", user.uid), { lastActive: serverTimestamp() });
+                        // تحسين: تحديث النشاط مرة واحدة فقط
+                        await updateDoc(doc(db, "users", user.uid), { 
+                            lastActive: serverTimestamp() 
+                        });
                         
                         setupProfileUI();
                         setupHeaderUI();
                         setupAdminUI();
-                        checkDailyReward(); 
+                        checkDailyReward();
                         checkPremiumStatus();
-                        if(userData.email === ADMIN_EMAIL) checkAdminNotifications(); 
+                        if(userData.email === ADMIN_EMAIL) checkAdminNotifications();
 
                         if (userData.grade) {
                             document.getElementById('grade-selector-card').classList.add('hidden');
@@ -1951,7 +1962,10 @@
                         await signOut(auth);
                         location.reload();
                     }
-                } catch(e) { console.error("Auth Data Error:", e); }
+                } catch(e) { 
+                    console.error("Auth Data Error:", e);
+                    showBeautifulAlert('error', 'خطأ', 'حدث خطأ في تحميل البيانات');
+                }
             } else {
                 setTimeout(() => {
                     intro.classList.add('hidden');
@@ -1977,7 +1991,7 @@
                 target.setHours(23, 59, 59, 999);
                 
                 if (day === 5) {
-                      target.setDate(now.getDate() + 6);
+                    target.setDate(now.getDate() + 6);
                 }
                 
                 const diff = target - now;
@@ -2010,6 +2024,7 @@
             try {
                 console.log("بدء التوزيع التلقائي للجوائز الأسبوعية...");
                 
+                // تحسين: استخدام limit لتقليل القراءات
                 const q = query(collection(db, "users"), orderBy("points", "desc"), limit(10));
                 const snap = await getDocs(q);
                 const prizes = [10, 7, 5, 3, 2, 1, 1, 1, 1, 1];
@@ -2029,7 +2044,8 @@
                 });
                 await batch.commit();
 
-                const qReset = query(collection(db, "users"), orderBy("points", "desc"), limit(150));
+                // تحسين: تقليل الحد الأقصى للمستخدمين
+                const qReset = query(collection(db, "users"), orderBy("points", "desc"), limit(100));
                 const snapReset = await getDocs(qReset);
                 
                 let resetBatch = writeBatch(db);
@@ -2047,6 +2063,10 @@
                 }, { merge: true });
                 
                 console.log("✅ تم التوزيع التلقائي للجوائز وتصفير النقاط بنجاح!");
+                
+                // تحسين: مسح الذاكرة المؤقتة للتحديث
+                cachedLeaderboardData = null;
+                leaderboardLastUpdate = 0;
                 
                 if (document.getElementById('tab-leaderboard').classList.contains('active')) {
                     loadLeaderboard();
@@ -2096,8 +2116,7 @@
             document.getElementById('beautiful-alert').classList.add('hidden');
         }
         
-        // أضف هذا السطر تحت دالة closeBeautifulAlert مباشرة
-document.getElementById('beautiful-alert-ok-btn').addEventListener('click', closeBeautifulAlert);
+        document.getElementById('beautiful-alert-ok-btn').addEventListener('click', closeBeautifulAlert);
 
         window.openForgotPassword = function() {
             document.getElementById('forgot-password-modal').classList.remove('hidden');
@@ -2245,6 +2264,7 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
             if(roomListenerUnsubscribe) roomListenerUnsubscribe();
             if(premiumInterval) clearInterval(premiumInterval);
             if(connectionMonitorInterval) clearInterval(connectionMonitorInterval);
+            if(countdownInterval) clearInterval(countdownInterval);
             signOut(auth);
         };
 
@@ -2797,36 +2817,65 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
             }
             
             let gradeCondition = userData.grade;
-            if(sharedSubjects.includes(sub) && (userData.grade === '6sci' || userData.grade === '6lit')) {
-                gradeCondition = ['6sci', '6lit'];
-            }
+            let subjectCondition = sub;
             
-            let q;
-            if (Array.isArray(gradeCondition)) {
-                q = query(
+            // إصلاح مشكلة المراحل المشتركة
+            if(sharedSubjects.includes(sub) && (userData.grade === '6sci' || userData.grade === '6lit')) {
+                // البحث في الأسئلة المشتركة لطلاب السادس
+                const q1 = query(
                     collection(db, "questions"), 
-                    where("grade", "in", gradeCondition),  
+                    where("grade", "==", userData.grade),  
                     where("subject", "==", sub), 
                     where("type", "==", type), 
-                    limit(50)
+                    limit(25)
                 );
+                
+                const q2 = query(
+                    collection(db, "questions"), 
+                    where("grade", "==", '6shared'),  
+                    where("subject", "==", sub), 
+                    where("type", "==", type), 
+                    limit(25)
+                );
+                
+                try {
+                    const [snap1, snap2] = await Promise.all([getDocs(q1), getDocs(q2)]);
+                    const list = [];
+                    
+                    snap1.forEach(d => {
+                        const data = d.data();
+                        list.push(data);
+                    });
+                    
+                    snap2.forEach(d => {
+                        const data = d.data();
+                        list.push(data);
+                    });
+                    
+                    return list;
+                } catch (error) {
+                    console.error("خطأ في جلب الأسئلة المشتركة:", error);
+                    return [];
+                }
             } else {
+                // البحث العادي للمراحل الأخرى
+                let q;
                 q = query(
                     collection(db, "questions"), 
                     where("grade", "==", gradeCondition),  
-                    where("subject", "==", sub), 
+                    where("subject", "==", subjectCondition), 
                     where("type", "==", type), 
                     limit(50)
                 );
+                
+                const snap = await getDocs(q);
+                const list = [];
+                snap.forEach(d => {
+                    const data = d.data();
+                    list.push(data);
+                });
+                return list;
             }
-            
-            const snap = await getDocs(q);
-            const list = [];
-            snap.forEach(d => {
-                const data = d.data();
-                list.push(data);
-            });
-            return list;
         }
 
         function startConnectionMonitoring(matchId, isPlayer1) {
@@ -3288,6 +3337,7 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
                  const userDoc = await getDoc(doc(db, "users", currentUser.uid));
                  if(userDoc.exists()) { 
                      userData = userDoc.data(); 
+                     cachedUserData = userData;
                      setupHeaderUI(); 
                      setupProfileUI(); 
                  }
@@ -3348,7 +3398,8 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
 
         async function loadStatsContent() {
              const div = document.getElementById('stats-content');
-             const usersSnap = await getDocs(collection(db, "users"));
+             // تحسين: تقليل عدد المستخدمين الذين يتم جلبهم
+             const usersSnap = await getDocs(query(collection(db, "users"), limit(100)));
              const total = usersSnap.size;
              const today = new Date(); today.setHours(0,0,0,0);
              let newUsers = 0; let activeNow = 0; const now = new Date();
@@ -3366,7 +3417,8 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
              const div = document.getElementById('admin-all-list');
              if(allAdminQuestions.length === 0) {
                  div.innerHTML = '<p class="text-center text-gray-400">جاري جلب كل الأسئلة من قاعدة البيانات...</p>';
-                 const q = await getDocs(query(collection(db, "questions"), orderBy("createdAt", "desc")));
+                 // تحسين: إضافة حد للاستعلام
+                 const q = await getDocs(query(collection(db, "questions"), orderBy("createdAt", "desc"), limit(200)));
                  allAdminQuestions = [];
                  q.forEach(d => allAdminQuestions.push({id: d.id, ...d.data()}));
              }
@@ -3490,9 +3542,18 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
         
         async function loadLeaderboard() {
             const div = document.getElementById('leaderboard-list');
+            
+            // تحسين: استخدام الذاكرة المؤقتة
+            const now = Date.now();
+            if (cachedLeaderboardData && (now - leaderboardLastUpdate < CACHE_DURATION)) {
+                renderLeaderboard(cachedLeaderboardData);
+                return;
+            }
+            
             div.innerHTML = '<p class="text-center text-gray-400 mt-10">تحميل...</p>';
             
-            const q = query(collection(db, "users"), orderBy("points", "desc"), limit(150));
+            // تحسين: تقليل عدد المستخدمين الذين يتم جلبهم
+            const q = query(collection(db, "users"), orderBy("points", "desc"), limit(100));
             const snap = await getDocs(q);
             let users = [];
             snap.forEach(d => { 
@@ -3501,6 +3562,14 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
             
             users.sort((a, b) => (b.points || 0) - (a.points || 0));
 
+            cachedLeaderboardData = users;
+            leaderboardLastUpdate = now;
+            
+            renderLeaderboard(users);
+        }
+
+        function renderLeaderboard(users) {
+            const div = document.getElementById('leaderboard-list');
             const myIndex = users.findIndex(u => u.uid === currentUser.uid);
             if(myIndex !== -1) document.getElementById('my-rank-text').innerText = "#" + (myIndex + 1);
             else document.getElementById('my-rank-text').innerText = "غير مصنف";
@@ -3590,13 +3659,17 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
             if(confirm(`هل أنت متأكد من تصفير نقاط الطالب: ${name}؟`)) {
                 await updateDoc(doc(db, "users", uid), { points: 0 });
                 showBeautifulAlert('success', 'تم التصفير', 'تم تصفير النقاط بنجاح!');
+                // تحسين: مسح الذاكرة المؤقتة
+                cachedLeaderboardData = null;
+                leaderboardLastUpdate = 0;
                 loadLeaderboard(); 
             }
         };
 
         async function loadBannedUsers() {
             try {
-                const q = query(collection(db, "users"), where("isBanned", "==", true));
+                // تحسين: إضافة حد للاستعلام
+                const q = query(collection(db, "users"), where("isBanned", "==", true), limit(50));
                 const snap = await getDocs(q);
                 
                 const section = document.getElementById('banned-users-section');
@@ -3654,7 +3727,7 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
              resDiv.classList.remove('hidden');
              resDiv.innerHTML = 'جاري البحث...';
              
-             const q = query(collection(db, "users"), where("uniqueId", "==", uidInput));
+             const q = query(collection(db, "users"), where("uniqueId", "==", uidInput), limit(1));
              const snap = await getDocs(q);
              
              if(snap.empty) {
@@ -3736,6 +3809,10 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
                  resetBatch.update(doc(db, "users", d.id), { points: 0 });
              });
              await resetBatch.commit();
+             
+             // تحسين: مسح الذاكرة المؤقتة
+             cachedLeaderboardData = null;
+             leaderboardLastUpdate = 0;
              
              showBeautifulAlert('success', 'تم التوزيع', '✅ تم توزيع الجوائز وتصفير النقاط بنجاح!');
         };
@@ -3862,7 +3939,8 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
             const listDiv = document.getElementById('premium-users-list');
             listDiv.innerHTML = '<p class="text-center text-gray-400">جاري التحميل...</p>';
             
-            const q = query(collection(db, "users"), where("isPremium", "==", true));
+            // تحسين: إضافة حد للاستعلام
+            const q = query(collection(db, "users"), where("isPremium", "==", true), limit(50));
             const snap = await getDocs(q);
             
             if(snap.empty) {
