@@ -210,14 +210,370 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
-        /* --- RANKING FRAMES & RAYS --- */
+        /* --- PREMIUM FRAMES STYLES --- */
+        .profile-frame {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 130%;
+            height: 130%;
+            pointer-events: none;
+            z-index: 5;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        /* Frame 1: Royal Gold */
+        .frame-royal-gold {
+            border: 8px solid transparent;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(255, 215, 0, 0.8) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(218, 165, 32, 0.7) 0%, transparent 50%),
+                linear-gradient(45deg, #FFD700, #DAA520, #B8860B, #FFD700);
+            background-clip: padding-box, border-box;
+            box-shadow: 
+                0 0 50px rgba(255, 215, 0, 0.8),
+                inset 0 0 40px rgba(255, 215, 0, 0.4),
+                0 0 0 4px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .frame-royal-gold::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            background: 
+                radial-gradient(circle at 50% 50%, transparent 30%, rgba(255, 215, 0, 0.3) 70%),
+                repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 215, 0, 0.2) 10px, rgba(255, 215, 0, 0.2) 20px);
+            border-radius: 50%;
+            animation: spin-slow 20s linear infinite;
+            z-index: -1;
+        }
+
+        .frame-royal-gold::after {
+            content: '👑';
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 30px;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8));
+            animation: float 2s ease-in-out infinite;
+        }
+
+        /* Frame 2: Crystal Magic */
+        .frame-crystal-magic {
+            border: 8px solid transparent;
+            background: 
+                linear-gradient(135deg, 
+                    rgba(0, 255, 255, 0.3) 0%,
+                    rgba(138, 43, 226, 0.3) 25%,
+                    rgba(75, 0, 130, 0.3) 50%,
+                    rgba(0, 191, 255, 0.3) 75%,
+                    rgba(0, 255, 255, 0.3) 100%);
+            background-clip: border-box;
+            box-shadow: 
+                0 0 60px rgba(0, 255, 255, 0.6),
+                inset 0 0 50px rgba(138, 43, 226, 0.4),
+                0 0 0 6px rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .frame-crystal-magic::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            right: -15px;
+            bottom: -15px;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(0, 255, 255, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(138, 43, 226, 0.4) 0%, transparent 50%);
+            border-radius: 50%;
+            animation: pulse-border 3s infinite;
+            z-index: -1;
+        }
+
+        .frame-crystal-magic .crystal-sparkles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 20%, white 2px, transparent 3px),
+                radial-gradient(circle at 80% 30%, white 2px, transparent 3px),
+                radial-gradient(circle at 40% 70%, white 2px, transparent 3px),
+                radial-gradient(circle at 60% 80%, white 2px, transparent 3px);
+            background-size: 100% 100%;
+            animation: sparkle 4s linear infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Frame 3: Gemstone Sparkle */
+        .frame-gemstone-sparkle {
+            border: 8px solid transparent;
+            background: 
+                linear-gradient(45deg, 
+                    #FF1493 0%, 
+                    #00BFFF 25%, 
+                    #32CD32 50%, 
+                    #FFD700 75%, 
+                    #FF1493 100%);
+            background-clip: border-box;
+            box-shadow: 
+                0 0 70px rgba(255, 20, 147, 0.7),
+                inset 0 0 60px rgba(0, 191, 255, 0.5),
+                0 0 0 5px rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .frame-gemstone-sparkle::before {
+            content: '💎';
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 35px;
+            filter: drop-shadow(0 0 15px rgba(255, 20, 147, 0.8));
+            animation: bounce 2s infinite;
+        }
+
+        .frame-gemstone-sparkle .gem-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 25% 25%, #FF1493 3px, transparent 4px),
+                radial-gradient(circle at 75% 25%, #00BFFF 3px, transparent 4px),
+                radial-gradient(circle at 25% 75%, #32CD32 3px, transparent 4px),
+                radial-gradient(circle at 75% 75%, #FFD700 3px, transparent 4px);
+            animation: spin-slow 10s linear infinite;
+        }
+
+        /* Frame 4: Ice Glass */
+        .frame-ice-glass {
+            border: 10px solid rgba(173, 216, 230, 0.3);
+            background: 
+                linear-gradient(135deg, 
+                    rgba(240, 248, 255, 0.8) 0%,
+                    rgba(173, 216, 230, 0.6) 25%,
+                    rgba(135, 206, 235, 0.8) 50%,
+                    rgba(176, 224, 230, 0.6) 75%,
+                    rgba(240, 248, 255, 0.8) 100%);
+            background-clip: border-box;
+            box-shadow: 
+                0 0 80px rgba(135, 206, 235, 0.8),
+                inset 0 0 70px rgba(255, 255, 255, 0.6),
+                0 0 0 8px rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+            position: relative;
+        }
+
+        .frame-ice-glass::before {
+            content: '❄️';
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 40px;
+            filter: drop-shadow(0 0 10px rgba(135, 206, 235, 0.8));
+            animation: spin-slow 8s linear infinite;
+        }
+
+        /* Frame 5: Angel Wings */
+        .frame-angel-wings {
+            border: 8px solid rgba(255, 255, 255, 0.9);
+            background: 
+                radial-gradient(circle at center, 
+                    rgba(255, 255, 255, 0.9) 0%,
+                    rgba(230, 230, 250, 0.7) 50%,
+                    rgba(216, 191, 216, 0.5) 100%);
+            background-clip: border-box;
+            box-shadow: 
+                0 0 90px rgba(255, 255, 255, 0.9),
+                inset 0 0 80px rgba(255, 255, 255, 0.7),
+                0 0 0 10px rgba(255, 255, 255, 0.4);
+            position: relative;
+        }
+
+        .frame-angel-wings::before {
+            content: '👼';
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 45px;
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.9));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .frame-angel-wings .wing-effect {
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            top: -25%;
+            left: -25%;
+            background: 
+                radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 70% 50%, rgba(255, 255, 255, 0.4) 0%, transparent 50%);
+            animation: pulse-border 4s infinite;
+        }
+
+        /* Frame 6: Imperial Crown */
+        .frame-imperial-crown {
+            border: 12px solid transparent;
+            background: 
+                linear-gradient(45deg, 
+                    #C0C0C0 0%,
+                    #FFD700 15%,
+                    #D4AF37 30%,
+                    #C0C0C0 45%,
+                    #FFD700 60%,
+                    #D4AF37 75%,
+                    #C0C0C0 90%);
+            background-clip: border-box;
+            box-shadow: 
+                0 0 100px rgba(212, 175, 55, 0.9),
+                inset 0 0 90px rgba(255, 215, 0, 0.7),
+                0 0 0 12px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .frame-imperial-crown::before {
+            content: '👑👑';
+            position: absolute;
+            top: -45px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 50px;
+            filter: drop-shadow(0 0 25px rgba(212, 175, 55, 0.9));
+            animation: bounce 3s infinite;
+        }
+
+        /* Frame 7: Magic Energy */
+        .frame-magic-energy {
+            border: 8px solid transparent;
+            background: 
+                linear-gradient(45deg, 
+                    #00FF00 0%,
+                    #00FFFF 25%,
+                    #FF00FF 50%,
+                    #FFFF00 75%,
+                    #00FF00 100%);
+            background-clip: border-box;
+            box-shadow: 
+                0 0 110px rgba(0, 255, 0, 0.7),
+                inset 0 0 100px rgba(0, 255, 255, 0.6),
+                0 0 0 8px rgba(255, 255, 255, 0.2);
+            position: relative;
+            animation: energy-pulse 2s infinite;
+        }
+
+        @keyframes energy-pulse {
+            0%, 100% { 
+                box-shadow: 
+                    0 0 110px rgba(0, 255, 0, 0.7),
+                    inset 0 0 100px rgba(0, 255, 255, 0.6),
+                    0 0 0 8px rgba(255, 255, 255, 0.2);
+            }
+            50% { 
+                box-shadow: 
+                    0 0 130px rgba(0, 255, 0, 0.9),
+                    inset 0 0 120px rgba(0, 255, 255, 0.8),
+                    0 0 0 12px rgba(255, 255, 255, 0.4);
+            }
+        }
+
+        .frame-magic-energy::before {
+            content: '⚡';
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 55px;
+            filter: drop-shadow(0 0 20px rgba(0, 255, 0, 0.9));
+            animation: pulse-border 1s infinite;
+        }
+
+        /* Frame 8: Legendary Fire */
+        .frame-legendary-fire {
+            border: 10px solid transparent;
+            background: 
+                linear-gradient(45deg, 
+                    #FF0000 0%,
+                    #FF4500 25%,
+                    #FF8C00 50%,
+                    #FFD700 75%,
+                    #FF0000 100%);
+            background-clip: border-box;
+            box-shadow: 
+                0 0 120px rgba(255, 69, 0, 0.9),
+                inset 0 0 110px rgba(255, 140, 0, 0.8),
+                0 0 0 10px rgba(255, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .frame-legendary-fire::before {
+            content: '🔥';
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 60px;
+            filter: drop-shadow(0 0 30px rgba(255, 69, 0, 0.9));
+            animation: fire-burn 1.5s infinite;
+        }
+
+        @keyframes fire-burn {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.2); }
+        }
+
+        .frame-legendary-fire .fire-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(255, 69, 0, 0.8) 4px, transparent 5px),
+                radial-gradient(circle at 80% 30%, rgba(255, 140, 0, 0.8) 4px, transparent 5px),
+                radial-gradient(circle at 40% 70%, rgba(255, 0, 0, 0.8) 4px, transparent 5px),
+                radial-gradient(circle at 60% 80%, rgba(255, 215, 0, 0.8) 4px, transparent 5px);
+            animation: spin-slow 15s linear infinite;
+        }
+
+        /* Image Container with Frame */
+        .image-frame-container {
+            position: relative;
+            display: inline-block;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .image-frame-container img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* RANKING FRAMES & RAYS */
         .rank-img-container { 
             position: relative; display: flex; align-items: center; justify-content: center;
-            width: 60px; height: 60px; margin-right: 5px;
+            width: 70px; height: 70px; margin-right: 5px;
         }
         .rank-img { 
-            width: 48px; height: 48px; border-radius: 50%; object-fit: cover;
-            padding: 2px; background: white; position: relative; z-index: 5;
+            width: 56px; height: 56px; border-radius: 50%; object-fit: cover;
+            position: relative; z-index: 5;
         }
         .rank-badge-top {
             position: absolute; top: -5px; left: 50%; transform: translateX(-50%);
@@ -456,6 +812,7 @@
             font-weight: bold;
             font-size: 0.9rem;
             backdrop-filter: blur(10px);
+            z-index: 100;
         }
 
         /* --- Beautiful Modal Styles --- */
@@ -792,9 +1149,252 @@
             box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
         }
 
+        /* --- Notifications Button Styles --- */
+        .notifications-btn {
+            position: absolute;
+            top: 35px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            cursor: pointer;
+            z-index: 40;
+            transition: all 0.3s;
+        }
+
+        .notifications-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+
+        .notifications-btn .notification-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 18px;
+            height: 18px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            font-size: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+
+        .notifications-btn.pulse {
+            animation: pulse-border 1.5s infinite;
+        }
+
+        /* --- Friend Request Button --- */
+        .friend-request-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 8px;
+            transition: all 0.3s;
+        }
+
+        .friend-request-btn:hover {
+            background: #2563eb;
+            transform: scale(1.1);
+        }
+
+        .friend-request-btn.sent {
+            background: #10b981;
+        }
+
+        .friend-request-btn.sent:hover {
+            background: #059669;
+        }
+
+        /* --- Bio Edit Styles --- */
+        .bio-edit-btn {
+            color: #4f46e5;
+            cursor: pointer;
+            font-size: 12px;
+            margin-right: 5px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #f1f5f9;
+        }
+
+        .bio-edit-btn:hover {
+            background: #e0e7ff;
+            transform: scale(1.1);
+        }
+
+        .bio-text {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        /* --- Game Connection Indicator --- */
+        .connection-indicator {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .connection-indicator.good {
+            background: rgba(34, 197, 94, 0.7);
+        }
+
+        .connection-indicator.poor {
+            background: rgba(245, 158, 11, 0.7);
+        }
+
+        .connection-indicator.bad {
+            background: rgba(239, 68, 68, 0.7);
+            animation: pulse-border 1s infinite;
+        }
+
+        /* --- Game Resume Modal --- */
+        .game-resume-modal {
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(20px);
+        }
+
+        .game-resume-card {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 2px solid #4f46e5;
+            border-radius: 25px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            color: white;
+        }
+
+        /* --- Image Loading Styles --- */
+        .image-loading {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* --- Friends List Styles --- */
+        .friend-item {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s;
+        }
+
+        .friend-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+
+        .friend-item.online {
+            border-left: 4px solid #10b981;
+        }
+
+        .friend-item.offline {
+            border-left: 4px solid #94a3b8;
+        }
+
+        .friend-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+
+        .friend-status.online {
+            background: #10b981;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+
+        .friend-status.offline {
+            background: #94a3b8;
+        }
+
+        /* --- Invite Friends Modal --- */
+        .invite-friends-modal {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .invite-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 15px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .invite-btn:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .invite-btn.disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .invite-btn.disabled:hover {
+            transform: none;
+            background: #94a3b8;
+        }
+
         @media (min-width: 768px) {
             .input-box { font-size: 1.1rem; }
             .auth-overlay > div { max-width: 500px; }
+            .notifications-btn { top: 30px; left: 30px; }
         }
     </style>
 </head>
@@ -828,15 +1428,19 @@
         <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-30"></div>
         <div class="flex items-center justify-center gap-6 w-full max-w-lg relative">
             <div class="vs-player-card animate-slide-left">
-                <img id="vs-p1-img" src="" class="vs-avatar mb-3">
-                <p id="vs-p1-name" class="text-white font-bold text-lg text-center truncate w-32"></p>
+                <div class="image-frame-container" style="width: 100px; height: 100px;">
+                    <img id="vs-p1-img" src="" class="vs-avatar">
+                </div>
+                <p id="vs-p1-name" class="text-white font-bold text-lg text-center truncate w-32 mt-3"></p>
             </div>
             
             <div class="vs-text animate-zoom-bounce">VS</div>
             
             <div class="vs-player-card animate-slide-right">
-                <img id="vs-p2-img" src="" class="vs-avatar mb-3">
-                <p id="vs-p2-name" class="text-white font-bold text-lg text-center truncate w-32"></p>
+                <div class="image-frame-container" style="width: 100px; height: 100px;">
+                    <img id="vs-p2-img" src="" class="vs-avatar">
+                </div>
+                <p id="vs-p2-name" class="text-white font-bold text-lg text-center truncate w-32 mt-3"></p>
             </div>
         </div>
         <p class="text-indigo-300 font-bold mt-10 tracking-widest animate-pulse">جاري بدء التحدي...</p>
@@ -930,7 +1534,9 @@
             <form id="signup-form" class="hidden" onsubmit="event.preventDefault(); handleSignup();">
                 <div class="flex justify-center mb-6">
                     <div class="relative cursor-pointer group" onclick="document.getElementById('signup-img').click()">
-                        <img id="preview-img" src="https://ui-avatars.com/api/?name=User&background=random&size=128" class="w-24 h-24 rounded-full object-cover border-4 border-gray-100 shadow-md transition group-hover:border-indigo-200">
+                        <div class="image-frame-container" style="width: 96px; height: 96px;">
+                            <img id="preview-img" src="https://ui-avatars.com/api/?name=User&background=random&size=128" class="w-full h-full rounded-full object-cover">
+                        </div>
                         <div class="absolute bottom-0 right-0 bg-indigo-600 w-8 h-8 rounded-full flex items-center justify-center text-white border-2 border-white shadow-sm">
                             <i class="fas fa-camera text-xs"></i>
                         </div>
@@ -964,6 +1570,12 @@
                     <i class="fas fa-gem text-yellow-500"></i>
                 </div>
             </div>
+        </div>
+
+        <!-- Notifications Button -->
+        <div id="notifications-btn" class="notifications-btn hidden" onclick="openNotifications()">
+            <i class="fas fa-bell text-indigo-600"></i>
+            <div id="notification-badge" class="notification-badge hidden">0</div>
         </div>
 
         <!-- === TABS === -->
@@ -1027,14 +1639,26 @@
 
         <!-- GAME OVERLAY -->
         <div id="game-overlay" class="fixed inset-0 bg-gray-50 z-[100] hidden flex-col">
+            <!-- Connection Indicator -->
+            <div id="connection-indicator" class="connection-indicator hidden">
+                <i class="fas fa-wifi"></i>
+                <span>جاري التحقق من الاتصال...</span>
+            </div>
+
             <div class="bg-white p-3 shadow-sm flex justify-between items-center z-10 border-b border-gray-100 h-20">
                 <!-- Player 1 -->
                 <div class="flex items-center gap-2 w-1/3 overflow-hidden">
-                    <img id="game-p1-img" src="" class="game-avatar-small">
+                    <div class="image-frame-container" style="width: 32px; height: 32px;">
+                        <img id="game-p1-img" src="" class="game-avatar-small">
+                    </div>
                     <div class="overflow-hidden">
                         <p id="p1-name" class="text-[10px] text-gray-500 font-bold truncate">...</p>
                         <p id="game-my-score" class="text-xl font-black text-indigo-600">0</p>
                     </div>
+                    <!-- Friend Request Button for Opponent -->
+                    <button id="game-friend-request-btn" class="friend-request-btn hidden" onclick="sendFriendRequestFromGame()">
+                        <i class="fas fa-user-plus"></i>
+                    </button>
                 </div>
                 
                 <!-- Timer -->
@@ -1048,7 +1672,9 @@
                         <p id="p2-name" class="text-[10px] text-gray-500 font-bold truncate">...</p>
                         <p id="game-op-score" class="text-xl font-black text-red-500">0</p>
                     </div>
-                    <img id="game-p2-img" src="" class="game-avatar-small">
+                    <div class="image-frame-container" style="width: 32px; height: 32px;">
+                        <img id="game-p2-img" src="" class="game-avatar-small">
+                    </div>
                 </div>
             </div>
 
@@ -1223,7 +1849,9 @@
                 <div class="bg-white p-6 rounded-3xl shadow-sm text-center mb-6 mt-4 relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-full h-16 bg-gradient-to-r from-indigo-500 to-purple-500 opacity-10"></div>
                     <div class="relative z-10">
-                        <img id="profile-img" src="" class="w-24 h-24 rounded-full mx-auto border-4 border-white shadow-md mb-3 object-cover">
+                        <div class="image-frame-container mx-auto mb-3" style="width: 96px; height: 96px;">
+                            <img id="profile-img" src="" class="w-full h-full rounded-full object-cover">
+                        </div>
                         <div class="flex items-center justify-center gap-2 flex-wrap" id="profile-name-container">
                             <h2 id="profile-name-text" class="text-xl font-bold text-gray-800">...</h2>
                             <!-- Badge will be inserted here -->
@@ -1232,10 +1860,12 @@
                             </button>
                         </div>
                         <p class="text-xs text-gray-400 mt-1" id="profile-id-text">ID: ...</p>
-                        <p class="text-xs text-gray-600 mt-2 max-w-xs mx-auto" id="profile-bio-text">لا يوجد سيرة ذاتية</p>
-                        <button onclick="editProfileBio()" class="text-indigo-600 text-xs font-bold mt-2 hover:underline flex items-center justify-center gap-1 mx-auto">
-                            <i class="fas fa-pen text-xs"></i> تعديل السيرة الذاتية
-                        </button>
+                        <p class="text-xs text-gray-600 mt-2 max-w-xs mx-auto flex items-center justify-center gap-1">
+                            <span id="profile-bio-text" class="bio-text">لا يوجد سيرة ذاتية</span>
+                            <button onclick="editProfileBio()" class="bio-edit-btn">
+                                <i class="fas fa-pen text-xs"></i>
+                            </button>
+                        </p>
                         <button onclick="document.getElementById('edit-pic-input').click()" class="text-indigo-600 text-xs font-bold mt-2 hover:underline block mx-auto">تغيير الصورة</button>
                         <input type="file" id="edit-pic-input" hidden accept="image/*" onchange="updateProfilePic(this)">
                     </div>
@@ -1366,6 +1996,15 @@
                             <div class="text-right">
                                 <h3 class="font-bold text-gray-800">خلفية التصنيف</h3>
                                 <p class="text-xs text-gray-500">اختر خلفية مميزة لبطاقتك</p>
+                            </div>
+                            <i class="fas fa-chevron-left mr-auto text-gray-300"></i>
+                        </button>
+
+                        <button onclick="openFrameSelector()" class="bg-white p-4 rounded-2xl shadow-sm border border-yellow-100 flex items-center gap-4 hover:shadow-md transition group">
+                            <div class="w-12 h-12 rounded-full bg-yellow-50 flex items-center justify-center text-yellow-600 group-hover:bg-yellow-600 group-hover:text-white transition"><i class="fas fa-gem text-xl"></i></div>
+                            <div class="text-right">
+                                <h3 class="font-bold text-gray-800">إطار الملف الشخصي</h3>
+                                <p class="text-xs text-gray-500">اختر إطاراً فاخراً لصورتك</p>
                             </div>
                             <i class="fas fa-chevron-left mr-auto text-gray-300"></i>
                         </button>
@@ -1668,6 +2307,43 @@
                 </div>
             </div>
         </div>
+
+        <!-- Screen: Notifications -->
+        <div id="screen-notifications" class="screen pt-20">
+            <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
+                <button onclick="backToChallenges()" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
+                <h1 class="font-bold text-lg text-gray-800">الإشعارات</h1>
+            </div>
+            <div class="scroll-container px-5 py-6">
+                <!-- Tabs -->
+                <div class="flex mb-6 border-b border-gray-100">
+                    <button id="notif-tab-alerts" onclick="switchNotifTab('alerts')" class="flex-1 py-3 font-bold text-sm border-b-2 border-indigo-600 text-indigo-600">التنبيهات</button>
+                    <button id="notif-tab-friends" onclick="switchNotifTab('friends')" class="flex-1 py-3 font-bold text-sm text-gray-500">الأصدقاء</button>
+                    <button id="notif-tab-requests" onclick="switchNotifTab('requests')" class="flex-1 py-3 font-bold text-sm text-gray-500">طلبات الصداقة</button>
+                    <button id="notif-tab-pending" onclick="switchNotifTab('pending')" class="flex-1 py-3 font-bold text-sm text-gray-500">المعلقة</button>
+                </div>
+
+                <!-- Alerts Content -->
+                <div id="notif-alerts-content" class="space-y-4">
+                    <!-- سيتم تعبئتها عبر JavaScript -->
+                </div>
+
+                <!-- Friends Content -->
+                <div id="notif-friends-content" class="space-y-4 hidden">
+                    <!-- سيتم تعبئتها عبر JavaScript -->
+                </div>
+
+                <!-- Friend Requests Content -->
+                <div id="notif-requests-content" class="space-y-4 hidden">
+                    <!-- سيتم تعبئتها عبر JavaScript -->
+                </div>
+
+                <!-- Pending Requests Content -->
+                <div id="notif-pending-content" class="space-y-4 hidden">
+                    <!-- سيتم تعبئتها عبر JavaScript -->
+                </div>
+            </div>
+        </div>
         
         <!-- BOTTOM NAV -->
         <div class="fixed bottom-0 w-full bg-white border-t border-gray-100 flex justify-around items-center h-20 pb-2 z-40 shadow-[0_-5px_20px_rgba(0,0,0,0.03)]">
@@ -1738,6 +2414,16 @@
                  <div class="space-y-3" id="bg-grid"></div>
             </div>
         </div>
+
+        <!-- POPUP: Frame Selector -->
+        <div id="frame-selector-modal" class="modal-overlay hidden">
+            <div class="modal-content relative">
+                <button onclick="document.getElementById('frame-selector-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400"><i class="fas fa-times"></i></button>
+                <h3 class="font-bold text-lg mb-4 text-yellow-700 text-center">اختر إطار الملف الشخصي</h3>
+                <p class="text-xs text-gray-500 text-center mb-4">اختر إطاراً فاخراً لصورتك (للمستخدمين المميزين فقط)</p>
+                <div class="grid grid-cols-2 gap-4 max-h-[70vh] overflow-y-auto p-2" id="frame-grid"></div>
+            </div>
+        </div>
         
         <!-- EDIT QUESTION MODAL -->
         <div id="edit-modal" class="modal-overlay hidden">
@@ -1784,7 +2470,11 @@
             <div class="modal-content relative">
                 <button onclick="document.getElementById('edit-bio-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
                 <h3 class="font-bold text-lg mb-4 text-indigo-700 text-center">تعديل السيرة الذاتية</h3>
-                <textarea id="edit-bio-input" class="input-box h-32 mb-4" placeholder="اكتب نبذة عنك..."></textarea>
+                <div class="mb-2 flex justify-between items-center">
+                    <span class="text-xs text-gray-500">الحد الأقصى: 25 حرف</span>
+                    <span id="bio-char-count" class="text-xs font-bold text-indigo-600">0/25</span>
+                </div>
+                <textarea id="edit-bio-input" class="input-box h-32 mb-4" placeholder="اكتب نبذة عنك..." maxlength="25" oninput="updateBioCharCount()"></textarea>
                 <button onclick="saveProfileBio()" class="btn-main bg-indigo-600 hover:bg-indigo-700">حفظ</button>
             </div>
         </div>
@@ -1816,13 +2506,46 @@
                 </div>
             </div>
         </div>
+
+        <!-- Invite Friends Modal -->
+        <div id="invite-friends-modal" class="modal-overlay hidden">
+            <div class="modal-content invite-friends-modal">
+                <button onclick="document.getElementById('invite-friends-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+                <h3 class="font-bold text-lg mb-4 text-indigo-700 text-center">دعوة الأصدقاء</h3>
+                <p class="text-xs text-gray-500 text-center mb-6">اختر صديقاً لدعوته للغرفة</p>
+                <div id="friends-list" class="space-y-3">
+                    <!-- سيتم تعبئتها عبر JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Resume Modal -->
+        <div id="game-resume-modal" class="modal-overlay game-resume-modal hidden">
+            <div class="game-resume-card">
+                <div class="text-center mb-6">
+                    <i class="fas fa-redo text-5xl text-indigo-400 mb-3 animate-spin"></i>
+                    <h2 class="text-2xl font-black text-white">استئناف المباراة</h2>
+                </div>
+                <p class="text-gray-300 text-center mb-6">يبدو أن لديك مباراة قيد التنفيذ. هل تريد استئنافها؟</p>
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="resumeGame()" class="bg-green-500 text-white py-3 rounded-xl font-bold hover:bg-green-600 transition">
+                        <i class="fas fa-play mr-2"></i> استئناف
+                    </button>
+                    <button onclick="cancelGameResume()" class="bg-red-500 text-white py-3 rounded-xl font-bold hover:bg-red-600 transition">
+                        <i class="fas fa-times mr-2"></i> إلغاء
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
 <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, onSnapshot, query, where, orderBy, limit, deleteDoc, serverTimestamp, increment, getDoc, writeBatch, Timestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL, uploadBytesResumable } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL, uploadBytesResumable, deleteObject } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAfLOjiPiSQW9opdiIgQif3pAp8zsezy58",
@@ -1885,6 +2608,17 @@
             { id: 'bg-love', name: 'حب (وردي)', class: 'bg-love' }
         ];
 
+        const FRAMES_LIST = [
+            { id: 'frame-royal-gold', name: 'ذهب ملكي', class: 'frame-royal-gold', description: 'إطار ذهبي ملكي مع تاج' },
+            { id: 'frame-crystal-magic', name: 'كريستال ساحر', class: 'frame-crystal-magic', description: 'إطار كريستال ساحر متلألئ' },
+            { id: 'frame-gemstone-sparkle', name: 'جوهرة متلألئة', class: 'frame-gemstone-sparkle', description: 'إطار جوهرة بألوان قوس قزح' },
+            { id: 'frame-ice-glass', name: 'زجاج ثلجي', class: 'frame-ice-glass', description: 'إطار زجاجي ثلجي نقي' },
+            { id: 'frame-angel-wings', name: 'أجنحة ملاك', class: 'frame-angel-wings', description: 'إطار بأجنحة ملاك بيضاء' },
+            { id: 'frame-imperial-crown', name: 'تاج إمبراطوري', class: 'frame-imperial-crown', description: 'إطار تاج إمبراطوري فاخر' },
+            { id: 'frame-magic-energy', name: 'طاقة سحرية', class: 'frame-magic-energy', description: 'إطار طاقة سحرية متوهجة' },
+            { id: 'frame-legendary-fire', name: 'نار أسطورية', class: 'frame-legendary-fire', description: 'إطار نار أسطورية متقدة' }
+        ];
+
         const subjects = {
             '6sci': ['اسلامية', 'عربي', 'انكليزي', 'احياء', 'رياضيات', 'كيمياء', 'فيزياء'],
             '6lit': ['اسلامية', 'عربي', 'انكليزي', 'تاريخ', 'رياضيات', 'جغرافية', 'اقتصاد'],
@@ -1892,6 +2626,71 @@
         };
 
         const sharedSubjects = ['اسلامية', 'عربي', 'انكليزي'];
+
+        // Image Cache System
+        const imageCache = new Map();
+        const MAX_CACHE_SIZE = 50;
+
+        async function getCachedImage(url) {
+            if (!url) return null;
+            
+            if (imageCache.has(url)) {
+                return imageCache.get(url);
+            }
+
+            try {
+                const response = await fetch(url);
+                const blob = await response.blob();
+                const objectUrl = URL.createObjectURL(blob);
+                
+                if (imageCache.size >= MAX_CACHE_SIZE) {
+                    const firstKey = imageCache.keys().next().value;
+                    const firstUrl = imageCache.get(firstKey);
+                    URL.revokeObjectURL(firstUrl);
+                    imageCache.delete(firstKey);
+                }
+                
+                imageCache.set(url, objectUrl);
+                return objectUrl;
+            } catch (error) {
+                console.error("Error caching image:", error);
+                return url;
+            }
+        }
+
+        function clearImageCache() {
+            for (const url of imageCache.values()) {
+                URL.revokeObjectURL(url);
+            }
+            imageCache.clear();
+        }
+
+        async function loadImageWithCache(imgElement, url, fallbackUrl = null) {
+            if (!imgElement) return;
+            
+            try {
+                const cachedUrl = await getCachedImage(url);
+                imgElement.src = cachedUrl || url;
+                
+                imgElement.onload = () => {
+                    imgElement.classList.remove('image-loading');
+                };
+                
+                imgElement.onerror = () => {
+                    if (fallbackUrl) {
+                        imgElement.src = fallbackUrl;
+                    }
+                    imgElement.classList.remove('image-loading');
+                };
+                
+            } catch (error) {
+                console.error("Error loading image:", error);
+                if (fallbackUrl) {
+                    imgElement.src = fallbackUrl;
+                }
+                imgElement.classList.remove('image-loading');
+            }
+        }
 
         onAuthStateChanged(auth, async (user) => {
             const intro = document.getElementById('intro-screen');
@@ -1929,6 +2728,8 @@
                         checkDailyReward(); 
                         checkPremiumStatus();
                         if(userData.email === ADMIN_EMAIL) checkAdminNotifications(); 
+                        checkForPendingGame();
+                        loadNotifications();
 
                         if (userData.grade) {
                             document.getElementById('grade-selector-card').classList.add('hidden');
@@ -1946,6 +2747,7 @@
                             intro.classList.add('hidden');
                             authScreen.classList.add('hidden');
                             mainApp.classList.remove('hidden');
+                            document.getElementById('notifications-btn').classList.remove('hidden');
                             if(!document.querySelector('.screen.active')) switchTab('challenges');
                             startWeeklyCountdown();
                         }, 2500);
@@ -1965,6 +2767,7 @@
                     intro.classList.add('hidden');
                     mainApp.classList.add('hidden');
                     banScreen.classList.add('hidden');
+                    document.getElementById('notifications-btn').classList.add('hidden');
                     authScreen.classList.remove('hidden');
                     window.switchAuthTab('login');
                 }, 2000);
@@ -2018,9 +2821,23 @@
                 const snapshot = await uploadBytes(storageRef, blob);
                 const downloadURL = await getDownloadURL(snapshot.ref);
                 
+                await updateDoc(doc(db, "users", userId), { photo: downloadURL });
+                
                 return downloadURL;
             } catch (error) {
                 console.error("Error uploading image:", error);
+                throw error;
+            }
+        }
+
+        async function uploadToStorage(file, path) {
+            try {
+                const storageRef = ref(storage, path);
+                const snapshot = await uploadBytes(storageRef, file);
+                const downloadURL = await getDownloadURL(snapshot.ref);
+                return downloadURL;
+            } catch (error) {
+                console.error("Error uploading to storage:", error);
                 throw error;
             }
         }
@@ -2300,7 +3117,12 @@
                     premiumExpiry: null,
                     selectedBadge: null,
                     selectedBadgeColor: null,
-                    selectedBgTheme: 'bg-rank-default'
+                    selectedBgTheme: 'bg-rank-default',
+                    selectedFrame: null,
+                    notifications: [],
+                    friends: [],
+                    friendRequests: [],
+                    pendingRequests: []
                 });
 
                 showBeautifulAlert('success', 'مبروك!', 'تم إنشاء حسابك بنجاح');
@@ -2316,6 +3138,7 @@
             if(roomListenerUnsubscribe) roomListenerUnsubscribe();
             if(premiumInterval) clearInterval(premiumInterval);
             if(connectionMonitorInterval) clearInterval(connectionMonitorInterval);
+            clearImageCache();
             signOut(auth);
         };
 
@@ -2381,8 +3204,17 @@
         function setupProfileUI() {
             document.getElementById('profile-name-text').innerText = userData.name;
             document.getElementById('profile-id-text').innerText = "ID: " + userData.uniqueId;
-            document.getElementById('profile-img').src = userData.photo;
-            document.getElementById('profile-bio-text').innerText = userData.bio || "لا يوجد سيرة ذاتية";
+            
+            const profileImg = document.getElementById('profile-img');
+            profileImg.classList.add('image-loading');
+            loadImageWithCache(profileImg, userData.photo, 'https://ui-avatars.com/api/?name=' + userData.name + '&background=random');
+            
+            const bioText = document.getElementById('profile-bio-text');
+            if (userData.bio && userData.bio.length > 25) {
+                bioText.innerText = userData.bio.substring(0, 22) + '...';
+            } else {
+                bioText.innerText = userData.bio || "لا يوجد سيرة ذاتية";
+            }
             
             const container = document.getElementById('profile-name-container');
             const existingBadge = container.querySelector('.premium-badge');
@@ -2403,6 +3235,25 @@
             } else {
                 document.getElementById('withdraw-section').classList.add('hidden');
                 document.getElementById('withdraw-locked-msg').classList.remove('hidden');
+            }
+
+            applyProfileFrame();
+        }
+
+        function applyProfileFrame() {
+            const profileImgContainer = document.querySelector('#profile-img').parentElement;
+            
+            // Remove existing frame
+            const existingFrame = profileImgContainer.querySelector('.profile-frame');
+            if (existingFrame) {
+                existingFrame.remove();
+            }
+
+            // Apply new frame if premium and has selected frame
+            if (userData.isPremium && userData.selectedFrame && isPremiumValid(userData)) {
+                const frameDiv = document.createElement('div');
+                frameDiv.className = `profile-frame ${userData.selectedFrame}`;
+                profileImgContainer.appendChild(frameDiv);
             }
         }
         
@@ -2461,7 +3312,8 @@
                     isPremium: false,
                     selectedBadge: null,
                     selectedBadgeColor: null,
-                    selectedBgTheme: 'bg-rank-default'
+                    selectedBgTheme: 'bg-rank-default',
+                    selectedFrame: null
                 });
                 
                 if (uid === currentUser?.uid) {
@@ -2469,6 +3321,7 @@
                     userData.selectedBadge = null;
                     userData.selectedBadgeColor = null;
                     userData.selectedBgTheme = 'bg-rank-default';
+                    userData.selectedFrame = null;
                     checkPremiumStatus();
                     setupProfileUI();
                 }
@@ -2711,6 +3564,49 @@
              showBeautifulAlert('success', 'تم التحديث', 'تم تحديث خلفية التصنيف ✅');
         }
 
+        window.openFrameSelector = () => {
+            if (!isPremiumValid(userData)) {
+                showBeautifulAlert('error', 'خطأ', '❌ يجب أن تكون مشتركاً مميزاً لاستخدام هذه الميزة');
+                return;
+            }
+
+            const grid = document.getElementById('frame-grid');
+            grid.innerHTML = '';
+            FRAMES_LIST.forEach(frame => {
+                const btn = document.createElement('button');
+                btn.className = `relative h-32 rounded-xl shadow-lg border-2 border-transparent hover:border-yellow-500 transition overflow-hidden group`;
+                
+                // Create preview frame
+                const previewDiv = document.createElement('div');
+                previewDiv.className = `absolute inset-0 ${frame.class} flex items-center justify-center`;
+                
+                // Add avatar inside frame
+                const avatar = document.createElement('div');
+                avatar.className = "w-16 h-16 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center";
+                avatar.innerHTML = '<i class="fas fa-user text-white text-2xl"></i>';
+                previewDiv.appendChild(avatar);
+                
+                // Add frame name
+                const nameDiv = document.createElement('div');
+                nameDiv.className = "absolute bottom-0 left-0 right-0 bg-black/70 text-white text-xs font-bold py-1 text-center";
+                nameDiv.innerText = frame.name;
+                previewDiv.appendChild(nameDiv);
+                
+                btn.appendChild(previewDiv);
+                btn.onclick = () => saveFrameChoice(frame.id, frame.class);
+                grid.appendChild(btn);
+            });
+            document.getElementById('frame-selector-modal').classList.remove('hidden');
+        };
+
+        async function saveFrameChoice(frameId, frameClass) {
+            await updateDoc(doc(db, "users", currentUser.uid), { selectedFrame: frameClass });
+            userData.selectedFrame = frameClass;
+            document.getElementById('frame-selector-modal').classList.add('hidden');
+            setupProfileUI();
+            showBeautifulAlert('success', 'تم التحديث', 'تم تحديث إطار الملف الشخصي ✅');
+        }
+
         window.setQType = (t) => {
             selectedQType = t;
             document.getElementById('btn-mcq').className = `py-3 rounded-xl border-2 font-bold transition flex-1 ${t==='mcq'?'border-indigo-600 bg-indigo-50 text-indigo-600':'border-indigo-100 text-gray-500'}`;
@@ -2786,6 +3682,14 @@
                         player2LastActive: Date.now(),
                         lastActivity: Date.now()
                     });
+                    
+                    // Save match info for resume
+                    localStorage.setItem('pending_match', JSON.stringify({
+                        matchId: foundMatchId,
+                        mode: 'online',
+                        timestamp: Date.now()
+                    }));
+                    
                     listenToMatch(foundMatchId);
                     startConnectionMonitoring(foundMatchId, false);
                 } else {
@@ -2816,6 +3720,14 @@
                         createdAt: serverTimestamp()
                     });
                     currentMatchId = newMatch.id;
+                    
+                    // Save match info for resume
+                    localStorage.setItem('pending_match', JSON.stringify({
+                        matchId: newMatch.id,
+                        mode: 'online',
+                        timestamp: Date.now()
+                    }));
+                    
                     listenToMatch(newMatch.id);
                 }
             } catch(e) { 
@@ -2857,6 +3769,14 @@
                 currentIdx: 0, 
                 answersCount: 0
             };
+            
+            // Save match info for resume
+            localStorage.setItem('pending_match', JSON.stringify({
+                matchId: 'ai_match_' + Date.now(),
+                mode: 'ai',
+                data: localMatchData,
+                timestamp: Date.now()
+            }));
             
             await showVSAnimation(localMatchData.player1, localMatchData.player2);
             document.getElementById('game-overlay').classList.remove('hidden');
@@ -2908,17 +3828,36 @@
             isMonitoringConnection = true;
             opponentLastSeen = Date.now();
             
+            // Show connection indicator
+            const indicator = document.getElementById('connection-indicator');
+            indicator.classList.remove('hidden', 'good', 'poor', 'bad');
+            indicator.classList.add('good');
+            indicator.innerHTML = '<i class="fas fa-wifi"></i><span>اتصال ممتاز</span>';
+            
             connectionMonitorInterval = setInterval(async () => {
                 if(!isMonitoringConnection || !currentMatchId) return;
                 
                 const now = Date.now();
                 const timeSinceLastSeen = now - opponentLastSeen;
                 
-                if(timeSinceLastSeen > 8000 && !matchConnectionChecked) {
+                // Update connection indicator status
+                if (timeSinceLastSeen > 3000) {
+                    indicator.classList.remove('good');
+                    indicator.classList.add('poor');
+                    indicator.innerHTML = '<i class="fas fa-wifi"></i><span>اتصال ضعيف</span>';
+                }
+                
+                if (timeSinceLastSeen > 6000) {
+                    indicator.classList.remove('poor');
+                    indicator.classList.add('bad');
+                    indicator.innerHTML = '<i class="fas fa-wifi-slash"></i><span>محاولة إعادة الاتصال...</span>';
+                }
+                
+                if(timeSinceLastSeen > 10000 && !matchConnectionChecked) {
                     matchConnectionChecked = true;
                     await checkOpponentConnection(matchId, isPlayer1);
                 }
-            }, 1000);
+            }, 3000); // Check every 3 seconds
             
             updateLastActive(matchId, isPlayer1);
         }
@@ -2985,6 +3924,9 @@
                     isMonitoringConnection = false;
                 }
                 
+                // Clear pending match from localStorage
+                localStorage.removeItem('pending_match');
+                
                 if(winnerId === currentUser.uid) {
                     showDisconnectionResult(true, "فزت بسبب انقطاع الانترنت عند خصمك");
                 } else if(loserId === currentUser.uid) {
@@ -2999,6 +3941,7 @@
         function showDisconnectionResult(isWinner, message) {
             clearInterval(gameTimer);
             document.getElementById('game-overlay').classList.add('hidden');
+            document.getElementById('connection-indicator').classList.add('hidden');
             
             const resultScreen = document.getElementById('result-screen');
             const iconContainer = document.getElementById('result-icon-container');
@@ -3037,6 +3980,7 @@
                 if(!snap.exists()) {
                     if (currentGameMode === 'online') {
                         console.log("المباراة حذفت من السيرفر");
+                        localStorage.removeItem('pending_match');
                         return;
                     }
                     return;
@@ -3060,7 +4004,7 @@
             });
         }
         
-        function showVSAnimation(p1, p2) {
+        async function showVSAnimation(p1, p2) {
             return new Promise(resolve => {
                 document.getElementById('searching-ui').classList.add('hidden');
                 document.getElementById('searching-ui').style.display = 'none';
@@ -3069,10 +4013,15 @@
                 const me = isP1 ? p1 : p2;
                 const op = isP1 ? p2 : p1;
 
-                document.getElementById('vs-p1-img').src = me.photo;
-                document.getElementById('vs-p1-name').innerText = me.name;
+                const vsP1Img = document.getElementById('vs-p1-img');
+                vsP1Img.classList.add('image-loading');
+                loadImageWithCache(vsP1Img, me.photo, 'https://ui-avatars.com/api/?name=' + me.name + '&background=random');
                 
-                document.getElementById('vs-p2-img').src = op.photo;
+                const vsP2Img = document.getElementById('vs-p2-img');
+                vsP2Img.classList.add('image-loading');
+                loadImageWithCache(vsP2Img, op.photo, 'https://ui-avatars.com/api/?name=' + op.name + '&background=random');
+                
+                document.getElementById('vs-p1-name').innerText = me.name;
                 document.getElementById('vs-p2-name').innerText = op.name;
 
                 const screen = document.getElementById('vs-screen');
@@ -3112,18 +4061,53 @@
             if (currentGameMode === 'online') {
                 const isP1 = data.player1.uid === currentUser.uid;
                 document.getElementById('p1-name').innerText = userData.name;
-                document.getElementById('game-p1-img').src = userData.photo;
+                
+                const gameP1Img = document.getElementById('game-p1-img');
+                gameP1Img.classList.add('image-loading');
+                loadImageWithCache(gameP1Img, userData.photo, 'https://ui-avatars.com/api/?name=' + userData.name + '&background=random');
+                
                 document.getElementById('p2-name').innerText = isP1 ? data.player2.name : data.player1.name;
-                document.getElementById('game-p2-img').src = isP1 ? data.player2.photo : data.player1.photo;
+                
+                const gameP2Img = document.getElementById('game-p2-img');
+                const opPhoto = isP1 ? data.player2.photo : data.player1.photo;
+                const opName = isP1 ? data.player2.name : data.player1.name;
+                gameP2Img.classList.add('image-loading');
+                loadImageWithCache(gameP2Img, opPhoto, 'https://ui-avatars.com/api/?name=' + opName + '&background=random');
+                
                 document.getElementById('game-my-score').innerText = isP1 ? data.player1.score : data.player2.score;
                 document.getElementById('game-op-score').innerText = isP1 ? data.player2.score : data.player1.score;
+                
+                // Show friend request button for opponent
+                const friendBtn = document.getElementById('game-friend-request-btn');
+                if (!isP1 && data.player1.uid && data.player1.uid !== currentUser.uid) {
+                    friendBtn.classList.remove('hidden');
+                    friendBtn.dataset.opponentId = data.player1.uid;
+                    friendBtn.dataset.opponentName = data.player1.name;
+                } else if (isP1 && data.player2.uid && data.player2.uid !== currentUser.uid) {
+                    friendBtn.classList.remove('hidden');
+                    friendBtn.dataset.opponentId = data.player2.uid;
+                    friendBtn.dataset.opponentName = data.player2.name;
+                } else {
+                    friendBtn.classList.add('hidden');
+                }
             } else {
                 document.getElementById('p1-name').innerText = userData.name;
-                document.getElementById('game-p1-img').src = userData.photo;
+                
+                const gameP1Img = document.getElementById('game-p1-img');
+                gameP1Img.classList.add('image-loading');
+                loadImageWithCache(gameP1Img, userData.photo, 'https://ui-avatars.com/api/?name=' + userData.name + '&background=random');
+                
                 document.getElementById('p2-name').innerText = data.player2.name;
-                document.getElementById('game-p2-img').src = data.player2.photo;
+                
+                const gameP2Img = document.getElementById('game-p2-img');
+                gameP2Img.classList.add('image-loading');
+                loadImageWithCache(gameP2Img, data.player2.photo);
+                
                 document.getElementById('game-my-score').innerText = data.player1.score;
                 document.getElementById('game-op-score').innerText = data.player2.score;
+                
+                // Hide friend request button for AI
+                document.getElementById('game-friend-request-btn').classList.add('hidden');
             }
 
             const qTextEl = document.getElementById('q-text');
@@ -3263,6 +4247,9 @@
                     }
                 }
                 
+                // Clear pending match
+                localStorage.removeItem('pending_match');
+                
                 showWithdrawalResult();
                 
             } catch (error) {
@@ -3275,6 +4262,7 @@
             clearInterval(gameTimer);
             if(connectionMonitorInterval) clearInterval(connectionMonitorInterval);
             document.getElementById('game-overlay').classList.add('hidden');
+            document.getElementById('connection-indicator').classList.add('hidden');
             
             const resultScreen = document.getElementById('result-screen');
             const iconContainer = document.getElementById('result-icon-container');
@@ -3306,6 +4294,7 @@
                 isMonitoringConnection = false;
             }
             document.getElementById('game-overlay').classList.add('hidden');
+            document.getElementById('connection-indicator').classList.add('hidden');
             document.getElementById('withdraw-game-btn').classList.add('hidden');
             if (isExitingGame) return;
             
@@ -3358,6 +4347,9 @@
                 await deleteDoc(doc(db, "match_queue", currentMatchId));
             }
             
+            // Clear pending match
+            localStorage.removeItem('pending_match');
+            
             const resultScreen = document.getElementById('result-screen');
             const iconContainer = document.getElementById('result-icon-container');
             const title = document.getElementById('result-title');
@@ -3400,6 +4392,7 @@
              }
              document.getElementById('result-screen').classList.add('hidden');
              document.getElementById('game-overlay').classList.add('hidden');
+             document.getElementById('connection-indicator').classList.add('hidden');
              document.getElementById('searching-ui').classList.add('hidden');
              document.getElementById('searching-ui').style.display = 'none';
 
@@ -3422,6 +4415,64 @@
              setTimeout(() => { isExitingGame = false; }, 500);
         };
 
+        async function checkForPendingGame() {
+            const pendingMatch = localStorage.getItem('pending_match');
+            if (pendingMatch) {
+                const matchData = JSON.parse(pendingMatch);
+                const now = Date.now();
+                
+                // If match was created less than 5 minutes ago, show resume option
+                if (now - matchData.timestamp < 5 * 60 * 1000) {
+                    setTimeout(() => {
+                        document.getElementById('game-resume-modal').classList.remove('hidden');
+                    }, 1000);
+                } else {
+                    // Clear expired match
+                    localStorage.removeItem('pending_match');
+                }
+            }
+        }
+
+        window.resumeGame = async function() {
+            const pendingMatch = localStorage.getItem('pending_match');
+            if (!pendingMatch) {
+                document.getElementById('game-resume-modal').classList.add('hidden');
+                return;
+            }
+
+            const matchData = JSON.parse(pendingMatch);
+            
+            if (matchData.mode === 'online' && matchData.matchId) {
+                currentMatchId = matchData.matchId;
+                currentGameMode = 'online';
+                listenToMatch(matchData.matchId);
+                
+                try {
+                    const matchDoc = await getDoc(doc(db, "match_queue", matchData.matchId));
+                    if (matchDoc.exists()) {
+                        const matchData = matchDoc.data();
+                        startConnectionMonitoring(matchData.matchId, matchData.player1.uid === currentUser.uid);
+                    }
+                } catch (error) {
+                    console.error("Error resuming game:", error);
+                }
+            } else if (matchData.mode === 'ai' && matchData.data) {
+                localMatchData = matchData.data;
+                currentGameMode = 'ai';
+                
+                document.getElementById('game-overlay').classList.remove('hidden');
+                document.getElementById('withdraw-game-btn').classList.add('hidden');
+                renderGame(localMatchData);
+            }
+            
+            document.getElementById('game-resume-modal').classList.add('hidden');
+        };
+
+        window.cancelGameResume = function() {
+            localStorage.removeItem('pending_match');
+            document.getElementById('game-resume-modal').classList.add('hidden');
+        };
+
         window.openPage = async (screenId) => {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
@@ -3439,6 +4490,9 @@
             }
             else if (screenId === 'screen-admin-users') {
                 loadBannedUsers();
+            }
+            else if (screenId === 'screen-notifications') {
+                loadNotifications();
             }
         };
 
@@ -3459,14 +4513,39 @@
 
         window.editProfileBio = () => {
             document.getElementById('edit-bio-input').value = userData.bio || "";
+            updateBioCharCount();
             document.getElementById('edit-bio-modal').classList.remove('hidden');
+        };
+
+        window.updateBioCharCount = function() {
+            const bioInput = document.getElementById('edit-bio-input');
+            const charCount = document.getElementById('bio-char-count');
+            const count = bioInput.value.length;
+            charCount.textContent = `${count}/25`;
+            
+            if (count > 25) {
+                bioInput.value = bioInput.value.substring(0, 25);
+                charCount.textContent = "25/25";
+            }
         };
 
         window.saveProfileBio = async () => {
             const newBio = document.getElementById('edit-bio-input').value.trim();
+            if (newBio.length > 25) {
+                showBeautifulAlert('warning', 'تنبيه', 'الحد الأقصى للسيرة الذاتية هو 25 حرف');
+                return;
+            }
+            
             await updateDoc(doc(db, "users", currentUser.uid), { bio: newBio });
             userData.bio = newBio;
-            document.getElementById('profile-bio-text').innerText = newBio || "لا يوجد سيرة ذاتية";
+            
+            const bioText = document.getElementById('profile-bio-text');
+            if (newBio.length > 25) {
+                bioText.innerText = newBio.substring(0, 22) + '...';
+            } else {
+                bioText.innerText = newBio || "لا يوجد سيرة ذاتية";
+            }
+            
             document.getElementById('edit-bio-modal').classList.add('hidden');
             showBeautifulAlert('success', 'تم التحديث', 'تم تحديث السيرة الذاتية ✅');
         };
@@ -3690,14 +4769,22 @@
                         resetBtn = `<button onclick="resetUserPoints('${u.id}', '${u.name}')" class="w-6 h-6 rounded bg-red-100 text-red-500 flex items-center justify-center mr-2"><i class="fas fa-trash-alt text-xs"></i></button>`;
                     }
                     
+                    // Create image with frame
+                    const imgContainer = document.createElement('div');
+                    imgContainer.className = 'rank-img-container';
+                    imgContainer.innerHTML = `
+                        ${rankBadge}
+                        ${raysHtml}
+                        <div class="image-frame-container" style="width: 56px; height: 56px;">
+                            <img src="${u.photo}" class="rank-img ${frameClass}">
+                            ${u.isPremium && u.selectedFrame ? `<div class="profile-frame ${u.selectedFrame}"></div>` : ''}
+                        </div>
+                    `;
+                    
                     div.innerHTML += `
                         <div class="flex items-center justify-between p-4 rounded-xl shadow-sm mb-3 relative overflow-hidden ${backgroundClass}">
                             <div class="flex items-center gap-4 z-10">
-                                <div class="rank-img-container">
-                                    ${rankBadge}
-                                    ${raysHtml}
-                                    <img src="${u.photo}" class="rank-img ${frameClass}">
-                                </div>
+                                ${imgContainer.outerHTML}
                                 <div>
                                     <p class="font-bold text-gray-800 text-sm flex items-center">
                                         ${crown} 
@@ -4089,6 +5176,7 @@
                 clearInterval(connectionMonitorInterval);
                 isMonitoringConnection = false;
             }
+            localStorage.removeItem('pending_match');
         };
 
         window.closeMaintenancePopup = function() {
@@ -4404,7 +5492,7 @@
             const readyCount = (host.ready ? 1 : 0) + (guest?.ready ? 1 : 0);
 
             content.innerHTML = `
-                <div class="room-counter">${totalPlayers}/${readyCount}</div>
+                <div class="room-counter">${totalPlayers}/2</div>
                 <div class="text-center mb-6">
                     <h2 class="text-2xl font-bold text-gray-800 mb-2">غرفة التحدي</h2>
                     <div class="room-code-display">${roomData.code}</div>
@@ -4444,6 +5532,11 @@
                         <div class="flex-1">
                             <p class="font-bold text-gray-400">في انتظار لاعب آخر...</p>
                         </div>
+                        ${isRoomHost ? `
+                        <button onclick="openInviteFriendsModal()" class="bg-blue-500 text-white px-3 py-2 rounded-lg text-xs font-bold hover:bg-blue-600 transition">
+                            <i class="fas fa-user-plus ml-1"></i> دعوة
+                        </button>
+                        ` : ''}
                     </div>
                     `}
                 </div>
@@ -4600,6 +5693,605 @@
                 }
                 
                 backToChallenges();
+            }
+        };
+
+        window.openInviteFriendsModal = async function() {
+            try {
+                const friendsList = document.getElementById('friends-list');
+                friendsList.innerHTML = '<p class="text-center text-gray-400">جاري تحميل الأصدقاء...</p>';
+                
+                document.getElementById('invite-friends-modal').classList.remove('hidden');
+                
+                // Load friends list
+                if (userData.friends && userData.friends.length > 0) {
+                    let html = '';
+                    for (const friendId of userData.friends) {
+                        try {
+                            const friendDoc = await getDoc(doc(db, "users", friendId));
+                            if (friendDoc.exists()) {
+                                const friend = friendDoc.data();
+                                const isOnline = friend.lastActive && (Date.now() - friend.lastActive.toDate().getTime()) < 5 * 60 * 1000;
+                                
+                                html += `
+                                    <div class="friend-item ${isOnline ? 'online' : 'offline'}">
+                                        <div class="flex items-center gap-3">
+                                            <img src="${friend.photo}" class="w-10 h-10 rounded-full">
+                                            <div>
+                                                <p class="font-bold text-gray-800">${friend.name}</p>
+                                                <p class="text-xs text-gray-500">${isOnline ? '🟢 متصل الآن' : '⚫ غير متصل'}</p>
+                                            </div>
+                                        </div>
+                                        <button onclick="inviteFriendToRoom('${friendId}')" class="invite-btn ${isOnline ? '' : 'disabled'}" ${isOnline ? '' : 'disabled'}>
+                                            دعوة
+                                        </button>
+                                    </div>
+                                `;
+                            }
+                        } catch (error) {
+                            console.error("Error loading friend:", error);
+                        }
+                    }
+                    
+                    if (html === '') {
+                        html = '<p class="text-center text-gray-400">لا يوجد أصدقاء</p>';
+                    }
+                    
+                    friendsList.innerHTML = html;
+                } else {
+                    friendsList.innerHTML = '<p class="text-center text-gray-400">لا يوجد أصدقاء</p>';
+                }
+                
+            } catch (error) {
+                console.error("Error opening invite modal:", error);
+                showBeautifulAlert('error', 'خطأ', 'حدث خطأ في تحميل قائمة الأصدقاء');
+            }
+        };
+
+        window.inviteFriendToRoom = async function(friendId) {
+            try {
+                const friendDoc = await getDoc(doc(db, "users", friendId));
+                if (!friendDoc.exists()) {
+                    showBeautifulAlert('error', 'خطأ', 'الصديق غير موجود');
+                    return;
+                }
+
+                const friend = friendDoc.data();
+                
+                // Add notification to friend
+                const notification = {
+                    type: 'room_invite',
+                    roomId: currentRoomId,
+                    fromUserId: currentUser.uid,
+                    fromUserName: userData.name,
+                    timestamp: Date.now(),
+                    read: false
+                };
+
+                await updateDoc(doc(db, "users", friendId), {
+                    notifications: [...(friend.notifications || []), notification]
+                });
+
+                showBeautifulAlert('success', 'تمت الدعوة', `تم إرسال دعوة إلى ${friend.name}`);
+                document.getElementById('invite-friends-modal').classList.add('hidden');
+
+            } catch (error) {
+                console.error("Error inviting friend:", error);
+                showBeautifulAlert('error', 'خطأ', 'حدث خطأ في إرسال الدعوة');
+            }
+        };
+
+        window.sendFriendRequestFromGame = async function() {
+            const btn = document.getElementById('game-friend-request-btn');
+            const opponentId = btn.dataset.opponentId;
+            const opponentName = btn.dataset.opponentName;
+
+            if (!opponentId || opponentId === currentUser.uid) {
+                return;
+            }
+
+            try {
+                const opponentDoc = await getDoc(doc(db, "users", opponentId));
+                if (!opponentDoc.exists()) {
+                    showBeautifulAlert('error', 'خطأ', 'المستخدم غير موجود');
+                    return;
+                }
+
+                const opponent = opponentDoc.data();
+
+                // Check if already friends
+                if (userData.friends && userData.friends.includes(opponentId)) {
+                    showBeautifulAlert('info', 'معلومة', 'أنتما صديقان بالفعل');
+                    return;
+                }
+
+                // Check if request already sent
+                if (userData.pendingRequests && userData.pendingRequests.includes(opponentId)) {
+                    showBeautifulAlert('info', 'معلومة', 'طلب الصداقة قيد الانتظار');
+                    return;
+                }
+
+                // Send friend request
+                const notification = {
+                    type: 'friend_request',
+                    fromUserId: currentUser.uid,
+                    fromUserName: userData.name,
+                    timestamp: Date.now(),
+                    read: false
+                };
+
+                const batch = writeBatch(db);
+                
+                // Add to opponent's friend requests
+                batch.update(doc(db, "users", opponentId), {
+                    friendRequests: [...(opponent.friendRequests || []), currentUser.uid]
+                });
+
+                // Add to user's pending requests
+                batch.update(doc(db, "users", currentUser.uid), {
+                    pendingRequests: [...(userData.pendingRequests || []), opponentId]
+                });
+
+                // Add notification to opponent
+                batch.update(doc(db, "users", opponentId), {
+                    notifications: [...(opponent.notifications || []), notification]
+                });
+
+                await batch.commit();
+
+                btn.classList.add('sent');
+                btn.innerHTML = '<i class="fas fa-user-check"></i>';
+                
+                showBeautifulAlert('success', 'تم الإرسال', `تم إرسال طلب صداقة إلى ${opponentName}`);
+
+            } catch (error) {
+                console.error("Error sending friend request:", error);
+                showBeautifulAlert('error', 'خطأ', 'حدث خطأ في إرسال طلب الصداقة');
+            }
+        };
+
+        async function loadNotifications() {
+            try {
+                if (!userData) return;
+                
+                const notifications = userData.notifications || [];
+                const unreadCount = notifications.filter(n => !n.read).length;
+                
+                const badge = document.getElementById('notification-badge');
+                const btn = document.getElementById('notifications-btn');
+                
+                if (unreadCount > 0) {
+                    badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+                    badge.classList.remove('hidden');
+                    
+                    if (notifications.some(n => n.type === 'friend_request' || n.type === 'room_invite')) {
+                        btn.classList.add('pulse');
+                    }
+                } else {
+                    badge.classList.add('hidden');
+                    btn.classList.remove('pulse');
+                }
+                
+            } catch (error) {
+                console.error("Error loading notifications:", error);
+            }
+        }
+
+        window.openNotifications = function() {
+            document.getElementById('notifications-btn').classList.remove('pulse');
+            openPage('screen-notifications');
+        };
+
+        window.switchNotifTab = function(tab) {
+            // Update tab buttons
+            document.querySelectorAll('#screen-notifications button[id^="notif-tab-"]').forEach(btn => {
+                btn.classList.remove('text-indigo-600', 'border-indigo-600');
+                btn.classList.add('text-gray-500');
+            });
+            
+            document.getElementById(`notif-tab-${tab}`).classList.add('text-indigo-600', 'border-indigo-600');
+            document.getElementById(`notif-tab-${tab}`).classList.remove('text-gray-500');
+            
+            // Show selected content
+            document.querySelectorAll('#screen-notifications div[id^="notif-"]').forEach(div => {
+                div.classList.add('hidden');
+            });
+            document.getElementById(`notif-${tab}-content`).classList.remove('hidden');
+            
+            // Load content
+            if (tab === 'alerts') loadAlertsContent();
+            else if (tab === 'friends') loadFriendsContent();
+            else if (tab === 'requests') loadFriendRequestsContent();
+            else if (tab === 'pending') loadPendingRequestsContent();
+        };
+
+        async function loadAlertsContent() {
+            const content = document.getElementById('notif-alerts-content');
+            content.innerHTML = '<p class="text-center text-gray-400">جاري التحميل...</p>';
+            
+            try {
+                const notifications = userData.notifications || [];
+                const alerts = notifications.filter(n => 
+                    n.type === 'game_result' || 
+                    n.type === 'daily_reward' || 
+                    n.type === 'weekly_prize' ||
+                    n.type === 'system'
+                ).sort((a, b) => b.timestamp - a.timestamp);
+                
+                if (alerts.length === 0) {
+                    content.innerHTML = '<p class="text-center text-gray-400 py-10">لا توجد تنبيهات</p>';
+                    return;
+                }
+                
+                let html = '';
+                alerts.forEach(alert => {
+                    let icon = '🔔';
+                    let title = 'تنبيه';
+                    let message = '';
+                    
+                    switch(alert.type) {
+                        case 'game_result':
+                            icon = alert.result === 'win' ? '🏆' : '😢';
+                            title = alert.result === 'win' ? 'فوز' : 'خسارة';
+                            message = alert.message || 'تم إنهاء المباراة';
+                            break;
+                        case 'daily_reward':
+                            icon = '🎁';
+                            title = 'هدية يومية';
+                            message = alert.message || 'تم استلام الهدية اليومية';
+                            break;
+                        case 'weekly_prize':
+                            icon = '💰';
+                            title = 'جائزة أسبوعية';
+                            message = alert.message || 'تم استلام الجائزة الأسبوعية';
+                            break;
+                        case 'system':
+                            icon = '⚙️';
+                            title = 'نظام';
+                            message = alert.message || 'تنبيه من النظام';
+                            break;
+                    }
+                    
+                    const date = new Date(alert.timestamp).toLocaleDateString('ar-EG');
+                    
+                    html += `
+                        <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <div class="text-2xl">${icon}</div>
+                                <div class="flex-1">
+                                    <p class="font-bold text-gray-800">${title}</p>
+                                    <p class="text-sm text-gray-600">${message}</p>
+                                    <p class="text-xs text-gray-400 mt-1">${date}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                content.innerHTML = html;
+                
+            } catch (error) {
+                console.error("Error loading alerts:", error);
+                content.innerHTML = '<p class="text-center text-gray-400">خطأ في تحميل التنبيهات</p>';
+            }
+        }
+
+        async function loadFriendsContent() {
+            const content = document.getElementById('notif-friends-content');
+            content.innerHTML = '<p class="text-center text-gray-400">جاري التحميل...</p>';
+            
+            try {
+                if (!userData.friends || userData.friends.length === 0) {
+                    content.innerHTML = '<p class="text-center text-gray-400 py-10">لا يوجد أصدقاء</p>';
+                    return;
+                }
+                
+                let html = '';
+                for (const friendId of userData.friends) {
+                    try {
+                        const friendDoc = await getDoc(doc(db, "users", friendId));
+                        if (friendDoc.exists()) {
+                            const friend = friendDoc.data();
+                            const isOnline = friend.lastActive && (Date.now() - friend.lastActive.toDate().getTime()) < 5 * 60 * 1000;
+                            
+                            html += `
+                                <div class="friend-item ${isOnline ? 'online' : 'offline'}">
+                                    <div class="flex items-center gap-3">
+                                        <img src="${friend.photo}" class="w-12 h-12 rounded-full">
+                                        <div>
+                                            <p class="font-bold text-gray-800">${friend.name}</p>
+                                            <p class="text-xs text-gray-500">${friend.bio || "لا يوجد سيرة ذاتية"}</p>
+                                            <p class="text-xs ${isOnline ? 'text-green-600' : 'text-gray-500'} mt-1">
+                                                ${isOnline ? '🟢 متصل الآن' : '⚫ غير متصل'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <button onclick="removeFriend('${friendId}')" class="text-red-500 hover:text-red-700">
+                                            <i class="fas fa-user-minus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    } catch (error) {
+                        console.error("Error loading friend:", error);
+                    }
+                }
+                
+                if (html === '') {
+                    html = '<p class="text-center text-gray-400 py-10">لا يوجد أصدقاء</p>';
+                }
+                
+                content.innerHTML = html;
+                
+            } catch (error) {
+                console.error("Error loading friends:", error);
+                content.innerHTML = '<p class="text-center text-gray-400">خطأ في تحميل الأصدقاء</p>';
+            }
+        }
+
+        async function loadFriendRequestsContent() {
+            const content = document.getElementById('notif-requests-content');
+            content.innerHTML = '<p class="text-center text-gray-400">جاري التحميل...</p>';
+            
+            try {
+                if (!userData.friendRequests || userData.friendRequests.length === 0) {
+                    content.innerHTML = '<p class="text-center text-gray-400 py-10">لا توجد طلبات صداقة</p>';
+                    return;
+                }
+                
+                let html = '';
+                for (const requesterId of userData.friendRequests) {
+                    try {
+                        const requesterDoc = await getDoc(doc(db, "users", requesterId));
+                        if (requesterDoc.exists()) {
+                            const requester = requesterDoc.data();
+                            
+                            html += `
+                                <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <img src="${requester.photo}" class="w-12 h-12 rounded-full">
+                                        <div>
+                                            <p class="font-bold text-gray-800">${requester.name}</p>
+                                            <p class="text-xs text-gray-500">${requester.bio || "لا يوجد سيرة ذاتية"}</p>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <button onclick="acceptFriendRequest('${requesterId}')" class="bg-green-500 text-white py-2 rounded-lg font-bold hover:bg-green-600 transition">
+                                            قبول
+                                        </button>
+                                        <button onclick="rejectFriendRequest('${requesterId}')" class="bg-red-500 text-white py-2 rounded-lg font-bold hover:bg-red-600 transition">
+                                            رفض
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    } catch (error) {
+                        console.error("Error loading requester:", error);
+                    }
+                }
+                
+                if (html === '') {
+                    html = '<p class="text-center text-gray-400 py-10">لا توجد طلبات صداقة</p>';
+                }
+                
+                content.innerHTML = html;
+                
+            } catch (error) {
+                console.error("Error loading friend requests:", error);
+                content.innerHTML = '<p class="text-center text-gray-400">خطأ في تحميل طلبات الصداقة</p>';
+            }
+        }
+
+        async function loadPendingRequestsContent() {
+            const content = document.getElementById('notif-pending-content');
+            content.innerHTML = '<p class="text-center text-gray-400">جاري التحميل...</p>';
+            
+            try {
+                if (!userData.pendingRequests || userData.pendingRequests.length === 0) {
+                    content.innerHTML = '<p class="text-center text-gray-400 py-10">لا توجد طلبات معلقة</p>';
+                    return;
+                }
+                
+                let html = '';
+                for (const pendingId of userData.pendingRequests) {
+                    try {
+                        const pendingDoc = await getDoc(doc(db, "users", pendingId));
+                        if (pendingDoc.exists()) {
+                            const pendingUser = pendingDoc.data();
+                            
+                            html += `
+                                <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                                    <div class="flex items-center gap-3">
+                                        <img src="${pendingUser.photo}" class="w-12 h-12 rounded-full">
+                                        <div class="flex-1">
+                                            <p class="font-bold text-gray-800">${pendingUser.name}</p>
+                                            <p class="text-xs text-gray-500">${pendingUser.bio || "لا يوجد سيرة ذاتية"}</p>
+                                            <p class="text-xs text-gray-400 mt-2">في انتظار القبول...</p>
+                                        </div>
+                                        <button onclick="cancelFriendRequest('${pendingId}')" class="text-red-500 hover:text-red-700">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    } catch (error) {
+                        console.error("Error loading pending user:", error);
+                    }
+                }
+                
+                if (html === '') {
+                    html = '<p class="text-center text-gray-400 py-10">لا توجد طلبات معلقة</p>';
+                }
+                
+                content.innerHTML = html;
+                
+            } catch (error) {
+                console.error("Error loading pending requests:", error);
+                content.innerHTML = '<p class="text-center text-gray-400">خطأ في تحميل الطلبات المعلقة</p>';
+            }
+        }
+
+        window.acceptFriendRequest = async function(requesterId) {
+            try {
+                const requesterDoc = await getDoc(doc(db, "users", requesterId));
+                if (!requesterDoc.exists()) {
+                    showBeautifulAlert('error', 'خطأ', 'المستخدم غير موجود');
+                    return;
+                }
+
+                const requester = requesterDoc.data();
+                const batch = writeBatch(db);
+
+                // Remove from user's friend requests
+                const updatedRequests = (userData.friendRequests || []).filter(id => id !== requesterId);
+                batch.update(doc(db, "users", currentUser.uid), {
+                    friendRequests: updatedRequests
+                });
+
+                // Remove from requester's pending requests
+                const requesterPending = (requester.pendingRequests || []).filter(id => id !== currentUser.uid);
+                batch.update(doc(db, "users", requesterId), {
+                    pendingRequests: requesterPending
+                });
+
+                // Add to user's friends
+                const userFriends = [...(userData.friends || []), requesterId];
+                batch.update(doc(db, "users", currentUser.uid), {
+                    friends: userFriends
+                });
+
+                // Add to requester's friends
+                const requesterFriends = [...(requester.friends || []), currentUser.uid];
+                batch.update(doc(db, "users", requesterId), {
+                    friends: requesterFriends
+                });
+
+                await batch.commit();
+
+                // Update local user data
+                userData.friendRequests = updatedRequests;
+                userData.friends = userFriends;
+
+                showBeautifulAlert('success', 'تم القبول', `أنت و${requester.name} صديقان الآن`);
+                loadFriendRequestsContent();
+                loadFriendsContent();
+
+            } catch (error) {
+                console.error("Error accepting friend request:", error);
+                showBeautifulAlert('error', 'خطأ', 'حدث خطأ في قبول طلب الصداقة');
+            }
+        };
+
+        window.rejectFriendRequest = async function(requesterId) {
+            try {
+                const batch = writeBatch(db);
+
+                // Remove from user's friend requests
+                const updatedRequests = (userData.friendRequests || []).filter(id => id !== requesterId);
+                batch.update(doc(db, "users", currentUser.uid), {
+                    friendRequests: updatedRequests
+                });
+
+                // Remove from requester's pending requests
+                const requesterDoc = await getDoc(doc(db, "users", requesterId));
+                if (requesterDoc.exists()) {
+                    const requester = requesterDoc.data();
+                    const requesterPending = (requester.pendingRequests || []).filter(id => id !== currentUser.uid);
+                    batch.update(doc(db, "users", requesterId), {
+                        pendingRequests: requesterPending
+                    });
+                }
+
+                await batch.commit();
+
+                // Update local user data
+                userData.friendRequests = updatedRequests;
+
+                showBeautifulAlert('success', 'تم الرفض', 'تم رفض طلب الصداقة');
+                loadFriendRequestsContent();
+
+            } catch (error) {
+                console.error("Error rejecting friend request:", error);
+                showBeautifulAlert('error', 'خطأ', 'حدث خطأ في رفض طلب الصداقة');
+            }
+        };
+
+        window.cancelFriendRequest = async function(pendingId) {
+            try {
+                const batch = writeBatch(db);
+
+                // Remove from user's pending requests
+                const updatedPending = (userData.pendingRequests || []).filter(id => id !== pendingId);
+                batch.update(doc(db, "users", currentUser.uid), {
+                    pendingRequests: updatedPending
+                });
+
+                // Remove from pending user's friend requests
+                const pendingDoc = await getDoc(doc(db, "users", pendingId));
+                if (pendingDoc.exists()) {
+                    const pendingUser = pendingDoc.data();
+                    const pendingRequests = (pendingUser.friendRequests || []).filter(id => id !== currentUser.uid);
+                    batch.update(doc(db, "users", pendingId), {
+                        friendRequests: pendingRequests
+                    });
+                }
+
+                await batch.commit();
+
+                // Update local user data
+                userData.pendingRequests = updatedPending;
+
+                showBeautifulAlert('success', 'تم الإلغاء', 'تم إلغاء طلب الصداقة');
+                loadPendingRequestsContent();
+
+            } catch (error) {
+                console.error("Error canceling friend request:", error);
+                showBeautifulAlert('error', 'خطأ', 'حدث خطأ في إلغاء طلب الصداقة');
+            }
+        };
+
+        window.removeFriend = async function(friendId) {
+            if (!confirm('هل أنت متأكد من إزالة هذا الصديق؟')) {
+                return;
+            }
+
+            try {
+                const friendDoc = await getDoc(doc(db, "users", friendId));
+                if (!friendDoc.exists()) {
+                    showBeautifulAlert('error', 'خطأ', 'الصديق غير موجود');
+                    return;
+                }
+
+                const friend = friendDoc.data();
+                const batch = writeBatch(db);
+
+                // Remove from user's friends
+                const userFriends = (userData.friends || []).filter(id => id !== friendId);
+                batch.update(doc(db, "users", currentUser.uid), {
+                    friends: userFriends
+                });
+
+                // Remove from friend's friends
+                const friendFriends = (friend.friends || []).filter(id => id !== currentUser.uid);
+                batch.update(doc(db, "users", friendId), {
+                    friends: friendFriends
+                });
+
+                await batch.commit();
+
+                // Update local user data
+                userData.friends = userFriends;
+
+                showBeautifulAlert('success', 'تم الإزالة', 'تم إزالة الصديق');
+                loadFriendsContent();
+
+            } catch (error) {
+                console.error("Error removing friend:", error);
+                showBeautifulAlert('error', 'خطأ', 'حدث خطأ في إزالة الصديق');
             }
         };
 
