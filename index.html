@@ -1822,6 +1822,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, onSnapshot, query, where, orderBy, limit, deleteDoc, serverTimestamp, increment, getDoc, writeBatch, Timestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL, uploadBytesResumable } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAfLOjiPiSQW9opdiIgQif3pAp8zsezy58",
@@ -1837,6 +1838,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const storage = getStorage(app);
         
         const ADMIN_EMAIL = "mslmalmyaly223@gmail.com";
 
@@ -1868,6 +1870,7 @@
         let opponentLastSeen = Date.now();
         let isMonitoringConnection = false;
         let playerDisconnected = false;
+        let matchConnectionChecked = false;
 
         let systemConfig = { enabled: true, msg: "النظام في وضع الصيانة حالياً" };
 
@@ -1886,7 +1889,7 @@
             '6sci': ['اسلامية', 'عربي', 'انكليزي', 'احياء', 'رياضيات', 'كيمياء', 'فيزياء'],
             '6lit': ['اسلامية', 'عربي', 'انكليزي', 'تاريخ', 'رياضيات', 'جغرافية', 'اقتصاد'],
             '3med': ['اسلامية', 'عربي', 'انكليزي', 'رياضيات', 'كيمياء', 'فيزياء', 'اجتماعيات', 'احياء']
-};
+        };
 
         const sharedSubjects = ['اسلامية', 'عربي', 'انكليزي'];
 
@@ -1951,7 +1954,12 @@
                         await signOut(auth);
                         location.reload();
                     }
-                } catch(e) { console.error("Auth Data Error:", e); }
+                } catch(e) { 
+                    console.error("Auth Data Error:", e); 
+                    showBeautifulAlert('error', 'خطأ', 'حدث خطأ في تحميل البيانات');
+                    await signOut(auth);
+                    location.reload();
+                }
             } else {
                 setTimeout(() => {
                     intro.classList.add('hidden');
@@ -1962,6 +1970,60 @@
                 }, 2000);
             }
         });
+
+        async function compressImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        let width = img.width;
+                        let height = img.height;
+                        const maxSize = 200;
+                        
+                        if (width > height) {
+                            if (width > maxSize) {
+                                height = Math.round((height * maxSize) / width);
+                                width = maxSize;
+                            }
+                        } else {
+                            if (height > maxSize) {
+                                width = Math.round((width * maxSize) / height);
+                                height = maxSize;
+                            }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                        resolve(compressedDataUrl);
+                    };
+                };
+            });
+        }
+
+        async function uploadImageToStorage(file, userId) {
+            try {
+                const compressedImage = await compressImage(file);
+                const blob = await fetch(compressedImage).then(r => r.blob());
+                
+                const storageRef = ref(storage, `profile_images/${userId}_${Date.now()}.jpg`);
+                const snapshot = await uploadBytes(storageRef, blob);
+                const downloadURL = await getDownloadURL(snapshot.ref);
+                
+                return downloadURL;
+            } catch (error) {
+                console.error("Error uploading image:", error);
+                throw error;
+            }
+        }
 
         function startWeeklyCountdown() {
             if(countdownInterval) clearInterval(countdownInterval);
@@ -2029,7 +2091,7 @@
                 });
                 await batch.commit();
 
-                const qReset = query(collection(db, "users"), orderBy("points", "desc"), limit(150));
+                const qReset = query(collection(db, "users"), orderBy("points", "desc"), limit(100));
                 const snapReset = await getDocs(qReset);
                 
                 let resetBatch = writeBatch(db);
@@ -2096,8 +2158,7 @@
             document.getElementById('beautiful-alert').classList.add('hidden');
         }
         
-        // أضف هذا السطر تحت دالة closeBeautifulAlert مباشرة
-document.getElementById('beautiful-alert-ok-btn').addEventListener('click', closeBeautifulAlert);
+        document.getElementById('beautiful-alert-ok-btn').addEventListener('click', closeBeautifulAlert);
 
         window.openForgotPassword = function() {
             document.getElementById('forgot-password-modal').classList.remove('hidden');
@@ -2131,6 +2192,9 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
                 case 'auth/user-disabled': return 'تم تعطيل هذا الحساب';
                 case 'auth/user-not-found': return 'المستخدم غير موجود';
                 case 'auth/wrong-password': return 'كلمة المرور غير صحيحة';
+                case 'storage/unauthorized': return 'غير مصرح بتخزين الصور';
+                case 'storage/canceled': return 'تم إلغاء رفع الصورة';
+                case 'storage/unknown': return 'خطأ غير معروف في التخزين';
                 default: return 'حدث خطأ: ' + code;
             }
         }
@@ -2205,7 +2269,14 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
 
                 let photoURL = `https://ui-avatars.com/api/?name=${name}&background=random&size=128`;
                 const imgFile = document.getElementById('signup-img').files[0];
-                if(imgFile) photoURL = await compressImage(imgFile);
+                if(imgFile) {
+                    try {
+                        photoURL = await uploadImageToStorage(imgFile, "new_user_" + Date.now());
+                    } catch (error) {
+                        console.error("Error uploading profile image:", error);
+                        showBeautifulAlert('warning', 'تنبيه', 'تم استخدام صورة افتراضية بسبب خطأ في رفع الصورة');
+                    }
+                }
 
                 const cred = await createUserWithEmailAndPassword(auth, email, pass);
                 
@@ -2654,6 +2725,7 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
             }
 
             currentGameMode = mode;
+            matchConnectionChecked = false;
 
             document.getElementById('challenge-active-card').classList.add('hidden');
             document.getElementById('searching-ui').classList.remove('hidden');
@@ -2711,7 +2783,8 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
                         },
                         status: 'active',
                         answersCount: 0,
-                        player2LastActive: Date.now()
+                        player2LastActive: Date.now(),
+                        lastActivity: Date.now()
                     });
                     listenToMatch(foundMatchId);
                     startConnectionMonitoring(foundMatchId, false);
@@ -2739,6 +2812,7 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
                         currentIdx: 0, 
                         answersCount: 0,
                         player1LastActive: Date.now(),
+                        lastActivity: Date.now(),
                         createdAt: serverTimestamp()
                     });
                     currentMatchId = newMatch.id;
@@ -2808,7 +2882,7 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
                     where("grade", "in", gradeCondition),  
                     where("subject", "==", sub), 
                     where("type", "==", type), 
-                    limit(50)
+                    limit(30)
                 );
             } else {
                 q = query(
@@ -2816,7 +2890,7 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
                     where("grade", "==", gradeCondition),  
                     where("subject", "==", sub), 
                     where("type", "==", type), 
-                    limit(50)
+                    limit(30)
                 );
             }
             
@@ -2835,15 +2909,14 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
             opponentLastSeen = Date.now();
             
             connectionMonitorInterval = setInterval(async () => {
-                if(!isMonitoringConnection) return;
+                if(!isMonitoringConnection || !currentMatchId) return;
                 
                 const now = Date.now();
                 const timeSinceLastSeen = now - opponentLastSeen;
                 
-                if(timeSinceLastSeen > 5000) {
-                    clearInterval(connectionMonitorInterval);
-                    isMonitoringConnection = false;
-                    await handlePlayerDisconnection(matchId, isPlayer1);
+                if(timeSinceLastSeen > 8000 && !matchConnectionChecked) {
+                    matchConnectionChecked = true;
+                    await checkOpponentConnection(matchId, isPlayer1);
                 }
             }, 1000);
             
@@ -2854,10 +2927,30 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
             try {
                 const updateField = isPlayer1 ? 'player1LastActive' : 'player2LastActive';
                 await updateDoc(doc(db, "match_queue", matchId), {
-                    [updateField]: Date.now()
+                    [updateField]: Date.now(),
+                    lastActivity: Date.now()
                 });
             } catch (error) {
                 console.error("Error updating last active:", error);
+            }
+        }
+
+        async function checkOpponentConnection(matchId, isPlayer1) {
+            try {
+                const matchDoc = await getDoc(doc(db, "match_queue", matchId));
+                if(!matchDoc.exists()) return;
+                
+                const matchData = matchDoc.data();
+                const opponentLastActive = isPlayer1 ? matchData.player2LastActive : matchData.player1LastActive;
+                const now = Date.now();
+                
+                if(opponentLastActive && (now - opponentLastActive) > 15000) {
+                    await handlePlayerDisconnection(matchId, isPlayer1);
+                } else {
+                    matchConnectionChecked = false;
+                }
+            } catch (error) {
+                console.error("Error checking connection:", error);
             }
         }
 
@@ -2873,19 +2966,28 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
                 const winnerId = isPlayer1 ? matchData.player2.uid : matchData.player1.uid;
                 const loserId = isPlayer1 ? matchData.player1.uid : matchData.player2.uid;
                 
-                await updateDoc(doc(db, "users", winnerId), {
-                    points: increment(10)
-                });
+                if(winnerId && winnerId !== 'AI_BOT') {
+                    await updateDoc(doc(db, "users", winnerId), {
+                        points: increment(10)
+                    });
+                }
                 
-                await updateDoc(doc(db, "users", loserId), {
-                    points: increment(-10)
-                });
+                if(loserId && loserId !== 'AI_BOT') {
+                    await updateDoc(doc(db, "users", loserId), {
+                        points: increment(-10)
+                    });
+                }
                 
                 await deleteDoc(doc(db, "match_queue", matchId));
                 
+                if(connectionMonitorInterval) {
+                    clearInterval(connectionMonitorInterval);
+                    isMonitoringConnection = false;
+                }
+                
                 if(winnerId === currentUser.uid) {
                     showDisconnectionResult(true, "فزت بسبب انقطاع الانترنت عند خصمك");
-                } else {
+                } else if(loserId === currentUser.uid) {
                     showDisconnectionResult(false, "خسرت بسبب انقطاع الانترنت");
                 }
                 
@@ -2932,7 +3034,13 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
             if(matchListenerUnsubscribe) matchListenerUnsubscribe(); 
             matchListenerUnsubscribe = onSnapshot(doc(db, "match_queue", id), async (snap) => {
                 if(isExitingGame) return;
-                if(!snap.exists()) return;
+                if(!snap.exists()) {
+                    if (currentGameMode === 'online') {
+                        console.log("المباراة حذفت من السيرفر");
+                        return;
+                    }
+                    return;
+                }
                 const d = snap.data();
                 
                 const isP1 = d.player1.uid === currentUser.uid;
@@ -2980,13 +3088,26 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
         function renderGame(data) {
             if (isExitingGame) return;
             const totalQs = data.questions.length;
-            if(!data.questions || data.currentIdx >= totalQs) { endGame(data); return; }
+            if(!data.questions || data.currentIdx >= totalQs) { 
+                endGame(data); 
+                return; 
+            }
+            
             if (currentGameMode === 'online' && data.answersCount >= 2) {
-                 if(data.player1.uid === currentUser.uid) updateDoc(doc(db, "match_queue", currentMatchId), { currentIdx: increment(1), answersCount: 0 });
+                 if(data.player1.uid === currentUser.uid) {
+                     updateDoc(doc(db, "match_queue", currentMatchId), { 
+                         currentIdx: increment(1), 
+                         answersCount: 0 
+                     });
+                 }
                  return;
             }
+            
             const q = data.questions[data.currentIdx];
-            if (!q) { endGame(data); return; }
+            if (!q) { 
+                endGame(data); 
+                return; 
+            }
             
             if (currentGameMode === 'online') {
                 const isP1 = data.player1.uid === currentUser.uid;
@@ -3078,7 +3199,10 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
                 const isP1 = matchData.player1.uid === currentUser.uid;
                 if (!currentMatchId) return;
                 const scoreIncrement = ansObj && ansObj.isCorrect ? 1 : 0;
-                const updates = { answersCount: increment(1) };
+                const updates = { 
+                    answersCount: increment(1),
+                    lastActivity: Date.now()
+                };
                 if(ansObj && ansObj.isCorrect) updates[isP1?'player1.score':'player2.score'] = increment(scoreIncrement);
                 await updateDoc(doc(db, "match_queue", currentMatchId), updates);
             } else {
@@ -3283,6 +3407,7 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
              localMatchData = null; 
              hasAnsweredCurrentQ = false;
              playerDisconnected = false;
+             matchConnectionChecked = false;
              document.getElementById('challenge-active-card').classList.remove('hidden');
              if(currentUser) {
                  const userDoc = await getDoc(doc(db, "users", currentUser.uid));
@@ -3348,27 +3473,36 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
 
         async function loadStatsContent() {
              const div = document.getElementById('stats-content');
-             const usersSnap = await getDocs(collection(db, "users"));
-             const total = usersSnap.size;
-             const today = new Date(); today.setHours(0,0,0,0);
-             let newUsers = 0; let activeNow = 0; const now = new Date();
-             usersSnap.forEach(d => {
-                 const u = d.data();
-                 if(!u) return;
-                 if(u.createdAt && u.createdAt.toDate && u.createdAt.toDate() >= today) newUsers++;
-                 if (u.lastActive && u.lastActive.toDate && (now - u.lastActive.toDate()) < 15 * 60 * 1000) activeNow++;
-             });
-             if(activeNow === 0) activeNow = 1; 
-             div.innerHTML = `<div class="bg-white p-5 rounded-2xl shadow-sm flex justify-between items-center"><div><p class="text-sm text-gray-500">المستخدمين الكلي</p><p class="text-2xl font-bold text-gray-800">${total}</p></div><div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600"><i class="fas fa-users"></i></div></div><div class="bg-white p-5 rounded-2xl shadow-sm flex justify-between items-center"><div><p class="text-sm text-gray-500">نشطين الآن</p><p class="text-2xl font-bold text-green-500">${activeNow}</p></div><div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600"><i class="fas fa-wifi"></i></div></div><div class="bg-white p-5 rounded-2xl shadow-sm flex justify-between items-center"><div><p class="text-sm text-gray-500">سجلوا اليوم</p><p class="text-2xl font-bold text-purple-500">${newUsers}</p></div><div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600"><i class="fas fa-user-plus"></i></div></div>`;
+             try {
+                 const usersSnap = await getDocs(collection(db, "users"));
+                 const total = usersSnap.size;
+                 const today = new Date(); today.setHours(0,0,0,0);
+                 let newUsers = 0; let activeNow = 0; const now = new Date();
+                 usersSnap.forEach(d => {
+                     const u = d.data();
+                     if(!u) return;
+                     if(u.createdAt && u.createdAt.toDate && u.createdAt.toDate() >= today) newUsers++;
+                     if (u.lastActive && u.lastActive.toDate && (now - u.lastActive.toDate()) < 15 * 60 * 1000) activeNow++;
+                 });
+                 if(activeNow === 0) activeNow = 1; 
+                 div.innerHTML = `<div class="bg-white p-5 rounded-2xl shadow-sm flex justify-between items-center"><div><p class="text-sm text-gray-500">المستخدمين الكلي</p><p class="text-2xl font-bold text-gray-800">${total}</p></div><div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600"><i class="fas fa-users"></i></div></div><div class="bg-white p-5 rounded-2xl shadow-sm flex justify-between items-center"><div><p class="text-sm text-gray-500">نشطين الآن</p><p class="text-2xl font-bold text-green-500">${activeNow}</p></div><div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600"><i class="fas fa-wifi"></i></div></div><div class="bg-white p-5 rounded-2xl shadow-sm flex justify-between items-center"><div><p class="text-sm text-gray-500">سجلوا اليوم</p><p class="text-2xl font-bold text-purple-500">${newUsers}</p></div><div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600"><i class="fas fa-user-plus"></i></div></div>`;
+             } catch (error) {
+                 div.innerHTML = '<p class="text-center text-gray-400">خطأ في تحميل الإحصائيات</p>';
+             }
         }
 
         async function loadAdminAllContent() {
              const div = document.getElementById('admin-all-list');
              if(allAdminQuestions.length === 0) {
                  div.innerHTML = '<p class="text-center text-gray-400">جاري جلب كل الأسئلة من قاعدة البيانات...</p>';
-                 const q = await getDocs(query(collection(db, "questions"), orderBy("createdAt", "desc")));
-                 allAdminQuestions = [];
-                 q.forEach(d => allAdminQuestions.push({id: d.id, ...d.data()}));
+                 try {
+                     const q = await getDocs(query(collection(db, "questions"), orderBy("createdAt", "desc"), limit(100)));
+                     allAdminQuestions = [];
+                     q.forEach(d => allAdminQuestions.push({id: d.id, ...d.data()}));
+                 } catch (error) {
+                     div.innerHTML = '<p class="text-center text-gray-400">خطأ في تحميل الأسئلة</p>';
+                     return;
+                 }
              }
              filterAdminQuestions();
         }
@@ -3492,98 +3626,102 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
             const div = document.getElementById('leaderboard-list');
             div.innerHTML = '<p class="text-center text-gray-400 mt-10">تحميل...</p>';
             
-            const q = query(collection(db, "users"), orderBy("points", "desc"), limit(150));
-            const snap = await getDocs(q);
-            let users = [];
-            snap.forEach(d => { 
-                users.push({ id: d.id, ...d.data() });
-            });
-            
-            users.sort((a, b) => (b.points || 0) - (a.points || 0));
+            try {
+                const q = query(collection(db, "users"), orderBy("points", "desc"), limit(100));
+                const snap = await getDocs(q);
+                let users = [];
+                snap.forEach(d => { 
+                    users.push({ id: d.id, ...d.data() });
+                });
+                
+                users.sort((a, b) => (b.points || 0) - (a.points || 0));
 
-            const myIndex = users.findIndex(u => u.uid === currentUser.uid);
-            if(myIndex !== -1) document.getElementById('my-rank-text').innerText = "#" + (myIndex + 1);
-            else document.getElementById('my-rank-text').innerText = "غير مصنف";
+                const myIndex = users.findIndex(u => u.uid === currentUser.uid);
+                if(myIndex !== -1) document.getElementById('my-rank-text').innerText = "#" + (myIndex + 1);
+                else document.getElementById('my-rank-text').innerText = "غير مصنف";
 
-            div.innerHTML = ''; 
-            
-            users.forEach((u, index) => {
-                let frameClass = "frame-rank-common";
-                let crown = "";
-                let rankBadge = `<div class="rank-badge-top">${index + 1}</div>`;
-                let raysHtml = ""; 
-                let backgroundClass = 'bg-rank-default';
+                div.innerHTML = ''; 
                 
-                if (u.isPremium && u.premiumExpiry && u.premiumExpiry.toDate() > new Date()) {
-                    backgroundClass = u.selectedBgTheme || 'bg-rank-default';
-                }
+                users.forEach((u, index) => {
+                    let frameClass = "frame-rank-common";
+                    let crown = "";
+                    let rankBadge = `<div class="rank-badge-top">${index + 1}</div>`;
+                    let raysHtml = ""; 
+                    let backgroundClass = 'bg-rank-default';
+                    
+                    if (u.isPremium && u.premiumExpiry && u.premiumExpiry.toDate() > new Date()) {
+                        backgroundClass = u.selectedBgTheme || 'bg-rank-default';
+                    }
 
-                if (index === 0) { 
-                    frameClass = "frame-rank-1"; 
-                    crown = `<i class="fas fa-crown text-yellow-500 name-crown"></i>`; 
-                    raysHtml = `<div class="rank-rays rays-gold"></div>`; 
-                }
-                else if (index === 1) { 
-                    frameClass = "frame-rank-2"; 
-                    raysHtml = `<div class="rank-rays rays-silver"></div>`; 
-                }
-                else if (index === 2) { 
-                    frameClass = "frame-rank-3"; 
-                    raysHtml = `<div class="rank-rays rays-bronze"></div>`; 
-                }
-                else if (index <= 9) { 
-                    const colors = ['rays-blue', 'rays-red', 'rays-green', 'rays-purple', 'rays-blue', 'rays-red'];
-                    frameClass = "frame-rank-other-top"; 
-                    raysHtml = `<div class="rank-rays ${colors[index-3]}"></div>`; 
-                }
-                
-                let badgeHtml = "";
-                if (u.isPremium && u.premiumExpiry && u.premiumExpiry.toDate() > new Date() && u.selectedBadge) {
-                    badgeHtml = `<span class="premium-badge" style="background-color: ${u.selectedBadgeColor || '#f59e0b'}">${u.selectedBadge}</span>`;
-                }
-                
-                let prizeMoney = "";
-                if (index === 0) prizeMoney = " <span class='text-xs text-green-300'>10$</span>";
-                else if (index === 1) prizeMoney = " <span class='text-xs text-green-300'>7$</span>";
-                else if (index === 2) prizeMoney = " <span class='text-xs text-green-300'>5$</span>";
-                else if (index === 3) prizeMoney = " <span class='text-xs text-green-300'>3$</span>";
-                else if (index === 4) prizeMoney = " <span class='text-xs text-green-300'>2$</span>";
-                else if (index >= 5 && index <= 9) prizeMoney = " <span class='text-xs text-green-300'>1$</span>";
-                
-                let resetBtn = "";
-                if (currentUser && userData && userData.email === ADMIN_EMAIL) {
-                    resetBtn = `<button onclick="resetUserPoints('${u.id}', '${u.name}')" class="w-6 h-6 rounded bg-red-100 text-red-500 flex items-center justify-center mr-2"><i class="fas fa-trash-alt text-xs"></i></button>`;
-                }
-                
-                div.innerHTML += `
-                    <div class="flex items-center justify-between p-4 rounded-xl shadow-sm mb-3 relative overflow-hidden ${backgroundClass}">
-                        <div class="flex items-center gap-4 z-10">
-                            <div class="rank-img-container">
-                                ${rankBadge}
-                                ${raysHtml}
-                                <img src="${u.photo}" class="rank-img ${frameClass}">
+                    if (index === 0) { 
+                        frameClass = "frame-rank-1"; 
+                        crown = `<i class="fas fa-crown text-yellow-500 name-crown"></i>`; 
+                        raysHtml = `<div class="rank-rays rays-gold"></div>`; 
+                    }
+                    else if (index === 1) { 
+                        frameClass = "frame-rank-2"; 
+                        raysHtml = `<div class="rank-rays rays-silver"></div>`; 
+                    }
+                    else if (index === 2) { 
+                        frameClass = "frame-rank-3"; 
+                        raysHtml = `<div class="rank-rays rays-bronze"></div>`; 
+                    }
+                    else if (index <= 9) { 
+                        const colors = ['rays-blue', 'rays-red', 'rays-green', 'rays-purple', 'rays-blue', 'rays-red'];
+                        frameClass = "frame-rank-other-top"; 
+                        raysHtml = `<div class="rank-rays ${colors[index-3]}"></div>`; 
+                    }
+                    
+                    let badgeHtml = "";
+                    if (u.isPremium && u.premiumExpiry && u.premiumExpiry.toDate() > new Date() && u.selectedBadge) {
+                        badgeHtml = `<span class="premium-badge" style="background-color: ${u.selectedBadgeColor || '#f59e0b'}">${u.selectedBadge}</span>`;
+                    }
+                    
+                    let prizeMoney = "";
+                    if (index === 0) prizeMoney = " <span class='text-xs text-green-300'>10$</span>";
+                    else if (index === 1) prizeMoney = " <span class='text-xs text-green-300'>7$</span>";
+                    else if (index === 2) prizeMoney = " <span class='text-xs text-green-300'>5$</span>";
+                    else if (index === 3) prizeMoney = " <span class='text-xs text-green-300'>3$</span>";
+                    else if (index === 4) prizeMoney = " <span class='text-xs text-green-300'>2$</span>";
+                    else if (index >= 5 && index <= 9) prizeMoney = " <span class='text-xs text-green-300'>1$</span>";
+                    
+                    let resetBtn = "";
+                    if (currentUser && userData && userData.email === ADMIN_EMAIL) {
+                        resetBtn = `<button onclick="resetUserPoints('${u.id}', '${u.name}')" class="w-6 h-6 rounded bg-red-100 text-red-500 flex items-center justify-center mr-2"><i class="fas fa-trash-alt text-xs"></i></button>`;
+                    }
+                    
+                    div.innerHTML += `
+                        <div class="flex items-center justify-between p-4 rounded-xl shadow-sm mb-3 relative overflow-hidden ${backgroundClass}">
+                            <div class="flex items-center gap-4 z-10">
+                                <div class="rank-img-container">
+                                    ${rankBadge}
+                                    ${raysHtml}
+                                    <img src="${u.photo}" class="rank-img ${frameClass}">
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-800 text-sm flex items-center">
+                                        ${crown} 
+                                        ${u.name}
+                                        ${badgeHtml}
+                                    </p>
+                                    <p class="text-[10px] text-gray-600">ID: ${u.uniqueId}</p>
+                                    <p class="text-[10px] text-gray-500 mt-1">${u.bio || ""}</p>
+                                    ${u.isPremium && u.premiumExpiry && u.premiumExpiry.toDate() > new Date() ? 
+                                        `<p class="text-[10px] text-yellow-600 font-bold">👑 مميز</p>` : 
+                                        ''}
+                                </div>
                             </div>
-                            <div>
-                                <p class="font-bold text-gray-800 text-sm flex items-center">
-                                    ${crown} 
-                                    ${u.name}
-                                    ${badgeHtml}
-                                </p>
-                                <p class="text-[10px] text-gray-600">ID: ${u.uniqueId}</p>
-                                <p class="text-[10px] text-gray-500 mt-1">${u.bio || ""}</p>
-                                ${u.isPremium && u.premiumExpiry && u.premiumExpiry.toDate() > new Date() ? 
-                                    `<p class="text-[10px] text-yellow-600 font-bold">👑 مميز</p>` : 
-                                    ''}
+                            <div class="flex items-center z-10">
+                                ${resetBtn}
+                                <div class="text-right">
+                                    <span class="font-black text-indigo-600 text-lg">${u.points || 0} 💎${prizeMoney}</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="flex items-center z-10">
-                            ${resetBtn}
-                            <div class="text-right">
-                                <span class="font-black text-indigo-600 text-lg">${u.points || 0} 💎${prizeMoney}</span>
-                            </div>
-                        </div>
-                    </div>`;
-            });
+                        </div>`;
+                });
+            } catch (error) {
+                div.innerHTML = '<p class="text-center text-gray-400">خطأ في تحميل التصنيف</p>';
+            }
         }
 
         window.resetUserPoints = async (uid, name) => {
@@ -3654,40 +3792,44 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
              resDiv.classList.remove('hidden');
              resDiv.innerHTML = 'جاري البحث...';
              
-             const q = query(collection(db, "users"), where("uniqueId", "==", uidInput));
-             const snap = await getDocs(q);
-             
-             if(snap.empty) {
-                 resDiv.innerHTML = '<p class="text-red-500">المستخدم غير موجود</p>';
-                 return;
-             }
-             
-             const uData = snap.docs[0].data();
-             const docId = snap.docs[0].id;
-             const isBanned = uData.isBanned === true;
-             const balance = uData.balance || 0;
-             const deserves = balance >= 100;
+             try {
+                 const q = query(collection(db, "users"), where("uniqueId", "==", uidInput));
+                 const snap = await getDocs(q);
+                 
+                 if(snap.empty) {
+                     resDiv.innerHTML = '<p class="text-red-500">المستخدم غير موجود</p>';
+                     return;
+                 }
+                 
+                 const uData = snap.docs[0].data();
+                 const docId = snap.docs[0].id;
+                 const isBanned = uData.isBanned === true;
+                 const balance = uData.balance || 0;
+                 const deserves = balance >= 100;
 
-             resDiv.innerHTML = `
-                <div class="text-center mb-4">
-                    <img src="${uData.photo}" class="w-16 h-16 rounded-full mx-auto mb-2">
-                    <h3 class="font-bold">${uData.name}</h3>
-                    <p class="text-xs text-gray-500">${uData.email}</p>
-                </div>
-                <div class="grid grid-cols-2 gap-2 mb-4 text-xs font-bold text-center">
-                    <div class="bg-gray-50 p-2 rounded">النقاط: ${uData.points}</div>
-                    <div class="bg-gray-50 p-2 rounded">الدولارات: $${balance}</div>
-                </div>
-                <div class="mb-4 text-center">
-                    <p class="text-sm font-bold ${deserves ? 'text-green-600' : 'text-red-500'}">
-                        ${deserves ? '✅ يستحق السحب' : '❌ لا يستحق السحب'}
-                    </p>
-                    ${deserves ? `<button onclick="resetUserBalance('${docId}')" class="mt-2 bg-yellow-500 text-white px-4 py-2 rounded text-xs font-bold">تصفير الدولارات</button>` : ''}
-                </div>
-                <button onclick="toggleBan('${docId}', ${!isBanned})" class="w-full py-3 rounded-xl font-bold text-white ${isBanned ? 'bg-green-500' : 'bg-red-500'}">
-                    ${isBanned ? 'إلغاء الحظر (فك القيد)' : 'حظر المستخدم نهائياً'}
-                </button>
-             `;
+                 resDiv.innerHTML = `
+                    <div class="text-center mb-4">
+                        <img src="${uData.photo}" class="w-16 h-16 rounded-full mx-auto mb-2">
+                        <h3 class="font-bold">${uData.name}</h3>
+                        <p class="text-xs text-gray-500">${uData.email}</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mb-4 text-xs font-bold text-center">
+                        <div class="bg-gray-50 p-2 rounded">النقاط: ${uData.points}</div>
+                        <div class="bg-gray-50 p-2 rounded">الدولارات: $${balance}</div>
+                    </div>
+                    <div class="mb-4 text-center">
+                        <p class="text-sm font-bold ${deserves ? 'text-green-600' : 'text-red-500'}">
+                            ${deserves ? '✅ يستحق السحب' : '❌ لا يستحق السحب'}
+                        </p>
+                        ${deserves ? `<button onclick="resetUserBalance('${docId}')" class="mt-2 bg-yellow-500 text-white px-4 py-2 rounded text-xs font-bold">تصفير الدولارات</button>` : ''}
+                    </div>
+                    <button onclick="toggleBan('${docId}', ${!isBanned})" class="w-full py-3 rounded-xl font-bold text-white ${isBanned ? 'bg-green-500' : 'bg-red-500'}">
+                        ${isBanned ? 'إلغاء الحظر (فك القيد)' : 'حظر المستخدم نهائياً'}
+                    </button>
+                 `;
+             } catch (error) {
+                 resDiv.innerHTML = '<p class="text-red-500">خطأ في البحث</p>';
+             }
         };
 
         window.toggleBan = async (docId, shouldBan) => {
@@ -3862,44 +4004,48 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
             const listDiv = document.getElementById('premium-users-list');
             listDiv.innerHTML = '<p class="text-center text-gray-400">جاري التحميل...</p>';
             
-            const q = query(collection(db, "users"), where("isPremium", "==", true));
-            const snap = await getDocs(q);
-            
-            if(snap.empty) {
-                listDiv.innerHTML = '<p class="text-center text-gray-400 py-10">لا يوجد مستخدمين مميزين</p>';
-                return;
-            }
-            
-            let html = '';
-            const now = new Date();
-            
-            snap.docs.forEach(doc => {
-                const u = doc.data();
-                let remainingDays = "منتهي";
-                if (u.premiumExpiry) {
-                    const expiry = u.premiumExpiry.toDate();
-                    const diff = expiry - now;
-                    if(diff > 0) {
-                        remainingDays = Math.ceil(diff / (1000 * 60 * 60 * 24)) + " يوم";
-                    }
+            try {
+                const q = query(collection(db, "users"), where("isPremium", "==", true));
+                const snap = await getDocs(q);
+                
+                if(snap.empty) {
+                    listDiv.innerHTML = '<p class="text-center text-gray-400 py-10">لا يوجد مستخدمين مميزين</p>';
+                    return;
                 }
                 
-                html += `
-                    <div class="bg-white rounded-xl p-4 border border-yellow-100 shadow-sm">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <p class="font-bold text-gray-800">${u.name}</p>
-                                <p class="text-xs text-gray-500">ID: ${u.uniqueId}</p>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded font-bold">${remainingDays}</span>
+                let html = '';
+                const now = new Date();
+                
+                snap.docs.forEach(doc => {
+                    const u = doc.data();
+                    let remainingDays = "منتهي";
+                    if (u.premiumExpiry) {
+                        const expiry = u.premiumExpiry.toDate();
+                        const diff = expiry - now;
+                        if(diff > 0) {
+                            remainingDays = Math.ceil(diff / (1000 * 60 * 60 * 24)) + " يوم";
+                        }
+                    }
+                    
+                    html += `
+                        <div class="bg-white rounded-xl p-4 border border-yellow-100 shadow-sm">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="font-bold text-gray-800">${u.name}</p>
+                                    <p class="text-xs text-gray-500">ID: ${u.uniqueId}</p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded font-bold">${remainingDays}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
-            });
-            
-            listDiv.innerHTML = html;
+                    `;
+                });
+                
+                listDiv.innerHTML = html;
+            } catch (error) {
+                listDiv.innerHTML = '<p class="text-center text-gray-400">خطأ في تحميل المستخدمين المميزين</p>';
+            }
         }
 
         window.handleImagePreview = (input) => {
@@ -3913,31 +4059,22 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
         function generateId() { 
             return Math.random().toString(36).substr(2, 8).toUpperCase(); 
         }
-        
-        function compressImage(file) {
-            return new Promise((resolve) => {
-                const r = new FileReader();
-                r.readAsDataURL(file);
-                r.onload = (e) => {
-                    const i = new Image();
-                    i.src = e.target.result;
-                    i.onload = () => {
-                        const c = document.createElement('canvas');
-                        c.width=200; c.height=200;
-                        const ctx = c.getContext('2d');
-                        ctx.drawImage(i,0,0,200,200);
-                        resolve(c.toDataURL('image/jpeg', 0.6));
-                    };
-                };
-            });
-        }
 
         window.updateProfilePic = async (input) => {
             if(input.files[0]) {
-                const p = await compressImage(input.files[0]);
-                await updateDoc(doc(db, "users", currentUser.uid), { photo: p });
-                document.getElementById('profile-img').src = p;
-                showBeautifulAlert('success', 'تم التحديث', 'تم تحديث صورة الملف الشخصي ✅');
+                try {
+                    showBeautifulAlert('info', 'جاري الرفع', 'جاري رفع الصورة...');
+                    const photoURL = await uploadImageToStorage(input.files[0], currentUser.uid);
+                    
+                    await updateDoc(doc(db, "users", currentUser.uid), { photo: photoURL });
+                    userData.photo = photoURL;
+                    document.getElementById('profile-img').src = photoURL;
+                    
+                    showBeautifulAlert('success', 'تم التحديث', 'تم تحديث صورة الملف الشخصي ✅');
+                } catch (error) {
+                    console.error("Error updating profile picture:", error);
+                    showBeautifulAlert('error', 'خطأ', '❌ حدث خطأ في رفع الصورة: ' + getArabicError(error.code));
+                }
             }
         };
 
@@ -4405,6 +4542,7 @@ document.getElementById('beautiful-alert-ok-btn').addEventListener('click', clos
                     answersCount: 0,
                     player1LastActive: Date.now(),
                     player2LastActive: Date.now(),
+                    lastActivity: Date.now(),
                     createdAt: serverTimestamp()
                 });
 
