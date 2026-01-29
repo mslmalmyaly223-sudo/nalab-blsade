@@ -860,7 +860,244 @@
             .input-box { font-size: 1.1rem; }
             .auth-overlay > div { max-width: 500px; }
         }
-    </style>
+
+.schedule-row {
+    transition: all 0.2s;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.schedule-row:hover {
+    background-color: #f8fafc;
+    transform: translateX(2px);
+}
+
+.time-cell {
+    position: relative;
+    padding-left: 20px;
+}
+
+.time-cell::before {
+    content: '🕐';
+    position: absolute;
+    right: 10px;
+    font-size: 14px;
+    opacity: 0.7;
+}
+
+.activity-cell {
+    position: relative;
+    padding-right: 20px;
+}
+
+.study-activity {
+    background-color: #f0f9ff;
+    border-right: 3px solid #3b82f6;
+}
+
+.break-activity {
+    background-color: #f0fdf4;
+    border-right: 3px solid #10b981;
+}
+
+.sleep-activity {
+    background-color: #faf5ff;
+    border-right: 3px solid #8b5cf6;
+}
+
+.schedule-time {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.schedule-duration {
+    font-size: 0.75rem;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-right: 5px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* تأثيرات للجدول */
+#beautiful-schedule-table {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    animation: slideUp 0.4s ease-out;
+}
+
+/* أنماط الجدول الجديد */
+#study-schedule-table {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#study-schedule-table th {
+    font-size: 12px;
+    padding: 10px 5px;
+}
+
+#study-schedule-table td {
+    font-size: 11px;
+    padding: 8px 5px;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background-color 0.2s;
+}
+
+#study-schedule-table tr:last-child td {
+    border-bottom: none;
+}
+
+#study-schedule-table tr:hover td {
+    background-color: #f8fafc;
+}
+
+.study-row {
+    background-color: #f0f9ff;
+}
+
+.break-row {
+    background-color: #f0fdf4;
+}
+
+.sleep-row {
+    background-color: #faf5ff;
+}
+
+.personal-row {
+    background-color: #fefce8;
+}
+
+.time-cell {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    font-size: 10px;
+    color: #1e293b;
+    text-align: center;
+}
+
+.activity-cell {
+    font-size: 11px;
+    color: #334155;
+    text-align: right;
+    padding-right: 10px !important;
+}
+
+.chapter-name {
+    font-weight: bold;
+    color: #1e40af;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.duration-badge {
+    font-size: 9px;
+    background: #e2e8f0;
+    padding: 1px 5px;
+    border-radius: 8px;
+    margin-right: 3px;
+}
+
+/* تنسيق للصورة المحفوظة */
+.schedule-image-container {
+    width: 800px; /* عرض مناسب للصورة */
+    padding: 20px;
+    background: white;
+}
+
+/* أنماط الجدول الصغير */
+#study-schedule-table {
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.04);
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 10px;
+}
+
+#study-schedule-table th {
+    font-size: 10px;
+    padding: 6px 3px;
+    white-space: nowrap;
+}
+
+#study-schedule-table td {
+    font-size: 9px;
+    padding: 5px 3px;
+    border-bottom: 1px solid #f1f5f9;
+    line-height: 1.2;
+}
+
+#study-schedule-table tr:last-child td {
+    border-bottom: none;
+}
+
+.time-cell {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    font-size: 9px;
+    color: #1e293b;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.activity-cell {
+    font-size: 9px;
+    color: #334155;
+    text-align: right;
+    padding-right: 5px !important;
+}
+
+.chapter-name {
+    font-weight: bold;
+    color: #1e40af;
+    display: block;
+    margin-bottom: 1px;
+    font-size: 9px;
+}
+
+.duration-badge {
+    font-size: 8px;
+    background: #e2e8f0;
+    padding: 1px 3px;
+    border-radius: 6px;
+    margin-right: 2px;
+}
+
+/* ألوان الصفوف */
+.study-row td {
+    background-color: #f0f9ff !important;
+}
+
+.break-row td {
+    background-color: #f0fdf4 !important;
+}
+
+.sleep-row td {
+    background-color: #faf5ff !important;
+}
+
+.personal-row td {
+    background-color: #fefce8 !important;
+}
+
+/* حاوية الصورة */
+.watermark {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(0, 0, 0, 0.3);
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    pointer-events: none;
+}
+</style>
 </head>
 <body>
 
@@ -1205,50 +1442,81 @@
                                     </select>
                                 </div>
                             </div>
+<!-- داخل #schedule-input-page في النموذج -->
+<div class="mb-4">
+    <label class="block text-gray-700 text-sm font-bold mb-2">وقت الدراسة المفضل</label>
+    <div class="grid grid-cols-3 gap-2">
+        <button type="button" onclick="selectStudyTime('morning')" id="time-morning" class="py-2 rounded-lg border-2 border-blue-100 bg-blue-50 text-blue-700 font-bold text-sm">
+            <i class="fas fa-sun ml-1"></i> صباحاً
+        </button>
+        <button type="button" onclick="selectStudyTime('evening')" id="time-evening" class="py-2 rounded-lg border-2 border-purple-100 bg-purple-50 text-purple-700 font-bold text-sm">
+            <i class="fas fa-moon ml-1"></i> مساءً
+        </button>
+        <button type="button" onclick="selectStudyTime('flexible')" id="time-flexible" class="py-2 rounded-lg border-2 border-green-100 bg-green-50 text-green-700 font-bold text-sm">
+            <i class="fas fa-random ml-1"></i> عشوائي
+        </button>
+    </div>
+    <input type="hidden" id="study-time-preference" value="morning">
+</div>
 
                             <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-indigo-700 transition-all text-lg">إنشاء الجدول الآن</button>
                         </form>
                     </div>
                 </section>
 
-                <section id="schedule-result-page" class="hidden">
-                    <div id="schedule-card" class="bg-white rounded-2xl overflow-hidden shadow-xl border border-gray-200 mb-6">
-                        <div class="h-3 bg-indigo-600 w-full"></div>
-                        <div class="p-5">
-                            <div class="text-center mb-6">
-                                <h2 class="text-3xl font-black text-gray-800" id="displaySubject"></h2>
-                            </div>
+                <!-- داخل #schedule-result-page -->
+<section id="schedule-result-page" class="hidden">
+    <div id="schedule-card" class="bg-white rounded-2xl overflow-hidden shadow-xl border border-gray-200 mb-4 max-w-md mx-auto">
+        <div class="h-2 bg-gradient-to-r from-indigo-600 to-purple-600 w-full"></div>
+        <div class="p-4">
+            <div class="text-center mb-4">
+                <h2 class="text-xl font-black text-gray-800" id="displaySubject"></h2>
+                <p class="text-xs text-gray-500 mt-1" id="schedule-duration-info"></p>
+            </div>
 
-                            <div class="mb-6 overflow-x-auto">
-                                <table class="w-full">
-                                    <thead>
-                                        <tr class="bg-gray-50">
-                                            <th class="text-sm font-bold text-gray-600 p-3" width="35%">الفصل</th>
-                                            <th class="text-sm font-bold text-gray-600 p-3" width="40%">الوقت المخصص</th>
-                                            <th class="text-sm font-bold text-gray-600 p-3" width="25%">الراحة</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="scheduleBody"></tbody>
-                                </table>
-                            </div>
+            <!-- جدول الدراسة المربع الصغير -->
+            <div class="mb-4 overflow-x-auto">
+                <table class="w-full border-collapse" id="study-schedule-table">
+                    <thead>
+                        <tr class="bg-gradient-to-r from-indigo-50 to-blue-50">
+                            <th class="py-2 px-1 text-center font-bold text-indigo-700 border border-gray-200 text-xs w-2/5">الوقت</th>
+                            <th class="py-2 px-1 text-center font-bold text-indigo-700 border border-gray-200 text-xs w-3/5">النشاط</th>
+                        </tr>
+                    </thead>
+                    <tbody id="schedule-table-body" class="text-xs">
+                        <!-- سيتم ملؤه بالجافاسكريبت -->
+                    </tbody>
+                </table>
+            </div>
 
-                            <div class="flex justify-between bg-gray-100 p-3 rounded-lg text-center text-xs font-bold text-gray-600">
-                                <div><span class="block text-indigo-600 text-lg" id="statStudy"></span>صافي الدراسة</div>
-                                <div><span class="block text-pink-600 text-lg" id="statBreak"></span>مجموع الراحة</div>
-                                <div><span class="block text-blue-600 text-lg" id="statSleep"></span>وقت النوم</div>
-                            </div>
-                        </div>
-                    </div>
+            <div class="grid grid-cols-3 gap-2 text-center bg-gray-50 p-2 rounded-lg">
+                <div>
+                    <p class="text-xs text-gray-600">الدراسة</p>
+                    <p id="statStudy" class="text-sm font-bold text-blue-600">0س</p>
+                </div>
+                <div>
+                    <p class="text-xs text-gray-600">الراحة</p>
+                    <p id="statBreak" class="text-sm font-bold text-green-600">0د</p>
+                </div>
+                <div>
+                    <p class="text-xs text-gray-600">النوم</p>
+                    <p id="statSleep" class="text-sm font-bold text-purple-600">0س</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                    <div id="schedule-action-buttons" class="space-y-3">
-                        <button onclick="downloadScheduleAsImage()" class="w-full bg-indigo-100 text-indigo-700 font-bold py-3 rounded-xl hover:bg-indigo-200 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-download"></i> حفظ كصورة
-                        </button>
-                        <button onclick="resetSchedule()" class="w-full bg-white text-red-500 border border-red-200 font-bold py-3 rounded-xl hover:bg-red-50 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-trash-can"></i> حذف وإنشاء جديد
-                        </button>
-                    </div>
-                </section>
+
+    <!-- زر حذف وإنشاء جديد -->
+    <div id="schedule-action-buttons" class="space-y-2 px-4 pb-20">
+        <button onclick="downloadScheduleAsImage()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-download"></i> حفظ كصورة
+        </button>
+        <button onclick="resetSchedule()" class="w-full bg-white text-red-500 border border-red-200 font-bold py-3 rounded-xl hover:bg-red-50 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-trash-can"></i> حذف وإنشاء جديد
+        </button>
+    </div>
+</section>
             </div>
         </div>
 
@@ -4236,30 +4504,43 @@
         let scheduleData = { subject: '', chapters: [], totalHours: 0, needSleep: true, breakDuration: 10 };
         
         const initSchedule = () => {
-            const chaptersList = document.getElementById('chaptersList');
-            chaptersList.innerHTML = '';
-            addChapterRow();
+    const chaptersList = document.getElementById('chaptersList');
+    chaptersList.innerHTML = '';
+    addChapterRow();
+    
+    // تعيين وقت الدراسة الافتراضي
+    selectStudyTime('morning');
+    
+    const saved = localStorage.getItem('studySchedule');
+    if (saved) {
+        try {
+            scheduleData = JSON.parse(saved);
+            document.getElementById('subjectName').value = scheduleData.subject || '';
+            document.getElementById('totalHours').value = scheduleData.totalHours || '';
+            document.getElementById('needSleep').value = scheduleData.needSleep ? 'yes' : 'no';
+            document.getElementById('breakDuration').value = scheduleData.breakDuration || 10;
             
-            const saved = localStorage.getItem('studySchedule');
-            if (saved) {
-                try {
-                    scheduleData = JSON.parse(saved);
-                    document.getElementById('subjectName').value = scheduleData.subject || '';
-                    document.getElementById('totalHours').value = scheduleData.totalHours || '';
-                    document.getElementById('needSleep').value = scheduleData.needSleep ? 'yes' : 'no';
-                    document.getElementById('breakDuration').value = scheduleData.breakDuration || 10;
-                    
-                    if (scheduleData.chapters && scheduleData.chapters.length > 0) {
-                        chaptersList.innerHTML = '';
-                        scheduleData.chapters.forEach(ch => {
-                            addChapterRow(ch.name, ch.difficulty);
-                        });
-                    }
-                } catch (e) {
-                    console.error("Error loading schedule:", e);
-                }
+            if (scheduleData.chapters && scheduleData.chapters.length > 0) {
+                chaptersList.innerHTML = '';
+                scheduleData.chapters.forEach(ch => {
+                    addChapterRow(ch.name, ch.difficulty);
+                });
             }
+        } catch (e) {
+            console.error("Error loading schedule:", e);
+        }
+    }
+    
+    // التأكد من تحميل html2canvas
+    if (typeof html2canvas === 'undefined') {
+        const script = document.createElement('script');
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+        script.onload = () => {
+            console.log("html2canvas loaded for schedule");
         };
+        document.head.appendChild(script);
+    }
+};
         
         window.handleScheduleFormSubmit = (e) => {
             e.preventDefault();
@@ -4286,98 +4567,366 @@
             calculateAndRenderSchedule(false);
         };
 
-        const calculateAndRenderSchedule = (isShared) => {
-            let totalMins = scheduleData.totalHours * 60;
-            let sleepMins = 0;
+        // إضافة متغير جديد
+let studyTimePreference = 'morning'; // morning, evening, flexible
 
-            if (scheduleData.needSleep && scheduleData.totalHours > 16) {
-                const days = scheduleData.totalHours / 24;
-                sleepMins = Math.floor(days * 8 * 60);
-                totalMins -= sleepMins;
-            }
+// دالة اختيار وقت الدراسة
+window.selectStudyTime = (time) => {
+    studyTimePreference = time;
+    document.getElementById('study-time-preference').value = time;
+    
+    // تحديث أزرار التحديد
+    ['morning', 'evening', 'flexible'].forEach(t => {
+        const btn = document.getElementById(`time-${t}`);
+        if (t === time) {
+            btn.classList.add('border-indigo-500', 'bg-indigo-100');
+            btn.classList.remove('border-blue-100', 'bg-blue-50', 'border-purple-100', 'bg-purple-50', 'border-green-100', 'bg-green-50');
+        } else {
+            btn.classList.remove('border-indigo-500', 'bg-indigo-100');
+            if (t === 'morning') btn.className = 'py-2 rounded-lg border-2 border-blue-100 bg-blue-50 text-blue-700 font-bold text-sm';
+            if (t === 'evening') btn.className = 'py-2 rounded-lg border-2 border-purple-100 bg-purple-50 text-purple-700 font-bold text-sm';
+            if (t === 'flexible') btn.className = 'py-2 rounded-lg border-2 border-green-100 bg-green-50 text-green-700 font-bold text-sm';
+        }
+    });
+};
 
-            const studyRatio = 60 / (60 + scheduleData.breakDuration);
-            const netStudyMins = totalMins * studyRatio;
-            const totalBreakMins = totalMins - netStudyMins;
+// تعديل دالة calculateAndRenderSchedule لإضافة وقت الدراسة
+const calculateAndRenderSchedule = (isShared) => {
+    let totalMins = scheduleData.totalHours * 60;
+    let sleepMins = 0;
+    
+    // تحديد وقت البدء حسب التفضيل
+    let startTime;
+    switch(studyTimePreference) {
+        case 'morning':
+            startTime = 8 * 60; // 8:00 صباحاً
+            break;
+        case 'evening':
+            startTime = 16 * 60; // 4:00 مساءً
+            break;
+        case 'flexible':
+        default:
+            startTime = 9 * 60; // 9:00 صباحاً (عشوائي)
+            break;
+    }
 
-            const totalPoints = scheduleData.chapters.reduce((acc, c) => acc + c.difficulty, 0);
+    // حساب وقت النوم إذا كان المطلوب
+    if (scheduleData.needSleep) {
+        sleepMins = 8 * 60; // 8 ساعات نوم
+    }
 
-            document.getElementById('schedule-input-page').classList.add('hidden');
-            document.getElementById('schedule-result-page').classList.remove('hidden');
-            document.getElementById('displaySubject').innerText = scheduleData.subject;
+    // النسبة بين الدراسة والراحة
+    const studyRatio = 60 / (60 + scheduleData.breakDuration);
+    const netStudyMins = totalMins * studyRatio;
+    const totalBreakMins = totalMins - netStudyMins;
 
-            const tbody = document.getElementById('scheduleBody');
-            tbody.innerHTML = '';
+    // حساب النقاط الكلية للفصول
+    const totalPoints = scheduleData.chapters.reduce((acc, c) => acc + c.difficulty, 0);
 
-            scheduleData.chapters.forEach(ch => {
-                const share = ch.difficulty / totalPoints;
-                const chapterMins = netStudyMins * share;
-                
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="text-sm p-3">${ch.name}</td>
-                    <td class="p-3">
-                        <div class="flex flex-col items-center">
-                            <span class="text-lg font-black">${formatTime(chapterMins)}</span>
-                            <div class="w-full bg-gray-100 h-1 mt-1 rounded overflow-hidden">
-                                <div class="bg-indigo-500 h-full" style="width: ${Math.min(100, (chapterMins/180)*100)}%"></div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="text-xs text-gray-500 font-bold p-3">${scheduleData.breakDuration}د</td>
-                `;
-                tbody.appendChild(tr);
+    // تحديث صفحة النتائج
+    document.getElementById('schedule-input-page').classList.add('hidden');
+    document.getElementById('schedule-result-page').classList.remove('hidden');
+    document.getElementById('displaySubject').innerText = scheduleData.subject;
+    document.getElementById('schedule-duration-info').innerText = `مدة: ${scheduleData.totalHours}س | وقت: ${studyTimePreference === 'morning' ? 'صباح' : studyTimePreference === 'evening' ? 'مساء' : 'عشوائي'}`;
+
+    // إنشاء جدول الدراسة
+    const tableBody = document.getElementById('schedule-table-body');
+    tableBody.innerHTML = '';
+    
+    let currentTime = startTime;
+    let scheduleItems = [];
+
+    // روتين الصباح (للمساء أيضاً)
+    scheduleItems.push({
+        type: 'routine',
+        name: 'تحضير',
+        duration: 30,
+        emoji: '🚿'
+    });
+
+    // فصول الدراسة مع الراحة
+    scheduleData.chapters.forEach((ch, index) => {
+        const share = ch.difficulty / totalPoints;
+        const chapterMins = Math.max(45, Math.round(netStudyMins * share));
+        
+        // إضافة فصل الدراسة
+        scheduleItems.push({
+            type: 'study',
+            subject: scheduleData.subject,
+            chapter: ch.name,
+            duration: chapterMins,
+            emoji: '📚'
+        });
+
+        // إضافة استراحة بين الفصول (ماعدا الأخير)
+        if (index < scheduleData.chapters.length - 1) {
+            scheduleItems.push({
+                type: 'break',
+                name: 'استراحة',
+                duration: scheduleData.breakDuration,
+                emoji: '☕'
             });
+        }
+    });
 
-            document.getElementById('statStudy').innerText = formatTime(netStudyMins);
-            document.getElementById('statBreak').innerText = formatTime(totalBreakMins);
-            document.getElementById('statSleep').innerText = formatTime(sleepMins);
+    // استراحة الغداء
+    scheduleItems.push({
+        type: 'break',
+        name: 'غداء',
+        duration: 45,
+        emoji: '🍽️'
+    });
+
+    // مراجعة
+    scheduleItems.push({
+        type: 'study',
+        subject: 'مراجعة',
+        chapter: 'مراجعة',
+        duration: 30,
+        emoji: '📝'
+    });
+
+    // وقت شخصي
+    scheduleItems.push({
+        type: 'personal',
+        name: 'وقت حر',
+        duration: 60,
+        emoji: '🎮'
+    });
+
+    // وقت النوم
+    if (sleepMins > 0) {
+        scheduleItems.push({
+            type: 'sleep',
+            name: 'نوم',
+            duration: sleepMins,
+            emoji: '😴'
+        });
+    }
+
+    // عرض جدول الدراسة (من الأعلى إلى الأسفل)
+    let accumulatedTime = startTime;
+    
+    scheduleItems.forEach((item) => {
+        const startTime = accumulatedTime;
+        const endTime = accumulatedTime + item.duration;
+        
+        // تنسيق الوقت
+        const formatTime = (timeInMinutes) => {
+            const hour = Math.floor(timeInMinutes / 60);
+            const minute = timeInMinutes % 60;
+            const period = hour >= 12 ? 'م' : 'ص';
+            const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
+            return `${displayHour}:${minute.toString().padStart(2, '0')} ${period}`;
         };
 
-        const formatTime = (m) => {
-            if(m < 60) return Math.round(m) + ' د';
-            const h = Math.floor(m/60);
-            const rem = Math.round(m%60);
-            return rem > 0 ? `${h}س ${rem}د` : `${h}س`;
-        };
+        const startStr = formatTime(startTime);
+        const endStr = formatTime(endTime);
+
+        // تحديد نوع النشاط
+        let rowClass = '';
+        let activityText = '';
+        
+        if (item.type === 'study') {
+            rowClass = 'study-row';
+            activityText = `${item.emoji} ${item.subject} - ${item.chapter}`;
+        } else if (item.type === 'break') {
+            rowClass = 'break-row';
+            activityText = `${item.emoji} ${item.name}`;
+        } else if (item.type === 'sleep') {
+            rowClass = 'sleep-row';
+            activityText = `${item.emoji} ${item.name}`;
+        } else if (item.type === 'personal') {
+            rowClass = 'personal-row';
+            activityText = `${item.emoji} ${item.name}`;
+        } else {
+            rowClass = 'break-row';
+            activityText = `${item.emoji} ${item.name}`;
+        }
+
+        // إنشاء صف الجدول
+        const row = document.createElement('tr');
+        row.className = rowClass;
+        row.innerHTML = `
+            <td class="time-cell border border-gray-100">
+                ${startStr}<br>${endStr}
+            </td>
+            <td class="activity-cell border border-gray-100">
+                <span class="chapter-name">${activityText}</span>
+                <span class="duration-badge">${formatDurationShort(item.duration)}</span>
+            </td>
+        `;
+        
+        tableBody.appendChild(row);
+        accumulatedTime = endTime;
+    });
+
+    // تحديث الإحصائيات
+    document.getElementById('statStudy').innerText = formatTimeShort(netStudyMins);
+    document.getElementById('statBreak').innerText = formatTimeShort(totalBreakMins);
+    document.getElementById('statSleep').innerText = formatTimeShort(sleepMins);
+    
+    // تمرير للأسفل لرؤية الزر
+    setTimeout(() => {
+        window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: 'smooth'
+        });
+    }, 300);
+};
+
+// دالة مساعدة مختصرة لتنسيق المدة
+const formatDurationShort = (minutes) => {
+    if (minutes < 60) {
+        return `${minutes}د`;
+    }
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return mins === 0 ? `${hours}س` : `${hours}س ${mins}د`;
+};
+
+// دالة مساعدة مختصرة لتنسيق الوقت
+const formatTimeShort = (m) => {
+    if(m < 60) return Math.round(m) + 'د';
+    const h = Math.floor(m/60);
+    const rem = Math.round(m%60);
+    return rem > 0 ? `${h}س ${rem}د` : `${h}س`;
+};
+
+// دالة مساعدة لتنسيق المدة
+const formatDuration = (minutes) => {
+    if (minutes < 60) {
+        return `${minutes} دقيقة`;
+    }
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    if (mins === 0) {
+        return `${hours} ساعة`;
+    }
+    return `${hours} ساعة و ${mins} دقيقة`;
+};
+
+// دالة مساعدة لتنسيق الوقت للإحصائيات
+const formatTime = (m) => {
+    if(m < 60) return Math.round(m) + 'د';
+    const h = Math.floor(m/60);
+    const rem = Math.round(m%60);
+    return rem > 0 ? `${h}س ${rem}د` : `${h}س`;
+};
 
         window.addChapterRow = (name = '', difficulty = 1.5) => {
-            const container = document.getElementById('chaptersList');
-            const index = container.children.length + 1;
-            const div = document.createElement('div');
-            div.className = 'flex gap-2 items-center';
-            div.innerHTML = `
-                <span class="bg-indigo-50 text-indigo-600 font-bold py-2 px-3 rounded text-sm">${index}</span>
-                <select class="diff-select w-24 p-2 rounded bg-white border text-xs font-bold focus:border-indigo-500 outline-none">
-                    <option value="1" ${difficulty === 1 ? 'selected' : ''}>سهل</option>
-                    <option value="1.5" ${difficulty === 1.5 ? 'selected' : ''}>متوسط</option>
-                    <option value="2.5" ${difficulty === 2.5 ? 'selected' : ''}>صعب</option>
-                </select>
-                <input type="text" placeholder="اسم الفصل" class="name-input flex-1 p-2 rounded bg-white border text-sm focus:border-indigo-500 outline-none" value="${name}">
-                <button type="button" onclick="this.parentElement.remove()" class="text-red-400 hover:text-red-600 px-2"><i class="fa-solid fa-xmark"></i></button>
-            `;
-            container.appendChild(div);
-        };
+    const container = document.getElementById('chaptersList');
+    const index = container.children.length + 1;
+    const div = document.createElement('div');
+    div.className = 'flex gap-2 items-center mb-2';
+    div.innerHTML = `
+        <span class="bg-indigo-50 text-indigo-600 font-bold py-2 px-3 rounded text-sm">${index}</span>
+        <input type="text" placeholder="اسم الفصل" class="name-input flex-1 p-2 rounded bg-white border text-sm focus:border-indigo-500 outline-none" value="${name}">
+        <select class="diff-select w-24 p-2 rounded bg-white border text-xs font-bold focus:border-indigo-500 outline-none">
+            <option value="1" ${difficulty === 1 ? 'selected' : ''}>سهل</option>
+            <option value="1.5" ${difficulty === 1.5 ? 'selected' : ''}>متوسط</option>
+            <option value="2.5" ${difficulty === 2.5 ? 'selected' : ''}>صعب</option>
+        </select>
+        <button type="button" onclick="this.parentElement.remove()" class="text-red-400 hover:text-red-600 px-2">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    `;
+    container.appendChild(div);
+};
 
         window.downloadScheduleAsImage = () => {
-            const el = document.getElementById('schedule-card');
-            const btn = event.target.closest('button');
-            const oldTxt = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> جاري الحفظ...';
-            
-            const script = document.createElement('script');
-            script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
-            script.onload = () => {
-                html2canvas(el, { scale: 2, backgroundColor: "#ffffff" }).then(canvas => {
-                    const link = document.createElement('a');
-                    link.download = `جدول-${Date.now()}.png`;
-                    link.href = canvas.toDataURL("image/png");
-                    link.click();
-                    btn.innerHTML = oldTxt;
-                });
-            };
-            document.head.appendChild(script);
+    const card = document.getElementById('schedule-card');
+    const btn = event.target.closest('button');
+    const oldTxt = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> جاري الحفظ...';
+    btn.disabled = true;
+    
+    // إنشاء عنصر مخفي للصورة مع العلامة المائية
+    const container = document.createElement('div');
+    container.className = 'schedule-image-container';
+    container.style.width = '600px'; // أصغر للهاتف
+    container.style.padding = '15px';
+    container.style.background = 'white';
+    container.style.fontFamily = "'Tajawal', sans-serif";
+    container.style.position = 'relative';
+    container.style.margin = '0 auto';
+    
+    // نسخ محتوى الجدول
+    const clone = card.cloneNode(true);
+    
+    // إزالة الأزرار غير ضرورية
+    const buttons = clone.querySelector('#schedule-action-buttons');
+    if (buttons) buttons.remove();
+    
+    // تحسين تنسيق الجدول للصورة
+    const table = clone.querySelector('#study-schedule-table');
+    if (table) {
+        table.style.width = '100%';
+        table.style.borderCollapse = 'collapse';
+        table.style.fontSize = '12px';
+        table.style.margin = '0';
+    }
+    
+    // إضافة العلامة المائية
+    const watermark = document.createElement('div');
+    watermark.className = 'watermark';
+    watermark.innerHTML = '📅 الجدول من تطبيق هكر الوزاري';
+    watermark.style.position = 'absolute';
+    watermark.style.bottom = '5px';
+    watermark.style.left = '50%';
+    watermark.style.transform = 'translateX(-50%)';
+    watermark.style.color = 'rgba(0, 0, 0, 0.2)';
+    watermark.style.fontSize = '10px';
+    watermark.style.fontWeight = 'bold';
+    watermark.style.textAlign = 'center';
+    watermark.style.width = '100%';
+    watermark.style.pointerEvents = 'none';
+    
+    container.appendChild(clone);
+    container.appendChild(watermark);
+    document.body.appendChild(container);
+    
+    // استخدام html2canvas
+    if (typeof html2canvas === 'undefined') {
+        const script = document.createElement('script');
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+        script.onload = () => {
+            generateImage(container, btn, oldTxt);
         };
+        document.head.appendChild(script);
+    } else {
+        generateImage(container, btn, oldTxt);
+    }
+    
+    function generateImage(container, btn, oldTxt) {
+        html2canvas(container, {
+            scale: 3, // دقة عالية للهاتف
+            backgroundColor: "#ffffff",
+            useCORS: true,
+            logging: false,
+            width: 600,
+            height: container.offsetHeight
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `جدول-${scheduleData.subject || 'دراسة'}-${Date.now()}.png`;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+            
+            // تنظيف
+            document.body.removeChild(container);
+            btn.innerHTML = oldTxt;
+            btn.disabled = false;
+            
+            showBeautifulAlert('success', 'تم الحفظ', 'تم حفظ الجدول كصورة بنجاح! العلامة المائية مضافة.');
+        }).catch(error => {
+            console.error("Error generating image:", error);
+            showBeautifulAlert('error', 'خطأ', 'حدث خطأ في حفظ الصورة. حاول مرة أخرى.');
+            btn.innerHTML = oldTxt;
+            btn.disabled = false;
+            document.body.removeChild(container);
+        });
+    }
+};
 
         window.resetSchedule = () => {
             if(confirm('هل أنت متأكد من حذف الجدول وإنشاء جديد؟')) {
@@ -5140,6 +5689,8 @@
             }
             if(tab==='profile') navs[3].classList.add('active', 'text-indigo-600');
         };
+        
+        
     </script>
 </body>
 </html>
