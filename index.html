@@ -1097,6 +1097,161 @@
     width: 100%;
     pointer-events: none;
 }
+
+/* إصلاح مشاكل جدول الدراسة */
+#study-schedule-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#study-schedule-table th {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    font-weight: bold;
+    padding: 8px 4px;
+    border: none;
+    text-align: center;
+    font-size: 10px;
+}
+
+#study-schedule-table td {
+    padding: 6px 4px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 9px;
+    text-align: center;
+    border-right: none !important; /* إزالة الحدود الجانبية */
+    border-left: none !important;
+    position: relative;
+}
+
+#study-schedule-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* إزالة النقاط والقوائم */
+#study-schedule-table ul,
+#study-schedule-table ol,
+#study-schedule-table li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* تحسين مظهر خلايا الوقت */
+.time-cell {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    font-size: 9px;
+    color: #1e293b;
+    background-color: #f8fafc;
+    border-right: 1px solid #e5e7eb;
+}
+
+/* تحسين مظهر خلايا النشاط */
+.activity-cell {
+    font-size: 9px;
+    color: #334155;
+    text-align: right;
+    padding-right: 8px !important;
+    background-color: white;
+}
+
+/* إزالة الخطوط تحت النصوص */
+.activity-cell span,
+.time-cell span,
+#study-schedule-table * {
+    text-decoration: none !important;
+    text-shadow: none !important;
+    -webkit-text-stroke: 0 !important;
+}
+
+/* تحسين مظهر أسماء الفصول */
+.chapter-name {
+    font-weight: bold;
+    color: #1e40af;
+    display: block;
+    margin-bottom: 2px;
+    font-size: 9px;
+    line-height: 1.3;
+    letter-spacing: 0;
+    text-shadow: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* إزالة التأثيرات غير المرغوبة */
+#study-schedule-table *::before,
+#study-schedule-table *::after {
+    content: none !important;
+}
+
+/* تحسين عرض الجدول للهواتف */
+@media (max-width: 768px) {
+    #study-schedule-table {
+        font-size: 8px;
+    }
+    
+    #study-schedule-table th,
+    #study-schedule-table td {
+        padding: 4px 2px;
+    }
+    
+    .chapter-name {
+        font-size: 8px;
+    }
+}
+
+/* تحسين الروابط في الجدول */
+#study-schedule-table a {
+    color: #3b82f6;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+}
+
+#study-schedule-table a:hover {
+    border-bottom-color: #3b82f6;
+}
+
+/* أنماط العلامات المائية للصورة */
+.watermark-left, .watermark-right {
+    font-family: 'Tajawal', sans-serif !important;
+    user-select: none;
+}
+
+/* تحسين مظهر الجدول في الصورة */
+.schedule-image-container #study-schedule-table {
+    position: relative;
+    z-index: 10;
+}
+
+.schedule-image-container #study-schedule-table th {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+}
+
+.schedule-image-container #study-schedule-table .study-row td {
+    background-color: #f0f9ff !important;
+    border-bottom: 1px solid #dbeafe;
+}
+
+.schedule-image-container #study-schedule-table .break-row td {
+    background-color: #f0fdf4 !important;
+    border-bottom: 1px solid #bbf7d0;
+}
+
+.schedule-image-container #study-schedule-table .sleep-row td {
+    background-color: #faf5ff !important;
+    border-bottom: 1px solid #e9d5ff;
+}
+
+.schedule-image-container #study-schedule-table .personal-row td {
+    background-color: #fefce8 !important;
+    border-bottom: 1px solid #fef08a;
+}
+
 </style>
 </head>
 <body>
@@ -4841,15 +4996,17 @@ const formatTime = (m) => {
     btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> جاري الحفظ...';
     btn.disabled = true;
     
-    // إنشاء عنصر مخفي للصورة مع العلامة المائية
+    // إنشاء عنصر مخفي للصورة مع العلامات المائية
     const container = document.createElement('div');
     container.className = 'schedule-image-container';
-    container.style.width = '600px'; // أصغر للهاتف
+    container.style.width = '600px';
     container.style.padding = '15px';
     container.style.background = 'white';
     container.style.fontFamily = "'Tajawal', sans-serif";
     container.style.position = 'relative';
     container.style.margin = '0 auto';
+    container.style.boxSizing = 'border-box';
+    container.style.overflow = 'hidden';
     
     // نسخ محتوى الجدول
     const clone = card.cloneNode(true);
@@ -4863,27 +5020,66 @@ const formatTime = (m) => {
     if (table) {
         table.style.width = '100%';
         table.style.borderCollapse = 'collapse';
-        table.style.fontSize = '12px';
+        table.style.fontSize = '11px';
         table.style.margin = '0';
+        table.style.borderRadius = '8px';
+        table.style.overflow = 'hidden';
     }
     
-    // إضافة العلامة المائية
-    const watermark = document.createElement('div');
-    watermark.className = 'watermark';
-    watermark.innerHTML = '📅 الجدول من تطبيق هكر الوزاري';
-    watermark.style.position = 'absolute';
-    watermark.style.bottom = '5px';
-    watermark.style.left = '50%';
-    watermark.style.transform = 'translateX(-50%)';
-    watermark.style.color = 'rgba(0, 0, 0, 0.2)';
-    watermark.style.fontSize = '10px';
-    watermark.style.fontWeight = 'bold';
-    watermark.style.textAlign = 'center';
-    watermark.style.width = '100%';
-    watermark.style.pointerEvents = 'none';
+    // إضافة العلامات المائية على الجانبين
+    const watermarkLeft = document.createElement('div');
+    watermarkLeft.className = 'watermark-left';
+    watermarkLeft.innerHTML = 'هكر الوزاري';
+    watermarkLeft.style.position = 'absolute';
+    watermarkLeft.style.top = '50%';
+    watermarkLeft.style.left = '10px';
+    watermarkLeft.style.transform = 'translateY(-50%) rotate(270deg)';
+    watermarkLeft.style.color = 'rgba(0, 0, 0, 0.15)';
+    watermarkLeft.style.fontSize = '20px';
+    watermarkLeft.style.fontWeight = '900';
+    watermarkLeft.style.letterSpacing = '2px';
+    watermarkLeft.style.textShadow = '1px 1px 2px rgba(255,255,255,0.8)';
+    watermarkLeft.style.pointerEvents = 'none';
+    watermarkLeft.style.zIndex = '9999';
+    watermarkLeft.style.opacity = '0.7';
+    
+    const watermarkRight = document.createElement('div');
+    watermarkRight.className = 'watermark-right';
+    watermarkRight.innerHTML = 'هكر الوزاري';
+    watermarkRight.style.position = 'absolute';
+    watermarkRight.style.top = '50%';
+    watermarkRight.style.right = '10px';
+    watermarkRight.style.transform = 'translateY(-50%) rotate(90deg)';
+    watermarkRight.style.color = 'rgba(0, 0, 0, 0.15)';
+    watermarkRight.style.fontSize = '20px';
+    watermarkRight.style.fontWeight = '900';
+    watermarkRight.style.letterSpacing = '2px';
+    watermarkRight.style.textShadow = '1px 1px 2px rgba(255,255,255,0.8)';
+    watermarkRight.style.pointerEvents = 'none';
+    watermarkRight.style.zIndex = '9999';
+    watermarkRight.style.opacity = '0.7';
+    
+    // العلامة المائية المركزية
+    const watermarkCenter = document.createElement('div');
+    watermarkCenter.className = 'watermark-center';
+    watermarkCenter.innerHTML = '📅 جدول الدراسة';
+    watermarkCenter.style.position = 'absolute';
+    watermarkCenter.style.top = '10px';
+    watermarkCenter.style.left = '50%';
+    watermarkCenter.style.transform = 'translateX(-50%)';
+    watermarkCenter.style.color = 'rgba(0, 0, 0, 0.1)';
+    watermarkCenter.style.fontSize = '30px';
+    watermarkCenter.style.fontWeight = 'bold';
+    watermarkCenter.style.textAlign = 'center';
+    watermarkCenter.style.pointerEvents = 'none';
+    watermarkCenter.style.zIndex = '9998';
+    watermarkCenter.style.opacity = '0.5';
+    watermarkCenter.style.width = '100%';
     
     container.appendChild(clone);
-    container.appendChild(watermark);
+    container.appendChild(watermarkLeft);
+    container.appendChild(watermarkRight);
+    container.appendChild(watermarkCenter);
     document.body.appendChild(container);
     
     // استخدام html2canvas
@@ -4900,16 +5096,29 @@ const formatTime = (m) => {
     
     function generateImage(container, btn, oldTxt) {
         html2canvas(container, {
-            scale: 3, // دقة عالية للهاتف
+            scale: 2,
             backgroundColor: "#ffffff",
             useCORS: true,
             logging: false,
             width: 600,
-            height: container.offsetHeight
+            height: container.scrollHeight,
+            allowTaint: true,
+            removeContainer: true
         }).then(canvas => {
+            // تحسين جودة الصورة
+            const finalCanvas = document.createElement('canvas');
+            const ctx = finalCanvas.getContext('2d');
+            
+            // زيادة الدقة
+            finalCanvas.width = canvas.width * 2;
+            finalCanvas.height = canvas.height * 2;
+            
+            ctx.scale(2, 2);
+            ctx.drawImage(canvas, 0, 0);
+            
             const link = document.createElement('a');
             link.download = `جدول-${scheduleData.subject || 'دراسة'}-${Date.now()}.png`;
-            link.href = canvas.toDataURL("image/png");
+            link.href = finalCanvas.toDataURL("image/png", 1.0);
             link.click();
             
             // تنظيف
@@ -4917,7 +5126,7 @@ const formatTime = (m) => {
             btn.innerHTML = oldTxt;
             btn.disabled = false;
             
-            showBeautifulAlert('success', 'تم الحفظ', 'تم حفظ الجدول كصورة بنجاح! العلامة المائية مضافة.');
+            showBeautifulAlert('success', 'تم الحفظ', 'تم حفظ الجدول كصورة بنجاح مع العلامات المائية!');
         }).catch(error => {
             console.error("Error generating image:", error);
             showBeautifulAlert('error', 'خطأ', 'حدث خطأ في حفظ الصورة. حاول مرة أخرى.');
@@ -5477,19 +5686,54 @@ const formatTime = (m) => {
                         ...q,
                         uid: userDoc.id,
                         name: userData.name,
-                        docId: userDoc.id, // لحفظ معرف المستخدم
-                        questionId: q.id // لحفظ معرف السؤال
+                        docId: userDoc.id,
+                        questionId: q.id,
+                        submittedAt: q.submittedAt || new Date().toISOString() // إصلاح هنا
                     });
                 }
             });
         });
         
-        // ترتيب حسب تاريخ الإرسال
+        // ترتيب حسب تاريخ الإرسال مع معالجة التواريخ بشكل صحيح
         allPendingQuestions.sort((a, b) => {
-            if (a.submittedAt && b.submittedAt) {
-                return b.submittedAt.toDate() - a.submittedAt.toDate();
+            try {
+                let dateA, dateB;
+                
+                // معالجة التاريخ a
+                if (a.submittedAt) {
+                    if (typeof a.submittedAt === 'string') {
+                        dateA = new Date(a.submittedAt);
+                    } else if (a.submittedAt.toDate) {
+                        dateA = a.submittedAt.toDate();
+                    } else if (a.submittedAt instanceof Date) {
+                        dateA = a.submittedAt;
+                    } else {
+                        dateA = new Date();
+                    }
+                } else {
+                    dateA = new Date();
+                }
+                
+                // معالجة التاريخ b
+                if (b.submittedAt) {
+                    if (typeof b.submittedAt === 'string') {
+                        dateB = new Date(b.submittedAt);
+                    } else if (b.submittedAt.toDate) {
+                        dateB = b.submittedAt.toDate();
+                    } else if (b.submittedAt instanceof Date) {
+                        dateB = b.submittedAt;
+                    } else {
+                        dateB = new Date();
+                    }
+                } else {
+                    dateB = new Date();
+                }
+                
+                return dateB.getTime() - dateA.getTime();
+            } catch (error) {
+                console.error("Error sorting dates:", error);
+                return 0;
             }
-            return 0;
         });
         
         if(allPendingQuestions.length === 0) {
@@ -5511,15 +5755,15 @@ const formatTime = (m) => {
                     answersHtml = `
                         <div class="mt-3 space-y-2">
                             <div class="flex items-center gap-2">
-                                <span class="w-6 h-6 rounded-full ${q.correct === 0 ? 'bg-green-500 text-white' : 'bg-gray-100'} flex items-center justify-center text-xs">1</span>
+                                <span class="w-6 h-6 rounded-full ${q.correct === 0 || q.correct === '0' ? 'bg-green-500 text-white' : 'bg-gray-100'} flex items-center justify-center text-xs">1</span>
                                 <span>${q.answers[0] || '--'}</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <span class="w-6 h-6 rounded-full ${q.correct === 1 ? 'bg-green-500 text-white' : 'bg-gray-100'} flex items-center justify-center text-xs">2</span>
+                                <span class="w-6 h-6 rounded-full ${q.correct === 1 || q.correct === '1' ? 'bg-green-500 text-white' : 'bg-gray-100'} flex items-center justify-center text-xs">2</span>
                                 <span>${q.answers[1] || '--'}</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <span class="w-6 h-6 rounded-full ${q.correct === 2 ? 'bg-green-500 text-white' : 'bg-gray-100'} flex items-center justify-center text-xs">3</span>
+                                <span class="w-6 h-6 rounded-full ${q.correct === 2 || q.correct === '2' ? 'bg-green-500 text-white' : 'bg-gray-100'} flex items-center justify-center text-xs">3</span>
                                 <span>${q.answers[2] || '--'}</span>
                             </div>
                         </div>
@@ -5528,11 +5772,29 @@ const formatTime = (m) => {
             } else {
                 answersHtml = `
                     <div class="mt-3">
-                        <span class="inline-block px-3 py-1 rounded-full ${q.correct === 'true' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'} font-bold">
-                            ${q.correct === 'true' ? 'صح' : 'خطأ'}
+                        <span class="inline-block px-3 py-1 rounded-full ${q.correct === 'true' || q.correct === true ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'} font-bold">
+                            ${q.correct === 'true' || q.correct === true ? 'صح' : 'خطأ'}
                         </span>
                     </div>
                 `;
+            }
+            
+            // عرض التاريخ إذا كان متاحاً
+            let dateInfo = '';
+            try {
+                if (q.submittedAt) {
+                    let date;
+                    if (typeof q.submittedAt === 'string') {
+                        date = new Date(q.submittedAt);
+                    } else if (q.submittedAt.toDate) {
+                        date = q.submittedAt.toDate();
+                    } else {
+                        date = new Date();
+                    }
+                    dateInfo = `<span class="text-xs text-gray-500">${date.toLocaleDateString('ar-EG')}</span>`;
+                }
+            } catch (e) {
+                console.error("Error formatting date:", e);
             }
             
             html += `
@@ -5541,6 +5803,7 @@ const formatTime = (m) => {
                         <div>
                             <span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded font-bold">${getGradeName(q.grade) || 'غير محدد'} | ${q.subject || 'غير محدد'}</span>
                             <span class="text-xs text-gray-400 ml-2">${q.type === 'mcq' ? 'اختيارات' : 'صح/خطأ'}</span>
+                            ${dateInfo}
                         </div>
                         <div class="text-xs text-gray-500">${q.name || 'مستخدم مجهول'}</div>
                     </div>
