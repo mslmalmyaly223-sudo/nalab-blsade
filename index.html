@@ -1252,6 +1252,21 @@
     border-bottom: 1px solid #fef08a;
 }
 
+.red-dot {
+    position: absolute; top: -2px; right: 25%;
+    width: 10px; height: 10px; background-color: #ef4444;
+    border-radius: 50%; border: 2px solid white;
+    display: none; z-index: 50;
+}
+.red-dot.visible { display: block; }
+.btn-dot {
+    position: absolute; top: 0; right: 0;
+    width: 10px; height: 10px; background-color: #ef4444;
+    border-radius: 50%; border: 2px solid white;
+    display: none; z-index: 50;
+}
+.btn-dot.visible { display: block; }
+
 </style>
 </head>
 <body>
@@ -2452,7 +2467,9 @@
                         checkDailyReward(); 
                         checkPremiumStatus();
                         checkAIDailyUsage();
-                        if(userData.email === ADMIN_EMAIL) checkAdminNotifications(); 
+                        if(userData.email === ADMIN_EMAIL) {
+    setupRealTimeNotifications();
+}
 
                         if (userData.grade) {
                             document.getElementById('grade-selector-card').classList.add('hidden');
@@ -2851,12 +2868,19 @@
         };
 
         window.logout = () => {
-            if(adminListenerUnsubscribe) adminListenerUnsubscribe(); 
-            if(matchListenerUnsubscribe) matchListenerUnsubscribe();
-            if(roomListenerUnsubscribe) roomListenerUnsubscribe();
-            if(premiumInterval) clearInterval(premiumInterval);
-            signOut(auth);
-        };
+    if(adminListenerUnsubscribe) adminListenerUnsubscribe(); 
+    if(matchListenerUnsubscribe) matchListenerUnsubscribe();
+    if(roomListenerUnsubscribe) roomListenerUnsubscribe();
+    if(premiumInterval) clearInterval(premiumInterval);
+    
+    // إلغاء اشتراك الاستماع للإشعارات
+    if (pendingQuestionsListener) {
+        pendingQuestionsListener();
+        pendingQuestionsListener = null;
+    }
+    
+    signOut(auth);
+};
 
         const getIraqDate = () => {
             const dateStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Baghdad"});
@@ -2982,14 +3006,20 @@
         };
         
         const setupHeaderUI = () => { 
-            document.getElementById('header-points').innerText = userData.points; 
-            const addSubscriptionBtn = document.getElementById('add-subscription-btn');
-            if (isPremiumValid(userData) && document.getElementById('screen-premium-in-profile').classList.contains('active')) {
-                addSubscriptionBtn.classList.remove('hidden');
-            } else {
-                addSubscriptionBtn.classList.add('hidden');
-            }
-        };
+    // عرض النقاط حتى لو كانت سالبة
+    const pointsElement = document.getElementById('header-points');
+    if (pointsElement) {
+        const pointsValue = userData.points || 0;
+        pointsElement.innerText = pointsValue < 0 ? `-${Math.abs(pointsValue)}` : pointsValue;
+    }
+    
+    const addSubscriptionBtn = document.getElementById('add-subscription-btn');
+    if (isPremiumValid(userData) && document.getElementById('screen-premium-in-profile').classList.contains('active')) {
+        addSubscriptionBtn.classList.remove('hidden');
+    } else {
+        addSubscriptionBtn.classList.add('hidden');
+    }
+};
         
         const setupAdminUI = () => { 
             if (userData.email === ADMIN_EMAIL) {
@@ -3699,64 +3729,93 @@
         };
 
         window.withdrawFromGame = async () => {
-            if(!confirm('هل أنت متأكد من الانسحاب من المباراة؟ سيتم خصم 10 نقاط منك ومنحها للخصم.')) return;
-            
-            try {
-                if(currentMatchId && currentGameMode === 'online') {
-                    const matchDoc = await getDoc(doc(db, "match_queue", currentMatchId));
-                    if(matchDoc.exists()) {
-                        const matchData = matchDoc.data();
-                        const isP1 = matchData.player1.uid === currentUser.uid;
-                        const opponentId = isP1 ? matchData.player2.uid : matchData.player1.uid;
-                        
-                        await updateDoc(doc(db, "users", currentUser.uid), {
-                            points: increment(-10)
-                        });
-                        
-                        if(opponentId !== 'AI_BOT') {
-                            await updateDoc(doc(db, "users", opponentId), {
-                                points: increment(10)
-                            });
-                        }
-                        
-                        await deleteDoc(doc(db, "match_queue", currentMatchId));
-                    }
+    if(!confirm('هل أنت متأكد من الانسحاب من المباراة؟ سيتم خصم 10 نقاط منك ومنحها للخصم.')) return;
+    
+    try {
+        if(currentMatchId && currentGameMode === 'online') {
+            const matchDoc = await getDoc(doc(db, "match_queue", currentMatchId));
+            if(matchDoc.exists()) {
+                const matchData = matchDoc.data();
+                const isP1 = matchData.player1.uid === currentUser.uid;
+                const opponentId = isP1 ? matchData.player2.uid : matchData.player1.uid;
+                
+                // الحصول على النقاط الحالية أولاً
+                const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+                const currentPoints = userDoc.data().points || 0;
+                const newPoints = currentPoints - 10;
+                
+                // تحديث النقاط بالقيمة الجديدة (يمكن أن تكون سالبة)
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    points: newPoints  // استخدام القيمة المباشرة بدلاً من increment
+                });
+                
+                // تحديث userData المحلي
+                userData.points = newPoints;
+                
+                // تحديث الواجهة مباشرة
+                setupHeaderUI();
+                
+                if(opponentId !== 'AI_BOT') {
+                    await updateDoc(doc(db, "users", opponentId), {
+                        points: increment(10)
+                    });
                 }
                 
-                showWithdrawalResult();
-                
-            } catch (error) {
-                console.error("Error withdrawing:", error);
-                showBeautifulAlert('error', 'خطأ', 'حدث خطأ أثناء الانسحاب');
+                await deleteDoc(doc(db, "match_queue", currentMatchId));
             }
-        };
+        } else if (currentGameMode === 'ai') {
+            // إذا كان ضد الذكاء الاصطناعي
+            const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+            const currentPoints = userDoc.data().points || 0;
+            const newPoints = currentPoints - 10;
+            
+            await updateDoc(doc(db, "users", currentUser.uid), {
+                points: newPoints
+            });
+            
+            // تحديث userData المحلي
+            userData.points = newPoints;
+            
+            // تحديث الواجهة مباشرة
+            setupHeaderUI();
+        }
+        
+        showWithdrawalResult();
+        
+    } catch (error) {
+        console.error("Error withdrawing:", error);
+        showBeautifulAlert('error', 'خطأ', 'حدث خطأ أثناء الانسحاب');
+    }
+};
 
         const showWithdrawalResult = () => {
-            clearInterval(gameTimer);
-            document.getElementById('game-overlay').classList.add('hidden');
-            
-            const resultScreen = document.getElementById('result-screen');
-            const iconContainer = document.getElementById('result-icon-container');
-            const title = document.getElementById('result-title');
-            const msg = document.getElementById('result-msg');
-            const myScore = document.getElementById('final-my-score');
-            const opScore = document.getElementById('final-op-score');
-            const opName = document.getElementById('final-op-name');
-            const pointsGained = document.getElementById('result-points-gained-text');
-            
-            iconContainer.innerText = "😢";
-            title.innerText = "انسحاب";
-            msg.innerText = "لقد انسحبت من المباراة";
-            myScore.innerText = "0";
-            opScore.innerText = "10";
-            opName.innerText = "الخصم";
-            pointsGained.innerText = "-10";
-            
-            resultScreen.classList.remove('hidden');
-            
-            userData.points -= 10;
-            setupHeaderUI();
-        };
+    clearInterval(gameTimer);
+    document.getElementById('game-overlay').classList.add('hidden');
+    
+    const resultScreen = document.getElementById('result-screen');
+    const iconContainer = document.getElementById('result-icon-container');
+    const title = document.getElementById('result-title');
+    const msg = document.getElementById('result-msg');
+    const myScore = document.getElementById('final-my-score');
+    const opScore = document.getElementById('final-op-score');
+    const opName = document.getElementById('final-op-name');
+    const pointsGained = document.getElementById('result-points-gained-text');
+    
+    iconContainer.innerText = "😢";
+    title.innerText = "انسحاب";
+    msg.innerText = "لقد انسحبت من المباراة";
+    myScore.innerText = "0";
+    opScore.innerText = "10";
+    opName.innerText = "الخصم";
+    
+    // عرض القيمة السالبة بشكل صحيح
+    pointsGained.innerHTML = `<span style="color: #ef4444; font-weight: bold;">-10</span>`;
+    
+    resultScreen.classList.remove('hidden');
+    
+    // تم تحديث النقاط في دالة الانسحاب الرئيسية
+    // لا حاجة لتحديثها هنا مرة أخرى
+};
 
         const endGame = async (d) => {
             clearInterval(gameTimer);
@@ -3836,8 +3895,8 @@
             iconContainer.innerText = icon;
             title.innerText = msg;
             resultMsg.innerText = "لقد قمت بأداء رائع";
-            finalMyScore.innerText = myScore;
-            finalOpScore.innerText = opScore;
+            finalMyScore.innerText = myScore < 0 ? `-${Math.abs(myScore)}` : myScore;
+finalOpScore.innerText = opScore < 0 ? `-${Math.abs(opScore)}` : opScore;
             finalOpName.innerText = opName;
             pointsGainedText.innerText = `+${pointsGained}`;
             
@@ -4089,29 +4148,77 @@
             }
         };
 
-        window.checkAdminNotifications = () => {
-            const badgeTab = document.getElementById('profile-tab-badge');
-            const badgeBtn = document.getElementById('admin-btn-badge');
-            badgeTab.classList.remove('visible'); 
+        // استبدل دالة checkAdminNotifications الحالية بهذا الكود:
+window.checkAdminNotifications = async () => {
+    const badgeTab = document.getElementById('profile-tab-badge');
+    const badgeBtn = document.getElementById('admin-btn-badge');
+    
+    if (userData.email === ADMIN_EMAIL) {
+        try {
+            // جلب جميع المستخدمين والتحقق من وجود أسئلة قيد المراجعة
+            const usersSnap = await getDocs(collection(db, "users"));
+            let hasPendingQuestions = false;
+            
+            for (const userDoc of usersSnap.docs) {
+                const userData = userDoc.data();
+                const submittedQuestions = userData.submittedQuestions || [];
+                
+                // التحقق إذا كان هناك أي سؤال بحالة "pending"
+                const pendingQuestion = submittedQuestions.find(q => q.status === 'pending');
+                if (pendingQuestion) {
+                    hasPendingQuestions = true;
+                    break; // توقف عند أول سؤال معلق
+                }
+            }
+            
+            // تحديث النقطة الحمراء
+            if (hasPendingQuestions) {
+                badgeTab.classList.add('visible');
+                badgeBtn.classList.add('visible');
+            } else {
+                badgeTab.classList.remove('visible');
+                badgeBtn.classList.remove('visible');
+            }
+            
+        } catch (error) {
+            console.error("Error checking admin notifications:", error);
+            badgeTab.classList.remove('visible');
             badgeBtn.classList.remove('visible');
-        };
+        }
+    } else {
+        badgeTab.classList.remove('visible');
+        badgeBtn.classList.remove('visible');
+    }
+};
 
         window.switchTab = (tab) => {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById('tab-'+tab).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n => { n.classList.remove('active'); n.classList.remove('text-indigo-600'); n.classList.add('text-gray-400'); });
-            const navs = document.querySelectorAll('.nav-item');
-            if(tab==='challenges') navs[0].classList.add('active', 'text-indigo-600');
-            if(tab==='leaderboard') { 
-                navs[1].classList.add('active', 'text-indigo-600'); 
-                loadLeaderboard(); 
-            }
-            if(tab==='schedule') { 
-                navs[2].classList.add('active', 'text-indigo-600'); 
-                initSchedule(); 
-            }
-            if(tab==='profile') navs[3].classList.add('active', 'text-indigo-600');
-        };
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('tab-'+tab).classList.add('active');
+    
+    document.querySelectorAll('.nav-item').forEach(n => { 
+        n.classList.remove('active'); 
+        n.classList.remove('text-indigo-600'); 
+        n.classList.add('text-gray-400'); 
+    });
+    
+    const navs = document.querySelectorAll('.nav-item');
+    if(tab==='challenges') navs[0].classList.add('active', 'text-indigo-600');
+    if(tab==='leaderboard') { 
+        navs[1].classList.add('active', 'text-indigo-600'); 
+        loadLeaderboard(); 
+    }
+    if(tab==='schedule') { 
+        navs[2].classList.add('active', 'text-indigo-600'); 
+        initSchedule(); 
+    }
+    if(tab==='profile') {
+        navs[3].classList.add('active', 'text-indigo-600');
+        // التحقق من الإشعارات عند فتح تبويب الحساب
+        if (window.checkAdminNotifications) {
+            setTimeout(() => window.checkAdminNotifications(), 300);
+        }
+    }
+};
         
         const loadLeaderboard = async () => {
             const div = document.getElementById('leaderboard-list');
@@ -4226,7 +4333,9 @@
                         <div class="flex items-center z-10">
                             ${resetBtn}
                             <div class="text-right">
-                                <span class="font-black text-indigo-600 text-lg">${u.points || 0} 💎${prizeMoney}</span>
+                                <span class="font-black ${(u.points || 0) < 0 ? 'text-red-500' : 'text-indigo-600'} text-lg">
+    ${(u.points || 0) < 0 ? `-${Math.abs(u.points)}` : (u.points || 0)} 💎${prizeMoney}
+</span>
                             </div>
                         </div>
                     </div>`;
@@ -4277,7 +4386,9 @@
                         <div class="flex items-center z-10">
                             ${resetBtn}
                             <div class="text-right">
-                                <span class="font-black text-indigo-600 text-lg">${u.points || 0} 💎</span>
+                                <span class="font-black ${(u.points || 0) < 0 ? 'text-red-500' : 'text-indigo-600'} text-lg">
+    ${(u.points || 0) < 0 ? `-${Math.abs(u.points)}` : (u.points || 0)} 💎${prizeMoney}
+</span>
                             </div>
                         </div>
                     </div>`;
@@ -5834,7 +5945,15 @@ const formatTime = (m) => {
         `;
     }
 };
+// أضف هذا في نهاية دالة loadReviewQuestions بعد عرض HTML
+// بعد السطر: listDiv.innerHTML = html;
 
+// إعادة التحقق من الإشعارات بعد تحميل الأسئلة
+setTimeout(() => {
+    if (window.checkAdminNotifications) {
+        window.checkAdminNotifications();
+    }
+}, 1000);
         window.acceptQuestion = async (docId, questionId, userId) => {
     try {
         // جلب بيانات المستخدم
@@ -5842,8 +5961,7 @@ const formatTime = (m) => {
         const userDoc = await getDoc(userRef);
         
         if (!userDoc.exists()) {
-            showBeautifulAlert('error', 'خطأ', 'المستخدم غير موجود');
-            return;
+            return; // لا تظهر رسالة
         }
         
         const userData = userDoc.data();
@@ -5853,8 +5971,7 @@ const formatTime = (m) => {
         const questionIndex = submittedQuestions.findIndex(q => q.id === questionId);
         
         if (questionIndex === -1) {
-            showBeautifulAlert('error', 'خطأ', 'السؤال غير موجود');
-            return;
+            return; // لا تظهر رسالة
         }
         
         const questionData = submittedQuestions[questionIndex];
@@ -5881,54 +5998,54 @@ const formatTime = (m) => {
         // تحديث بيانات المستخدم
         await updateDoc(userRef, {
             submittedQuestions: submittedQuestions,
-            points: increment(5) // إضافة 5 نقاط للمستخدم
+            points: increment(5)
         });
         
-        showBeautifulAlert('success', 'تم القبول', '✅ تم قبول السؤال ومنح المستخدم 5 نقاط');
+        // إعادة تحميل قائمة الأسئلة مباشرة (سيختفي السؤال)
         loadReviewQuestions();
         
     } catch (error) {
         console.error("Error accepting question:", error);
-        showBeautifulAlert('error', 'خطأ', '❌ حدث خطأ في قبول السؤال: ' + error.message);
+        // لا تظهر رسالة خطأ
     }
 };
 
-        window.rejectQuestion = async (docId, questionId) => {
-    if(confirm('هل أنت متأكد من رفض هذا السؤال؟')) {
-        try {
-            const userRef = doc(db, "users", docId);
-            const userDoc = await getDoc(userRef);
-            
-            if (!userDoc.exists()) {
-                showBeautifulAlert('error', 'خطأ', 'المستخدم غير موجود');
-                return;
-            }
-            
-            const userData = userDoc.data();
-            let submittedQuestions = userData.submittedQuestions || [];
-            
-            // تحديث حالة السؤال إلى "مرفوض"
-            submittedQuestions = submittedQuestions.map(q => {
-                if (q.id === questionId) {
-                    return { ...q, status: 'rejected' };
-                }
-                return q;
-            });
-            
-            // تحديث بيانات المستخدم
-            await updateDoc(userRef, {
-                submittedQuestions: submittedQuestions
-            });
-            
-            showBeautifulAlert('success', 'تم الرفض', '✅ تم رفض السؤال');
-            loadReviewQuestions();
-            
-        } catch (error) {
-            console.error("Error rejecting question:", error);
-            showBeautifulAlert('error', 'خطأ', '❌ حدث خطأ في رفض السؤال');
+window.rejectQuestion = async (docId, questionId) => {
+    try {
+        const userRef = doc(db, "users", docId);
+        const userDoc = await getDoc(userRef);
+        
+        if (!userDoc.exists()) {
+            return;
         }
+        
+        const userData = userDoc.data();
+        let submittedQuestions = userData.submittedQuestions || [];
+        
+        // تحديث حالة السؤال إلى "مرفوض"
+        submittedQuestions = submittedQuestions.map(q => {
+            if (q.id === questionId) {
+                return { ...q, status: 'rejected' };
+            }
+            return q;
+        });
+        
+        // تحديث بيانات المستخدم
+        await updateDoc(userRef, {
+            submittedQuestions: submittedQuestions
+        });
+        
+        // إعادة تحميل قائمة الأسئلة مباشرة (سيختفي السؤال)
+        loadReviewQuestions();
+        
+    } catch (error) {
+        console.error("Error rejecting question:", error);
+        // لا تظهر رسالة خطأ
     }
 };
+
+// أضف هذا السطر في نهاية الدالة rejectQuestion
+setTimeout(() => window.checkAdminNotifications(), 500);
 
         window.switchTab = (tab) => {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -5953,6 +6070,48 @@ const formatTime = (m) => {
             if(tab==='profile') navs[3].classList.add('active', 'text-indigo-600');
         };
         
+        // أضف هذه الدالة بعد تعريف ADMIN_EMAIL
+let pendingQuestionsListener = null;
+
+const setupRealTimeNotifications = () => {
+    if (pendingQuestionsListener) {
+        pendingQuestionsListener(); // إلغاء الاشتراك السابق إذا كان موجودًا
+    }
+    
+    if (userData.email === ADMIN_EMAIL) {
+        // الاستماع للتغييرات في جميع المستخدمين
+        pendingQuestionsListener = onSnapshot(collection(db, "users"), (snapshot) => {
+            let hasPendingQuestions = false;
+            
+            snapshot.forEach((userDoc) => {
+                const userData = userDoc.data();
+                const submittedQuestions = userData.submittedQuestions || [];
+                
+                const pendingQuestion = submittedQuestions.find(q => q.status === 'pending');
+                if (pendingQuestion) {
+                    hasPendingQuestions = true;
+                }
+            });
+            
+            updateNotificationBadge(hasPendingQuestions);
+        });
+    } else {
+        updateNotificationBadge(false);
+    }
+};
+
+const updateNotificationBadge = (hasPending) => {
+    const badgeTab = document.getElementById('profile-tab-badge');
+    const badgeBtn = document.getElementById('admin-btn-badge');
+    
+    if (hasPending) {
+        badgeTab.classList.add('visible');
+        badgeBtn.classList.add('visible');
+    } else {
+        badgeTab.classList.remove('visible');
+        badgeBtn.classList.remove('visible');
+    }
+};
         
     </script>
 </body>
