@@ -4,15 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>هكر الوزاري</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     
     <style>
-        /* --- Global Reset & Variables --- */
         :root {
             --primary: #4F46E5;
             --primary-dark: #4338ca;
@@ -34,7 +30,6 @@
             overscroll-behavior: none;
         }
 
-        /* --- Performance & Smooth Transitions --- */
         .screen {
             display: none; 
             height: 100vh; 
@@ -56,7 +51,6 @@
             transform: scale(1);
         }
 
-        /* --- Custom Scroll --- */
         .scroll-container {
             height: 100%;
             overflow-y: auto;
@@ -66,56 +60,44 @@
         .scroll-container::-webkit-scrollbar { display: none; }
         .scroll-container { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* --- Animations --- */
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes pulse-border { 0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(79, 70, 229, 0); } 100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); } }
         @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         
-        /* Hacker Intro Animation */
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes glitch { 0% { opacity: 1; transform: translate(0); } 20% { opacity: 0.8; transform: translate(-2px, 2px); } 40% { opacity: 1; transform: translate(2px, -2px); } 60% { opacity: 0.9; transform: translate(-1px, 1px); } 80% { opacity: 1; transform: translate(1px, -1px); } 100% { opacity: 1; transform: translate(0); } }
 
-        /* VS Animation */
         @keyframes slideInLeft { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes zoomInBounce { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); } }
 
-        /* --- PREMIUM ANIMATIONS & STYLES --- */
-        /* Medical Theme */
         .bg-medical { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); position: relative; overflow: hidden; }
         .bg-medical::before { content: '✚'; position: absolute; font-size: 40px; color: rgba(14, 165, 233, 0.2); animation: float 3s infinite; top: 10px; left: 10px; }
         .bg-medical::after { content: '💊'; position: absolute; font-size: 30px; opacity: 0.3; animation: spin-slow 10s infinite; bottom: 10px; right: 10px; }
         
-        /* Law Theme */
         .bg-law { background: linear-gradient(135deg, #fef3c7 0%, #d97706 100%); position: relative; overflow: hidden; }
         .bg-law::before { content: '⚖️'; position: absolute; font-size: 40px; opacity: 0.3; animation: float 4s infinite; top: 5px; right: 20px; }
         .bg-law::after { content: '📜'; position: absolute; font-size: 30px; opacity: 0.3; animation: float 5s infinite reverse; bottom: 5px; left: 20px; }
 
-        /* Education Theme */
         .bg-edu { background: linear-gradient(135deg, #dcfce7 0%, #4ade80 100%); position: relative; overflow: hidden; }
         .bg-edu::before { content: '📚'; position: absolute; font-size: 35px; opacity: 0.3; animation: float 3s infinite; top: 10px; left: 20px; }
         .bg-edu::after { content: '✏️'; position: absolute; font-size: 30px; opacity: 0.3; animation: float 4s infinite reverse; bottom: 10px; right: 20px; }
 
-        /* Engineering Theme */
         .bg-eng { background: linear-gradient(135deg, #fef9c3 0%, #facc15 100%); position: relative; overflow: hidden; }
         .bg-eng::before { content: '📐'; position: absolute; font-size: 35px; opacity: 0.3; animation: spin-slow 8s infinite; top: 5px; left: 10px; }
         .bg-eng::after { content: '⚙️'; position: absolute; font-size: 40px; opacity: 0.2; animation: spin-slow 4s infinite reverse; bottom: 5px; right: 10px; }
 
-        /* Smart Theme */
         .bg-smart { background: linear-gradient(135deg, #ffedd5 0%, #fb923c 100%); position: relative; overflow: hidden; }
         .bg-smart::before { content: '💡'; position: absolute; font-size: 40px; opacity: 0.4; animation: pulse-border 2s infinite; top: 10px; right: 10px; }
         .bg-smart::after { content: '🧠'; position: absolute; font-size: 30px; opacity: 0.3; animation: float 3s infinite; bottom: 10px; left: 10px; }
 
-        /* Love Theme */
         .bg-love { background: linear-gradient(135deg, #fce7f3 0%, #f472b6 100%); position: relative; overflow: hidden; }
         .bg-love::before { content: '❤'; position: absolute; font-size: 20px; color: rgba(255,255,255,0.6); animation: float 2s infinite; top: 20px; left: 20%; }
         .bg-love::after { content: '💖'; position: absolute; font-size: 30px; opacity: 0.5; animation: float 3s infinite reverse; bottom: 10px; right: 20%; }
 
-        /* Default Rank BG */
         .bg-rank-default { background: white; }
 
-        /* Badge Styles */
         .premium-badge {
             display: inline-block;
             padding: 2px 6px;
@@ -128,7 +110,6 @@
             vertical-align: middle;
         }
 
-        /* --- Components --- */
         .auth-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: white; z-index: 9999; display: flex;
@@ -177,7 +158,6 @@
         }
         .btn-dot.visible { display: block; }
 
-        /* Hacker Intro Styles */
         .hacker-avatar {
             font-size: 80px;
             color: #1e293b;
@@ -210,7 +190,6 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
-        /* --- RANKING FRAMES & RAYS --- */
         .rank-img-container { 
             position: relative; display: flex; align-items: center; justify-content: center;
             width: 60px; height: 60px; margin-right: 5px;
@@ -247,7 +226,6 @@
         .frame-rank-other-top { border: 2px solid #6366f1; }
         .name-crown { margin-right: 6px; font-size: 14px; animation: bounce 2s infinite; display: inline-block; }
 
-        /* --- Daily Reward --- */
         .reward-overlay { background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); }
         .reward-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 20px; }
         .day-box {
@@ -266,7 +244,6 @@
         .day-box.active p { color: #D97706; }
         .day-box.locked { opacity: 0.6; }
 
-        /* --- Maintenance Modal --- */
         .new-maintenance-overlay {
             position: fixed; inset: 0; z-index: 11000;
             background: rgba(15, 23, 42, 0.95); 
@@ -300,7 +277,6 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        /* --- Ban Overlay --- */
         .ban-overlay {
             position: fixed; inset: 0; z-index: 20000;
             background: #0f172a;
@@ -309,7 +285,6 @@
         }
         .ban-icon { font-size: 80px; color: #ef4444; margin-bottom: 20px; }
 
-        /* Toggle Switch */
         .toggle-wrapper { position: relative; width: 50px; height: 26px; }
         .toggle-checkbox { opacity: 0; width: 0; height: 0; }
         .toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #9CA3AF; transition: .4s; border-radius: 34px; }
@@ -317,7 +292,6 @@
         .toggle-checkbox:checked + .toggle-slider { background-color: #10B981; }
         .toggle-checkbox:checked + .toggle-slider:before { transform: translateX(24px); }
         
-        /* Modal Styles */
         .modal-overlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.5); 
             z-index: 12000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px);
@@ -328,14 +302,12 @@
             animation: slideUp 0.3s ease-out; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
 
-        /* Answer Colors */
         .answer-correct { background: #DCFCE7 !important; border-color: #22C55E !important; color: #166534 !important; position: relative; }
         .answer-correct::after { content: '✓'; position: absolute; left: 15px; font-size: 1.2rem; font-weight: bold; color: #22C55E; }
         .answer-wrong { background: #FEE2E2 !important; border-color: #EF4444 !important; color: #991B1B !important; position: relative; }
         .answer-wrong::after { content: '✗'; position: absolute; left: 15px; font-size: 1.2rem; font-weight: bold; color: #EF4444; }
         .answer-neutral { background: white !important; border-color: #E5E7EB !important; color: #374151 !important; }
 
-        /* --- Countdown Timer --- */
         .countdown-container {
             background: linear-gradient(to right, #1e293b, #0f172a);
             color: white; padding: 10px; border-radius: 12px;
@@ -345,7 +317,6 @@
         }
         .timer-digits { font-family: monospace; font-size: 1.5rem; font-weight: bold; color: #ffd700; letter-spacing: 2px; }
 
-        /* --- VS Screen & Avatar Styles --- */
         .vs-screen-overlay {
             position: fixed; inset: 0; z-index: 15000;
             background: radial-gradient(circle at center, #2e1065, #0f172a);
@@ -371,7 +342,6 @@
             object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: inline-block; vertical-align: middle;
         }
 
-        /* --- Room System Styles --- */
         .room-code-display {
             font-family: monospace;
             font-size: 2rem;
@@ -458,7 +428,6 @@
             backdrop-filter: blur(10px);
         }
 
-        /* --- Beautiful Modal Styles --- */
         .beautiful-modal {
             background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
             border-radius: 25px;
@@ -526,7 +495,6 @@
             box-shadow: 0 4px 15px rgba(100, 116, 139, 0.3);
         }
 
-        /* --- Withdraw Button Styles --- */
         .withdraw-btn {
             position: fixed;
             bottom: 20px;
@@ -557,7 +525,6 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        /* --- Premium Timer Styles --- */
         .premium-timer-container {
             background: linear-gradient(135deg, #0f172a, #1e293b);
             color: white;
@@ -577,7 +544,6 @@
             letter-spacing: 3px;
         }
 
-        /* --- Beautiful Alert Styles --- */
         .beautiful-alert {
             position: fixed;
             top: 50%;
@@ -647,7 +613,6 @@
             opacity: 0.9;
         }
 
-        /* --- Result Screen Styles --- */
         .result-container {
             display: flex;
             flex-direction: column;
@@ -743,7 +708,6 @@
             gap: 10px;
         }
 
-        /* --- Banned Users List Styles --- */
         .banned-user-item {
             background: white;
             border-radius: 12px;
@@ -800,7 +764,6 @@
 </head>
 <body>
 
-    <!-- 0. BANNED SCREEN -->
     <div id="ban-screen" class="ban-overlay hidden">
         <i class="fas fa-ban ban-icon"></i>
         <h1 class="text-3xl font-black mb-4">تم حظر حسابك</h1>
@@ -810,7 +773,6 @@
         </div>
     </div>
 
-    <!-- 1. INTRO SCREEN -->
     <div id="intro-screen" class="auth-overlay flex-col bg-slate-50" style="z-index: 10000;">
         <div class="hacker-avatar">
             <i class="fas fa-user-secret"></i>
@@ -823,7 +785,6 @@
         <style> @keyframes loadBar { 0% { width: 0%; } 100% { width: 100%; } } </style>
     </div>
 
-    <!-- 1.5 VS SCREEN -->
     <div id="vs-screen" class="vs-screen-overlay hidden">
         <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-30"></div>
         <div class="flex items-center justify-center gap-6 w-full max-w-lg relative">
@@ -842,12 +803,10 @@
         <p class="text-indigo-300 font-bold mt-10 tracking-widest animate-pulse">جاري بدء التحدي...</p>
     </div>
 
-    <!-- 2. DAILY REWARD POPUP -->
     <div id="daily-reward-screen" class="fixed inset-0 reward-overlay z-[9000] hidden flex flex-col items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl relative overflow-hidden animate-[slideUp_0.4s_ease-out]">
             <div class="text-center mb-4">
                 <h2 class="text-2xl font-black text-indigo-800">سجل الحضور اليومي 📅</h2>
-                <p class="text-xs text-gray-500">التوقيت حسب بغداد (12:00 ص)</p>
             </div>
             <div id="reward-grid-container" class="reward-grid"></div>
             <div class="text-center mt-6">
@@ -862,12 +821,10 @@
         </div>
     </div>
 
-    <!-- 3. MAINTENANCE MODAL -->
     <div id="maintenance-popup" class="new-maintenance-overlay hidden">
         <div class="new-maintenance-card">
             <div class="maint-icon-wrapper"><i class="fas fa-tools"></i></div>
             <h2 class="maint-title">النظام تحت الصيانة</h2>
-            <p class="text-sm text-red-500 font-bold mb-6 tracking-wide uppercase">System Maintenance</p>
             <div class="bg-white/90 border border-slate-200 rounded-2xl p-5 mb-6 text-slate-700 font-bold leading-relaxed">
                 <p id="maintenance-msg-display">رسالة الإدارة...</p>
             </div>
@@ -877,7 +834,6 @@
         </div>
     </div>
 
-    <!-- 4. FORGOT PASSWORD MODAL -->
     <div id="forgot-password-modal" class="modal-overlay hidden">
         <div class="bg-white rounded-3xl p-8 w-11/12 max-w-sm shadow-2xl animate-[slideUp_0.2s_ease-out]">
             <div class="text-center mb-6">
@@ -889,7 +845,6 @@
             <div class="mb-6">
                 <label class="block text-sm font-bold text-gray-600 mb-2">البريد الإلكتروني</label>
                 <input type="email" id="forgot-email" placeholder="أدخل بريدك الإلكتروني المسجل" class="input-box">
-                <p class="text-xs bg-yellow-50 text-yellow-700 p-2 rounded mt-2 border border-yellow-200">تنبيه: الرسالة ممكن توصل "الرسائل غير المرغوب فيها"</p>
             </div>
             <div class="flex gap-3">
                 <button onclick="closeForgotPassword()" class="flex-1 bg-gray-100 text-gray-600 py-3 rounded-xl font-bold hover:bg-gray-200 transition">إلغاء</button>
@@ -898,12 +853,10 @@
         </div>
     </div>
 
-    <!-- 5. AUTH SCREEN -->
     <div id="auth-screen" class="auth-overlay hidden">
         <div class="w-full max-w-md p-8 h-full overflow-y-auto flex flex-col justify-center">
             <div class="text-center mb-8">
                 <h1 class="text-3xl font-black text-indigo-600 mb-2">هكر الوزاري</h1>
-                <p class="text-gray-500 text-sm">بوابتك للتفوق في الامتحانات الوزارية</p>
             </div>
             <div class="auth-tabs">
                 <div id="tab-login-btn" onclick="switchAuthTab('login')" class="auth-tab active">تسجيل الدخول</div>
@@ -943,15 +896,12 @@
                     <div><input type="password" id="signup-pass" placeholder="كلمة المرور (6+ أحرف)" class="input-box" required></div>
                 </div>
                 <button type="submit" class="btn-main mt-6 bg-indigo-600">إنشاء حساب جديد</button>
-                <p class="text-xs text-center text-gray-400 mt-4">بإمكانك إنشاء حساب واحد فقط للجهاز</p>
             </form>
         </div>
     </div>
 
-    <!-- 6. MAIN APP CONTAINER -->
     <div id="main-app" class="hidden w-full h-full relative">
         
-        <!-- HEADER -->
         <div class="absolute top-0 w-full h-20 bg-white/95 backdrop-blur-sm shadow-sm z-30 flex items-center justify-between px-5 pt-2">
             <div>
                 <h1 class="font-black text-lg text-indigo-900">هكر الوزاري</h1>
@@ -966,17 +916,12 @@
             </div>
         </div>
 
-        <!-- === TABS === -->
-
-        <!-- TAB 1: CHALLENGES -->
         <div id="tab-challenges" class="screen pt-20">
             <div class="scroll-container px-5 py-6">
-                <!-- Select Grade First Time -->
                 <div id="grade-selector-card" class="bg-white p-6 rounded-2xl shadow-sm mb-6 border border-gray-100">
                     <div class="text-center mb-4">
                         <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-2"><i class="fas fa-school text-xl"></i></div>
                         <h3 class="font-bold text-gray-800">حدد مرحلتك الدراسية</h3>
-                        <p class="text-xs text-gray-400">يتم تحديدها مرة واحدة فقط</p>
                     </div>
                     <select id="grade-select" class="input-box mb-4 text-center">
                         <option value="">-- اختر المرحلة --</option>
@@ -987,7 +932,6 @@
                     <button onclick="saveUserGrade()" class="btn-main py-3 text-sm">حفظ المرحلة</button>
                 </div>
 
-                <!-- Active Challenge Card -->
                 <div id="challenge-active-card" class="bg-white p-6 rounded-2xl shadow-sm mb-6 hidden">
                     <h3 class="font-bold text-gray-800 mb-4 border-r-4 border-indigo-500 pr-3">بدء تحدي جديد 🔥</h3>
                     <label class="block text-sm font-bold text-gray-600 mb-2">المادة</label>
@@ -1007,13 +951,11 @@
                         <i class="fas fa-robot ml-2"></i> ضد الذكاء الاصطناعي
                     </button>
 
-                    <!-- زر تحدّي الأصدقاء -->
                     <button onclick="openFriendChallenge()" class="btn-main bg-gradient-to-r from-pink-500 to-rose-600 h-12">
                         <i class="fas fa-users ml-2"></i> تحدّي الأصدقاء (غرف)
                     </button>
                 </div>
 
-                <!-- Searching UI -->
                 <div id="searching-ui" class="hidden flex-col items-center justify-center py-10 min-h-[300px]">
                     <div class="w-24 h-24 rounded-full bg-indigo-50 flex items-center justify-center relative mb-6">
                         <div class="absolute inset-0 rounded-full border-4 border-indigo-500 opacity-20 animate-ping"></div>
@@ -1025,10 +967,8 @@
             </div>
         </div>
 
-        <!-- GAME OVERLAY -->
         <div id="game-overlay" class="fixed inset-0 bg-gray-50 z-[100] hidden flex-col">
             <div class="bg-white p-3 shadow-sm flex justify-between items-center z-10 border-b border-gray-100 h-20">
-                <!-- Player 1 -->
                 <div class="flex items-center gap-2 w-1/3 overflow-hidden">
                     <img id="game-p1-img" src="" class="game-avatar-small">
                     <div class="overflow-hidden">
@@ -1037,12 +977,10 @@
                     </div>
                 </div>
                 
-                <!-- Timer -->
                 <div class="w-1/3 flex justify-center">
                     <div id="game-timer" class="w-10 h-10 bg-gray-800 text-white rounded-full flex items-center justify-center font-bold text-md shadow-md">15</div>
                 </div>
 
-                <!-- Player 2 -->
                 <div class="flex items-center gap-2 w-1/3 overflow-hidden justify-end">
                     <div class="overflow-hidden text-left">
                         <p id="p2-name" class="text-[10px] text-gray-500 font-bold truncate">...</p>
@@ -1062,13 +1000,11 @@
                 <p id="ai-thinking-msg" class="text-center text-green-600 text-sm hidden animate-pulse mt-4 font-bold">الذكاء الاصطناعي يفكر...</p>
             </div>
 
-            <!-- زر الانسحاب -->
             <button id="withdraw-game-btn" onclick="withdrawFromGame()" class="withdraw-btn hidden">
                 <i class="fas fa-sign-out-alt"></i> انسحاب
             </button>
         </div>
 
-        <!-- POST MATCH RESULT SCREEN -->
         <div id="result-screen" class="fixed inset-0 bg-white z-[200] hidden">
             <div class="result-container">
                 <button onclick="closeResultScreen()" class="absolute top-6 right-6 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-200">
@@ -1102,10 +1038,8 @@
             </div>
         </div>
 
-        <!-- TAB 2: LEADERBOARD -->
         <div id="tab-leaderboard" class="screen pt-20">
             <div class="scroll-container px-4">
-                <!-- Weekly Countdown -->
                 <div class="countdown-container">
                     <p class="text-xs text-gray-300 mb-1">الجوائز الاسبوعية 🎁 (الخميس 12:00 ص)</p>
                     <div id="weekly-timer" class="timer-digits">00:00:00:00</div>
@@ -1119,10 +1053,12 @@
                     <i class="fas fa-trophy text-4xl opacity-50"></i>
                 </div>
                 <div id="leaderboard-list" class="space-y-4 pb-10 flex flex-col"></div>
+                <button id="load-more-leaderboard" onclick="loadMoreLeaderboard()" class="beautiful-btn secondary hidden mt-4 mb-10">
+                    <i class="fas fa-chevron-down"></i> عرض المزيد
+                </button>
             </div>
         </div>
 
-        <!-- TAB 3: STUDY SCHEDULE -->
         <div id="tab-schedule" class="screen pt-20">
             <div class="scroll-container px-5 py-6">
                 <section id="schedule-input-page">
@@ -1132,7 +1068,6 @@
                                 <i class="fa-solid fa-layer-group text-2xl text-indigo-600"></i>
                             </div>
                             <h1 class="text-xl font-bold text-gray-800">جدول الدراسة اليومي</h1>
-                            <p class="text-xs text-gray-500 mt-1">خطط لدراستك بذكاء وحقق أفضل النتائج!</p>
                         </header>
 
                         <form onsubmit="handleScheduleFormSubmit(event)">
@@ -1181,7 +1116,6 @@
                         <div class="p-5">
                             <div class="text-center mb-6">
                                 <h2 class="text-3xl font-black text-gray-800" id="displaySubject"></h2>
-                                <p class="text-xs text-gray-500 mt-1">خطة دراسية ذكية</p>
                             </div>
 
                             <div class="mb-6 overflow-x-auto">
@@ -1217,7 +1151,6 @@
             </div>
         </div>
 
-        <!-- TAB 4: PROFILE -->
         <div id="tab-profile" class="screen pt-20">
             <div class="scroll-container px-5">
                 <div class="bg-white p-6 rounded-3xl shadow-sm text-center mb-6 mt-4 relative overflow-hidden">
@@ -1226,16 +1159,17 @@
                         <img id="profile-img" src="" class="w-24 h-24 rounded-full mx-auto border-4 border-white shadow-md mb-3 object-cover">
                         <div class="flex items-center justify-center gap-2 flex-wrap" id="profile-name-container">
                             <h2 id="profile-name-text" class="text-xl font-bold text-gray-800">...</h2>
-                            <!-- Badge will be inserted here -->
                             <button onclick="editProfileName()" class="w-6 h-6 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center hover:bg-indigo-100 transition">
                                 <i class="fas fa-pen text-xs"></i>
                             </button>
                         </div>
                         <p class="text-xs text-gray-400 mt-1" id="profile-id-text">ID: ...</p>
-                        <p class="text-xs text-gray-600 mt-2 max-w-xs mx-auto" id="profile-bio-text">لا يوجد سيرة ذاتية</p>
-                        <button onclick="editProfileBio()" class="text-indigo-600 text-xs font-bold mt-2 hover:underline flex items-center justify-center gap-1 mx-auto">
-                            <i class="fas fa-pen text-xs"></i> تعديل السيرة الذاتية
-                        </button>
+                        <div class="flex items-center justify-center gap-1 mt-2">
+                            <p class="text-xs text-gray-600 max-w-xs mx-auto" id="profile-bio-text">لا يوجد سيرة ذاتية</p>
+                            <button onclick="editProfileBio()" class="text-indigo-600 hover:text-indigo-800">
+                                <i class="fas fa-pen text-xs"></i>
+                            </button>
+                        </div>
                         <button onclick="document.getElementById('edit-pic-input').click()" class="text-indigo-600 text-xs font-bold mt-2 hover:underline block mx-auto">تغيير الصورة</button>
                         <input type="file" id="edit-pic-input" hidden accept="image/*" onchange="updateProfilePic(this)">
                     </div>
@@ -1250,7 +1184,6 @@
                         <i class="fas fa-chevron-left text-gray-300"></i>
                     </button>
 
-                    <!-- زر قسم المميزين في حسابي -->
                     <button onclick="openPage('screen-premium-in-profile')" class="stat-btn border-yellow-100 bg-yellow-50">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-yellow-600"><i class="fas fa-crown"></i></div>
@@ -1259,15 +1192,6 @@
                         <i class="fas fa-chevron-left text-gray-300"></i>
                     </button>
 
-                    <button onclick="openPage('screen-stats')" class="stat-btn">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600"><i class="fas fa-chart-pie"></i></div>
-                            <span class="font-bold text-gray-700">إحصائيات التطبيق</span>
-                        </div>
-                        <i class="fas fa-chevron-left text-gray-300"></i>
-                    </button>
-
-                    <!-- Unified Admin Button -->
                     <div id="admin-hub-btn-container" class="hidden mt-4">
                         <button onclick="openPage('screen-admin-hub')" class="stat-btn border-red-200 bg-red-50 shadow-md">
                             <div class="flex items-center gap-3">
@@ -1291,9 +1215,6 @@
             </div>
         </div>
 
-        <!-- === SUB SCREENS === -->
-
-        <!-- Screen: Wallet -->
         <div id="screen-wallet" class="screen pt-20">
             <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
                 <button onclick="backToProfile()" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
@@ -1303,9 +1224,6 @@
                 <div class="bg-gradient-to-br from-green-500 to-emerald-700 text-white p-8 rounded-3xl shadow-lg mb-6">
                     <p class="text-green-100 text-sm mb-2 font-bold">الرصيد الحالي</p>
                     <h1 class="text-5xl font-black mb-1">$<span id="wallet-balance">0</span></h1>
-                    <p class="text-xs text-green-200 mt-4 border-t border-green-400 pt-2 leading-relaxed">
-                        (يمكن سحب اقل شي 100$ وكل 100$ تساوي 10 الف دينار عراقي)
-                    </p>
                 </div>
                 <div id="withdraw-section" class="hidden">
                      <a href="https://t.me/mslmh19" target="_blank" class="w-full bg-blue-500 text-white py-4 rounded-xl font-bold shadow-lg hover:bg-blue-600 transition flex items-center justify-center gap-2 animate-pulse">
@@ -1317,14 +1235,12 @@
             </div>
         </div>
 
-        <!-- Screen: قسم المميزين داخل حسابي -->
         <div id="screen-premium-in-profile" class="screen pt-20">
             <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
                 <button onclick="backToProfile()" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
                 <h1 class="font-bold text-lg text-gray-800">قسم المميزين</h1>
             </div>
             <div class="scroll-container px-5 py-6">
-                <!-- NON-PREMIUM VIEW -->
                 <div id="premium-locked-view">
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-yellow-100 mb-6">
                         <h3 class="font-bold text-gray-800 mb-4 text-center">تفعيل الاشتراك المميز 🔑</h3>
@@ -1342,21 +1258,17 @@
                     </div>
                 </div>
 
-                <!-- PREMIUM ACTIVE VIEW -->
                 <div id="premium-active-view" class="hidden">
-                    <!-- Timer Card -->
                     <div class="premium-timer-container">
                         <p class="text-xs text-gray-300 mb-1">المدة المتبقية لاشتراكك</p>
                         <div id="premium-countdown" class="premium-timer-digits">تحميل...</div>
                     </div>
 
-                    <!-- Customization Buttons -->
                     <div class="grid grid-cols-1 gap-4 mb-6">
                         <button onclick="openBadgeSelector()" class="bg-white p-4 rounded-2xl shadow-sm border border-indigo-100 flex items-center gap-4 hover:shadow-md transition group">
                             <div class="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition"><i class="fas fa-check-circle text-xl"></i></div>
                             <div class="text-right">
                                 <h3 class="font-bold text-gray-800">علامة التوثيق</h3>
-                                <p class="text-xs text-gray-500">اختر اللقب واللون بجانب اسمك</p>
                             </div>
                             <i class="fas fa-chevron-left mr-auto text-gray-300"></i>
                         </button>
@@ -1365,13 +1277,11 @@
                             <div class="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition"><i class="fas fa-image text-xl"></i></div>
                             <div class="text-right">
                                 <h3 class="font-bold text-gray-800">خلفية التصنيف</h3>
-                                <p class="text-xs text-gray-500">اختر خلفية مميزة لبطاقتك</p>
                             </div>
                             <i class="fas fa-chevron-left mr-auto text-gray-300"></i>
                         </button>
                     </div>
 
-                    <!-- Active Perks Status -->
                     <div class="space-y-3">
                         <div class="flex items-center justify-between bg-green-50 p-3 rounded-xl border border-green-200">
                             <div class="flex items-center gap-2">
@@ -1399,14 +1309,13 @@
             </div>
         </div>
 
-        <!-- Screen: ADMIN HUB -->
         <div id="screen-admin-hub" class="screen pt-20">
             <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
                 <button onclick="backToProfile()" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
                 <h1 class="font-bold text-lg text-gray-800">لوحة التحكم الرئيسية</h1>
             </div>
             <div class="scroll-container px-5 py-6">
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-3 gap-3">
                     <button onclick="openPage('screen-admin-panel')" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-2 hover:bg-gray-50">
                         <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center text-red-600"><i class="fas fa-cogs text-xl"></i></div>
                         <span class="font-bold text-sm text-gray-700">النظام</span>
@@ -1423,11 +1332,14 @@
                         <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600"><i class="fas fa-ticket-alt text-xl"></i></div>
                         <span class="font-bold text-sm text-gray-700">إدارة الاشتراكات</span>
                     </button>
+                    <button onclick="openPage('screen-admin-stats')" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-2 hover:bg-gray-50">
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600"><i class="fas fa-chart-pie text-xl"></i></div>
+                        <span class="font-bold text-sm text-gray-700">إحصائيات</span>
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- Screen: Admin Subscription -->
         <div id="screen-admin-subscription" class="screen pt-20">
             <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
                 <button onclick="openPage('screen-admin-hub')" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
@@ -1438,25 +1350,21 @@
                     <button onclick="openPage('screen-admin-generate-code')" class="bg-white p-6 rounded-2xl shadow-sm border border-green-100 flex flex-col items-center justify-center gap-3 hover:bg-green-50 transition">
                         <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-green-600"><i class="fas fa-key text-2xl"></i></div>
                         <h3 class="font-bold text-gray-800">تكوين كود</h3>
-                        <p class="text-xs text-gray-500 text-center">إنشاء كود اشتراك جديد</p>
                     </button>
 
                     <button onclick="openPage('screen-admin-delete-code')" class="bg-white p-6 rounded-2xl shadow-sm border border-red-100 flex flex-col items-center justify-center gap-3 hover:bg-red-50 transition">
                         <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center text-red-600"><i class="fas fa-trash-alt text-2xl"></i></div>
                         <h3 class="font-bold text-gray-800">حذف كود الاشتراك</h3>
-                        <p class="text-xs text-gray-500 text-center">حذف كود اشتراك موجود</p>
                     </button>
 
                     <button onclick="openPage('screen-admin-premium-users')" class="bg-white p-6 rounded-2xl shadow-sm border border-blue-100 flex flex-col items-center justify-center gap-3 hover:bg-blue-50 transition">
                         <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-blue-600"><i class="fas fa-crown text-2xl"></i></div>
                         <h3 class="font-bold text-gray-800">المستخدمين المميزين</h3>
-                        <p class="text-xs text-gray-500 text-center">عرض جميع المستخدمين المميزين</p>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Screen: Admin Generate Code -->
         <div id="screen-admin-generate-code" class="screen pt-20">
             <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
                 <button onclick="openPage('screen-admin-subscription')" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
@@ -1495,7 +1403,6 @@
             </div>
         </div>
 
-        <!-- Screen: Admin Delete Code -->
         <div id="screen-admin-delete-code" class="screen pt-20">
             <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
                 <button onclick="openPage('screen-admin-subscription')" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
@@ -1508,12 +1415,10 @@
                     <button onclick="deleteSubscriptionCode()" class="btn-main bg-red-600 hover:bg-red-700">
                         <i class="fas fa-trash-alt ml-2"></i> حذف الكود
                     </button>
-                    <p class="text-xs text-gray-500 mt-3">ملاحظة: هذا الحذف نهائي ولا يمكن التراجع عنه</p>
                 </div>
             </div>
         </div>
 
-        <!-- Screen: Admin Premium Users -->
         <div id="screen-admin-premium-users" class="screen pt-20">
             <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
                 <button onclick="openPage('screen-admin-subscription')" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
@@ -1526,7 +1431,6 @@
             </div>
         </div>
 
-        <!-- Screen: Admin System Panel -->
         <div id="screen-admin-panel" class="screen pt-20">
             <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
                 <button onclick="openPage('screen-admin-hub')" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
@@ -1535,13 +1439,11 @@
             <div class="scroll-container px-5 py-6">
                 <div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-5 shadow-sm">
                     <h3 class="font-bold text-yellow-800 mb-2">🎁 توزيع الجوائز الأسبوعية</h3>
-                    <p class="text-xs text-yellow-600 mb-4">عند الضغط، سيتم توزيع الجوائز على المراكز الـ 10 الأولى وتصفير نقاط جميع المستخدمين.</p>
                     <button onclick="manualWeeklyDistribution()" class="w-full bg-yellow-500 text-white font-bold py-3 rounded-xl shadow-md hover:bg-yellow-600">توزيع وتصفير الآن</button>
                 </div>
             </div>
         </div>
 
-        <!-- Screen: Admin Users -->
         <div id="screen-admin-users" class="screen pt-20">
             <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
                 <button onclick="openPage('screen-admin-hub')" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
@@ -1554,20 +1456,16 @@
                 </div>
                 <div id="admin-user-result" class="hidden bg-white p-5 rounded-2xl shadow-md border border-gray-100"></div>
                 
-                <!-- قائمة المحظورين -->
                 <div id="banned-users-section" class="mt-8 hidden">
                     <h3 class="font-bold text-gray-800 mb-4 text-center">المستخدمين المحظورين</h3>
-                    <div id="banned-users-list" class="space-y-3">
-                        <!-- سيتم تعبئتها عبر JavaScript -->
-                    </div>
+                    <div id="banned-users-list" class="space-y-3"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Screen: App Stats -->
-        <div id="screen-stats" class="screen pt-20">
+        <div id="screen-admin-stats" class="screen pt-20">
             <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
-                <button onclick="backToProfile()" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
+                <button onclick="openPage('screen-admin-hub')" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
                 <h1 class="font-bold text-lg text-gray-800">إحصائيات التطبيق</h1>
             </div>
             <div class="scroll-container px-5 py-6">
@@ -1575,7 +1473,6 @@
             </div>
         </div>
 
-        <!-- Screen: Admin ALL Questions -->
         <div id="screen-admin-all" class="screen pt-20">
             <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
                 <button onclick="openPage('screen-admin-hub')" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
@@ -1603,21 +1500,18 @@
             </div>
         </div>
 
-        <!-- Screen: Friend Challenge Room -->
         <div id="screen-friend-challenge" class="screen pt-20">
             <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
                 <button onclick="backToChallenges()" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
                 <h1 class="font-bold text-lg text-gray-800">تحدي الأصدقاء</h1>
             </div>
             <div class="scroll-container px-5 py-6">
-                <!-- محتوى الغرفة سيتم تعبئته عبر JavaScript -->
                 <div id="room-content" class="text-center">
                     <p class="text-gray-400 mt-10">جاري تحميل الغرفة...</p>
                 </div>
             </div>
         </div>
 
-        <!-- Screen: Create Room -->
         <div id="screen-create-room" class="screen pt-20">
             <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
                 <button onclick="backToFriendChallenge()" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
@@ -1647,7 +1541,6 @@
             </div>
         </div>
 
-        <!-- Screen: Join Room -->
         <div id="screen-join-room" class="screen pt-20">
             <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
                 <button onclick="backToFriendChallenge()" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
@@ -1669,7 +1562,6 @@
             </div>
         </div>
         
-        <!-- BOTTOM NAV -->
         <div class="fixed bottom-0 w-full bg-white border-t border-gray-100 flex justify-around items-center h-20 pb-2 z-40 shadow-[0_-5px_20px_rgba(0,0,0,0.03)]">
             <div onclick="switchTab('challenges')" class="nav-item active flex-1 flex flex-col items-center justify-center h-full cursor-pointer">
                 <i class="fas fa-gamepad text-xl mb-1"></i><span class="text-[10px] font-bold">التحديات</span>
@@ -1686,7 +1578,6 @@
             </div>
         </div>
         
-        <!-- POPUP: Premium Details -->
         <div id="premium-details-modal" class="modal-overlay hidden">
             <div class="modal-content relative bg-gradient-to-br from-indigo-900 to-indigo-800 text-white border-2 border-yellow-500">
                 <button onclick="document.getElementById('premium-details-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
@@ -1720,17 +1611,14 @@
             </div>
         </div>
 
-        <!-- POPUP: Badge Selector -->
         <div id="badge-selector-modal" class="modal-overlay hidden">
             <div class="modal-content relative">
                  <button onclick="document.getElementById('badge-selector-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400"><i class="fas fa-times"></i></button>
                  <h3 class="font-bold text-lg mb-4 text-indigo-700 text-center">اختر لقب التوثيق</h3>
-                 <p class="text-xs text-gray-500 text-center mb-4">سيظهر هذا اللقب بلون عشوائي بجانب اسمك</p>
                  <div class="grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto p-2" id="badge-grid"></div>
             </div>
         </div>
 
-        <!-- POPUP: Background Selector -->
         <div id="bg-selector-modal" class="modal-overlay hidden">
              <div class="modal-content relative">
                  <button onclick="document.getElementById('bg-selector-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400"><i class="fas fa-times"></i></button>
@@ -1739,7 +1627,6 @@
             </div>
         </div>
         
-        <!-- EDIT QUESTION MODAL -->
         <div id="edit-modal" class="modal-overlay hidden">
             <div class="modal-content relative">
                 <button onclick="document.getElementById('edit-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
@@ -1766,12 +1653,10 @@
             </div>
         </div>
 
-        <!-- POPUP: Add Subscription -->
         <div id="add-subscription-modal" class="modal-overlay hidden">
             <div class="modal-content relative">
                 <button onclick="document.getElementById('add-subscription-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
                 <h3 class="font-bold text-lg mb-4 text-indigo-700 text-center">إضافة اشتراك</h3>
-                <p class="text-xs text-gray-500 text-center mb-4">أدخل كود الاشتراك لتزيد المدة</p>
                 <input type="text" id="add-subscription-code" placeholder="أدخل كود الاشتراك" class="input-box mb-4 text-center font-mono text-lg uppercase">
                 <button onclick="addSubscriptionTime()" class="btn-main bg-green-600 hover:bg-green-700">
                     <i class="fas fa-plus-circle ml-2"></i> إضافة المدة
@@ -1779,17 +1664,24 @@
             </div>
         </div>
 
-        <!-- POPUP: Edit Bio -->
         <div id="edit-bio-modal" class="modal-overlay hidden">
             <div class="modal-content relative">
                 <button onclick="document.getElementById('edit-bio-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
                 <h3 class="font-bold text-lg mb-4 text-indigo-700 text-center">تعديل السيرة الذاتية</h3>
-                <textarea id="edit-bio-input" class="input-box h-32 mb-4" placeholder="اكتب نبذة عنك..."></textarea>
+                <textarea id="edit-bio-input" class="input-box h-32 mb-4" placeholder="اكتب نبذة عنك..." maxlength="25"></textarea>
                 <button onclick="saveProfileBio()" class="btn-main bg-indigo-600 hover:bg-indigo-700">حفظ</button>
             </div>
         </div>
 
-        <!-- Beautiful Alert Popup -->
+        <div id="edit-name-modal" class="modal-overlay hidden">
+            <div class="modal-content relative">
+                <button onclick="document.getElementById('edit-name-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+                <h3 class="font-bold text-lg mb-4 text-indigo-700 text-center">تعديل الاسم</h3>
+                <input type="text" id="edit-name-input" class="input-box mb-4" placeholder="أدخل الاسم الجديد">
+                <button onclick="saveProfileName()" class="btn-main bg-indigo-600 hover:bg-indigo-700">حفظ</button>
+            </div>
+        </div>
+
         <div id="beautiful-alert" class="beautiful-alert hidden">
             <div id="beautiful-alert-icon" class="beautiful-alert-icon">!</div>
             <h3 id="beautiful-alert-title" class="beautiful-alert-title">تنبيه</h3>
@@ -1797,7 +1689,6 @@
             <button id="beautiful-alert-ok-btn" class="beautiful-alert-btn">حسناً</button>
         </div>
 
-        <!-- Friend Challenge Modal -->
         <div id="friend-challenge-modal" class="modal-overlay hidden">
             <div class="beautiful-modal">
                 <button onclick="closeFriendChallengeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
@@ -1822,7 +1713,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, onSnapshot, query, where, orderBy, limit, deleteDoc, serverTimestamp, increment, getDoc, writeBatch, Timestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL, uploadBytesResumable } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAfLOjiPiSQW9opdiIgQif3pAp8zsezy58",
@@ -1861,18 +1752,12 @@
         
         let isExitingGame = false;
         let currentGameMode = 'online'; 
-        let aiDifficulty = 'medium'; 
         let localMatchData = null; 
         let aiTimeoutId = null; 
         let currentQuestionCorrectAnswer = null; 
         let userAnsweredCorrectly = false; 
-        let connectionMonitorInterval = null;
-        let opponentLastSeen = Date.now();
-        let isMonitoringConnection = false;
-        let playerDisconnected = false;
-        let matchConnectionChecked = false;
-
-        let systemConfig = { enabled: true, msg: "النظام في وضع الصيانة حالياً" };
+        let leaderboardOffset = 0;
+        let allLeaderboardUsers = [];
 
         let premiumInterval = null;
         const BADGES_LIST = ["سجاج", "سجاجة", "دكتور", "دكتورة", "كسلان", "كسولة", "شطور", "شطورة", "نايم", "نايمة", "نعسان", "نعسانة", "ماكو واهس", "مهندس", "مهندسة", "واحد عراق", "صگاركم", "صگارتكم", "فستقة", "المحامي", "المحامية"];
@@ -1901,7 +1786,6 @@
 
             if (user) {
                 currentUser = user;
-                loadDisabledSubjects();
 
                 try {
                     const docSnap = await getDoc(doc(db, "users", user.uid));
@@ -1921,7 +1805,7 @@
                             return;
                         }
 
-                        updateDoc(doc(db, "users", user.uid), { lastActive: serverTimestamp() });
+                        await updateDoc(doc(db, "users", user.uid), { lastActive: serverTimestamp() });
                         
                         setupProfileUI();
                         setupHeaderUI();
@@ -2199,14 +2083,6 @@
             }
         }
 
-        async function loadDisabledSubjects() {
-            try {
-                const docSnap = await getDoc(doc(db, "system_settings", "disabled_subjects"));
-                if (docSnap.exists()) disabledSubjects = docSnap.data();
-                else disabledSubjects = {};
-            } catch (e) { disabledSubjects = {}; }
-        }
-
         function populateSubjects(grade, elementId, type = null) {
             const sel = document.getElementById(elementId);
             if(!sel) return;
@@ -2315,7 +2191,6 @@
             if(matchListenerUnsubscribe) matchListenerUnsubscribe();
             if(roomListenerUnsubscribe) roomListenerUnsubscribe();
             if(premiumInterval) clearInterval(premiumInterval);
-            if(connectionMonitorInterval) clearInterval(connectionMonitorInterval);
             signOut(auth);
         };
 
@@ -2382,7 +2257,12 @@
             document.getElementById('profile-name-text').innerText = userData.name;
             document.getElementById('profile-id-text').innerText = "ID: " + userData.uniqueId;
             document.getElementById('profile-img').src = userData.photo;
-            document.getElementById('profile-bio-text').innerText = userData.bio || "لا يوجد سيرة ذاتية";
+            
+            let bioText = userData.bio || "لا يوجد سيرة ذاتية";
+            if (bioText.length > 25) {
+                bioText = bioText.substring(0, 25) + "...";
+            }
+            document.getElementById('profile-bio-text').innerText = bioText;
             
             const container = document.getElementById('profile-name-container');
             const existingBadge = container.querySelector('.premium-badge');
@@ -2725,7 +2605,6 @@
             }
 
             currentGameMode = mode;
-            matchConnectionChecked = false;
 
             document.getElementById('challenge-active-card').classList.add('hidden');
             document.getElementById('searching-ui').classList.remove('hidden');
@@ -2787,7 +2666,6 @@
                         lastActivity: Date.now()
                     });
                     listenToMatch(foundMatchId);
-                    startConnectionMonitoring(foundMatchId, false);
                 } else {
                     const qDocs = await getQuestions(sub, selectedQType);
                     if(qDocs.length === 0) { 
@@ -2903,133 +2781,6 @@
             return list;
         }
 
-        function startConnectionMonitoring(matchId, isPlayer1) {
-            if(connectionMonitorInterval) clearInterval(connectionMonitorInterval);
-            isMonitoringConnection = true;
-            opponentLastSeen = Date.now();
-            
-            connectionMonitorInterval = setInterval(async () => {
-                if(!isMonitoringConnection || !currentMatchId) return;
-                
-                const now = Date.now();
-                const timeSinceLastSeen = now - opponentLastSeen;
-                
-                if(timeSinceLastSeen > 8000 && !matchConnectionChecked) {
-                    matchConnectionChecked = true;
-                    await checkOpponentConnection(matchId, isPlayer1);
-                }
-            }, 1000);
-            
-            updateLastActive(matchId, isPlayer1);
-        }
-
-        async function updateLastActive(matchId, isPlayer1) {
-            try {
-                const updateField = isPlayer1 ? 'player1LastActive' : 'player2LastActive';
-                await updateDoc(doc(db, "match_queue", matchId), {
-                    [updateField]: Date.now(),
-                    lastActivity: Date.now()
-                });
-            } catch (error) {
-                console.error("Error updating last active:", error);
-            }
-        }
-
-        async function checkOpponentConnection(matchId, isPlayer1) {
-            try {
-                const matchDoc = await getDoc(doc(db, "match_queue", matchId));
-                if(!matchDoc.exists()) return;
-                
-                const matchData = matchDoc.data();
-                const opponentLastActive = isPlayer1 ? matchData.player2LastActive : matchData.player1LastActive;
-                const now = Date.now();
-                
-                if(opponentLastActive && (now - opponentLastActive) > 15000) {
-                    await handlePlayerDisconnection(matchId, isPlayer1);
-                } else {
-                    matchConnectionChecked = false;
-                }
-            } catch (error) {
-                console.error("Error checking connection:", error);
-            }
-        }
-
-        async function handlePlayerDisconnection(matchId, isPlayer1) {
-            if(playerDisconnected) return;
-            playerDisconnected = true;
-            
-            try {
-                const matchDoc = await getDoc(doc(db, "match_queue", matchId));
-                if(!matchDoc.exists()) return;
-                
-                const matchData = matchDoc.data();
-                const winnerId = isPlayer1 ? matchData.player2.uid : matchData.player1.uid;
-                const loserId = isPlayer1 ? matchData.player1.uid : matchData.player2.uid;
-                
-                if(winnerId && winnerId !== 'AI_BOT') {
-                    await updateDoc(doc(db, "users", winnerId), {
-                        points: increment(10)
-                    });
-                }
-                
-                if(loserId && loserId !== 'AI_BOT') {
-                    await updateDoc(doc(db, "users", loserId), {
-                        points: increment(-10)
-                    });
-                }
-                
-                await deleteDoc(doc(db, "match_queue", matchId));
-                
-                if(connectionMonitorInterval) {
-                    clearInterval(connectionMonitorInterval);
-                    isMonitoringConnection = false;
-                }
-                
-                if(winnerId === currentUser.uid) {
-                    showDisconnectionResult(true, "فزت بسبب انقطاع الانترنت عند خصمك");
-                } else if(loserId === currentUser.uid) {
-                    showDisconnectionResult(false, "خسرت بسبب انقطاع الانترنت");
-                }
-                
-            } catch (error) {
-                console.error("Error handling disconnection:", error);
-            }
-        }
-
-        function showDisconnectionResult(isWinner, message) {
-            clearInterval(gameTimer);
-            document.getElementById('game-overlay').classList.add('hidden');
-            
-            const resultScreen = document.getElementById('result-screen');
-            const iconContainer = document.getElementById('result-icon-container');
-            const title = document.getElementById('result-title');
-            const msg = document.getElementById('result-msg');
-            const myScore = document.getElementById('final-my-score');
-            const opScore = document.getElementById('final-op-score');
-            const opName = document.getElementById('final-op-name');
-            const pointsGained = document.getElementById('result-points-gained-text');
-            
-            if(isWinner) {
-                iconContainer.innerText = "🏆";
-                title.innerText = "فوز!";
-                msg.innerText = message;
-                myScore.innerText = "10";
-                opScore.innerText = "0";
-                opName.innerText = "الخصم";
-                pointsGained.innerText = "+10";
-            } else {
-                iconContainer.innerText = "😢";
-                title.innerText = "خسارة!";
-                msg.innerText = message;
-                myScore.innerText = "0";
-                opScore.innerText = "10";
-                opName.innerText = "الخصم";
-                pointsGained.innerText = "-10";
-            }
-            
-            resultScreen.classList.remove('hidden');
-        }
-
         function listenToMatch(id) {
             if(matchListenerUnsubscribe) matchListenerUnsubscribe(); 
             matchListenerUnsubscribe = onSnapshot(doc(db, "match_queue", id), async (snap) => {
@@ -3043,15 +2794,11 @@
                 }
                 const d = snap.data();
                 
-                const isP1 = d.player1.uid === currentUser.uid;
-                opponentLastSeen = isP1 ? (d.player2LastActive || Date.now()) : (d.player1LastActive || Date.now());
-                
                 if(d.status === 'active') {
                     if (document.getElementById('game-overlay').classList.contains('hidden') && !document.getElementById('vs-screen').classList.contains('flex')) {
                          await showVSAnimation(d.player1, d.player2);
                          document.getElementById('game-overlay').classList.remove('hidden');
                          document.getElementById('withdraw-game-btn').classList.remove('hidden');
-                         startConnectionMonitoring(id, isP1);
                          renderGame(d);
                     } else {
                          renderGame(d);
@@ -3273,7 +3020,6 @@
 
         function showWithdrawalResult() {
             clearInterval(gameTimer);
-            if(connectionMonitorInterval) clearInterval(connectionMonitorInterval);
             document.getElementById('game-overlay').classList.add('hidden');
             
             const resultScreen = document.getElementById('result-screen');
@@ -3301,10 +3047,6 @@
 
         async function endGame(d) {
             clearInterval(gameTimer);
-            if(connectionMonitorInterval) {
-                clearInterval(connectionMonitorInterval);
-                isMonitoringConnection = false;
-            }
             document.getElementById('game-overlay').classList.add('hidden');
             document.getElementById('withdraw-game-btn').classList.add('hidden');
             if (isExitingGame) return;
@@ -3394,10 +3136,6 @@
              }
              clearInterval(gameTimer); 
              clearTimeout(aiTimeoutId);
-             if(connectionMonitorInterval) {
-                 clearInterval(connectionMonitorInterval);
-                 isMonitoringConnection = false;
-             }
              document.getElementById('result-screen').classList.add('hidden');
              document.getElementById('game-overlay').classList.add('hidden');
              document.getElementById('searching-ui').classList.add('hidden');
@@ -3406,8 +3144,6 @@
              currentMatchId = null; 
              localMatchData = null; 
              hasAnsweredCurrentQ = false;
-             playerDisconnected = false;
-             matchConnectionChecked = false;
              document.getElementById('challenge-active-card').classList.remove('hidden');
              if(currentUser) {
                  const userDoc = await getDoc(doc(db, "users", currentUser.uid));
@@ -3430,7 +3166,7 @@
                 populateAdminFilterSubjects(); 
                 loadAdminAllContent(); 
             }
-            else if (screenId === 'screen-stats') loadStatsContent();
+            else if (screenId === 'screen-admin-stats') loadStatsContent();
             else if (screenId === 'screen-admin-premium-users') loadPremiumUsers();
             else if (screenId === 'screen-wallet') setupProfileUI(); 
             else if (screenId === 'screen-premium-in-profile') {
@@ -3457,13 +3193,34 @@
             document.getElementById('screen-friend-challenge').classList.add('active');
         };
 
+        window.editProfileName = () => {
+            document.getElementById('edit-name-input').value = userData.name || "";
+            document.getElementById('edit-name-modal').classList.remove('hidden');
+        };
+
+        window.saveProfileName = async () => {
+            const newName = document.getElementById('edit-name-input').value.trim();
+            if (!newName) {
+                showBeautifulAlert('warning', 'تنبيه', 'يرجى إدخال اسم');
+                return;
+            }
+            await updateDoc(doc(db, "users", currentUser.uid), { name: newName });
+            userData.name = newName;
+            document.getElementById('profile-name-text').innerText = newName;
+            document.getElementById('edit-name-modal').classList.add('hidden');
+            showBeautifulAlert('success', 'تم التحديث', 'تم تحديث الاسم ✅');
+        };
+
         window.editProfileBio = () => {
             document.getElementById('edit-bio-input').value = userData.bio || "";
             document.getElementById('edit-bio-modal').classList.remove('hidden');
         };
 
         window.saveProfileBio = async () => {
-            const newBio = document.getElementById('edit-bio-input').value.trim();
+            let newBio = document.getElementById('edit-bio-input').value.trim();
+            if (newBio.length > 25) {
+                newBio = newBio.substring(0, 25);
+            }
             await updateDoc(doc(db, "users", currentUser.uid), { bio: newBio });
             userData.bio = newBio;
             document.getElementById('profile-bio-text').innerText = newBio || "لا يوجد سيرة ذاتية";
@@ -3624,105 +3381,178 @@
         
         async function loadLeaderboard() {
             const div = document.getElementById('leaderboard-list');
+            const loadMoreBtn = document.getElementById('load-more-leaderboard');
             div.innerHTML = '<p class="text-center text-gray-400 mt-10">تحميل...</p>';
+            leaderboardOffset = 0;
             
             try {
-                const q = query(collection(db, "users"), orderBy("points", "desc"), limit(100));
+                const q = query(collection(db, "users"), orderBy("points", "desc"), limit(50));
                 const snap = await getDocs(q);
-                let users = [];
+                allLeaderboardUsers = [];
                 snap.forEach(d => { 
-                    users.push({ id: d.id, ...d.data() });
+                    allLeaderboardUsers.push({ id: d.id, ...d.data() });
                 });
                 
-                users.sort((a, b) => (b.points || 0) - (a.points || 0));
+                allLeaderboardUsers.sort((a, b) => (b.points || 0) - (a.points || 0));
 
-                const myIndex = users.findIndex(u => u.uid === currentUser.uid);
+                const myIndex = allLeaderboardUsers.findIndex(u => u.uid === currentUser.uid);
                 if(myIndex !== -1) document.getElementById('my-rank-text').innerText = "#" + (myIndex + 1);
-                else document.getElementById('my-rank-text').innerText = "غير مصنف";
+                else document.getElementById('my-rank-text').innerText = "#" + (allLeaderboardUsers.length + 1);
 
-                div.innerHTML = ''; 
+                renderLeaderboardChunk(0, 25);
                 
-                users.forEach((u, index) => {
-                    let frameClass = "frame-rank-common";
-                    let crown = "";
-                    let rankBadge = `<div class="rank-badge-top">${index + 1}</div>`;
-                    let raysHtml = ""; 
-                    let backgroundClass = 'bg-rank-default';
-                    
-                    if (u.isPremium && u.premiumExpiry && u.premiumExpiry.toDate() > new Date()) {
-                        backgroundClass = u.selectedBgTheme || 'bg-rank-default';
-                    }
+                if (allLeaderboardUsers.length > 25) {
+                    loadMoreBtn.classList.remove('hidden');
+                } else {
+                    loadMoreBtn.classList.add('hidden');
+                }
 
-                    if (index === 0) { 
-                        frameClass = "frame-rank-1"; 
-                        crown = `<i class="fas fa-crown text-yellow-500 name-crown"></i>`; 
-                        raysHtml = `<div class="rank-rays rays-gold"></div>`; 
-                    }
-                    else if (index === 1) { 
-                        frameClass = "frame-rank-2"; 
-                        raysHtml = `<div class="rank-rays rays-silver"></div>`; 
-                    }
-                    else if (index === 2) { 
-                        frameClass = "frame-rank-3"; 
-                        raysHtml = `<div class="rank-rays rays-bronze"></div>`; 
-                    }
-                    else if (index <= 9) { 
-                        const colors = ['rays-blue', 'rays-red', 'rays-green', 'rays-purple', 'rays-blue', 'rays-red'];
-                        frameClass = "frame-rank-other-top"; 
-                        raysHtml = `<div class="rank-rays ${colors[index-3]}"></div>`; 
-                    }
-                    
-                    let badgeHtml = "";
-                    if (u.isPremium && u.premiumExpiry && u.premiumExpiry.toDate() > new Date() && u.selectedBadge) {
-                        badgeHtml = `<span class="premium-badge" style="background-color: ${u.selectedBadgeColor || '#f59e0b'}">${u.selectedBadge}</span>`;
-                    }
-                    
-                    let prizeMoney = "";
-                    if (index === 0) prizeMoney = " <span class='text-xs text-green-300'>10$</span>";
-                    else if (index === 1) prizeMoney = " <span class='text-xs text-green-300'>7$</span>";
-                    else if (index === 2) prizeMoney = " <span class='text-xs text-green-300'>5$</span>";
-                    else if (index === 3) prizeMoney = " <span class='text-xs text-green-300'>3$</span>";
-                    else if (index === 4) prizeMoney = " <span class='text-xs text-green-300'>2$</span>";
-                    else if (index >= 5 && index <= 9) prizeMoney = " <span class='text-xs text-green-300'>1$</span>";
-                    
-                    let resetBtn = "";
-                    if (currentUser && userData && userData.email === ADMIN_EMAIL) {
-                        resetBtn = `<button onclick="resetUserPoints('${u.id}', '${u.name}')" class="w-6 h-6 rounded bg-red-100 text-red-500 flex items-center justify-center mr-2"><i class="fas fa-trash-alt text-xs"></i></button>`;
-                    }
-                    
-                    div.innerHTML += `
-                        <div class="flex items-center justify-between p-4 rounded-xl shadow-sm mb-3 relative overflow-hidden ${backgroundClass}">
-                            <div class="flex items-center gap-4 z-10">
-                                <div class="rank-img-container">
-                                    ${rankBadge}
-                                    ${raysHtml}
-                                    <img src="${u.photo}" class="rank-img ${frameClass}">
-                                </div>
-                                <div>
-                                    <p class="font-bold text-gray-800 text-sm flex items-center">
-                                        ${crown} 
-                                        ${u.name}
-                                        ${badgeHtml}
-                                    </p>
-                                    <p class="text-[10px] text-gray-600">ID: ${u.uniqueId}</p>
-                                    <p class="text-[10px] text-gray-500 mt-1">${u.bio || ""}</p>
-                                    ${u.isPremium && u.premiumExpiry && u.premiumExpiry.toDate() > new Date() ? 
-                                        `<p class="text-[10px] text-yellow-600 font-bold">👑 مميز</p>` : 
-                                        ''}
-                                </div>
-                            </div>
-                            <div class="flex items-center z-10">
-                                ${resetBtn}
-                                <div class="text-right">
-                                    <span class="font-black text-indigo-600 text-lg">${u.points || 0} 💎${prizeMoney}</span>
-                                </div>
-                            </div>
-                        </div>`;
-                });
             } catch (error) {
                 div.innerHTML = '<p class="text-center text-gray-400">خطأ في تحميل التصنيف</p>';
+                loadMoreBtn.classList.add('hidden');
             }
         }
+
+        function renderLeaderboardChunk(start, end) {
+            const div = document.getElementById('leaderboard-list');
+            div.innerHTML = '';
+            
+            const usersToShow = allLeaderboardUsers.slice(start, end);
+            
+            usersToShow.forEach((u, index) => {
+                const globalIndex = start + index;
+                let frameClass = "frame-rank-common";
+                let crown = "";
+                let rankBadge = `<div class="rank-badge-top">${globalIndex + 1}</div>`;
+                let raysHtml = ""; 
+                let backgroundClass = 'bg-rank-default';
+                
+                if (u.isPremium && u.premiumExpiry && u.premiumExpiry.toDate() > new Date()) {
+                    backgroundClass = u.selectedBgTheme || 'bg-rank-default';
+                }
+
+                if (globalIndex === 0) { 
+                    frameClass = "frame-rank-1"; 
+                    crown = `<i class="fas fa-crown text-yellow-500 name-crown"></i>`; 
+                    raysHtml = `<div class="rank-rays rays-gold"></div>`; 
+                }
+                else if (globalIndex === 1) { 
+                    frameClass = "frame-rank-2"; 
+                    raysHtml = `<div class="rank-rays rays-silver"></div>`; 
+                }
+                else if (globalIndex === 2) { 
+                    frameClass = "frame-rank-3"; 
+                    raysHtml = `<div class="rank-rays rays-bronze"></div>`; 
+                }
+                else if (globalIndex <= 9) { 
+                    const colors = ['rays-blue', 'rays-red', 'rays-green', 'rays-purple', 'rays-blue', 'rays-red'];
+                    frameClass = "frame-rank-other-top"; 
+                    raysHtml = `<div class="rank-rays ${colors[globalIndex-3]}"></div>`; 
+                }
+                
+                let badgeHtml = "";
+                if (u.isPremium && u.premiumExpiry && u.premiumExpiry.toDate() > new Date() && u.selectedBadge) {
+                    badgeHtml = `<span class="premium-badge" style="background-color: ${u.selectedBadgeColor || '#f59e0b'}">${u.selectedBadge}</span>`;
+                }
+                
+                let prizeMoney = "";
+                if (globalIndex === 0) prizeMoney = " <span class='text-xs text-green-300'>10$</span>";
+                else if (globalIndex === 1) prizeMoney = " <span class='text-xs text-green-300'>7$</span>";
+                else if (globalIndex === 2) prizeMoney = " <span class='text-xs text-green-300'>5$</span>";
+                else if (globalIndex === 3) prizeMoney = " <span class='text-xs text-green-300'>3$</span>";
+                else if (globalIndex === 4) prizeMoney = " <span class='text-xs text-green-300'>2$</span>";
+                else if (globalIndex >= 5 && globalIndex <= 9) prizeMoney = " <span class='text-xs text-green-300'>1$</span>";
+                
+                let resetBtn = "";
+                if (currentUser && userData && userData.email === ADMIN_EMAIL) {
+                    resetBtn = `<button onclick="resetUserPoints('${u.id}', '${u.name}')" class="w-6 h-6 rounded bg-red-100 text-red-500 flex items-center justify-center mr-2"><i class="fas fa-trash-alt text-xs"></i></button>`;
+                }
+                
+                div.innerHTML += `
+                    <div class="flex items-center justify-between p-4 rounded-xl shadow-sm mb-3 relative overflow-hidden ${backgroundClass}">
+                        <div class="flex items-center gap-4 z-10">
+                            <div class="rank-img-container">
+                                ${rankBadge}
+                                ${raysHtml}
+                                <img src="${u.photo}" class="rank-img ${frameClass}">
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-800 text-sm flex items-center">
+                                    ${crown} 
+                                    ${u.name}
+                                    ${badgeHtml}
+                                </p>
+                                <p class="text-[10px] text-gray-600">ID: ${u.uniqueId}</p>
+                                <p class="text-[10px] text-gray-500 mt-1">${u.bio || ""}</p>
+                                ${u.isPremium && u.premiumExpiry && u.premiumExpiry.toDate() > new Date() ? 
+                                    `<p class="text-[10px] text-yellow-600 font-bold">👑 مميز</p>` : 
+                                    ''}
+                            </div>
+                        </div>
+                        <div class="flex items-center z-10">
+                            ${resetBtn}
+                            <div class="text-right">
+                                <span class="font-black text-indigo-600 text-lg">${u.points || 0} 💎${prizeMoney}</span>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        window.loadMoreLeaderboard = function() {
+            leaderboardOffset += 25;
+            const nextChunk = allLeaderboardUsers.slice(leaderboardOffset, leaderboardOffset + 25);
+            
+            nextChunk.forEach((u, index) => {
+                const globalIndex = leaderboardOffset + index;
+                let frameClass = "frame-rank-common";
+                let rankBadge = `<div class="rank-badge-top">${globalIndex + 1}</div>`;
+                let backgroundClass = 'bg-rank-default';
+                
+                if (u.isPremium && u.premiumExpiry && u.premiumExpiry.toDate() > new Date()) {
+                    backgroundClass = u.selectedBgTheme || 'bg-rank-default';
+                }
+                
+                let badgeHtml = "";
+                if (u.isPremium && u.premiumExpiry && u.premiumExpiry.toDate() > new Date() && u.selectedBadge) {
+                    badgeHtml = `<span class="premium-badge" style="background-color: ${u.selectedBadgeColor || '#f59e0b'}">${u.selectedBadge}</span>`;
+                }
+                
+                let resetBtn = "";
+                if (currentUser && userData && userData.email === ADMIN_EMAIL) {
+                    resetBtn = `<button onclick="resetUserPoints('${u.id}', '${u.name}')" class="w-6 h-6 rounded bg-red-100 text-red-500 flex items-center justify-center mr-2"><i class="fas fa-trash-alt text-xs"></i></button>`;
+                }
+                
+                const div = document.getElementById('leaderboard-list');
+                div.innerHTML += `
+                    <div class="flex items-center justify-between p-4 rounded-xl shadow-sm mb-3 relative overflow-hidden ${backgroundClass}">
+                        <div class="flex items-center gap-4 z-10">
+                            <div class="rank-img-container">
+                                ${rankBadge}
+                                <img src="${u.photo}" class="rank-img ${frameClass}">
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-800 text-sm flex items-center">
+                                    ${u.name}
+                                    ${badgeHtml}
+                                </p>
+                                <p class="text-[10px] text-gray-600">ID: ${u.uniqueId}</p>
+                                <p class="text-[10px] text-gray-500 mt-1">${u.bio || ""}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center z-10">
+                            ${resetBtn}
+                            <div class="text-right">
+                                <span class="font-black text-indigo-600 text-lg">${u.points || 0} 💎</span>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+            
+            if (leaderboardOffset + 25 >= allLeaderboardUsers.length) {
+                document.getElementById('load-more-leaderboard').classList.add('hidden');
+            }
+        };
 
         window.resetUserPoints = async (uid, name) => {
             if(confirm(`هل أنت متأكد من تصفير نقاط الطالب: ${name}؟`)) {
@@ -4084,10 +3914,6 @@
             if(currentMatchId) {
                 deleteDoc(doc(db, "match_queue", currentMatchId));
                 currentMatchId = null;
-            }
-            if(connectionMonitorInterval) {
-                clearInterval(connectionMonitorInterval);
-                isMonitoringConnection = false;
             }
         };
 
@@ -4570,7 +4396,6 @@
             currentMatchId = matchId;
             currentGameMode = 'online';
             listenToMatch(matchId);
-            startConnectionMonitoring(matchId, isRoomHost);
         }
 
         window.deleteRoom = async function() {
