@@ -756,6 +756,193 @@
             box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
         }
 
+        .table-schedule {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 12px;
+        }
+        .table-schedule th, .table-schedule td {
+            border: 1px solid #e2e8f0;
+            padding: 6px 4px;
+            text-align: center;
+        }
+        .table-schedule th {
+            background: #f1f5f9;
+            font-weight: bold;
+            color: #475569;
+        }
+        .table-schedule td {
+            background: white;
+        }
+        .schedule-header {
+            text-align: center;
+            font-size: 16px;
+            font-weight: 900;
+            margin-bottom: 5px;
+            color: #1e293b;
+        }
+        .schedule-subheader {
+            text-align: center;
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 15px;
+        }
+        .schedule-footer {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+        }
+        .schedule-footer-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 40px;
+            color: rgba(0, 0, 0, 0.08);
+            font-weight: bold;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .upload-question-item {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #e5e7eb;
+        }
+        .upload-question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .upload-question-grade {
+            background: #3b82f6;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .upload-question-subject {
+            background: #10b981;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .upload-question-type {
+            background: #f59e0b;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .upload-question-text {
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding-right: 10px;
+            border-right: 3px solid #e5e7eb;
+        }
+        .upload-question-answers {
+            background: #f8fafc;
+            padding: 8px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .upload-question-answer {
+            padding: 5px;
+            margin-bottom: 3px;
+            border-radius: 5px;
+        }
+        .upload-question-correct {
+            background: #d1fae5;
+            border: 1px solid #10b981;
+        }
+        .upload-question-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .upload-accept-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+        }
+        .upload-reject-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+        }
+        .upload-sender {
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+
+        .auth-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100000;
+            backdrop-filter: blur(5px);
+        }
+        .auth-loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #4f46e5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .points-negative {
+            color: #ef4444 !important;
+            animation: pulse-red 1s infinite;
+        }
+        @keyframes pulse-red {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
         @media (min-width: 768px) {
             .input-box { font-size: 1.1rem; }
             .auth-overlay > div { max-width: 500px; }
@@ -853,6 +1040,11 @@
         </div>
     </div>
 
+    <div id="auth-loading" class="auth-loading hidden">
+        <div class="auth-loading-spinner"></div>
+        <p class="text-gray-700 font-bold" id="auth-loading-text">جاري المعالجة...</p>
+    </div>
+
     <div id="auth-screen" class="auth-overlay hidden">
         <div class="w-full max-w-md p-8 h-full overflow-y-auto flex flex-col justify-center">
             <div class="text-center mb-8">
@@ -864,17 +1056,19 @@
             </div>
 
             <form id="login-form" onsubmit="event.preventDefault(); handleLogin();">
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-1 mr-1">البريد الإلكتروني</label>
-                        <input type="email" id="login-email" placeholder="example@gmail.com" class="input-box" required>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-1 mr-1">كلمة المرور</label>
-                        <input type="password" id="login-pass" placeholder="••••••••" class="input-box" required>
-                    </div>
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-gray-500 mb-1 mr-1">البريد الإلكتروني أو المعرف (ID)</label>
+                    <input type="text" id="login-identifier" placeholder="example@gmail.com أو المعرف" class="input-box" required>
                 </div>
-                <button type="submit" class="btn-main mt-8">دخول</button>
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-gray-500 mb-1 mr-1">كلمة المرور</label>
+                    <input type="password" id="login-pass" placeholder="••••••••" class="input-box" required>
+                </div>
+                <div class="flex items-center mb-6">
+                    <input type="checkbox" id="remember-me" class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                    <label for="remember-me" class="mr-2 text-sm text-gray-600">تذكرني</label>
+                </div>
+                <button type="submit" class="btn-main">دخول</button>
                 <div class="text-center mt-4">
                     <button type="button" onclick="openForgotPassword()" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium hover:underline">هل نسيت كلمة السر؟</button>
                 </div>
@@ -893,7 +1087,10 @@
                 <div class="space-y-3">
                     <div><input type="text" id="signup-name" placeholder="الاسم الظاهر" class="input-box" required></div>
                     <div><input type="email" id="signup-email" placeholder="البريد الإلكتروني (@gmail.com)" class="input-box" required></div>
-                    <div><input type="password" id="signup-pass" placeholder="كلمة المرور (6+ أحرف)" class="input-box" required></div>
+                    <div><input type="password" id="signup-pass" placeholder="كلمة المرور (6+ أحرف)" class="input-box" required minlength="6"></div>
+                </div>
+                <div class="mt-4 text-xs text-gray-500">
+                    <p>ⓘ كلمة المرور يجب أن تكون 6 أحرف على الأقل</p>
                 </div>
                 <button type="submit" class="btn-main mt-6 bg-indigo-600">إنشاء حساب جديد</button>
             </form>
@@ -949,6 +1146,7 @@
 
                     <button onclick="startMatchmaking('ai')" class="btn-main bg-gradient-to-r from-emerald-500 to-green-600 mb-3 h-12">
                         <i class="fas fa-robot ml-2"></i> ضد الذكاء الاصطناعي
+                        <span id="ai-remaining" class="text-xs bg-white text-green-600 px-2 py-1 rounded-full mr-2">10</span>
                     </button>
 
                     <button onclick="openFriendChallenge()" class="btn-main bg-gradient-to-r from-pink-500 to-rose-600 h-12">
@@ -1041,7 +1239,7 @@
         <div id="tab-leaderboard" class="screen pt-20">
             <div class="scroll-container px-4">
                 <div class="countdown-container">
-                    <p class="text-xs text-gray-300 mb-1">الجوائز الاسبوعية 🎁 (الخميس 12:00 ص)</p>
+                    <p class="text-xs text-gray-300 mb-1">الجوائز الأسبوعية 🎁 (تنتهي الجمعة 00:00)</p>
                     <div id="weekly-timer" class="timer-digits">00:00:00:00</div>
                 </div>
 
@@ -1087,7 +1285,7 @@
                                 <input type="number" id="totalHours" required min="1" max="999" placeholder="مثال: 10" class="input-box text-center font-bold text-lg">
                             </div>
 
-                            <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="grid grid-cols-3 gap-4 mb-6">
                                 <div>
                                     <label class="block text-gray-700 text-xs font-bold mb-2">وقت النوم؟</label>
                                     <select id="needSleep" class="input-box text-sm font-bold">
@@ -1103,6 +1301,14 @@
                                         <option value="20">20 دقيقة</option>
                                     </select>
                                 </div>
+                                <div>
+                                    <label class="block text-gray-700 text-xs font-bold mb-2">وقت الدراسة المفضل</label>
+                                    <select id="studyTimePref" class="input-box text-sm font-bold">
+                                        <option value="morning">صباحاً</option>
+                                        <option value="evening">مساءً</option>
+                                        <option value="any">أي وقت</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-indigo-700 transition-all text-lg">إنشاء الجدول الآن</button>
@@ -1111,30 +1317,40 @@
                 </section>
 
                 <section id="schedule-result-page" class="hidden">
-                    <div id="schedule-card" class="bg-white rounded-2xl overflow-hidden shadow-xl border border-gray-200 mb-6">
+                    <div id="schedule-card" class="bg-white rounded-2xl overflow-hidden shadow-xl border border-gray-200 mb-6 relative">
+                        <div class="watermark">الجدول من تطبيق هكر الوزاري</div>
                         <div class="h-3 bg-indigo-600 w-full"></div>
                         <div class="p-5">
-                            <div class="text-center mb-6">
-                                <h2 class="text-3xl font-black text-gray-800" id="displaySubject"></h2>
+                            <div class="text-center mb-4">
+                                <h2 class="schedule-header" id="displaySubject"></h2>
+                                <p class="schedule-subheader" id="displayScheduleTime"></p>
                             </div>
 
                             <div class="mb-6 overflow-x-auto">
-                                <table class="w-full">
+                                <table class="table-schedule">
                                     <thead>
-                                        <tr class="bg-gray-50">
-                                            <th class="text-sm font-bold text-gray-600 p-3" width="35%">الفصل</th>
-                                            <th class="text-sm font-bold text-gray-600 p-3" width="40%">الوقت المخصص</th>
-                                            <th class="text-sm font-bold text-gray-600 p-3" width="25%">الراحة</th>
+                                        <tr>
+                                            <th width="40%">النشاط</th>
+                                            <th width="60%">الوقت</th>
                                         </tr>
                                     </thead>
                                     <tbody id="scheduleBody"></tbody>
                                 </table>
                             </div>
 
-                            <div class="flex justify-between bg-gray-100 p-3 rounded-lg text-center text-xs font-bold text-gray-600">
-                                <div><span class="block text-indigo-600 text-lg" id="statStudy"></span>صافي الدراسة</div>
-                                <div><span class="block text-pink-600 text-lg" id="statBreak"></span>مجموع الراحة</div>
-                                <div><span class="block text-blue-600 text-lg" id="statSleep"></span>وقت النوم</div>
+                            <div class="schedule-footer">
+                                <div class="schedule-footer-item">
+                                    <span class="font-bold text-indigo-600 text-sm" id="statStudy"></span>
+                                    <span class="text-xs text-gray-500">صافي الدراسة</span>
+                                </div>
+                                <div class="schedule-footer-item">
+                                    <span class="font-bold text-pink-600 text-sm" id="statBreak"></span>
+                                    <span class="text-xs text-gray-500">مجموع الراحة</span>
+                                </div>
+                                <div class="schedule-footer-item">
+                                    <span class="font-bold text-blue-600 text-sm" id="statSleep"></span>
+                                    <span class="text-xs text-gray-500">وقت النوم</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1187,12 +1403,28 @@
                     <button onclick="openPage('screen-premium-in-profile')" class="stat-btn border-yellow-100 bg-yellow-50">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-yellow-600"><i class="fas fa-crown"></i></div>
-                            <span class="font-bold text-yellow-700">قسم المميزين</span>
+                            <span class="font-bold text-yellow-700">للمميزين</span>
                         </div>
                         <i class="fas fa-chevron-left text-gray-300"></i>
                     </button>
 
-                    <div id="admin-hub-btn-container" class="hidden mt-4">
+                    <button onclick="window.open('https://t.me/mslmh19', '_blank')" class="stat-btn border-blue-100 bg-blue-50">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-blue-600"><i class="fas fa-headset"></i></div>
+                            <span class="font-bold text-blue-700">التواصل مع الدعم</span>
+                        </div>
+                        <i class="fas fa-chevron-left text-gray-300"></i>
+                    </button>
+
+                    <button onclick="openPage('screen-upload-questions')" class="stat-btn border-purple-100 bg-purple-50">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-purple-600"><i class="fas fa-upload"></i></div>
+                            <span class="font-bold text-purple-700">رفع أسئلة</span>
+                        </div>
+                        <i class="fas fa-chevron-left text-gray-300"></i>
+                    </button>
+
+                    <div id="admin-hub-btn-container" class="hidden">
                         <button onclick="openPage('screen-admin-hub')" class="stat-btn border-red-200 bg-red-50 shadow-md">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-red-600 relative">
@@ -1300,9 +1532,30 @@
                         <div class="flex items-center justify-between bg-blue-50 p-3 rounded-xl border border-blue-200">
                             <div class="flex items-center gap-2">
                                 <i class="fas fa-robot text-blue-600"></i>
-                                <span class="font-bold text-sm text-blue-800">15 سؤال (الذكاء الاصطناعي)</span>
+                                <span class="font-bold text-sm text-blue-800">15 محاولة يومية (الذكاء الاصطناعي)</span>
                             </div>
                             <span class="bg-blue-200 text-blue-800 text-[10px] px-2 py-1 rounded font-bold">نشط ✅</span>
+                        </div>
+                        <div class="flex items-center justify-between bg-purple-50 p-3 rounded-xl border border-purple-200">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-crown text-purple-600"></i>
+                                <span class="font-bold text-sm text-purple-800">علامة توثيق مميزة</span>
+                            </div>
+                            <span class="bg-purple-200 text-purple-800 text-[10px] px-2 py-1 rounded font-bold">نشط ✅</span>
+                        </div>
+                        <div class="flex items-center justify-between bg-pink-50 p-3 rounded-xl border border-pink-200">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-palette text-pink-600"></i>
+                                <span class="font-bold text-sm text-pink-800">خلفية متحركة في التصنيف</span>
+                            </div>
+                            <span class="bg-pink-200 text-pink-800 text-[10px] px-2 py-1 rounded font-bold">نشط ✅</span>
+                        </div>
+                        <div class="flex items-center justify-between bg-amber-50 p-3 rounded-xl border border-amber-200">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-star text-amber-600"></i>
+                                <span class="font-bold text-sm text-amber-800">أولوية في البحث عن مباريات</span>
+                            </div>
+                            <span class="bg-amber-200 text-amber-800 text-[10px] px-2 py-1 rounded font-bold">نشط ✅</span>
                         </div>
                     </div>
                 </div>
@@ -1335,6 +1588,10 @@
                     <button onclick="openPage('screen-admin-stats')" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-2 hover:bg-gray-50">
                         <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600"><i class="fas fa-chart-pie text-xl"></i></div>
                         <span class="font-bold text-sm text-gray-700">إحصائيات</span>
+                    </button>
+                    <button onclick="openPage('screen-review-questions')" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-2 hover:bg-gray-50">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600"><i class="fas fa-check-circle text-xl"></i></div>
+                        <span class="font-bold text-sm text-gray-700">مراجعة الأسئلة</span>
                     </button>
                 </div>
             </div>
@@ -1500,6 +1757,115 @@
             </div>
         </div>
 
+        <div id="screen-review-questions" class="screen pt-20">
+            <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
+                <button onclick="openPage('screen-admin-hub')" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
+                <h1 class="font-bold text-lg text-gray-800">مراجعة الأسئلة</h1>
+            </div>
+            <div class="scroll-container px-5 py-6">
+                <div id="review-questions-list" class="space-y-3">
+                    <p class="text-center text-gray-400">جاري تحميل الأسئلة للمراجعة...</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="screen-upload-questions" class="screen pt-20">
+            <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
+                <button onclick="backToProfile()" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
+                <h1 class="font-bold text-lg text-gray-800">رفع أسئلة جديدة</h1>
+            </div>
+            <div class="scroll-container px-5 py-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="font-bold text-gray-800 mb-4 text-center">رفع سؤال جديد</h3>
+                    
+                    <div id="upload-step-1">
+                        <div class="mb-4">
+                            <label class="block text-sm font-bold text-gray-600 mb-2">المادة</label>
+                            <select id="upload-subject" class="input-box" onchange="onUploadSubjectChange()">
+                                <option value="">اختر المادة</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-bold text-gray-600 mb-2">نوع السؤال</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button onclick="setUploadQType('mcq')" id="upload-btn-mcq" class="py-3 rounded-xl border-2 border-indigo-100 text-gray-500 font-bold active:scale-95 transition">اختيارات</button>
+                                <button onclick="setUploadQType('tf')" id="upload-btn-tf" class="py-3 rounded-xl border-2 border-indigo-100 text-gray-500 font-bold active:scale-95 transition">صح وخطأ</button>
+                            </div>
+                        </div>
+
+                        <button onclick="goToUploadStep2()" class="beautiful-btn">
+                            <i class="fas fa-arrow-left"></i> التالي
+                        </button>
+                    </div>
+
+                    <div id="upload-step-2-mcq" class="hidden">
+                        <div class="mb-4">
+                            <label class="block text-sm font-bold text-gray-600 mb-2">نص السؤال</label>
+                            <textarea id="upload-question-text" class="input-box h-24" placeholder="اكتب نص السؤال هنا..." maxlength="500"></textarea>
+                        </div>
+
+                        <div class="space-y-3 mb-4">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-600 mb-2">الخيار 1</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="upload-answer-1" class="input-box flex-1" placeholder="النص">
+                                    <button onclick="setCorrectAnswer(1)" id="upload-correct-1" class="w-12 bg-gray-100 text-gray-600 rounded-lg">✓</button>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-600 mb-2">الخيار 2</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="upload-answer-2" class="input-box flex-1" placeholder="النص">
+                                    <button onclick="setCorrectAnswer(2)" id="upload-correct-2" class="w-12 bg-gray-100 text-gray-600 rounded-lg">✓</button>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-600 mb-2">الخيار 3</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="upload-answer-3" class="input-box flex-1" placeholder="النص">
+                                    <button onclick="setCorrectAnswer(3)" id="upload-correct-3" class="w-12 bg-gray-100 text-gray-600 rounded-lg">✓</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <button onclick="goToUploadStep1()" class="beautiful-btn secondary flex-1">
+                                <i class="fas fa-arrow-right"></i> رجوع
+                            </button>
+                            <button onclick="submitQuestionMCQ()" class="beautiful-btn flex-1">
+                                <i class="fas fa-paper-plane"></i> إرسال للمراجعة
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="upload-step-2-tf" class="hidden">
+                        <div class="mb-4">
+                            <label class="block text-sm font-bold text-gray-600 mb-2">نص السؤال</label>
+                            <textarea id="upload-tf-question" class="input-box h-24" placeholder="اكتب نص السؤال هنا..." maxlength="500"></textarea>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-bold text-gray-600 mb-2">الإجابة الصحيحة</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button onclick="setTFAnswer(true)" id="upload-tf-true" class="py-3 rounded-xl border-2 border-green-100 text-gray-500 font-bold">صح</button>
+                                <button onclick="setTFAnswer(false)" id="upload-tf-false" class="py-3 rounded-xl border-2 border-red-100 text-gray-500 font-bold">خطأ</button>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <button onclick="goToUploadStep1()" class="beautiful-btn secondary flex-1">
+                                <i class="fas fa-arrow-right"></i> رجوع
+                            </button>
+                            <button onclick="submitQuestionTF()" class="beautiful-btn flex-1">
+                                <i class="fas fa-paper-plane"></i> إرسال للمراجعة
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="screen-friend-challenge" class="screen pt-20">
             <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
                 <button onclick="backToChallenges()" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
@@ -1572,7 +1938,7 @@
             <div onclick="switchTab('schedule')" class="nav-item flex-1 flex flex-col items-center justify-center h-full cursor-pointer text-gray-400">
                 <i class="fas fa-calendar-alt text-xl mb-1"></i><span class="text-[10px] font-bold">جدول يومي</span>
             </div>
-            <div onclick="switchTab('profile')" class="nav-item flex-1 flex flex-col items-center justify-center h-full cursor-pointer text-gray-400">
+            <div onclick="switchTab('profile')" class="nav-item flex-1 flex flex-col items-center justify-center h-full cursor-pointer text-gray-400 relative">
                 <i class="fas fa-user text-xl mb-1"></i><span class="text-[10px] font-bold">حسابي</span>
                 <div id="profile-tab-badge" class="red-dot"></div>
             </div>
@@ -1604,7 +1970,11 @@
                     </div>
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-full bg-yellow-500 text-indigo-900 flex items-center justify-center font-bold">15</div>
-                        <p class="font-bold">15 سؤال بدل 10 في الذكاء الاصطناعي.</p>
+                        <p class="font-bold">15 محاولة يومية في الذكاء الاصطناعي.</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-yellow-500 text-indigo-900 flex items-center justify-center font-bold"><i class="fas fa-star"></i></div>
+                        <p class="font-bold">أولوية في البحث عن مباريات.</p>
                     </div>
                 </div>
                 <button onclick="document.getElementById('premium-details-modal').classList.add('hidden')" class="mt-8 w-full bg-yellow-500 text-indigo-900 font-bold py-3 rounded-xl hover:bg-yellow-400 transition">فهمت، شكراً</button>
@@ -1778,6 +2148,12 @@
 
         const sharedSubjects = ['اسلامية', 'عربي', 'انكليزي'];
 
+        let uploadQType = 'mcq';
+        let uploadCorrectAnswer = null;
+        let uploadTFAnswer = null;
+        let dailyAIRemaining = 10;
+        let uploadSubject = null;
+
         onAuthStateChanged(auth, async (user) => {
             const intro = document.getElementById('intro-screen');
             const authScreen = document.getElementById('auth-screen');
@@ -1786,11 +2162,13 @@
 
             if (user) {
                 currentUser = user;
+                console.log("تم تسجيل الدخول بنجاح، UID:", user.uid);
 
                 try {
                     const docSnap = await getDoc(doc(db, "users", user.uid));
                     if (docSnap.exists()) {
                         userData = docSnap.data();
+                        console.log("تم تحميل بيانات المستخدم:", userData.name);
 
                         if (userData.isBanned === true) {
                             banScreen.classList.remove('hidden');
@@ -1805,14 +2183,19 @@
                             return;
                         }
 
-                        await updateDoc(doc(db, "users", user.uid), { lastActive: serverTimestamp() });
+                        await updateDoc(doc(db, "users", user.uid), { 
+                            lastActive: serverTimestamp(),
+                            lastLogin: new Date().toISOString()
+                        });
                         
                         setupProfileUI();
                         setupHeaderUI();
                         setupAdminUI();
-                        checkDailyReward(); 
+                        checkDailyReward();
+                        checkAIRemaining();
                         checkPremiumStatus();
-                        if(userData.email === ADMIN_EMAIL) checkAdminNotifications(); 
+                        if(userData.email === ADMIN_EMAIL) checkAdminNotifications();
+                        checkPendingQuestionsNotification();
 
                         if (userData.grade) {
                             document.getElementById('grade-selector-card').classList.add('hidden');
@@ -1835,6 +2218,7 @@
                         }, 2500);
                         
                     } else {
+                        console.log("المستخدم غير موجود في قاعدة البيانات، تسجيل الخروج...");
                         await signOut(auth);
                         location.reload();
                     }
@@ -1845,6 +2229,7 @@
                     location.reload();
                 }
             } else {
+                console.log("المستخدم غير مسجل دخول");
                 setTimeout(() => {
                     intro.classList.add('hidden');
                     mainApp.classList.add('hidden');
@@ -1915,20 +2300,23 @@
             
             function updateTimer() {
                 const now = new Date();
-                const day = now.getDay();
-                const daysUntilThu = (4 - day + 7) % 7; 
+                const day = now.getDay(); 
+                const hour = now.getHours();
+                const minute = now.getMinutes();
+                const second = now.getSeconds();
+                
+                let daysUntilFriday = 5 - day;
+                if (day > 5 || (day === 5 && (hour > 0 || minute > 0 || second > 0))) {
+                    daysUntilFriday += 7;
+                }
                 
                 const target = new Date(now);
-                target.setDate(now.getDate() + daysUntilThu);
-                target.setHours(23, 59, 59, 999);
-                
-                if (day === 5) {
-                      target.setDate(now.getDate() + 6);
-                }
+                target.setDate(now.getDate() + daysUntilFriday);
+                target.setHours(0, 0, 0, 0);
                 
                 const diff = target - now;
                 
-                if (diff < 0) {
+                if (diff <= 0) {
                     timerEl.innerText = "00:00:00:00";
                     if (!window.weeklyRewardDistributed) {
                         window.weeklyRewardDistributed = true;
@@ -1975,7 +2363,7 @@
                 });
                 await batch.commit();
 
-                const qReset = query(collection(db, "users"), orderBy("points", "desc"), limit(100));
+                const qReset = query(collection(db, "users"), orderBy("points", "desc"), limit(150));
                 const snapReset = await getDocs(qReset);
                 
                 let resetBatch = writeBatch(db);
@@ -2046,7 +2434,7 @@
 
         window.openForgotPassword = function() {
             document.getElementById('forgot-password-modal').classList.remove('hidden');
-            document.getElementById('forgot-email').value = document.getElementById('login-email').value || '';
+            document.getElementById('forgot-email').value = document.getElementById('login-identifier').value || '';
         };
 
         window.closeForgotPassword = function() {
@@ -2076,6 +2464,9 @@
                 case 'auth/user-disabled': return 'تم تعطيل هذا الحساب';
                 case 'auth/user-not-found': return 'المستخدم غير موجود';
                 case 'auth/wrong-password': return 'كلمة المرور غير صحيحة';
+                case 'auth/too-many-requests': return 'محاولات كثيرة جداً، حاول لاحقاً';
+                case 'auth/network-request-failed': return 'فشل الاتصال بالشبكة';
+                case 'auth/operation-not-allowed': return 'العملية غير مسموحة';
                 case 'storage/unauthorized': return 'غير مصرح بتخزين الصور';
                 case 'storage/canceled': return 'تم إلغاء رفع الصورة';
                 case 'storage/unknown': return 'خطأ غير معروف في التخزين';
@@ -2106,26 +2497,64 @@
             }
         };
 
+        function showAuthLoading(text) {
+            document.getElementById('auth-loading-text').innerText = text;
+            document.getElementById('auth-loading').classList.remove('hidden');
+        }
+
+        function hideAuthLoading() {
+            document.getElementById('auth-loading').classList.add('hidden');
+        }
+
         window.handleLogin = async () => {
             try {
-                const email = document.getElementById('login-email').value;
+                const identifier = document.getElementById('login-identifier').value.trim();
                 const pass = document.getElementById('login-pass').value;
                 
-                if (!email || !pass) {
+                if (!identifier || !pass) {
                     showBeautifulAlert('warning', 'تنبيه', 'يرجى ملء جميع الحقول');
                     return;
                 }
                 
-                await signInWithEmailAndPassword(auth, email, pass);
-            } catch (e) { 
-                showBeautifulAlert('error', 'خطأ في التسجيل', getArabicError(e.code)); 
+                showAuthLoading('جاري التحقق من البيانات...');
+                
+                let emailToUse = identifier;
+                
+                if (!identifier.includes('@')) {
+                    const usersQuery = query(collection(db, "users"), where("uniqueId", "==", identifier.toUpperCase()));
+                    const querySnapshot = await getDocs(usersQuery);
+                    
+                    if (querySnapshot.empty) {
+                        hideAuthLoading();
+                        showBeautifulAlert('error', 'خطأ', 'المعرف غير صحيح أو غير موجود');
+                        return;
+                    }
+                    
+                    const userData = querySnapshot.docs[0].data();
+                    emailToUse = userData.email;
+                }
+                
+                setTimeout(async () => {
+                    try {
+                        await signInWithEmailAndPassword(auth, emailToUse, pass);
+                        hideAuthLoading();
+                        showBeautifulAlert('success', 'تم تسجيل الدخول', 'مرحباً بعودتك!');
+                    } catch (e) {
+                        hideAuthLoading();
+                        showBeautifulAlert('error', 'خطأ في التسجيل', getArabicError(e.code));
+                    }
+                }, 500);
+                
+            } catch (e) {
+                hideAuthLoading();
+                showBeautifulAlert('error', 'خطأ', 'حدث خطأ غير متوقع: ' + e.message);
             }
         };
 
         window.handleSignup = async () => {
             try {
-                const name = document.getElementById('signup-name').value;
-                const email = document.getElementById('signup-email').value;
+                const name = document.getElementById('signup-name').value.trim();
+                const email = document.getElementById('signup-email').value.trim();
                 const pass = document.getElementById('signup-pass').value;
                 
                 if(!name || !email || !pass) {
@@ -2139,50 +2568,64 @@
                 }
                 
                 if(pass.length < 6) {
-                    showBeautifulAlert('warning', 'تنبيه', 'كلمة المرور قصيرة جداً');
+                    showBeautifulAlert('warning', 'تنبيه', 'كلمة المرور يجب أن تكون 6 أحرف على الأقل');
                     return;
                 }
 
-                let photoURL = `https://ui-avatars.com/api/?name=${name}&background=random&size=128`;
+                showAuthLoading('جاري إنشاء حسابك...');
+
+                let photoURL = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&size=128`;
                 const imgFile = document.getElementById('signup-img').files[0];
                 if(imgFile) {
                     try {
                         photoURL = await uploadImageToStorage(imgFile, "new_user_" + Date.now());
                     } catch (error) {
                         console.error("Error uploading profile image:", error);
-                        showBeautifulAlert('warning', 'تنبيه', 'تم استخدام صورة افتراضية بسبب خطأ في رفع الصورة');
                     }
                 }
 
-                const cred = await createUserWithEmailAndPassword(auth, email, pass);
-                
-                await setDoc(doc(db, "users", cred.user.uid), {
-                    uid: cred.user.uid,
-                    name: name,
-                    email: email,
-                    photo: photoURL,
-                    uniqueId: generateId(),
-                    points: 0,
-                    balance: 0,
-                    role: 'user',
-                    isBanned: false,
-                    bio: "",
-                    invitedCount: 0,
-                    createdAt: serverTimestamp(),
-                    lastRewardDayKey: null, 
-                    rewardMonthKey: null,    
-                    daysClaimedInMonth: 0,
-                    isPremium: false,
-                    premiumExpiry: null,
-                    selectedBadge: null,
-                    selectedBadgeColor: null,
-                    selectedBgTheme: 'bg-rank-default'
-                });
+                setTimeout(async () => {
+                    try {
+                        const cred = await createUserWithEmailAndPassword(auth, email, pass);
+                        
+                        await setDoc(doc(db, "users", cred.user.uid), {
+                            uid: cred.user.uid,
+                            name: name,
+                            email: email,
+                            photo: photoURL,
+                            uniqueId: generateId(),
+                            points: 0,
+                            balance: 0,
+                            role: 'user',
+                            isBanned: false,
+                            bio: "",
+                            invitedCount: 0,
+                            createdAt: serverTimestamp(),
+                            lastRewardDayKey: null, 
+                            rewardMonthKey: null,    
+                            daysClaimedInMonth: 0,
+                            isPremium: false,
+                            premiumExpiry: null,
+                            selectedBadge: null,
+                            selectedBadgeColor: null,
+                            selectedBgTheme: 'bg-rank-default',
+                            lastLogin: new Date().toISOString(),
+                            dailyAIRemaining: 10,
+                            lastAIReset: new Date().toISOString().split('T')[0]
+                        });
 
-                showBeautifulAlert('success', 'مبروك!', 'تم إنشاء حسابك بنجاح');
+                        hideAuthLoading();
+                        showBeautifulAlert('success', 'مبروك!', 'تم إنشاء حسابك بنجاح، يمكنك الآن تسجيل الدخول');
 
-            } catch (e) { 
-                showBeautifulAlert('error', 'خطأ', getArabicError(e.code)); 
+                    } catch (e) {
+                        hideAuthLoading();
+                        showBeautifulAlert('error', 'خطأ', getArabicError(e.code));
+                    }
+                }, 1000);
+
+            } catch (e) {
+                hideAuthLoading();
+                showBeautifulAlert('error', 'خطأ', 'حدث خطأ غير متوقع: ' + e.message);
             }
         };
 
@@ -2287,7 +2730,17 @@
         }
         
         function setupHeaderUI() { 
-            document.getElementById('header-points').innerText = userData.points; 
+            const pointsElement = document.getElementById('header-points');
+            const points = userData.points || 0;
+            
+            if (points < 0) {
+                pointsElement.innerText = points;
+                pointsElement.classList.add('points-negative');
+            } else {
+                pointsElement.innerText = points;
+                pointsElement.classList.remove('points-negative');
+            }
+            
             const addSubscriptionBtn = document.getElementById('add-subscription-btn');
             if (isPremiumValid(userData) && document.getElementById('screen-premium-in-profile').classList.contains('active')) {
                 addSubscriptionBtn.classList.remove('hidden');
@@ -2399,6 +2852,38 @@
             premiumInterval = setInterval(update, 1000);
         }
 
+        async function checkAIRemaining() {
+            const today = new Date().toISOString().split('T')[0];
+            
+            if (userData.lastAIReset !== today) {
+                const limit = isPremiumValid(userData) ? 15 : 10;
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    dailyAIRemaining: limit,
+                    lastAIReset: today
+                });
+                userData.dailyAIRemaining = limit;
+                userData.lastAIReset = today;
+            }
+            
+            dailyAIRemaining = userData.dailyAIRemaining || 10;
+            updateAIRemainingDisplay();
+        }
+
+        function updateAIRemainingDisplay() {
+            const aiRemainingElement = document.getElementById('ai-remaining');
+            if (aiRemainingElement) {
+                aiRemainingElement.textContent = dailyAIRemaining;
+                
+                if (dailyAIRemaining <= 3) {
+                    aiRemainingElement.classList.add('bg-red-100', 'text-red-600');
+                    aiRemainingElement.classList.remove('bg-white', 'text-green-600');
+                } else {
+                    aiRemainingElement.classList.add('bg-white', 'text-green-600');
+                    aiRemainingElement.classList.remove('bg-red-100', 'text-red-600');
+                }
+            }
+        }
+
         window.showPremiumDetails = () => { 
             document.getElementById('premium-details-modal').classList.remove('hidden'); 
         }
@@ -2452,16 +2937,20 @@
                 
                 batch.update(doc(db, "users", currentUser.uid), { 
                     isPremium: true,
-                    premiumExpiry: Timestamp.fromDate(newExpiry)
+                    premiumExpiry: Timestamp.fromDate(newExpiry),
+                    dailyAIRemaining: 15
                 });
                 
                 await batch.commit();
                 
                 userData.isPremium = true;
                 userData.premiumExpiry = Timestamp.fromDate(newExpiry);
+                userData.dailyAIRemaining = 15;
+                dailyAIRemaining = 15;
 
                 showBeautifulAlert('success', 'مبروك!', `🎉 تم تفعيل الاشتراك المميز لمدة ${durationDays} يوم.\n\nالكود استخدم ولن يعمل مرة أخرى.`);
                 checkPremiumStatus();
+                checkAIRemaining();
                 setupHeaderUI();
                 document.getElementById('premium-code-input').value = "";
 
@@ -2604,6 +3093,20 @@
                 return;
             }
 
+            if (mode === 'ai') {
+                if (dailyAIRemaining <= 0) {
+                    showBeautifulAlert('error', 'انتهت المحاولات', 'لقد استنفدت جميع محاولات الذكاء الاصطناعي لهذا اليوم. يرجى العودة غداً أو اشتراك مميز للحصول على 15 محاولة يومية.');
+                    return;
+                }
+                
+                dailyAIRemaining--;
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    dailyAIRemaining: dailyAIRemaining
+                });
+                userData.dailyAIRemaining = dailyAIRemaining;
+                updateAIRemainingDisplay();
+            }
+
             currentGameMode = mode;
 
             document.getElementById('challenge-active-card').classList.add('hidden');
@@ -2711,7 +3214,6 @@
             }
             
             let limit = 10;
-            if (isPremiumValid(userData)) limit = 15;
 
             const shuffledQs = qDocs.sort(() => 0.5 - Math.random()).slice(0, limit);
             localMatchData = {
@@ -2989,6 +3491,11 @@
             if(!confirm('هل أنت متأكد من الانسحاب من المباراة؟ سيتم خصم 10 نقاط منك ومنحها للخصم.')) return;
             
             try {
+                let penalty = -10;
+                if (userData.points < 10) {
+                    penalty = -userData.points;
+                }
+                
                 if(currentMatchId && currentGameMode === 'online') {
                     const matchDoc = await getDoc(doc(db, "match_queue", currentMatchId));
                     if(matchDoc.exists()) {
@@ -2997,7 +3504,7 @@
                         const opponentId = isP1 ? matchData.player2.uid : matchData.player1.uid;
                         
                         await updateDoc(doc(db, "users", currentUser.uid), {
-                            points: increment(-10)
+                            points: increment(penalty)
                         });
                         
                         if(opponentId !== 'AI_BOT') {
@@ -3008,7 +3515,14 @@
                         
                         await deleteDoc(doc(db, "match_queue", currentMatchId));
                     }
+                } else if (currentGameMode === 'ai') {
+                    await updateDoc(doc(db, "users", currentUser.uid), {
+                        points: increment(penalty)
+                    });
                 }
+                
+                userData.points += penalty;
+                setupHeaderUI();
                 
                 showWithdrawalResult();
                 
@@ -3040,9 +3554,6 @@
             pointsGained.innerText = "-10";
             
             resultScreen.classList.remove('hidden');
-            
-            userData.points -= 10;
-            setupHeaderUI();
         }
 
         async function endGame(d) {
@@ -3149,6 +3660,7 @@
                  const userDoc = await getDoc(doc(db, "users", currentUser.uid));
                  if(userDoc.exists()) { 
                      userData = userDoc.data(); 
+                     checkAIRemaining();
                      setupHeaderUI(); 
                      setupProfileUI(); 
                  }
@@ -3175,6 +3687,12 @@
             }
             else if (screenId === 'screen-admin-users') {
                 loadBannedUsers();
+            }
+            else if (screenId === 'screen-review-questions') {
+                loadReviewQuestions();
+            }
+            else if (screenId === 'screen-upload-questions') {
+                initUploadQuestions();
             }
         };
 
@@ -3355,12 +3873,31 @@
             }
         };
 
-        window.checkAdminNotifications = () => {
-            const badgeTab = document.getElementById('profile-tab-badge');
-            const badgeBtn = document.getElementById('admin-btn-badge');
-            badgeTab.classList.remove('visible'); 
-            badgeBtn.classList.remove('visible');
-        };
+        async function checkPendingQuestionsNotification() {
+            if (!currentUser || !userData || userData.email !== ADMIN_EMAIL) return;
+            
+            try {
+                const q = query(collection(db, "pending_questions"), where("status", "==", "pending"));
+                const snapshot = await getDocs(q);
+                
+                const badgeTab = document.getElementById('profile-tab-badge');
+                const badgeBtn = document.getElementById('admin-btn-badge');
+                
+                if (!snapshot.empty) {
+                    badgeTab.classList.add('visible');
+                    badgeBtn.classList.add('visible');
+                } else {
+                    badgeTab.classList.remove('visible');
+                    badgeBtn.classList.remove('visible');
+                }
+            } catch (error) {
+                console.error("خطأ في التحقق من الأسئلة المعلقة:", error);
+            }
+        }
+
+        async function checkAdminNotifications() {
+            await checkPendingQuestionsNotification();
+        }
 
         window.switchTab = (tab) => {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -3386,7 +3923,7 @@
             leaderboardOffset = 0;
             
             try {
-                const q = query(collection(db, "users"), orderBy("points", "desc"), limit(50));
+                const q = query(collection(db, "users"), orderBy("points", "desc"), limit(150));
                 const snap = await getDocs(q);
                 allLeaderboardUsers = [];
                 snap.forEach(d => { 
@@ -3922,7 +4459,7 @@
             switchTab('challenges');
         };
 
-        let scheduleData = { subject: '', chapters: [], totalHours: 0, needSleep: true, breakDuration: 10 };
+        let scheduleData = { subject: '', chapters: [], totalHours: 0, needSleep: true, breakDuration: 10, studyTimePref: 'any' };
         
         function initSchedule() {
             const chaptersList = document.getElementById('chaptersList');
@@ -3937,6 +4474,7 @@
                     document.getElementById('totalHours').value = scheduleData.totalHours || '';
                     document.getElementById('needSleep').value = scheduleData.needSleep ? 'yes' : 'no';
                     document.getElementById('breakDuration').value = scheduleData.breakDuration || 10;
+                    document.getElementById('studyTimePref').value = scheduleData.studyTimePref || 'any';
                     
                     if (scheduleData.chapters && scheduleData.chapters.length > 0) {
                         chaptersList.innerHTML = '';
@@ -3957,6 +4495,7 @@
             scheduleData.totalHours = parseFloat(document.getElementById('totalHours').value);
             scheduleData.needSleep = document.getElementById('needSleep').value === 'yes';
             scheduleData.breakDuration = parseInt(document.getElementById('breakDuration').value);
+            scheduleData.studyTimePref = document.getElementById('studyTimePref').value;
             
             scheduleData.chapters = [];
             document.querySelectorAll('#chaptersList > div').forEach((row, idx) => {
@@ -3972,56 +4511,116 @@
             }
 
             localStorage.setItem('studySchedule', JSON.stringify(scheduleData));
-            calculateAndRenderSchedule(false);
+            calculateAndRenderSchedule();
         };
 
-        function calculateAndRenderSchedule(isShared) {
-            let totalMins = scheduleData.totalHours * 60;
-            let sleepMins = 0;
+        function calculateAndRenderSchedule() {
+    let totalMins = scheduleData.totalHours * 60;
+    let sleepMins = 0;
 
-            if (scheduleData.needSleep && scheduleData.totalHours > 16) {
-                const days = scheduleData.totalHours / 24;
-                sleepMins = Math.floor(days * 8 * 60);
-                totalMins -= sleepMins;
-            }
+    if (scheduleData.needSleep && scheduleData.totalHours > 16) {
+        const days = scheduleData.totalHours / 24;
+        sleepMins = Math.floor(days * 8 * 60);
+        totalMins -= sleepMins;
+    }
 
-            const studyRatio = 60 / (60 + scheduleData.breakDuration);
-            const netStudyMins = totalMins * studyRatio;
-            const totalBreakMins = totalMins - netStudyMins;
+    const studyRatio = 60 / (60 + scheduleData.breakDuration);
+    const netStudyMins = Math.round(totalMins * studyRatio); // تقريب هنا
+    const totalBreakMins = totalMins - netStudyMins;
 
-            const totalPoints = scheduleData.chapters.reduce((acc, c) => acc + c.difficulty, 0);
+    const totalPoints = scheduleData.chapters.reduce((acc, c) => acc + c.difficulty, 0);
 
-            document.getElementById('schedule-input-page').classList.add('hidden');
-            document.getElementById('schedule-result-page').classList.remove('hidden');
-            document.getElementById('displaySubject').innerText = scheduleData.subject;
+    document.getElementById('schedule-input-page').classList.add('hidden');
+    document.getElementById('schedule-result-page').classList.remove('hidden');
+    document.getElementById('displaySubject').innerText = scheduleData.subject;
+    
+    let timeText = "مدّة: " + scheduleData.totalHours + " س | وقت: ";
+    if (scheduleData.studyTimePref === 'morning') timeText += "صباح";
+    else if (scheduleData.studyTimePref === 'evening') timeText += "مساء";
+    else timeText += "أي وقت";
+    document.getElementById('displayScheduleTime').innerText = timeText;
 
-            const tbody = document.getElementById('scheduleBody');
-            tbody.innerHTML = '';
+    const tbody = document.getElementById('scheduleBody');
+    tbody.innerHTML = '';
 
-            scheduleData.chapters.forEach(ch => {
-                const share = ch.difficulty / totalPoints;
-                const chapterMins = netStudyMins * share;
-                
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="text-sm p-3">${ch.name}</td>
-                    <td class="p-3">
-                        <div class="flex flex-col items-center">
-                            <span class="text-lg font-black">${formatTime(chapterMins)}</span>
-                            <div class="w-full bg-gray-100 h-1 mt-1 rounded overflow-hidden">
-                                <div class="bg-indigo-500 h-full" style="width: ${Math.min(100, (chapterMins/180)*100)}%"></div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="text-xs text-gray-500 font-bold p-3">${scheduleData.breakDuration}د</td>
-                `;
-                tbody.appendChild(tr);
-            });
+    let currentTime = 0;
+    if (scheduleData.studyTimePref === 'evening') currentTime = 16 * 60;
+    else if (scheduleData.studyTimePref === 'any') currentTime = 8 * 60;
 
-            document.getElementById('statStudy').innerText = formatTime(netStudyMins);
-            document.getElementById('statBreak').innerText = formatTime(totalBreakMins);
-            document.getElementById('statSleep').innerText = formatTime(sleepMins);
+    scheduleData.chapters.forEach((ch, idx) => {
+        const share = ch.difficulty / totalPoints;
+        const chapterMins = Math.round(netStudyMins * share); // تقريب هنا
+        
+        const startHour = Math.floor(currentTime / 60);
+        const startMin = currentTime % 60;
+        currentTime += chapterMins;
+        const endHour = Math.floor(currentTime / 60);
+        const endMin = currentTime % 60;
+        
+        const breakMins = scheduleData.breakDuration;
+        
+        const tr1 = document.createElement('tr');
+        tr1.innerHTML = `
+            <td>${ch.name}</td>
+            <td>${formatTime2(startHour, startMin)}<br>${formatTime2(endHour, endMin)}</td>
+        `;
+        tbody.appendChild(tr1);
+        
+        if (idx < scheduleData.chapters.length - 1) {
+            const breakStartHour = Math.floor(currentTime / 60);
+            const breakStartMin = currentTime % 60;
+            currentTime += breakMins;
+            const breakEndHour = Math.floor(currentTime / 60);
+            const breakEndMin = currentTime % 60;
+            
+            const tr2 = document.createElement('tr');
+            tr2.innerHTML = `
+                <td>استراحة</td>
+                <td>${formatTime2(breakStartHour, breakStartMin)}<br>${formatTime2(breakEndHour, breakEndMin)}</td>
+            `;
+            tbody.appendChild(tr2);
         }
+    });
+
+    if (scheduleData.needSleep && scheduleData.totalHours > 16) {
+        const sleepStart = 22 * 60;
+        const sleepEnd = 6 * 60;
+        const trSleep = document.createElement('tr');
+        trSleep.innerHTML = `
+            <td>نوم</td>
+            <td>${formatTime2(22, 0)}<br>${formatTime2(6, 0)}</td>
+        `;
+        tbody.appendChild(trSleep);
+    }
+
+    document.getElementById('statStudy').innerText = formatTime(netStudyMins);
+    document.getElementById('statBreak').innerText = formatTime(totalBreakMins);
+    document.getElementById('statSleep').innerText = formatTime(sleepMins);
+}
+
+        function formatTime2(hour, min) {
+    // تقريب الدقائق إلى أقرب رقم صحيح
+    min = Math.round(min);
+    
+    // إذا كانت الدقائق 60 أو أكثر، نضيف ساعة ونطرح 60
+    if (min >= 60) {
+        hour += Math.floor(min / 60);
+        min = min % 60;
+    }
+    
+    // ضبط الساعة لتكون بين 0-23
+    hour = hour % 24;
+    
+    // تحويل إلى تنسيق 12 ساعة
+    let displayHour = hour % 12;
+    if (displayHour === 0) displayHour = 12; // الساعة 0 تكون 12 صباحاً
+    
+    // تحديد ص/م
+    const ampm = hour < 12 ? 'ص' : 'م';
+    
+    // إرجاع التنسيق المطلوب مع دقائق مكونة من رقمين
+    return `${displayHour}:${min < 10 ? '0' + min : min} ${ampm}`;
+}
 
         function formatTime(m) {
             if(m < 60) return Math.round(m) + ' د';
@@ -4449,6 +5048,444 @@
                 initSchedule(); 
             }
             if(tab==='profile') navs[3].classList.add('active', 'text-indigo-600');
+        };
+
+        function initUploadQuestions() {
+            if (!userData.grade) {
+                showBeautifulAlert('warning', 'تنبيه', 'يرجى تحديد مرحلتك الدراسية أولاً');
+                setTimeout(() => backToProfile(), 1000);
+                return;
+            }
+            
+            const subjectSelect = document.getElementById('upload-subject');
+            subjectSelect.innerHTML = '<option value="">اختر المادة</option>';
+            const gradeSubjects = subjects[userData.grade] || [];
+            gradeSubjects.forEach(sub => {
+                subjectSelect.innerHTML += `<option value="${sub}">${sub}</option>`;
+            });
+            
+            uploadQType = 'mcq';
+            uploadCorrectAnswer = null;
+            uploadTFAnswer = null;
+            
+            document.getElementById('upload-step-1').classList.remove('hidden');
+            document.getElementById('upload-step-2-mcq').classList.add('hidden');
+            document.getElementById('upload-step-2-tf').classList.add('hidden');
+            
+            document.getElementById('upload-btn-mcq').className = `py-3 rounded-xl border-2 border-indigo-600 bg-indigo-50 text-indigo-600 font-bold active:scale-95 transition`;
+            document.getElementById('upload-btn-tf').className = `py-3 rounded-xl border-2 border-indigo-100 text-gray-500 font-bold active:scale-95 transition`;
+        }
+
+        window.onUploadSubjectChange = function() {
+            uploadSubject = document.getElementById('upload-subject').value;
+        };
+
+        window.setUploadQType = (t) => {
+            uploadQType = t;
+            document.getElementById('upload-btn-mcq').className = `py-3 rounded-xl border-2 font-bold transition flex-1 ${t==='mcq'?'border-indigo-600 bg-indigo-50 text-indigo-600':'border-indigo-100 text-gray-500'}`;
+            document.getElementById('upload-btn-tf').className = `py-3 rounded-xl border-2 font-bold transition flex-1 ${t==='tf'?'border-indigo-600 bg-indigo-50 text-indigo-600':'border-indigo-100 text-gray-500'}`;
+        };
+
+        window.goToUploadStep1 = function() {
+            document.getElementById('upload-step-1').classList.remove('hidden');
+            document.getElementById('upload-step-2-mcq').classList.add('hidden');
+            document.getElementById('upload-step-2-tf').classList.add('hidden');
+        };
+
+        window.goToUploadStep2 = function() {
+            if (!uploadSubject) {
+                showBeautifulAlert('warning', 'تنبيه', 'يرجى اختيار المادة أولاً');
+                return;
+            }
+            
+            if (!uploadQType) {
+                showBeautifulAlert('warning', 'تنبيه', 'يرجى اختيار نوع السؤال أولاً');
+                return;
+            }
+            
+            document.getElementById('upload-step-1').classList.add('hidden');
+            
+            if (uploadQType === 'mcq') {
+                document.getElementById('upload-step-2-mcq').classList.remove('hidden');
+                document.getElementById('upload-step-2-tf').classList.add('hidden');
+                
+                document.getElementById('upload-question-text').value = '';
+                document.getElementById('upload-answer-1').value = '';
+                document.getElementById('upload-answer-2').value = '';
+                document.getElementById('upload-answer-3').value = '';
+                uploadCorrectAnswer = null;
+                resetCorrectButtons();
+            } else {
+                document.getElementById('upload-step-2-mcq').classList.add('hidden');
+                document.getElementById('upload-step-2-tf').classList.remove('hidden');
+                
+                document.getElementById('upload-tf-question').value = '';
+                uploadTFAnswer = null;
+                resetTFButtons();
+            }
+        };
+
+        function resetCorrectButtons() {
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById('upload-correct-' + i);
+                btn.className = 'w-12 bg-gray-100 text-gray-600 rounded-lg';
+                btn.innerHTML = '✓';
+            }
+        }
+
+        function resetTFButtons() {
+            document.getElementById('upload-tf-true').className = 'py-3 rounded-xl border-2 border-green-100 text-gray-500 font-bold';
+            document.getElementById('upload-tf-false').className = 'py-3 rounded-xl border-2 border-red-100 text-gray-500 font-bold';
+        }
+
+        window.setCorrectAnswer = function(num) {
+            uploadCorrectAnswer = num;
+            resetCorrectButtons();
+            const btn = document.getElementById('upload-correct-' + num);
+            btn.className = 'w-12 bg-green-500 text-white rounded-lg';
+            btn.innerHTML = '✓';
+        };
+
+        window.setTFAnswer = function(isTrue) {
+            uploadTFAnswer = isTrue;
+            resetTFButtons();
+            if (isTrue) {
+                document.getElementById('upload-tf-true').className = 'py-3 rounded-xl border-2 border-green-500 bg-green-50 text-green-600 font-bold';
+                document.getElementById('upload-tf-false').className = 'py-3 rounded-xl border-2 border-red-100 text-gray-500 font-bold';
+            } else {
+                document.getElementById('upload-tf-true').className = 'py-3 rounded-xl border-2 border-green-100 text-gray-500 font-bold';
+                document.getElementById('upload-tf-false').className = 'py-3 rounded-xl border-2 border-red-500 bg-red-50 text-red-600 font-bold';
+            }
+        };
+
+        window.submitQuestionMCQ = async function() {
+            const questionText = document.getElementById('upload-question-text').value.trim();
+            const answer1 = document.getElementById('upload-answer-1').value.trim();
+            const answer2 = document.getElementById('upload-answer-2').value.trim();
+            const answer3 = document.getElementById('upload-answer-3').value.trim();
+            
+            if (!questionText) {
+                showBeautifulAlert('warning', 'تنبيه', 'يرجى إدخال نص السؤال');
+                return;
+            }
+            
+            if (!answer1 || !answer2 || !answer3) {
+                showBeautifulAlert('warning', 'تنبيه', 'يرجى إدخال جميع الخيارات');
+                return;
+            }
+            
+            if (uploadCorrectAnswer === null) {
+                showBeautifulAlert('warning', 'تنبيه', 'يرجى تحديد الإجابة الصحيحة');
+                return;
+            }
+            
+            if (!confirm('هل أنت متأكد أن السؤال صحيح ومن ضمن المنهج الدراسي؟')) {
+                return;
+            }
+            
+            try {
+                await addDoc(collection(db, "pending_questions"), {
+                    question: questionText,
+                    answers: [answer1, answer2, answer3],
+                    correct: uploadCorrectAnswer,
+                    type: 'mcq',
+                    grade: userData.grade,
+                    subject: uploadSubject,
+                    senderId: currentUser.uid,
+                    senderName: userData.name,
+                    status: 'pending',
+                    createdAt: serverTimestamp()
+                });
+                
+                showBeautifulAlert('success', 'تم الإرسال', '✅ تم إرسال السؤال للمراجعة. ستتم إضافة 5 نقاط لك بعد قبوله.');
+                
+                document.getElementById('upload-question-text').value = '';
+                document.getElementById('upload-answer-1').value = '';
+                document.getElementById('upload-answer-2').value = '';
+                document.getElementById('upload-answer-3').value = '';
+                uploadCorrectAnswer = null;
+                resetCorrectButtons();
+                
+                goToUploadStep1();
+                
+            } catch (error) {
+                console.error("Error submitting question:", error);
+                showBeautifulAlert('error', 'خطأ', '❌ حدث خطأ في إرسال السؤال');
+            }
+        };
+
+        window.submitQuestionTF = async function() {
+            const questionText = document.getElementById('upload-tf-question').value.trim();
+            
+            if (!questionText) {
+                showBeautifulAlert('warning', 'تنبيه', 'يرجى إدخال نص السؤال');
+                return;
+            }
+            
+            if (uploadTFAnswer === null) {
+                showBeautifulAlert('warning', 'تنبيه', 'يرجى تحديد الإجابة الصحيحة');
+                return;
+            }
+            
+            if (!confirm('هل أنت متأكد أن السؤال صحيح ومن ضمن المنهج الدراسي؟')) {
+                return;
+            }
+            
+            try {
+                await addDoc(collection(db, "pending_questions"), {
+                    question: questionText,
+                    correct: uploadTFAnswer,
+                    type: 'tf',
+                    grade: userData.grade,
+                    subject: uploadSubject,
+                    senderId: currentUser.uid,
+                    senderName: userData.name,
+                    status: 'pending',
+                    createdAt: serverTimestamp()
+                });
+                
+                showBeautifulAlert('success', 'تم الإرسال', '✅ تم إرسال السؤال للمراجعة. ستتم إضافة 5 نقاط لك بعد قبوله.');
+                
+                document.getElementById('upload-tf-question').value = '';
+                uploadTFAnswer = null;
+                resetTFButtons();
+                
+                goToUploadStep1();
+                
+            } catch (error) {
+                console.error("Error submitting question:", error);
+                showBeautifulAlert('error', 'خطأ', '❌ حدث خطأ في إرسال السؤال');
+            }
+        };
+
+        async function loadReviewQuestions() {
+    const listDiv = document.getElementById('review-questions-list');
+    
+    // تحقق إذا المستخدم أدمن
+    if (!userData || userData.email !== ADMIN_EMAIL) {
+        listDiv.innerHTML = `
+            <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
+                <i class="fas fa-shield-alt text-yellow-500 text-3xl mb-3"></i>
+                <p class="text-yellow-700 font-bold">⛔ صلاحية محدودة</p>
+                <p class="text-gray-600 text-sm mt-2">هذا القسم مخصص للإدارة فقط</p>
+            </div>
+        `;
+        return;
+    }
+    
+    listDiv.innerHTML = '<p class="text-center text-gray-400 animate-pulse">📥 جاري تحميل الأسئلة للمراجعة...</p>';
+    
+    try {
+        // استعلام لجلب الأسئلة المعلقة
+        const q = query(collection(db, "pending_questions"), where("status", "==", "pending"));
+        const snapshot = await getDocs(q);
+        
+        if (snapshot.empty) {
+            listDiv.innerHTML = `
+                <div class="bg-green-50 border border-green-200 rounded-xl p-8 text-center">
+                    <i class="fas fa-check-circle text-green-500 text-4xl mb-3"></i>
+                    <p class="text-green-700 font-bold">🎉 كل الأسئلة تمت مراجعتها</p>
+                    <p class="text-gray-600 text-sm mt-2">لا توجد أسئلة جديدة</p>
+                </div>
+            `;
+            return;
+        }
+        
+        console.log(`✅ تم العثور على ${snapshot.size} سؤال للمراجعة`);
+        
+        // تحويل البيانات إلى مصفوفة للترتيب
+        let questions = [];
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            questions.push({
+                id: doc.id,
+                ...data,
+                // تاريخ الإنشاء (إذا ما موجود، استخدم تاريخ الآن)
+                createdAt: data.createdAt ? data.createdAt.toDate() : new Date(),
+                timestamp: data.createdAt ? data.createdAt.toDate().getTime() : Date.now()
+            });
+        });
+        
+        // **الترتيب: من الأحدث إلى الأقدم**
+        questions.sort((a, b) => b.timestamp - a.timestamp);
+        
+        console.log("📊 الأسئلة بعد الترتيب:", questions);
+        
+        // عرض الأسئلة مرتبة
+        let html = `
+            <div class="mb-4 p-3 bg-indigo-50 rounded-xl border border-indigo-100">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="font-bold text-indigo-700 text-sm">عدد الأسئلة: ${questions.length}</p>
+                        <p class="text-xs text-indigo-500">(من الأحدث للأقدم)</p>
+                    </div>
+                    <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold">
+                        🔄 مرتبة تلقائياً
+                    </span>
+                </div>
+            </div>
+        `;
+        
+        questions.forEach((item, index) => {
+            const data = item;
+            
+            // تاريخ النشر بصيغة جميلة
+            const dateStr = data.createdAt.toLocaleDateString('ar-EG', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            let answersHtml = '';
+            if (data.type === 'mcq') {
+                answersHtml = `
+                    <div class="upload-question-answers mt-3">
+                        <p class="text-xs text-gray-500 mb-2 font-bold">الخيارات:</p>
+                        ${(data.answers || []).map((ans, idx) => `
+                            <div class="upload-question-answer ${idx === data.correct ? 'upload-question-correct' : ''}">
+                                <span class="font-bold">${idx + 1}.</span> ${ans || '...'}
+                                ${idx === data.correct ? '<span class="text-green-500 text-xs mr-2">✓ صح</span>' : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                answersHtml = `
+                    <div class="upload-question-answers mt-3">
+                        <p class="text-xs text-gray-500 mb-2 font-bold">الإجابة الصحيحة:</p>
+                        <div class="upload-question-answer ${data.correct ? 'upload-question-correct' : ''}">
+                            ${data.correct ? '✅ صح' : '❌ خطأ'}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            html += `
+                <div class="upload-question-item mb-4 border-l-4 ${index === 0 ? 'border-l-blue-500' : 'border-l-gray-300'}">
+                    <div class="upload-question-header">
+                        <div class="flex justify-between items-start">
+                            <div class="flex gap-2 flex-wrap">
+                                <span class="upload-question-grade">${data.grade ? getGradeName(data.grade) : 'غير محدد'}</span>
+                                <span class="upload-question-subject" style="background:#10b981">${data.subject || 'غير محدد'}</span>
+                                <span class="upload-question-type">${data.type === 'mcq' ? 'اختيارات' : 'صح/خطأ'}</span>
+                                ${index === 0 ? '<span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold">🆕 الأحدث</span>' : ''}
+                            </div>
+                            <div class="text-xs text-gray-500" title="${data.createdAt.toISOString()}">
+                                📅 ${dateStr}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p class="upload-question-text mt-3">${data.question || 'لا يوجد نص للسؤال'}</p>
+                    
+                    ${answersHtml}
+                    
+                    <div class="mt-4 pt-3 border-t border-gray-100">
+                        <div class="flex justify-between items-center">
+                            <p class="upload-sender text-sm">
+                                <span class="text-gray-500">📤 مرسل:</span>
+                                <span class="font-bold text-purple-600 mr-2">${data.senderName || data.senderId || 'مجهول'}</span>
+                            </p>
+                            <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                                #${index + 1}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="upload-question-buttons mt-4">
+                        <button onclick="acceptQuestion('${item.id}')" class="upload-accept-btn hover:scale-105 transition">
+                            <i class="fas fa-check"></i> قبول السؤال (+5 نقاط للمرسل)
+                        </button>
+                        <button onclick="rejectQuestion('${item.id}')" class="upload-reject-btn hover:scale-105 transition">
+                            <i class="fas fa-times"></i> رفض السؤال
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+        
+        // زر تحديث في الأسفل
+        html += `
+            <div class="mt-6 text-center">
+                <button onclick="loadReviewQuestions()" class="bg-gray-100 text-gray-700 px-6 py-3 rounded-xl font-bold hover:bg-gray-200 transition flex items-center gap-2 mx-auto">
+                    <i class="fas fa-sync-alt"></i> تحديث القائمة
+                </button>
+                <p class="text-xs text-gray-400 mt-2">آخر تحديث: ${new Date().toLocaleTimeString('ar-EG')}</p>
+            </div>
+        `;
+        
+        listDiv.innerHTML = html;
+        
+    } catch (error) {
+        console.error("❌ خطأ في تحميل الأسئلة:", error);
+        listDiv.innerHTML = `
+            <div class="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+                <i class="fas fa-exclamation-triangle text-red-500 text-3xl mb-3"></i>
+                <p class="text-red-700 font-bold">فشل في تحميل الأسئلة</p>
+                <p class="text-red-600 text-sm mt-2">${error.message || 'خطأ غير معروف'}</p>
+                <button onclick="loadReviewQuestions()" class="mt-4 bg-red-100 text-red-700 px-6 py-2 rounded-lg font-bold hover:bg-red-200 transition">
+                    <i class="fas fa-redo"></i> إعادة المحاولة
+                </button>
+            </div>
+        `;
+    }
+}
+
+        window.acceptQuestion = async function(questionId) {
+            try {
+                const questionDoc = await getDoc(doc(db, "pending_questions", questionId));
+                if (!questionDoc.exists()) return;
+                
+                const questionData = questionDoc.data();
+                
+                await addDoc(collection(db, "questions"), {
+                    question: questionData.question,
+                    answers: questionData.answers || [],
+                    correct: questionData.correct,
+                    type: questionData.type,
+                    grade: questionData.grade,
+                    subject: questionData.subject,
+                    createdAt: serverTimestamp()
+                });
+                
+                await updateDoc(doc(db, "pending_questions", questionId), {
+                    status: 'accepted',
+                    reviewedAt: serverTimestamp(),
+                    reviewedBy: currentUser.uid
+                });
+                
+                if (questionData.senderId) {
+                    await updateDoc(doc(db, "users", questionData.senderId), {
+                        points: increment(5)
+                    });
+                }
+                
+                loadReviewQuestions();
+                checkPendingQuestionsNotification();
+                
+            } catch (error) {
+                console.error("Error accepting question:", error);
+                showBeautifulAlert('error', 'خطأ', 'حدث خطأ في قبول السؤال');
+            }
+        };
+
+        window.rejectQuestion = async function(questionId) {
+            try {
+                await updateDoc(doc(db, "pending_questions", questionId), {
+                    status: 'rejected',
+                    reviewedAt: serverTimestamp(),
+                    reviewedBy: currentUser.uid
+                });
+                
+                loadReviewQuestions();
+                checkPendingQuestionsNotification();
+                
+            } catch (error) {
+                console.error("Error rejecting question:", error);
+                showBeautifulAlert('error', 'خطأ', 'حدث خطأ في رفض السؤال');
+            }
         };
     </script>
 </body>
