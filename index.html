@@ -947,6 +947,148 @@
             .input-box { font-size: 1.1rem; }
             .auth-overlay > div { max-width: 500px; }
         }
+        
+        /* مؤشرات الاتصال */
+.connection-good {
+    background: rgba(34, 197, 94, 0.1);
+    border: 2px solid #22c55e;
+    border-radius: 12px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    backdrop-filter: blur(10px);
+}
+
+.connection-warning {
+    background: rgba(245, 158, 11, 0.1);
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    backdrop-filter: blur(10px);
+}
+
+.connection-poor {
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid #ef4444;
+    border-radius: 12px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    backdrop-filter: blur(10px);
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* إشعارات التوقيت */
+.time-out-notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from { transform: translate(-50%, -100%); opacity: 0; }
+    to { transform: translate(-50%, -50%); opacity: 1; }
+}
+
+/* تحسين المؤقت */
+#game-timer {
+    transition: all 0.3s;
+    font-weight: 900;
+    font-size: 1.2rem;
+}
+
+#game-timer.bg-red-500 {
+    animation: heartbeat 0.5s infinite;
+}
+
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* تحسين واجهة البحث */
+#searching-ui {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    min-height: 60vh;
+}
+
+#search-msg {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.searching-animation {
+    width: 100px;
+    height: 100px;
+    position: relative;
+}
+
+.searching-animation::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 4px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* رسائل الخطأ الجميلة */
+.connection-error-modal {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    color: white;
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    animation: slideUp 0.3s ease-out;
+}
+
+.connection-error-modal h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.connection-error-modal p {
+    opacity: 0.9;
+    margin-bottom: 20px;
+}
+
+.retry-button {
+    background: white;
+    color: #ff6b6b;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.retry-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255,255,255,0.2);
+}
+
     </style>
 </head>
 <body>
@@ -3087,123 +3229,910 @@ if (localStorage.getItem('device_banned') === 'true' && userData.email !== ADMIN
         };
 
         window.startMatchmaking = async (mode) => {
-            const sub = document.getElementById('challenge-subject').value;
-            if(!sub || !selectedQType) {
-                showBeautifulAlert('warning', 'تنبيه', 'يرجى اختيار المادة ونوع الأسئلة');
+    try {
+        console.log("🎮 بدء عملية المطابقة، الوضع:", mode);
+        
+        const sub = document.getElementById('challenge-subject').value;
+        if(!sub || !selectedQType) {
+            showBeautifulAlert('warning', 'تنبيه', 'يرجى اختيار المادة ونوع الأسئلة');
+            return;
+        }
+
+        // إخفاء واجهة التحدي
+        document.getElementById('challenge-active-card').classList.add('hidden');
+        
+        // عرض واجهة البحث بشكل صحيح
+        const searchingUI = document.getElementById('searching-ui');
+        searchingUI.classList.remove('hidden');
+        searchingUI.style.display = 'flex';
+        searchingUI.style.flexDirection = 'column';
+        searchingUI.style.alignItems = 'center';
+        searchingUI.style.justifyContent = 'center';
+        
+        document.getElementById('search-msg').innerHTML = `
+            <div class="text-center">
+                <div class="w-20 h-20 mx-auto mb-4 relative">
+                    <div class="absolute inset-0 rounded-full border-4 border-indigo-500 opacity-20 animate-ping"></div>
+                    <div class="absolute inset-2 rounded-full border-4 border-indigo-500 opacity-40 animate-pulse"></div>
+                    <div class="absolute inset-4 rounded-full border-4 border-indigo-500 animate-spin"></div>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">نبحث عن منافس مناسب</h3>
+                <p class="text-gray-600">نتأكد من جودة الاتصال وسرعته...</p>
+            </div>
+        `;
+
+        // وضع اللعبة الحالي
+        currentGameMode = mode;
+        
+        // وضع الذكاء الاصطناعي
+        if (mode === 'ai') {
+            if (dailyAIRemaining <= 0) {
+                showBeautifulAlert('error', 'انتهت المحاولات', 'لقد استنفدت جميع محاولات الذكاء الاصطناعي لهذا اليوم.');
+                cancelSearch();
                 return;
             }
-
-            if (mode === 'ai') {
-                if (dailyAIRemaining <= 0) {
-                    showBeautifulAlert('error', 'انتهت المحاولات', 'لقد استنفدت جميع محاولات الذكاء الاصطناعي لهذا اليوم. يرجى العودة غداً أو اشتراك مميز للحصول على 15 محاولة يومية.');
-                    return;
-                }
-                
-                dailyAIRemaining--;
-                await updateDoc(doc(db, "users", currentUser.uid), {
-                    dailyAIRemaining: dailyAIRemaining
-                });
-                userData.dailyAIRemaining = dailyAIRemaining;
-                updateAIRemainingDisplay();
-            }
-
-            currentGameMode = mode;
-
-            document.getElementById('challenge-active-card').classList.add('hidden');
-            document.getElementById('searching-ui').classList.remove('hidden');
-            document.getElementById('searching-ui').style.display = 'flex'; 
-            document.getElementById('search-msg').innerText = mode === 'online' ? "جاري البحث عن طالب..." : "جاري تحضير البوت...";
-
-            const grade = userData.grade;
-            let group = `${grade}_${sub}`;
             
-            if(sharedSubjects.includes(sub) && (grade === '6sci' || grade === '6lit')) {
-                group = `6shared_${sub}`;
+            // تحديث العدد المتبقي
+            dailyAIRemaining--;
+            await updateDoc(doc(db, "users", currentUser.uid), {
+                dailyAIRemaining: dailyAIRemaining
+            });
+            userData.dailyAIRemaining = dailyAIRemaining;
+            updateAIRemainingDisplay();
+            
+            // البدء مع الذكاء الاصطناعي
+            await startAIMatch(sub);
+            return;
+        }
+        
+        // وضع اللعب الحقيقي
+        if (mode === 'online') {
+            const grade = userData.grade;
+            let group;
+            
+            // المواد المشتركة بين العلمي والأدبي
+            const sharedSubjects = ['اسلامية', 'عربي', 'انكليزي'];
+            
+            if ((grade === '6sci' || grade === '6lit') && sharedSubjects.includes(sub)) {
+                group = `6shared_${sub}_${selectedQType}`;
+            } else {
+                group = `${grade}_${sub}_${selectedQType}`;
             }
-
-            if (mode === 'online') startOnlineMatch(group, sub);
-            else startAIMatch(sub);
-        };
-
-        async function startOnlineMatch(group, sub) {
+            
+            console.log("🔍 مجموعة البحث:", group);
+            
+            // محاولة الاتصال مع مهلة
+            const connectionPromise = startOnlineMatchUltimate(group, sub);
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('انتهت مهلة البحث')), 25000)
+            );
+            
             try {
-                const qRef = collection(db, "match_queue");
+                await Promise.race([connectionPromise, timeoutPromise]);
+            } catch (searchError) {
+                console.error("⏱️ انتهت مهلة البحث:", searchError);
                 
-                const qWait = query(
-                    qRef, 
-                    where("group", "==", group), 
-                    where("status", "==", "waiting"), 
-                    limit(10)
-                );
-                
-                const snap = await getDocs(qWait);
-                let foundMatchId = null;
-                let foundMatchData = null;
-                
-                snap.forEach((doc) => { 
-                    const matchData = doc.data();
-                    if (matchData.player1.uid !== currentUser.uid && matchData.grade === userData.grade) {
-                        const lastActiveTime = matchData.player1LastActive || 0;
-                        const currentTime = Date.now();
-                        
-                        if (currentTime - lastActiveTime < 30000) {
-                            foundMatchId = doc.id;
-                            foundMatchData = matchData;
-                        }
-                    }
-                });
-
-                if(foundMatchId && foundMatchData) {
-                    currentMatchId = foundMatchId;
-                    await updateDoc(doc(db, "match_queue", foundMatchId), {
-                        player2: { 
-                            uid: currentUser.uid, 
-                            name: userData.name, 
-                            score: 0, 
-                            photo: userData.photo,
-                            grade: userData.grade
-                        },
-                        status: 'active',
-                        answersCount: 0,
-                        player2LastActive: Date.now(),
-                        lastActivity: Date.now()
-                    });
-                    listenToMatch(foundMatchId);
-                } else {
-                    const qDocs = await getQuestions(sub, selectedQType);
-                    if(qDocs.length === 0) { 
-                        showBeautifulAlert('warning', 'تنبيه', 'لا توجد أسئلة كافية في هذا القسم لهذه المرحلة'); 
-                        cancelSearch(); 
-                        return; 
-                    }
-                    
-                    const shuffledQs = qDocs.sort(() => 0.5 - Math.random()).slice(0, 10);
-                    const newMatch = await addDoc(qRef, {
-                        group: group, 
-                        status: 'waiting',
-                        grade: userData.grade,
-                        player1: { 
-                            uid: currentUser.uid, 
-                            name: userData.name, 
-                            score: 0, 
-                            photo: userData.photo,
-                            grade: userData.grade
-                        },
-                        questions: shuffledQs, 
-                        currentIdx: 0, 
-                        answersCount: 0,
-                        player1LastActive: Date.now(),
-                        lastActivity: Date.now(),
-                        createdAt: serverTimestamp()
-                    });
-                    currentMatchId = newMatch.id;
-                    listenToMatch(newMatch.id);
+                // حذف المباراة إذا كنت المضيف
+                if (currentMatchId) {
+                    try {
+                        await deleteDoc(doc(db, "match_queue", currentMatchId));
+                        console.log("🗑️ حذف المباراة بسبب المهلة");
+                    } catch (e) { /* تجاهل */ }
                 }
-            } catch(e) { 
-                console.error("خطأ في البحث عن مباراة:", e); 
-                cancelSearch(); 
+                
+                showBeautifulAlert('info', 'لم نجد منافساً', 
+                    'لم نتمكن من العثور على لاعب آخر في الوقت الحالي. ' +
+                    'يمكنك:\n\n' +
+                    '1. المحاولة مرة أخرى\n' +
+                    '2. اللعب ضد الذكاء الاصطناعي\n' +
+                    '3. المحاولة في وقت آخر'
+                );
+                cancelSearch();
             }
         }
+        
+    } catch (error) {
+        console.error("💥 خطأ غير متوقع في startMatchmaking:", error);
+        showSearchErrorUltimate(error);
+    }
+};
+
+async function startOnlineMatchUltimate(group, sub) {
+    console.log("🚀 بدء البحث المتقدم...");
+    
+    // الخطوة 1: تنظيف المباريات القديمة
+    await cleanupMatches();
+    
+    // الخطوة 2: البحث عن مباراة متاحة
+    console.log("🔎 نبحث عن مباراة متاحة...");
+    const availableMatch = await findAvailableMatchUltimate(group);
+    
+    if (availableMatch) {
+        console.log("✅ وجدنا مباراة!", availableMatch.id);
+        return await joinMatchUltimate(availableMatch);
+    }
+    
+    // الخطوة 3: إنشاء مباراة جديدة
+    console.log("🆕 ننشئ مباراة جديدة...");
+    return await createNewMatchUltimate(group, sub);
+}
+
+async function cleanupMatches() {
+    try {
+        const oneMinuteAgo = Date.now() - 60000;
+        const q = query(
+            collection(db, "match_queue"),
+            where("lastActivity", "<", oneMinuteAgo)
+        );
+        
+        const snap = await getDocs(q);
+        console.log(`🧹 ننظف ${snap.size} مباراة قديمة`);
+        
+        const deletePromises = snap.docs.map(doc => 
+            deleteDoc(doc.ref).catch(e => console.log("⚠️ لم أستطع حذف:", e))
+        );
+        
+        await Promise.all(deletePromises);
+    } catch (cleanupError) {
+        console.warn("⚠️ تنظيف المباريات القديمة فشل:", cleanupError);
+    }
+}
+
+async function findAvailableMatchUltimate(group) {
+    try {
+        const thirtySecondsAgo = Date.now() - 30000;
+        
+        const q = query(
+            collection(db, "match_queue"),
+            where("group", "==", group),
+            where("status", "==", "waiting"),
+            where("lastActivity", ">=", thirtySecondsAgo),
+            limit(1)
+        );
+        
+        const snap = await getDocs(q);
+        
+        if (snap.empty) {
+            console.log("🔍 لا توجد مباريات متاحة");
+            return null;
+        }
+        
+        const doc = snap.docs[0];
+        const data = doc.data();
+        
+        // التأكد من أن اللاعب ليس نفسه
+        if (data.player1.uid === currentUser.uid) {
+            console.log("👤 هذه مباراتي أنا، أتخطاها");
+            return null;
+        }
+        
+        console.log("🎯 وجدنا مباراة مناسبة!");
+        return { id: doc.id, data: data };
+        
+    } catch (error) {
+        console.error("❌ خطأ في البحث عن مباراة:", error);
+        throw error;
+    }
+}
+
+async function joinMatchUltimate(match) {
+    console.log("🤝 أنضم للمباراة الموجودة...");
+    
+    currentMatchId = match.id;
+    
+    try {
+        // تحديث المباراة بانضمام اللاعب الثاني
+        await updateDoc(doc(db, "match_queue", currentMatchId), {
+            player2: {
+                uid: currentUser.uid,
+                name: userData.name,
+                photo: userData.photo,
+                grade: userData.grade,
+                score: 0,
+                ready: true
+            },
+            status: 'active',
+            player2JoinedAt: Date.now(),
+            lastActivity: Date.now()
+        });
+        
+        console.log("✅ انضممت بنجاح!");
+        
+        // تحديث واجهة المستخدم
+        document.getElementById('search-msg').innerHTML = `
+            <div class="text-center animate-pulse">
+                <i class="fas fa-check-circle text-green-500 text-5xl mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">تم العثور على منافس!</h3>
+                <p class="text-gray-600">نبدأ المباراة خلال ثواني...</p>
+            </div>
+        `;
+        
+        // الانتظار قليلاً ثم الاستماع
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // بدء الاستماع للمباراة
+        listenToMatch(currentMatchId);
+        
+    } catch (joinError) {
+        console.error("❌ فشل الانضمام للمباراة:", joinError);
+        throw joinError;
+    }
+}
+
+async function createNewMatchUltimate(group, sub) {
+    console.log("🏗️ أُنشئ مباراة جديدة...");
+    
+    // الحصول على الأسئلة
+    const questions = await getQuestionsWithRetry(sub, selectedQType);
+    
+    if (questions.length < 5) {
+        throw new Error('لا توجد أسئلة كافية: ' + questions.length);
+    }
+    
+    // تحضير الأسئلة
+    const selectedQuestions = questions
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 10);
+    
+    console.log(`📚 تم تحضير ${selectedQuestions.length} سؤال`);
+    
+    try {
+        // إنشاء المباراة
+        const newMatchRef = await addDoc(collection(db, "match_queue"), {
+            // التعريف
+            group: group,
+            grade: userData.grade,
+            subject: sub,
+            questionType: selectedQType,
+            
+            // الحالة
+            status: 'waiting',
+            
+            // اللاعبون
+            player1: {
+                uid: currentUser.uid,
+                name: userData.name,
+                photo: userData.photo,
+                grade: userData.grade,
+                score: 0,
+                ready: true
+            },
+            player2: null,
+            
+            // الأسئلة
+            questions: selectedQuestions,
+            currentIdx: 0,
+            answersCount: 0,
+            
+            // التوقيت
+            createdAt: serverTimestamp(),
+            created: Date.now(),
+            lastActivity: Date.now(),
+            searchStartTime: Date.now(),
+            
+            // الإحصائيات
+            metadata: {
+                version: '2.0',
+                searchAttempts: 1,
+                connectionQuality: 'good'
+            }
+        });
+        
+        currentMatchId = newMatchRef.id;
+        console.log("🆕 تم إنشاء مباراة جديدة، الرقم:", currentMatchId);
+        
+        // تحديث واجهة المستخدم
+        document.getElementById('search-msg').innerHTML = `
+            <div class="text-center">
+                <div class="w-16 h-16 mx-auto mb-4">
+                    <i class="fas fa-user-clock text-indigo-500 text-4xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">في انتظار لاعب آخر</h3>
+                <p class="text-gray-600">شارك رمز الغرفة مع صديق أو انتظر...</p>
+                
+                <div class="mt-4 p-3 bg-indigo-50 rounded-lg">
+                    <p class="text-xs text-indigo-700 font-bold">كود المباراة:</p>
+                    <p class="text-xl font-mono font-bold text-indigo-800">${currentMatchId.substring(0, 8)}</p>
+                </div>
+            </div>
+        `;
+        
+        // بدء الاستماع
+        listenToMatch(currentMatchId);
+        
+        // بدء مراقبة الوقت
+        startSearchMonitor();
+        
+    } catch (createError) {
+        console.error("❌ فشل إنشاء المباراة:", createError);
+        throw createError;
+    }
+}
+
+async function getQuestionsWithRetry(subject, type, retries = 3) {
+    for (let i = 0; i < retries; i++) {
+        try {
+            const questions = await getQuestions(subject, type);
+            if (questions.length > 0) return questions;
+            
+            if (i < retries - 1) {
+                console.log(`🔄 محاولة ${i + 2}/${retries} للحصول على أسئلة...`);
+                await new Promise(r => setTimeout(r, 1000));
+            }
+        } catch (error) {
+            console.error(`❌ محاولة ${i + 1} فشلت:`, error);
+        }
+    }
+    return [];
+}
+
+function startSearchMonitor() {
+    const searchStartTime = Date.now();
+    
+    const monitorInterval = setInterval(async () => {
+        if (!currentMatchId) {
+            clearInterval(monitorInterval);
+            return;
+        }
+        
+        const elapsed = Date.now() - searchStartTime;
+        
+        // بعد 20 ثانية، اقتراح البدائل
+        if (elapsed > 20000 && elapsed < 25000) {
+            document.getElementById('search-msg').innerHTML += `
+                <div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg animate-pulse">
+                    <p class="text-sm text-yellow-700 font-bold">
+                        <i class="fas fa-lightbulb mr-2"></i>
+                        نصيحة: حاول في وقت الذروة (6-10 مساءً)
+                    </p>
+                </div>
+            `;
+        }
+        
+        // بعد 25 ثانية، إلغاء البحث
+        if (elapsed > 25000) {
+            clearInterval(monitorInterval);
+            
+            try {
+                const matchDoc = await getDoc(doc(db, "match_queue", currentMatchId));
+                if (matchDoc.exists()) {
+                    const data = matchDoc.data();
+                    if (data.status === 'waiting' && !data.player2) {
+                        await deleteDoc(doc(db, "match_queue", currentMatchId));
+                        showBeautifulAlert('info', 'انتهى وقت البحث', 
+                            'بحثنا لمدة 25 ثانية ولم نجد منافساً.\n\n' +
+                            'جرب:\n' +
+                            '• اللعب ضد الذكاء الاصطناعي\n' +
+                            '• المحاولة في وقت مختلف\n' +
+                            '• اختيار مادة أخرى'
+                        );
+                        cancelSearch();
+                    }
+                }
+            } catch (e) {
+                console.error("خطأ في المراقبة:", e);
+            }
+        }
+    }, 1000);
+}
+
+function showSearchErrorUltimate(error) {
+    console.error("🔴 خطأ بحث نهائي:", error);
+    
+    let title = 'خطأ في البحث';
+    let message = 'تعذر إنشاء اتصال، حاول مرة أخرى';
+    let type = 'error';
+    
+    // تحليل الخطأ
+    if (error.message && error.message.includes('permission')) {
+        title = 'مشكلة في الصلاحيات';
+        message = 'تحتاج إلى تسجيل الدخول أولاً أو تحديث الصفحة';
+    } else if (error.message && error.message.includes('network')) {
+        title = 'مشكلة في الشبكة';
+        message = 'تحقق من اتصال الإنترنت وحاول مرة أخرى';
+    } else if (error.message && error.message.includes('quota')) {
+        title = 'تجاوز الحد المسموح';
+        message = 'حاول مرة أخرى بعد قليل أو غداً';
+        type = 'warning';
+    } else if (error.message && error.message.includes('timeout')) {
+        title = 'مهلة البحث انتهت';
+        message = 'لم نجد منافساً في الوقت المحدد';
+        type = 'info';
+    }
+    
+    // عرض رسالة جميلة
+    showBeautifulAlert(type, title, message);
+    
+    // إلغاء البحث
+    cancelSearch();
+}
+
+async function cleanupOldMatches() {
+    try {
+        const oldThreshold = Date.now() - 60000; // أقدم من دقيقة
+        const q = query(
+            collection(db, "match_queue"),
+            where("lastActivity", "<", oldThreshold),
+            where("status", "in", ["waiting", "active"]),
+            limit(10)
+        );
+        
+        const snap = await getDocs(q);
+        const deletePromises = snap.docs.map(doc => deleteDoc(doc.ref));
+        await Promise.all(deletePromises);
+        
+        if (snap.size > 0) {
+            console.log(`🧹 تم تنظيف ${snap.size} مباراة قديمة`);
+        }
+    } catch (cleanupError) {
+        console.warn("⚠️ خطأ في التنظيف:", cleanupError);
+        // لا نوقف العملية إذا فشل التنظيف
+    }
+}
+
+async function findAvailableMatch(group) {
+    const q = query(
+        collection(db, "match_queue"),
+        where("group", "==", group),
+        where("status", "==", "waiting"),
+        where("grade", "==", userData.grade),
+        where("questionType", "==", selectedQType),
+        where("lastActivity", ">=", Date.now() - 30000),
+        limit(1)
+    );
+    
+    const snap = await getDocs(q);
+    
+    if (!snap.empty) {
+        const doc = snap.docs[0];
+        const data = doc.data();
+        
+        // تأكد أن اللاعب ليس نفسه
+        if (data.player1.uid !== currentUser.uid) {
+            return { id: doc.id, data: data };
+        }
+    }
+    
+    return null;
+}
+
+async function joinExistingMatch(match) {
+    currentMatchId = match.id;
+    
+    // تحديث سريع وآمن
+    await updateDoc(doc(db, "match_queue", currentMatchId), {
+        player2: {
+            uid: currentUser.uid,
+            name: userData.name,
+            photo: userData.photo,
+            grade: userData.grade,
+            score: 0,
+            ready: true
+        },
+        status: 'active',
+        player2JoinedAt: Date.now(),
+        lastActivity: Date.now()
+    });
+    
+    console.log("✅ انضممت للمباراة بنجاح");
+    
+    // إشعار جميل للمستخدم
+    document.getElementById('search-msg').innerHTML = `
+        <div class="flex items-center justify-center gap-3">
+            <i class="fas fa-check-circle text-green-500 text-xl"></i>
+            <span class="font-bold">تم العثور على مباراة!</span>
+        </div>
+    `;
+    
+    // تأخير قصير ثم الانتقال
+    setTimeout(() => {
+        listenToMatch(currentMatchId);
+    }, 1000);
+}
+
+async function createNewMatch(group, sub) {
+    // الحصول على الأسئلة
+    const qDocs = await getQuestions(sub, selectedQType);
+    
+    if (qDocs.length < 10) {
+        throw new Error('لا توجد أسئلة كافية');
+    }
+    
+    const shuffledQs = qDocs
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 10);
+    
+    // إنشاء المباراة
+    const newMatch = await addDoc(collection(db, "match_queue"), {
+        // البيانات الأساسية
+        group: group,
+        status: 'waiting',
+        grade: userData.grade,
+        questionType: selectedQType,
+        subject: sub,
+        
+        // اللاعب الأول (أنت)
+        player1: {
+            uid: currentUser.uid,
+            name: userData.name,
+            photo: userData.photo,
+            grade: userData.grade,
+            score: 0,
+            ready: true,
+            joinedAt: Date.now()
+        },
+        
+        // اللاعب الثاني (سيتم ملؤه لاحقاً)
+        player2: null,
+        
+        // الأسئلة
+        questions: shuffledQs,
+        currentIdx: 0,
+        answersCount: 0,
+        
+        // التوقيتات
+        createdAt: serverTimestamp(),
+        lastActivity: Date.now(),
+        searchStartedAt: Date.now(),
+        
+        // الإعدادات
+        settings: {
+            timePerQuestion: 15,
+            totalQuestions: 10,
+            allowWithdraw: true
+        },
+        
+        // إحصائيات
+        stats: {
+            player1ResponseTime: [],
+            player2ResponseTime: []
+        }
+    });
+    
+    currentMatchId = newMatch.id;
+    
+    console.log("🆕 تم إنشاء مباراة جديدة:", currentMatchId);
+    
+    // تحديث واجهة المستخدم
+    document.getElementById('search-msg').innerHTML = `
+        <div class="flex items-center justify-center gap-3">
+            <i class="fas fa-hourglass-half text-yellow-500 text-xl animate-spin"></i>
+            <span class="font-bold">ننتظر لاعباً آخر...</span>
+        </div>
+    `;
+    
+    // بدء الاستماع
+    listenToMatch(currentMatchId);
+    
+    // بدء مؤقت البحث (30 ثانية كحد أقصى)
+    startSearchTimeout();
+}
+
+function startSearchTimeout() {
+    setTimeout(async () => {
+        if (currentMatchId && !document.getElementById('game-overlay').classList.contains('hidden')) {
+            // المباراة لم تبدأ بعد 30 ثانية
+            const matchDoc = await getDoc(doc(db, "match_queue", currentMatchId));
+            if (matchDoc.exists()) {
+                const data = matchDoc.data();
+                if (data.status === 'waiting' && !data.player2) {
+                    showBeautifulAlert('info', 'لم نجد منافساً', 'لم نتمكن من العثور على لاعب آخر. حاول مرة أخرى في وقت مختلف.');
+                    cancelSearch();
+                }
+            }
+        }
+    }, 30000);
+}
+
+function showSearchError(error) {
+    console.error("🔴 خطأ في البحث:", error);
+    
+    let userMessage = "تعذر إنشاء اتصال، حاول مرة أخرى";
+    
+    if (error.message && error.message.includes('permission')) {
+        userMessage = "❌ مشكلة في الصلاحيات. تأكد من تسجيل الدخول بشكل صحيح.";
+    } else if (error.message && error.message.includes('network')) {
+        userMessage = "🌐 مشكلة في الشبكة. تحقق من اتصال الإنترنت.";
+    } else if (error.message && error.message.includes('quota')) {
+        userMessage = "🔄 تجاوز الحد المسموح. حاول بعد قليل.";
+    }
+    
+    showBeautifulAlert('error', 'خطأ في البحث', userMessage);
+    cancelSearch();
+}
+
+// نظام الاتصال الذكي والمستمر
+class MatchConnectionSystem {
+    constructor(matchId) {
+        this.matchId = matchId;
+        this.pingInterval = null;
+        this.reconnectAttempts = 0;
+        this.maxReconnectAttempts = 5;
+        this.lastHeartbeat = Date.now();
+        this.isConnected = false;
+    }
+    
+    async connect() {
+        try {
+            // 1. الاتصال الأولي
+            await this.establishConnection();
+            
+            // 2. مراقبة النشاط
+            this.startHeartbeat();
+            
+            // 3. مراقبة الاتصال
+            this.startConnectionMonitor();
+            
+            this.isConnected = true;
+            console.log("✅ اتصال المباراة نشط بنجاح");
+            
+        } catch (error) {
+            console.error("❌ فشل الاتصال:", error);
+            this.handleDisconnection();
+        }
+    }
+    
+    async establishConnection() {
+        return new Promise((resolve, reject) => {
+            // محاكاة WebSocket أو Socket.io
+            setTimeout(() => {
+                // هنا سيكون اتصال WebSocket حقيقي
+                resolve();
+            }, 100);
+        });
+    }
+    
+    startHeartbeat() {
+        // إرسال نبضات كل 5 ثواني
+        this.pingInterval = setInterval(async () => {
+            if (!this.isConnected) return;
+            
+            try {
+                await updateDoc(doc(db, "match_queue", this.matchId), {
+                    lastHeartbeat: Date.now(),
+                    connectionStatus: 'active'
+                });
+                this.lastHeartbeat = Date.now();
+            } catch (error) {
+                console.warn("⚠️ فشل في إرسال النبضة");
+            }
+        }, 5000);
+    }
+    
+    startConnectionMonitor() {
+        // مراقبة الجودة كل 3 ثواني
+        setInterval(() => {
+            const timeSinceLastHeartbeat = Date.now() - this.lastHeartbeat;
+            
+            if (timeSinceLastBeat > 15000) { // 15 ثانية بدون اتصال
+                this.handlePoorConnection();
+            }
+            
+            if (timeSinceLastBeat > 30000) { // 30 ثانية بدون اتصال
+                this.handleDisconnection();
+            }
+        }, 3000);
+    }
+    
+    handlePoorConnection() {
+        // إشعار المستخدم بأن الاتصال ضعيف
+        if (document.getElementById('connection-status')) {
+            document.getElementById('connection-status').innerHTML = `
+                <div class="connection-warning animate-pulse">
+                    <i class="fas fa-wifi text-yellow-500"></i>
+                    <span>جودة الاتصال منخفضة</span>
+                </div>
+            `;
+        }
+    }
+    
+    async handleDisconnection() {
+        clearInterval(this.pingInterval);
+        this.isConnected = false;
+        
+        if (this.reconnectAttempts < this.maxReconnectAttempts) {
+            this.reconnectAttempts++;
+            
+            setTimeout(async () => {
+                console.log(`🔄 محاولة إعادة اتصال ${this.reconnectAttempts}`);
+                await this.connect();
+            }, 2000 * this.reconnectAttempts); // زيادة التأخير مع كل محاولة
+        } else {
+            console.log("❌ فشل الاتصال النهائي");
+            this.endMatchGracefully();
+        }
+    }
+    
+    async endMatchGracefully() {
+        // إنهاء المباراة بشكل أنيق عند فشل الاتصال
+        try {
+            await updateDoc(doc(db, "match_queue", this.matchId), {
+                status: 'disconnected',
+                disconnectTime: Date.now(),
+                winner: 'connection_lost'
+            });
+            
+            showBeautifulAlert('warning', 'فقد الاتصال', 'انقطع الاتصال، سيتم إنهاء المباراة');
+            closeResultScreen();
+        } catch (error) {
+            console.error("خطأ في إنهاء المباراة:", error);
+        }
+    }
+    
+    disconnect() {
+        clearInterval(this.pingInterval);
+        this.isConnected = false;
+    }
+}
+
+// إضافة مؤشر اتصال إلى الواجهة
+function addConnectionIndicator() {
+    const gameOverlay = document.getElementById('game-overlay');
+    if (!gameOverlay.querySelector('#connection-status')) {
+        const indicator = document.createElement('div');
+        indicator.id = 'connection-status';
+        indicator.className = 'absolute top-4 left-4 z-50';
+        indicator.innerHTML = `
+            <div class="connection-good">
+                <i class="fas fa-wifi text-green-500"></i>
+                <span class="text-xs text-green-600">الاتصال ممتاز</span>
+            </div>
+        `;
+        gameOverlay.appendChild(indicator);
+    }
+}
+
+function startQuestionTimer(duration = 15, questionData) {
+    clearInterval(gameTimer);
+    let timeLeft = duration;
+    
+    const timerElement = document.getElementById('game-timer');
+    if (timerElement) {
+        timerElement.textContent = timeLeft;
+        
+        // تغيير اللون مع اقتراب الوقت
+        if (timeLeft <= 5) {
+            timerElement.classList.add('bg-red-500', 'animate-pulse');
+            timerElement.classList.remove('bg-gray-800');
+        }
+    }
+    
+    gameTimer = setInterval(() => {
+        if (isExitingGame) {
+            clearInterval(gameTimer);
+            return;
+        }
+        
+        timeLeft--;
+        
+        if (timerElement) {
+            timerElement.textContent = timeLeft;
+            
+            // تأثيرات بصرية
+            if (timeLeft === 10) {
+                timerElement.classList.add('bg-yellow-500');
+                timerElement.classList.remove('bg-gray-800');
+            }
+            if (timeLeft === 5) {
+                timerElement.classList.remove('bg-yellow-500');
+                timerElement.classList.add('bg-red-500', 'animate-pulse');
+                playSound('timer_beep'); // صوت تنبيه
+            }
+        }
+        
+        if (timeLeft <= 0) {
+            clearInterval(gameTimer);
+            handleTimeOut(questionData);
+        }
+    }, 1000);
+}
+
+async function handleTimeOut(questionData) {
+    if (hasAnsweredCurrentQ) return;
+    
+    hasAnsweredCurrentQ = true;
+    
+    // إظهار الإجابة الصحيحة
+    const answerButtons = document.querySelectorAll('#answers-container button');
+    answerButtons.forEach(btn => {
+        btn.classList.remove('answer-correct', 'answer-wrong', 'answer-neutral');
+        if (btn.dataset.value.toString() === currentQuestionCorrectAnswer.toString()) {
+            btn.classList.add('answer-correct');
+        }
+    });
+    
+    document.getElementById('answers-container').classList.add('pointer-events-none');
+    
+    // إشعار بانتهاء الوقت
+    showTimeOutNotification();
+    
+    // تحديث المباراة
+    if (currentGameMode === 'online' && currentMatchId) {
+        const isP1 = localMatchData?.player1?.uid === currentUser.uid;
+        await updateDoc(doc(db, "match_queue", currentMatchId), {
+            answersCount: increment(1),
+            lastActivity: Date.now(),
+            [`player${isP1 ? '1' : '2'}.timedOut`]: increment(1)
+        });
+    }
+    
+    // الانتقال للسؤال التالي بعد 2 ثانية
+    setTimeout(() => {
+        if (currentGameMode === 'online' && currentMatchId) {
+            // سينتقل تلقائياً عند اكتمال الإجابات
+        } else if (currentGameMode === 'ai') {
+            handleAINextTurn();
+        }
+    }, 2000);
+}
+
+function showTimeOutNotification() {
+    const notification = document.createElement('div');
+    notification.className = 'time-out-notification animate__animated animate__bounceIn';
+    notification.innerHTML = `
+        <div class="bg-red-100 border border-red-300 text-red-700 px-4 py-2 rounded-lg text-center">
+            <i class="fas fa-clock mr-2"></i>
+            <span class="font-bold">انتهى الوقت!</span>
+            <p class="text-sm">لم يتم الإجابة على السؤال</p>
+        </div>
+    `;
+    
+    const container = document.getElementById('answers-container');
+    container.parentNode.insertBefore(notification, container.nextSibling);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+// نظام طوابق ذكي مع معالجة الاستثناءات
+function createMatchGroup(grade, subject, qType) {
+    // المواد المشتركة بين العلمي والأدبي
+    const sharedSubjects = ['اسلامية', 'عربي', 'انكليزي'];
+    
+    let group = `${grade}_${subject}_${qType}`;
+    
+    // معالجة الاستثناء: السادس العلمي والأدبي في المواد المشتركة
+    if ((grade === '6sci' || grade === '6lit') && sharedSubjects.includes(subject)) {
+        group = `6shared_${subject}_${qType}`;
+    }
+    
+    return group;
+}
+
+// مراقبة جودة المباريات
+function startMatchQualityMonitor(matchId) {
+    setInterval(async () => {
+        try {
+            const matchDoc = await getDoc(doc(db, "match_queue", matchId));
+            if (!matchDoc.exists()) return;
+            
+            const matchData = matchDoc.data();
+            const now = Date.now();
+            const lastActivity = matchData.lastActivity || 0;
+            
+            // إذا كانت المباراة متوقفة لأكثر من 60 ثانية
+            if (matchData.status === 'active' && (now - lastActivity) > 60000) {
+                console.log(`⚠️ المباراة ${matchId} متوقفة، جاري الإنهاء...`);
+                
+                // إنهاء المباراة بشكل آمن
+                await updateDoc(doc(db, "match_queue", matchId), {
+                    status: 'ended',
+                    endReason: 'timeout',
+                    endedAt: now
+                });
+                
+                // إرجاع اللاعبين للصفحة الرئيسية
+                if (document.getElementById('game-overlay').classList.contains('active')) {
+                    closeResultScreen();
+                }
+            }
+        } catch (error) {
+            console.error("خطأ في مراقبة الجودة:", error);
+        }
+    }, 30000); // كل 30 ثانية
+}
+
 
         async function startAIMatch(sub) {
             const qDocs = await getQuestions(sub, selectedQType);
@@ -4456,14 +5385,43 @@ if (localStorage.getItem('device_banned') === 'true' && userData.email !== ADMIN
             }
         };
 
-        window.cancelSearch = function() {
-            document.getElementById('searching-ui').classList.add('hidden');
-            document.getElementById('challenge-active-card').classList.remove('hidden');
-            if(currentMatchId) {
-                deleteDoc(doc(db, "match_queue", currentMatchId));
-                currentMatchId = null;
+        window.cancelSearch = async function() {
+    console.log("🛑 إلغاء البحث...");
+    
+    // إخفاء واجهة البحث
+    document.getElementById('searching-ui').classList.add('hidden');
+    document.getElementById('searching-ui').style.display = 'none';
+    
+    // حذف المباراة إذا كنت المضيف
+    if (currentMatchId) {
+        try {
+            const matchDoc = await getDoc(doc(db, "match_queue", currentMatchId));
+            if (matchDoc.exists()) {
+                const matchData = matchDoc.data();
+                
+                // حذف فقط إذا كنت أنت اللاعب الوحيد
+                if (!matchData.player2 || matchData.player2.uid === currentUser.uid) {
+                    await deleteDoc(doc(db, "match_queue", currentMatchId));
+                    console.log("🗑️ تم حذف المباراة");
+                }
             }
-        };
+        } catch (deleteError) {
+            console.warn("⚠️ لم أستطع حذف المباراة:", deleteError);
+        }
+        
+        currentMatchId = null;
+    }
+    
+    // إعادة العرض
+    document.getElementById('challenge-active-card').classList.remove('hidden');
+    
+    // إعادة تعيين الحالة
+    selectedQType = null;
+    document.getElementById('btn-mcq').className = "py-3 rounded-xl border-2 border-indigo-100 text-gray-500 font-bold active:scale-95 transition flex-1";
+    document.getElementById('btn-tf').className = "py-3 rounded-xl border-2 border-indigo-100 text-gray-500 font-bold active:scale-95 transition flex-1";
+    
+    console.log("✅ تم إلغاء البحث بنجاح");
+};
 
         window.closeMaintenancePopup = function() {
             document.getElementById('maintenance-popup').classList.add('hidden');
@@ -5038,6 +5996,50 @@ if (localStorage.getItem('device_banned') === 'true' && userData.email !== ADMIN
             }
         };
 
+// أضف هذا في بداية الكود للتشخيص
+async function testFirebaseConnection() {
+    try {
+        console.log("🔍 اختبار اتصال Firebase...");
+        
+        // محاولة قراءة بسيطة
+        const testDoc = await getDoc(doc(db, "system_settings", "connection_test"));
+        console.log("✅ اتصال قاعدة البيانات نشط");
+        
+        // محاولة كتابة بسيطة
+        await setDoc(doc(db, "connection_logs", Date.now().toString()), {
+            timestamp: new Date().toISOString(),
+            userId: currentUser?.uid || 'anonymous',
+            status: 'connected'
+        });
+        console.log("✅ كتابة قاعدة البيانات نشطة");
+        
+        return true;
+    } catch (error) {
+        console.error("❌ خطأ في اتصال Firebase:", error);
+        
+        // عرض رسالة تفصيلية للمستخدم
+        const errorMsg = getDetailedFirebaseError(error);
+        showBeautifulAlert('error', 'خطأ في الاتصال', errorMsg);
+        
+        return false;
+    }
+}
+
+function getDetailedFirebaseError(error) {
+    switch(error.code) {
+        case 'permission-denied':
+            return '❌ صلاحيات غير كافية. تأكد من قواعد الأمان في Firebase.';
+        case 'unavailable':
+            return '🌐 لا يمكن الوصول إلى السيرفر. تحقق من اتصال الإنترنت.';
+        case 'failed-precondition':
+            return '⚙️ قاعدة البيانات غير مهيئة بشكل صحيح.';
+        case 'resource-exhausted':
+            return '🔄 تجاوزت الحد المسموح. حاول مرة أخرى لاحقاً.';
+        default:
+            return `🔧 خطأ تقني: ${error.message || error.code}`;
+    }
+}
+
         window.switchTab = (tab) => {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById('tab-'+tab).classList.add('active');
@@ -5498,6 +6500,129 @@ if (localStorage.getItem('device_banned') === 'true' && userData.email !== ADMIN
                 showBeautifulAlert('error', 'خطأ', 'حدث خطأ في رفض السؤال');
             }
         };
+        
+        // إضافة أصوات للمباراة
+const gameSounds = {
+    timer_beep: new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3'),
+    correct_answer: new Audio('https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3'),
+    wrong_answer: new Audio('https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3'),
+    match_found: new Audio('https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3')
+};
+
+function playSound(soundName) {
+    if (gameSounds[soundName]) {
+        gameSounds[soundName].currentTime = 0;
+        gameSounds[soundName].play().catch(e => console.log("الصوت غير متاح:", e));
+    }
+}
+
+// إضافة زر تشخيص في الصفحة الرئيسية
+function addDiagnosticButton() {
+    const header = document.querySelector('header');
+    if (!header) return;
+    
+    const diagnosticBtn = document.createElement('button');
+    diagnosticBtn.id = 'diagnostic-btn';
+    diagnosticBtn.className = 'hidden'; // مخفي افتراضياً
+    diagnosticBtn.innerHTML = '<i class="fas fa-bug"></i>';
+    diagnosticBtn.onclick = openDiagnosticPanel;
+    
+    header.appendChild(diagnosticBtn);
+}
+
+function openDiagnosticPanel() {
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black/50 z-[99999] flex items-center justify-center';
+    modal.innerHTML = `
+        <div class="bg-white rounded-2xl p-6 w-11/12 max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg">🔧 تشخيص الاتصال</h3>
+                <button onclick="this.parentElement.parentElement.remove()" class="text-gray-400">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div id="diagnostic-results" class="space-y-3">
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span>اتصال الإنترنت</span>
+                    <span id="net-status" class="px-3 py-1 rounded-full text-xs">جاري الاختبار...</span>
+                </div>
+                
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span>اتصال Firebase</span>
+                    <span id="firebase-status" class="px-3 py-1 rounded-full text-xs">جاري الاختبار...</span>
+                </div>
+                
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span>صلاحيات القاعدة</span>
+                    <span id="permission-status" class="px-3 py-1 rounded-full text-xs">جاري الاختبار...</span>
+                </div>
+                
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span>حالة التطبيق</span>
+                    <span id="app-status" class="px-3 py-1 rounded-full text-xs">جاري الاختبار...</span>
+                </div>
+            </div>
+            
+            <button onclick="runDiagnostics()" class="w-full mt-4 bg-indigo-600 text-white py-3 rounded-xl font-bold">
+                <i class="fas fa-sync-alt mr-2"></i>إعادة التشخيص
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    runDiagnostics();
+}
+
+async function runDiagnostics() {
+    const results = {
+        internet: { status: 'testing', message: 'جاري الاختبار...' },
+        firebase: { status: 'testing', message: 'جاري الاختبار...' },
+        permissions: { status: 'testing', message: 'جاري الاختبار...' },
+        app: { status: 'testing', message: 'جاري الاختبار...' }
+    };
+    
+    // 1. اختبار الإنترنت
+    try {
+        const response = await fetch('https://www.google.com', { mode: 'no-cors' });
+        results.internet = { status: 'success', message: '✅ متصل' };
+    } catch {
+        results.internet = { status: 'error', message: '❌ غير متصل' };
+    }
+    
+    // 2. اختبار Firebase
+    try {
+        const testDoc = await getDoc(doc(db, "system_settings", "test"));
+        results.firebase = { status: 'success', message: '✅ نشط' };
+    } catch (error) {
+        results.firebase = { status: 'error', message: `❌ خطأ: ${error.code || error.message}` };
+    }
+    
+    // تحديث الواجهة
+    updateDiagnosticUI(results);
+}
+
+function updateDiagnosticUI(results) {
+    const elements = {
+        'net-status': results.internet,
+        'firebase-status': results.firebase,
+        'permission-status': results.permissions,
+        'app-status': results.app
+    };
+    
+    Object.entries(elements).forEach(([id, result]) => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.textContent = result.message;
+            el.className = `px-3 py-1 rounded-full text-xs font-bold ${
+                result.status === 'success' ? 'bg-green-100 text-green-800' :
+                result.status === 'error' ? 'bg-red-100 text-red-800' :
+                'bg-yellow-100 text-yellow-800'
+            }`;
+        }
+    });
+}
+
     </script>
 </body>
 </html>
