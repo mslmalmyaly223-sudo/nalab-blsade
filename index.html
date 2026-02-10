@@ -2874,56 +2874,93 @@
         };
 
         function getIraqDate() {
-            const dateStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Baghdad"});
-            return new Date(dateStr);
-        }
+    // الحصول على وقت العراق بدقة
+    const now = new Date();
+    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    // توقيت العراق (UTC+3)
+    const iraqTime = new Date(utc + (3 * 3600000));
+    
+    // إذا كان بعد منتصف الليل في العراق، عد للتاريخ الصحيح
+    const localMidnight = new Date();
+    localMidnight.setHours(0, 0, 0, 0);
+    
+    const iraqHours = iraqTime.getHours();
+    
+    // إذا كان الوقت في العراق بعد منتصف الليل ولكن في المنطقة المحلية قبل منتصف الليل
+    // نستخدم تاريخ العراق
+    return iraqTime;
+}
 
         window.checkDailyReward = async () => {
-            const iraqDate = getIraqDate();
-            const currentDayKey = `${iraqDate.getDate()}-${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
-            const currentMonthKey = `${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
+    const iraqDate = getIraqDate();
+    const currentDayKey = `${iraqDate.getDate()}-${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
+    const currentMonthKey = `${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
 
-            if (userData.lastRewardDayKey === currentDayKey) return; 
+    console.log("اليوم الحالي:", currentDayKey);
+    console.log("آخر يوم تم المطالبة:", userData.lastRewardDayKey);
+    console.log("مفتاح الشهر الحالي:", currentMonthKey);
+    console.log("مفتاح شهر المستخدم:", userData.rewardMonthKey);
+    console.log("الأيام المطالب بها:", userData.daysClaimedInMonth || 0);
 
-            let userDaysClaimed = userData.daysClaimedInMonth || 0;
-            if (userData.rewardMonthKey !== currentMonthKey) userDaysClaimed = 0;
+    // إذا طالب اليوم فلا تعرض شيء
+    if (userData.lastRewardDayKey === currentDayKey) {
+        console.log("تم المطالبة اليوم بالفعل");
+        return;
+    }
 
-            const nextDayToClaim = userDaysClaimed + 1;
-            const grid = document.getElementById('reward-grid-container');
-            grid.innerHTML = '';
-            
-            const weeklyRewards = [
-                { day: 1, points: getRandomPoints(), money: 0 },
-                { day: 2, points: 0, money: getRandomMoney() },
-                { day: 3, points: getRandomPoints(), money: 0 },
-                { day: 4, points: getRandomPoints(), money: 0 },
-                { day: 5, points: 0, money: getRandomMoney() },
-                { day: 6, points: getRandomPoints(), money: 0 },
-                { day: 7, points: getRandomPoints(), money: 0 }
-            ];
-            
-            for(let i=1; i<=7; i++) {
-                let reward = weeklyRewards[i-1];
-                let pts = reward.points;
-                let money = reward.money;
+    let userDaysClaimed = userData.daysClaimedInMonth || 0;
+    
+    // إذا تغير الشهر، ابدأ من الصفر
+    if (userData.rewardMonthKey !== currentMonthKey) {
+        console.log("شهر جديد، إعادة التعيين");
+        userDaysClaimed = 0;
+    }
 
-                let cls = "day-box";
-                if (i < nextDayToClaim) cls += " claimed"; 
-                else if (i === nextDayToClaim) cls += " active"; 
-                else cls += " locked"; 
-                
-                let content = `<p>يوم ${i}</p>`;
-                if (money > 0) {
-                    content += `<span>$${money.toFixed(1)}</span>`;
-                } else {
-                    content += `<span>${pts} نقاط</span>`;
-                }
-                
-                grid.innerHTML += `<div class="${cls}">${content}</div>`;
-            }
-            
-            document.getElementById('daily-reward-screen').classList.remove('hidden');
-        };
+    const nextDayToClaim = userDaysClaimed + 1;
+    console.log("اليوم التالي للمطالبة:", nextDayToClaim);
+
+    const grid = document.getElementById('reward-grid-container');
+    grid.innerHTML = '';
+    
+    const weeklyRewards = [
+        { day: 1, points: getRandomPoints(), money: 0 },
+        { day: 2, points: 0, money: getRandomMoney() },
+        { day: 3, points: getRandomPoints(), money: 0 },
+        { day: 4, points: getRandomPoints(), money: 0 },
+        { day: 5, points: 0, money: getRandomMoney() },
+        { day: 6, points: getRandomPoints(), money: 0 },
+        { day: 7, points: getRandomPoints(), money: 0 }
+    ];
+    
+    for(let i = 1; i <= 7; i++) {
+        let reward = weeklyRewards[i-1];
+        let pts = reward.points;
+        let money = reward.money;
+
+        let cls = "day-box";
+        if (i < nextDayToClaim) {
+            cls += " claimed"; 
+            console.log(`اليوم ${i}: تم المطالبة`);
+        } else if (i === nextDayToClaim) {
+            cls += " active"; 
+            console.log(`اليوم ${i}: نشط وجاهز للمطالبة`);
+        } else {
+            cls += " locked"; 
+            console.log(`اليوم ${i}: مقفل`);
+        }
+        
+        let content = `<p>يوم ${i}</p>`;
+        if (money > 0) {
+            content += `<span>$${money.toFixed(1)}</span>`;
+        } else {
+            content += `<span>${pts} نقاط</span>`;
+        }
+        
+        grid.innerHTML += `<div class="${cls}">${content}</div>`;
+    }
+    
+    document.getElementById('daily-reward-screen').classList.remove('hidden');
+};
 
         function getRandomPoints() {
             const pointsOptions = [10, 15, 20, 25, 30, 35, 40, 45, 50];
@@ -2936,58 +2973,95 @@
         }
 
         window.claimReward = async () => {
-            const iraqDate = getIraqDate();
-            const currentDayKey = `${iraqDate.getDate()}-${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
-            const currentMonthKey = `${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
+    const iraqDate = getIraqDate();
+    const currentDayKey = `${iraqDate.getDate()}-${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
+    const currentMonthKey = `${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
 
-            let userDaysClaimed = userData.daysClaimedInMonth || 0;
-            if (userData.rewardMonthKey !== currentMonthKey) userDaysClaimed = 0;
+    console.log("المطالبة بالهدية - اليوم:", currentDayKey);
+    console.log("المطالبة بالهدية - الشهر:", currentMonthKey);
 
-            const dayToClaim = userDaysClaimed + 1;
-            
-            const weeklyRewards = [
-                { day: 1, points: getRandomPoints(), money: 0 },
-                { day: 2, points: 0, money: getRandomMoney() },
-                { day: 3, points: getRandomPoints(), money: 0 },
-                { day: 4, points: getRandomPoints(), money: 0 },
-                { day: 5, points: 0, money: getRandomMoney() },
-                { day: 6, points: getRandomPoints(), money: 0 },
-                { day: 7, points: getRandomPoints(), money: 0 }
-            ];
-            
-            const reward = weeklyRewards[dayToClaim - 1];
-            let rewardAmount = reward.points;
-            let moneyAmount = reward.money;
+    let userDaysClaimed = userData.daysClaimedInMonth || 0;
+    console.log("الأيام المطالب بها قبل:", userDaysClaimed);
+    
+    // إذا كان شهر مختلف، ابدأ من الصفر
+    if (userData.rewardMonthKey !== currentMonthKey) {
+        console.log("شهر مختلف، إعادة التعيين إلى الصفر");
+        userDaysClaimed = 0;
+    }
 
-            await updateDoc(doc(db, "users", currentUser.uid), {
-                points: increment(rewardAmount),
-                balance: increment(moneyAmount),
-                lastRewardDayKey: currentDayKey,
-                rewardMonthKey: currentMonthKey,
-                daysClaimedInMonth: increment(1) 
-            });
-            
-            userData.points += rewardAmount;
-            userData.balance += moneyAmount;
-            userData.lastRewardDayKey = currentDayKey;
-            userData.rewardMonthKey = currentMonthKey;
-            userData.daysClaimedInMonth = dayToClaim;
-            
-            setupHeaderUI();
-            
-            let rewardMessage = '';
-            if (moneyAmount > 0) {
-                rewardMessage = `🎉 مبروك! لقد حصلت على $${moneyAmount.toFixed(1)}`;
-            } else {
-                rewardMessage = `🎉 مبروك! لقد حصلت على ${rewardAmount} نقطة`;
-            }
-            
-            showBeautifulAlert('success', 'هدية اليوم', rewardMessage);
-            
-            document.getElementById('daily-reward-screen').classList.add('hidden');
-            
-            await createNotification('reward', rewardMessage);
-        };
+    const dayToClaim = userDaysClaimed + 1;
+    console.log("اليوم للمطالبة:", dayToClaim);
+    
+    if (dayToClaim > 7) {
+        showBeautifulAlert('info', 'تم الانتهاء', 'لقد أنهيت جميع أيام الأسبوع! عد في الأسبوع القادم.');
+        document.getElementById('daily-reward-screen').classList.add('hidden');
+        return;
+    }
+    
+    const weeklyRewards = [
+        { day: 1, points: getRandomPoints(), money: 0 },
+        { day: 2, points: 0, money: getRandomMoney() },
+        { day: 3, points: getRandomPoints(), money: 0 },
+        { day: 4, points: getRandomPoints(), money: 0 },
+        { day: 5, points: 0, money: getRandomMoney() },
+        { day: 6, points: getRandomPoints(), money: 0 },
+        { day: 7, points: getRandomPoints(), money: 0 }
+    ];
+    
+    if (dayToClaim < 1 || dayToClaim > 7) {
+        showBeautifulAlert('error', 'خطأ', 'يوم غير صالح للمطالبة!');
+        return;
+    }
+    
+    const reward = weeklyRewards[dayToClaim - 1];
+    let rewardAmount = reward.points;
+    let moneyAmount = reward.money;
+
+    console.log("قبل التحديث - النقاط:", userData.points);
+    console.log("قبل التحديث - الرصيد:", userData.balance);
+    
+    try {
+        // تحديث قاعدة البيانات
+        await updateDoc(doc(db, "users", currentUser.uid), {
+            points: increment(rewardAmount),
+            balance: increment(moneyAmount),
+            lastRewardDayKey: currentDayKey,
+            rewardMonthKey: currentMonthKey,
+            daysClaimedInMonth: dayToClaim
+        });
+        
+        // تحديث البيانات المحلية
+        userData.points += rewardAmount;
+        userData.balance += moneyAmount;
+        userData.lastRewardDayKey = currentDayKey;
+        userData.rewardMonthKey = currentMonthKey;
+        userData.daysClaimedInMonth = dayToClaim;
+        
+        console.log("بعد التحديث - النقاط:", userData.points);
+        console.log("بعد التحديث - الرصيد:", userData.balance);
+        console.log("بعد التحديث - الأيام المطالب بها:", userData.daysClaimedInMonth);
+        
+        setupHeaderUI();
+        
+        let rewardMessage = '';
+        if (moneyAmount > 0) {
+            rewardMessage = `🎉 مبروك! لقد حصلت على $${moneyAmount.toFixed(1)}`;
+        } else {
+            rewardMessage = `🎉 مبروك! لقد حصلت على ${rewardAmount} نقطة`;
+        }
+        
+        showBeautifulAlert('success', 'هدية اليوم', rewardMessage);
+        
+        document.getElementById('daily-reward-screen').classList.add('hidden');
+        
+        // إنشاء إشعار بالمكافأة
+        await createNotification('reward', rewardMessage);
+        
+    } catch (error) {
+        console.error("خطأ في المطالبة بالهدية:", error);
+        showBeautifulAlert('error', 'خطأ', 'حدث خطأ أثناء المطالبة بالهدية: ' + error.message);
+    }
+};
 
         async function createNotification(type, message, opponentId = null, opponentName = null, matchResult = null) {
             try {
@@ -4393,7 +4467,7 @@ function getStudentSmartEmoji(isCorrect, questionType, scoreDiff, userWasCorrect
             
             if (scoreDiff > 5) return '😎';
             if (scoreDiff > 2) return '😏';
-            if (scoreDiff > 0) return '🙂';
+            if (scoreDiff > 0) return '??';
             if (scoreDiff === 0) return '😶';
             if (scoreDiff > -3) return '😕';
             return '😢';
