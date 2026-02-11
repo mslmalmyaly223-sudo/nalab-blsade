@@ -2826,30 +2826,30 @@
                         const cred = await createUserWithEmailAndPassword(auth, email, pass);
                         
                         await setDoc(doc(db, "users", cred.user.uid), {
-                            uid: cred.user.uid,
-                            name: name,
-                            email: email,
-                            photo: photoURL,
-                            uniqueId: generateId(),
-                            points: 0,
-                            balance: 0,
-                            role: 'user',
-                            isBanned: false,
-                            bio: "",
-                            invitedCount: 0,
-                            createdAt: serverTimestamp(),
-                            lastRewardDayKey: null, 
-                            rewardMonthKey: null,    
-                            daysClaimedInMonth: 0,
-                            isPremium: false,
-                            premiumExpiry: null,
-                            selectedBadge: null,
-                            selectedBadgeColor: null,
-                            selectedBgTheme: 'bg-rank-default',
-                            lastLogin: new Date().toISOString(),
-                            dailyAIRemaining: 10,
-                            lastAIReset: new Date().toISOString().split('T')[0]
-                        });
+    uid: cred.user.uid,
+    name: name,
+    email: email,
+    photo: photoURL,
+    uniqueId: generateId(),
+    points: 0,
+    balance: 0,
+    role: 'user',
+    isBanned: false,
+    bio: "",
+    invitedCount: 0,
+    createdAt: serverTimestamp(),
+    lastRewardDayKey: null, 
+    rewardWeekKey: null,    // تغيير من rewardMonthKey
+    daysClaimedInWeek: 0,   // تغيير من daysClaimedInMonth
+    isPremium: false,
+    premiumExpiry: null,
+    selectedBadge: null,
+    selectedBadgeColor: null,
+    selectedBgTheme: 'bg-rank-default',
+    lastLogin: new Date().toISOString(),
+    dailyAIRemaining: 10,
+    lastAIReset: new Date().toISOString().split('T')[0]
+});
 
                         hideAuthLoading();
                         showBeautifulAlert('success', 'مبروك!', 'تم إنشاء حسابك بنجاح، يمكنك الآن تسجيل الدخول');
@@ -2894,13 +2894,13 @@
         window.checkDailyReward = async () => {
     const iraqDate = getIraqDate();
     const currentDayKey = `${iraqDate.getDate()}-${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
-    const currentMonthKey = `${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
+    const currentWeekKey = `${iraqDate.getFullYear()}-W${getWeekNumber(iraqDate)}`;
 
     console.log("اليوم الحالي:", currentDayKey);
     console.log("آخر يوم تم المطالبة:", userData.lastRewardDayKey);
-    console.log("مفتاح الشهر الحالي:", currentMonthKey);
-    console.log("مفتاح شهر المستخدم:", userData.rewardMonthKey);
-    console.log("الأيام المطالب بها:", userData.daysClaimedInMonth || 0);
+    console.log("مفتاح الأسبوع الحالي:", currentWeekKey);
+    console.log("مفتاح أسبوع المستخدم:", userData.rewardWeekKey);
+    console.log("الأيام المطالب بها هذا الأسبوع:", userData.daysClaimedInWeek || 0);
 
     // إذا طالب اليوم فلا تعرض شيء
     if (userData.lastRewardDayKey === currentDayKey) {
@@ -2908,34 +2908,49 @@
         return;
     }
 
-    let userDaysClaimed = userData.daysClaimedInMonth || 0;
+    let userDaysClaimed = userData.daysClaimedInWeek || 0;
     
-    // إذا تغير الشهر، ابدأ من الصفر
-    if (userData.rewardMonthKey !== currentMonthKey) {
-        console.log("شهر جديد، إعادة التعيين");
+    // إذا تغير الأسبوع، ابدأ من الصفر وجدد الجوائز
+    if (userData.rewardWeekKey !== currentWeekKey) {
+        console.log("أسبوع جديد، إعادة التعيين وتوليد جوائز جديدة");
         userDaysClaimed = 0;
+        
+        // توليد جوائز جديدة للأسبوع
+        const weeklyRewards = generateWeeklyRewards();
+        
+        // حفظ الجوائز في localStorage أو في قاعدة البيانات
+        localStorage.setItem(`weeklyRewards_${currentWeekKey}`, JSON.stringify(weeklyRewards));
+        localStorage.setItem(`currentWeekKey`, currentWeekKey);
     }
 
     const nextDayToClaim = userDaysClaimed + 1;
     console.log("اليوم التالي للمطالبة:", nextDayToClaim);
+    
+    // استرجاع جوائز الأسبوع الحالي
+    const currentWeekKeyStored = localStorage.getItem('currentWeekKey');
+    let weeklyRewards;
+    
+    if (currentWeekKeyStored === currentWeekKey) {
+        const storedRewards = localStorage.getItem(`weeklyRewards_${currentWeekKey}`);
+        if (storedRewards) {
+            weeklyRewards = JSON.parse(storedRewards);
+        } else {
+            weeklyRewards = generateWeeklyRewards();
+            localStorage.setItem(`weeklyRewards_${currentWeekKey}`, JSON.stringify(weeklyRewards));
+        }
+    } else {
+        weeklyRewards = generateWeeklyRewards();
+        localStorage.setItem(`weeklyRewards_${currentWeekKey}`, JSON.stringify(weeklyRewards));
+        localStorage.setItem('currentWeekKey', currentWeekKey);
+    }
 
     const grid = document.getElementById('reward-grid-container');
     grid.innerHTML = '';
     
-    const weeklyRewards = [
-        { day: 1, points: getRandomPoints(), money: 0 },
-        { day: 2, points: 0, money: getRandomMoney() },
-        { day: 3, points: getRandomPoints(), money: 0 },
-        { day: 4, points: getRandomPoints(), money: 0 },
-        { day: 5, points: 0, money: getRandomMoney() },
-        { day: 6, points: getRandomPoints(), money: 0 },
-        { day: 7, points: getRandomPoints(), money: 0 }
-    ];
-    
     for(let i = 1; i <= 7; i++) {
         let reward = weeklyRewards[i-1];
-        let pts = reward.points;
-        let money = reward.money;
+        let pts = reward.points || 0;
+        let money = reward.money || 0;
 
         let cls = "day-box";
         if (i < nextDayToClaim) {
@@ -2953,7 +2968,7 @@
         if (money > 0) {
             content += `<span>$${money.toFixed(1)}</span>`;
         } else {
-            content += `<span>${pts} نقاط</span>`;
+            content += `<span>${pts} نقطة</span>`;
         }
         
         grid.innerHTML += `<div class="${cls}">${content}</div>`;
@@ -2961,6 +2976,71 @@
     
     document.getElementById('daily-reward-screen').classList.remove('hidden');
 };
+
+// دالة مساعدة للحصول على رقم الأسبوع
+function getWeekNumber(d) {
+    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    return weekNo;
+}
+
+// دالة توليد الجوائز الأسبوعية حسب النظام الجديد
+function generateWeeklyRewards() {
+    const rewards = [];
+    const moneyOptions = [1.0, 1.5, 2.0, 2.5, 3.0];
+    const pointsOptions = [10, 15, 20, 25, 30, 35, 40, 45, 50];
+    
+    for (let i = 1; i <= 7; i++) {
+        // يوم 2 و 5 للاموال، باقي الأيام للنقاط
+        if (i === 2 || i === 5) {
+            // أموال عشوائية بين 1 و 3 دولار
+            const randomMoney = moneyOptions[Math.floor(Math.random() * moneyOptions.length)];
+            rewards.push({ points: 0, money: randomMoney });
+        } else {
+            // نقاط عشوائية بين 10 و 50
+            const randomPoints = pointsOptions[Math.floor(Math.random() * pointsOptions.length)];
+            rewards.push({ points: randomPoints, money: 0 });
+        }
+    }
+    
+    // خلط الجوائز لجعلها أكثر عشوائية مع الحفاظ على يومي 2 و 5 للاموال
+    // نستخرج يومي 2 و 5 أولاً
+    const moneyDay2 = rewards[1];
+    const moneyDay5 = rewards[4];
+    
+    // نخلط باقي الأيام
+    const otherDays = [];
+    for (let i = 0; i < 7; i++) {
+        if (i !== 1 && i !== 4) {
+            otherDays.push(rewards[i]);
+        }
+    }
+    
+    // نخلط الأيام الأخرى عشوائياً
+    for (let i = otherDays.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [otherDays[i], otherDays[j]] = [otherDays[j], otherDays[i]];
+    }
+    
+    // إعادة بناء المصفوفة بالترتيب الصحيح
+    const finalRewards = [];
+    let otherIndex = 0;
+    for (let i = 0; i < 7; i++) {
+        if (i === 1) {
+            finalRewards.push(moneyDay2);
+        } else if (i === 4) {
+            finalRewards.push(moneyDay5);
+        } else {
+            finalRewards.push(otherDays[otherIndex]);
+            otherIndex++;
+        }
+    }
+    
+    console.log("جوائز الأسبوع الجديدة:", finalRewards);
+    return finalRewards;
+}
 
         function getRandomPoints() {
             const pointsOptions = [10, 15, 20, 25, 30, 35, 40, 45, 50];
@@ -2975,17 +3055,17 @@
         window.claimReward = async () => {
     const iraqDate = getIraqDate();
     const currentDayKey = `${iraqDate.getDate()}-${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
-    const currentMonthKey = `${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
+    const currentWeekKey = `${iraqDate.getFullYear()}-W${getWeekNumber(iraqDate)}`;
 
     console.log("المطالبة بالهدية - اليوم:", currentDayKey);
-    console.log("المطالبة بالهدية - الشهر:", currentMonthKey);
+    console.log("المطالبة بالهدية - الأسبوع:", currentWeekKey);
 
-    let userDaysClaimed = userData.daysClaimedInMonth || 0;
+    let userDaysClaimed = userData.daysClaimedInWeek || 0;
     console.log("الأيام المطالب بها قبل:", userDaysClaimed);
     
-    // إذا كان شهر مختلف، ابدأ من الصفر
-    if (userData.rewardMonthKey !== currentMonthKey) {
-        console.log("شهر مختلف، إعادة التعيين إلى الصفر");
+    // إذا كان أسبوع مختلف، ابدأ من الصفر
+    if (userData.rewardWeekKey !== currentWeekKey) {
+        console.log("أسبوع مختلف، إعادة التعيين إلى الصفر");
         userDaysClaimed = 0;
     }
 
@@ -2993,20 +3073,21 @@
     console.log("اليوم للمطالبة:", dayToClaim);
     
     if (dayToClaim > 7) {
-        showBeautifulAlert('info', 'تم الانتهاء', 'لقد أنهيت جميع أيام الأسبوع! عد في الأسبوع القادم.');
+        showBeautifulAlert('info', 'تم الانتهاء', 'لقد أنهيت جميع أيام هذا الأسبوع! عد في الأسبوع القادم.');
         document.getElementById('daily-reward-screen').classList.add('hidden');
         return;
     }
     
-    const weeklyRewards = [
-        { day: 1, points: getRandomPoints(), money: 0 },
-        { day: 2, points: 0, money: getRandomMoney() },
-        { day: 3, points: getRandomPoints(), money: 0 },
-        { day: 4, points: getRandomPoints(), money: 0 },
-        { day: 5, points: 0, money: getRandomMoney() },
-        { day: 6, points: getRandomPoints(), money: 0 },
-        { day: 7, points: getRandomPoints(), money: 0 }
-    ];
+    // استرجاع جوائز الأسبوع الحالي
+    let weeklyRewards;
+    const storedRewards = localStorage.getItem(`weeklyRewards_${currentWeekKey}`);
+    
+    if (storedRewards) {
+        weeklyRewards = JSON.parse(storedRewards);
+    } else {
+        weeklyRewards = generateWeeklyRewards();
+        localStorage.setItem(`weeklyRewards_${currentWeekKey}`, JSON.stringify(weeklyRewards));
+    }
     
     if (dayToClaim < 1 || dayToClaim > 7) {
         showBeautifulAlert('error', 'خطأ', 'يوم غير صالح للمطالبة!');
@@ -3014,11 +3095,12 @@
     }
     
     const reward = weeklyRewards[dayToClaim - 1];
-    let rewardAmount = reward.points;
-    let moneyAmount = reward.money;
+    let rewardAmount = reward.points || 0;
+    let moneyAmount = reward.money || 0;
 
     console.log("قبل التحديث - النقاط:", userData.points);
     console.log("قبل التحديث - الرصيد:", userData.balance);
+    console.log("المكافأة المستلمة:", rewardAmount > 0 ? `${rewardAmount} نقطة` : `$${moneyAmount}`);
     
     try {
         // تحديث قاعدة البيانات
@@ -3026,20 +3108,20 @@
             points: increment(rewardAmount),
             balance: increment(moneyAmount),
             lastRewardDayKey: currentDayKey,
-            rewardMonthKey: currentMonthKey,
-            daysClaimedInMonth: dayToClaim
+            rewardWeekKey: currentWeekKey,
+            daysClaimedInWeek: dayToClaim
         });
         
         // تحديث البيانات المحلية
         userData.points += rewardAmount;
         userData.balance += moneyAmount;
         userData.lastRewardDayKey = currentDayKey;
-        userData.rewardMonthKey = currentMonthKey;
-        userData.daysClaimedInMonth = dayToClaim;
+        userData.rewardWeekKey = currentWeekKey;
+        userData.daysClaimedInWeek = dayToClaim;
         
         console.log("بعد التحديث - النقاط:", userData.points);
         console.log("بعد التحديث - الرصيد:", userData.balance);
-        console.log("بعد التحديث - الأيام المطالب بها:", userData.daysClaimedInMonth);
+        console.log("بعد التحديث - الأيام المطالب بها:", userData.daysClaimedInWeek);
         
         setupHeaderUI();
         
@@ -3056,6 +3138,12 @@
         
         // إنشاء إشعار بالمكافأة
         await createNotification('reward', rewardMessage);
+        
+        // إذا أنهى الأسبوع، نحذف الجوائز القديمة
+        if (dayToClaim === 7) {
+            localStorage.removeItem(`weeklyRewards_${currentWeekKey}`);
+            console.log("تم إنهاء الأسبوع، سيتم توليد جوائز جديدة الأسبوع القادم");
+        }
         
     } catch (error) {
         console.error("خطأ في المطالبة بالهدية:", error);
@@ -4757,12 +4845,13 @@ function showWithdrawalResult() {
                         });
                         
                         // إشعار للطالب الخاسر
-                        await createNotification('revenge', 
-                            `😡 ${userData.name} فاز عليك بنتيجة ${myScore}-${opScore}! (-${deduction} نقطة)`,
-                            currentUser.uid,
-                            userData.name,
-                            `${myScore}-${opScore}`
-                        );
+                        // إشعار للطالب الخاسر (يصل للخاسر وليس الفائز)
+await createNotification('revenge', 
+    `😡 ${userData.name} فاز عليك بنتيجة ${myScore}-${opScore}! (-${deduction} نقطة)`,
+    opId,  // الخاسر
+    userData.name,  // اسم الفائز
+    `${myScore}-${opScore}`
+);
                     }
                 }
             } catch (error) {
@@ -4851,15 +4940,15 @@ function showWithdrawalResult() {
             userData.points -= pointsLost;
             setupHeaderUI();
             
-            // إشعار انتقام للطالب الفائز
-            if (currentGameMode === 'student' && opId !== 'AI_BOT') {
-                await createNotification('revenge', 
-                    `😡 لقد انتقم منك ${opName} وأخذ ${pointsLost} نقطة منك!`,
-                    opId,
-                    opName,
-                    `${opScore}-${myScore}`
-                );
-            }
+// إشعار للطالب الخاسر (يصل للخاسر وليس الفائز)
+if (currentGameMode === 'student' && opId !== 'AI_BOT') {
+    await createNotification('revenge', 
+        `😡 ${userData.name} فاز عليك بنتيجة ${myScore}-${opScore}! (-${pointsLost} نقطة)`,
+        opId,  // الخاسر
+        userData.name,  // اسم الفائز
+        `${myScore}-${opScore}`
+    );
+}
         }
     }
     
