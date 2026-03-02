@@ -1258,7 +1258,7 @@
     <div id="auth-screen" class="auth-overlay hidden">
         <div class="w-full max-w-md p-8 h-full overflow-y-auto flex flex-col justify-center">
             <div class="text-center mb-8">
-                <h1 class="text-3xl font-black text-indigo-600 mb-2">هكر الوزاري</h1>
+                <h1 class="text-3xl font-black text-indigo-600 mb-2">هكر الوزاي</h1>
             </div>
             <div class="auth-tabs">
                 <div id="tab-login-btn" onclick="switchAuthTab('login')" class="auth-tab active">تسجيل الدخول</div>
@@ -5173,16 +5173,19 @@ async function promptForRevengeSubject(opponentName) {
             leaderboardOffset = 0;
             
             try {
-                // 1. حساب ترتيبك الحقيقي (حتى لو كنت بالمركز 1000) بذكاء وبدون سحب كل البيانات
+                // 1. حساب ترتيبك الحقيقي بدقة (حتى لو كنت بالمركز 1000 أو مليون)
                 const myPoints = userData.points || 0;
-                // نحسب كم مستخدم عنده نقاط أعلى منك
+                
+                // نحسب كم مستخدم يمتلك نقاط أعلى منك مباشرة من قاعدة البيانات
                 const higherRankQuery = query(collection(db, "users"), where("points", ">", myPoints));
                 const higherRankSnap = await getDocs(higherRankQuery);
-                const myTrueRank = higherRankSnap.size + 1; // عدد اللي أعلى منك + 1 = ترتيبك
+                
+                // ترتيبك هو: عدد الأشخاص اللي أعلى منك + 1
+                const myTrueRank = higherRankSnap.size + 1; 
                 
                 document.getElementById('my-rank-text').innerText = "#" + myTrueRank;
 
-                // 2. جلب أفضل 50 مستخدم فقط لعرضهم في القائمة
+                // 2. جلب أفضل 50 مستخدم فقط لعرضهم في القائمة السفلية
                 const q = query(collection(db, "users"), orderBy("points", "desc"), limit(50));
                 const snap = await getDocs(q);
                 
@@ -5191,13 +5194,12 @@ async function promptForRevengeSubject(opponentName) {
                     allLeaderboardUsers.push({ id: d.id, ...d.data() });
                 });
                 
-                // ترتيبهم للضمان
                 allLeaderboardUsers.sort((a, b) => (b.points || 0) - (a.points || 0));
 
                 // نعرض أول 25 مستخدم
                 renderLeaderboardChunk(0, 25);
                 
-                // زر عرض المزيد ليظهر الـ 25 مستخدم المتبقين (ليصبح المجموع 50)
+                // زر عرض المزيد ليظهر الـ 25 مستخدم المتبقين
                 if (allLeaderboardUsers.length > 25) {
                     loadMoreBtn.classList.remove('hidden');
                 } else {
@@ -5205,7 +5207,7 @@ async function promptForRevengeSubject(opponentName) {
                 }
 
             } catch (error) {
-                console.error(error);
+                console.error("Error loading leaderboard:", error);
                 div.innerHTML = '<p class="text-center text-gray-400">خطأ في تحميل التصنيف</p>';
                 loadMoreBtn.classList.add('hidden');
             }
