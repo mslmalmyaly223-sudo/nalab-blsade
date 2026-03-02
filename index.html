@@ -1535,9 +1535,8 @@
                     </div>
                 </section>
 
-                <section id="schedule-result-page" class="hidden">
+                <section id="schedule-result-page" class="hidden pb-32">
                     <div id="schedule-card" class="bg-white rounded-2xl overflow-hidden shadow-xl border border-gray-200 mb-6 relative">
-                        <div class="watermark">الجدول من تطبيق هكر الوزاري</div>
                         <div class="h-3 bg-indigo-600 w-full"></div>
                         <div class="p-5">
                             <div class="text-center mb-4">
@@ -1545,7 +1544,7 @@
                                 <p class="schedule-subheader" id="displayScheduleTime"></p>
                             </div>
 
-                            <div class="mb-6 overflow-x-auto">
+                            <div class="mb-4 overflow-x-auto">
                                 <table class="table-schedule">
                                     <thead>
                                         <tr>
@@ -1557,24 +1556,16 @@
                                 </table>
                             </div>
 
-                            <div class="schedule-footer">
-                                <div class="schedule-footer-item">
-                                    <span class="font-bold text-indigo-600 text-sm" id="statStudy"></span>
-                                    <span class="text-xs text-gray-500">صافي الدراسة</span>
-                                </div>
-                                <div class="schedule-footer-item">
-                                    <span class="font-bold text-pink-600 text-sm" id="statBreak"></span>
-                                    <span class="text-xs text-gray-500">مجموع الراحة</span>
-                                </div>
-                                <div class="schedule-footer-item">
-                                    <span class="font-bold text-blue-600 text-sm" id="statSleep"></span>
-                                    <span class="text-xs text-gray-500">وقت النوم</span>
+                            <div class="mt-4 pt-4 border-t border-gray-100 flex justify-center items-center">
+                                <div class="bg-indigo-50 text-indigo-700 text-sm font-bold py-2 px-6 rounded-full border border-indigo-100 shadow-sm flex items-center gap-2">
+                                    <i class="fas fa-user-secret"></i>
+                                    الجدول من تطبيق هكر الوزاري
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div id="schedule-action-buttons" class="flex gap-3">
+                    <div id="schedule-action-buttons" class="flex gap-3 mb-20">
                         <button onclick="downloadScheduleAsImage()" class="flex-1 bg-indigo-100 text-indigo-700 font-bold py-3 rounded-xl hover:bg-indigo-200 flex items-center justify-center gap-2">
                             <i class="fa-solid fa-download"></i> حفظ كصورة
                         </button>
@@ -4286,153 +4277,46 @@ function enableEmojiButtons() {
     }, 2000);
 }
 
-// دالة محسنة لاختيار إيموجي الذكاء الاصطناعي
-function getAISmartEmoji(myScore, opScore, questionNumber, isCorrect, timeLeft) {
-    const scoreDiff = myScore - opScore;
-    const questionNum = questionNumber;
-    
-    // حالة 1: أنت أخطأت وهو صح ← يضحك عليك (خبيث)
-    if (!userAnsweredCorrectly && isCorrect) {
-        // يختار بين إيموجيات السخرية والضحك
-        if (scoreDiff < -3) {
-            // إذا متأخر كثيراً ويضحك عليك بقوة
-            return Math.random() > 0.5 ? '😂' : '🥲';
-        } else {
-            // ضحك عادي
-            return '😒'; // إيماءة ازدراء
-        }
+function getAISmartEmoji(aiAnsweredCorrectly, userWasCorrect) {
+    // حالة 1: الذكاء الاصطناعي جاوب صح، وأنت أخطأت (قمة الشماتة)
+    if (aiAnsweredCorrectly && !userWasCorrect) {
+        return Math.random() > 0.5 ? '😂' : '😒'; // يضحك عليك أو يستهزئ
     }
-    
-    // حالة 2: أنت صح وهو خطأ ← يغضب أو يحزن
-    if (userAnsweredCorrectly && !isCorrect) {
-        if (scoreDiff > 3) {
-            // إذا متقدم كثيراً وهو يغضب
-            return Math.random() > 0.5 ? '😡' : '😭';
-        } else {
-            // غضب أو حزن عادي
-            return '😔';
-        }
+    // حالة 2: الذكاء الاصطناعي أخطأ، وأنت جاوبت صح (قهر/غضب)
+    if (!aiAnsweredCorrectly && userWasCorrect) {
+        return Math.random() > 0.5 ? '😡' : '😔'; // يغضب أو ينقهر
     }
-    
-    // حالة 3: كلاكما صح
-    if (userAnsweredCorrectly && isCorrect) {
-        if (scoreDiff > 5) {
-            return '😂'; // يضحك لأنه متفوق كثيراً
-        } else if (scoreDiff > 0) {
-            return '😒'; // ازدراء لأنه متقدم
-        } else {
-            return '😔'; // حزين لأنه متساوي أو متأخر
-        }
+    // حالة 3: كلاكما صح (تحدي / بكاء مزيف)
+    if (aiAnsweredCorrectly && userWasCorrect) {
+        return Math.random() > 0.5 ? '🥲' : '😒'; 
     }
-    
-    // حالة 4: كلاكما خطأ
-    if (!userAnsweredCorrectly && !isCorrect) {
-        if (scoreDiff < 0) {
-            return '😭'; // يبكي لأنه متأخر
-        } else {
-            return '😡'; // يغضب لأنه أخطأ وهو متقدم
-        }
+    // حالة 4: كلاكما خطأ (احباط/بكاء)
+    if (!aiAnsweredCorrectly && !userWasCorrect) {
+        return '😭'; // يبكي لأنكما أخطأتما
     }
-    
-    // الذكاء الاصطناعي يتفاعل بشكل استراتيجي حسب رقم السؤال
-    if (questionNum % 3 === 0) {
-        // كل 3 أسئلة: يتفاعل بقوة
-        if (scoreDiff > 0) {
-            return Math.random() > 0.5 ? '😂' : '🥲'; // يضحك إذا كان متقدماً
-        } else {
-            return Math.random() > 0.5 ? '😡' : '😭'; // يغضب أو يبكي إذا كان متأخراً
-        }
-    }
-    
-    // السلوك العادي حسب الفارق
-    if (scoreDiff > 5) return '😂';
-    if (scoreDiff > 2) return '🥲';
-    if (scoreDiff > 0) return '😒';
-    if (scoreDiff === 0) return '😔';
-    if (scoreDiff > -3) return '😭';
-    return '😡';
+    return '😒';
 }
 
-// دالة محسنة للطالب العشوائي
-function getStudentSmartEmoji(isCorrect, questionType, scoreDiff, userWasCorrect) {
-    // الطالب العشوائي خبيث واستراتيجي
-    
-    // حالة 1: أنت أخطأت وهو صح ← يسخر منك
-    if (!userWasCorrect && isCorrect) {
-        if (scoreDiff < -2) {
-            // إذا متأخر كثيراً وهو يضحك عليك
-            return Math.random() > 0.7 ? '😂' : '🥲';
-        } else {
-            // سخرية خفيفة
-            return '😒';
-        }
+function getStudentSmartEmoji(studentAnsweredCorrectly, userWasCorrect) {
+    // حالة 1: الطالب جاوب صح، وأنت أخطأت (انفجار شماتة وضحك هستيري)
+    if (studentAnsweredCorrectly && !userWasCorrect) {
+        return Math.random() > 0.3 ? '😂' : '🥲'; // نسبة ضحك عالية جداً
     }
-    
-    // حالة 2: أنت صح وهو خطأ ← يتضايق
-    if (userWasCorrect && !isCorrect) {
-        if (scoreDiff > 2) {
-            // إذا متقدم كثيراً وهو يغضب
-            return '😡';
-        } else {
-            // إحباط عادي
-            return Math.random() > 0.5 ? '😔' : '😭';
-        }
+    // حالة 2: الطالب أخطأ، وأنت صح (حقد وغضب شديد)
+    if (!studentAnsweredCorrectly && userWasCorrect) {
+        return '😡'; // غضب فوري
     }
-    
-    // حالة 3: كلاكما صح
-    if (userWasCorrect && isCorrect) {
-        if (scoreDiff > 0) {
-            return '😒'; // ازدراء لأنه متقدم عليك
-        } else {
-            return '😔'; // حزين لأنه متساوي أو متأخر
-        }
+    // حالة 3: كلاكما صح (نظرة احتقار واستفزاز)
+    if (studentAnsweredCorrectly && userWasCorrect) {
+        return '😒'; 
     }
-    
-    // حالة 4: كلاكما خطأ
-    if (!userWasCorrect && !isCorrect) {
-        return '😭'; // يبكي على خطأه
+    // حالة 4: كلاكما خطأ (انهيار)
+    if (!studentAnsweredCorrectly && !userWasCorrect) {
+        return Math.random() > 0.5 ? '😭' : '😔'; 
     }
-    
-    // السلوك حسب نوع السؤال
-    if (questionType === 'mcq') {
-        // في الأسئلة الاختيارية: أكثر سخرية
-        if (isCorrect) return '😂';
-        else return '😡';
-    } else {
-        // في الأسئلة الصح/خطأ: أكثر جدية
-        if (isCorrect) return '🥲';
-        else return '😔';
-    }
+    return '😂';
 }
 
-        function getAIEmojiBasedOnSituation(myScore, opScore, questionNumber) {
-            const scoreDiff = myScore - opScore;
-            
-            if (questionNumber % 3 === 0) {
-                if (scoreDiff > 3) return '😂';
-                if (scoreDiff > 0) return '😊';
-                if (scoreDiff === 0) return '😐';
-                if (scoreDiff < -3) return '😭';
-                return '😔';
-            }
-            
-            if (scoreDiff > 5) return '😎';
-            if (scoreDiff > 2) return '😏';
-            if (scoreDiff > 0) return '??';
-            if (scoreDiff === 0) return '😶';
-            if (scoreDiff > -3) return '😕';
-            return '😢';
-        }
-
-        function getStudentAIEmoji(isCorrect, questionType) {
-            if (isCorrect) {
-                const correctEmojis = ['😊', '👍', '🎯', '✅'];
-                return correctEmojis[Math.floor(Math.random() * correctEmojis.length)];
-            } else {
-                const wrongEmojis = ['😔', '❌', '😞', '🤔'];
-                return wrongEmojis[Math.floor(Math.random() * wrongEmojis.length)];
-            }
-        }
 
         async function submitGameAnswer(ansObj, q, matchData) {
     if(hasAnsweredCurrentQ || isExitingGame) return;
@@ -4471,7 +4355,8 @@ function getStudentSmartEmoji(isCorrect, questionType, scoreDiff, userWasCorrect
     document.getElementById('ai-thinking-msg').classList.remove('hidden');
     
     let delay = Math.random() * 3000 + 1000;
-    let accuracy = 0.6;
+    // نسبة الذكاء الاصطناعي 60%
+    let accuracy = 0.60;
     
     if (Math.random() < 0.2) {
         document.getElementById('weak-signal').classList.remove('hidden');
@@ -4483,18 +4368,12 @@ function getStudentSmartEmoji(isCorrect, questionType, scoreDiff, userWasCorrect
     aiTimeoutId = setTimeout(() => {
         const isCorrect = Math.random() < accuracy;
         
-        // الذكاء الاصطناعي يتفاعل بعد كل 3 أسئلة
-        const shouldShowEmoji = (localMatchData.currentIdx + 1) % 3 === 0;
+        // الذكاء الاصطناعي يتفاعل كل 2 أسئلة كما طلبت
+        const shouldShowEmoji = (localMatchData.currentIdx + 1) % 2 === 0;
         
         if (shouldShowEmoji) {
-            const aiEmoji = getAISmartEmoji(
-                localMatchData.player1.score,
-                localMatchData.player2.score,
-                localMatchData.currentIdx + 1,
-                isCorrect,
-                parseInt(document.getElementById('game-timer').innerText)
-            );
-            
+            // نمرر للوظيفة: هل الذكاء جاوب صح؟ وهل المستخدم جاوب صح؟
+            const aiEmoji = getAISmartEmoji(isCorrect, userAnsweredCorrectly);
             showEmoji(aiEmoji, 'ai');
         }
         
@@ -4512,7 +4391,8 @@ function triggerStudentAIResponse() {
     document.getElementById('ai-thinking-msg').classList.add('hidden');
     
     let delay = Math.random() * 3400 + 1000;
-    let accuracy = 0.62;
+    // نسبة الطالب العشوائي 75% بناءً على طلبك
+    let accuracy = 0.75;
     
     if (Math.random() < 0.3) {
         document.getElementById('weak-signal').classList.remove('hidden');
@@ -4524,15 +4404,8 @@ function triggerStudentAIResponse() {
     aiTimeoutId = setTimeout(() => {
         const isCorrect = Math.random() < accuracy;
         
-        // الطالب العشوائي يتفاعل بعد كل سؤال (100%)
-        const studentEmoji = getStudentSmartEmoji(
-            isCorrect,
-            selectedQType,
-            localMatchData.player1.score - localMatchData.player2.score,
-            userAnsweredCorrectly
-        );
-        
-        // عرض إيموجي الطالب
+        // الطالب العشوائي يتفاعل مع كل سؤال (100%) وبقمة الخبث
+        const studentEmoji = getStudentSmartEmoji(isCorrect, userAnsweredCorrectly);
         showEmoji(studentEmoji, 'ai');
         
         if(isCorrect) {
@@ -5960,9 +5833,15 @@ async function promptForRevengeSubject(opponentName) {
                             addChapterRow(ch.name, ch.difficulty);
                         });
                     }
+                    // التعديل: إذا كان الجدول محفوظاً، اعرض النتيجة مباشرة
+                    calculateAndRenderSchedule();
                 } catch (e) {
                     console.error("Error loading schedule:", e);
                 }
+            } else {
+                // تأكيد ظهور صفحة الإدخال إذا لم يكن هناك جدول
+                document.getElementById('schedule-input-page').classList.remove('hidden');
+                document.getElementById('schedule-result-page').classList.add('hidden');
             }
         }
         
@@ -6016,8 +5895,7 @@ async function promptForRevengeSubject(opponentName) {
 
             const studyRatio = 60 / (60 + scheduleData.breakDuration);
             const netStudyMins = Math.round(totalMins * studyRatio);
-            const totalBreakMins = totalMins - netStudyMins;
-
+            
             const totalPoints = scheduleData.chapters.reduce((acc, c) => acc + c.difficulty, 0);
 
             document.getElementById('schedule-input-page').classList.add('hidden');
@@ -6073,8 +5951,6 @@ async function promptForRevengeSubject(opponentName) {
             });
 
             if (scheduleData.needSleep && scheduleData.totalHours > 16) {
-                const sleepStart = 22 * 60;
-                const sleepEnd = 6 * 60;
                 const trSleep = document.createElement('tr');
                 trSleep.innerHTML = `
                     <td>نوم</td>
@@ -6082,10 +5958,8 @@ async function promptForRevengeSubject(opponentName) {
                 `;
                 tbody.appendChild(trSleep);
             }
-
-            document.getElementById('statStudy').innerText = formatTime(netStudyMins);
-            document.getElementById('statBreak').innerText = formatTime(totalBreakMins);
-            document.getElementById('statSleep').innerText = formatTime(sleepMins);
+            
+            // تم حذف السطور الخاصة بتحديث الإحصائيات (صافي الدراسة ومجموع الراحة ووقت النوم) بنجاح
         }
 
         function formatTime2(hour, min) {
@@ -6154,7 +6028,14 @@ async function promptForRevengeSubject(opponentName) {
         window.resetSchedule = function() {
             if(confirm('هل أنت متأكد من حذف الجدول وإنشاء جديد؟')) {
                 localStorage.removeItem('studySchedule');
-                location.reload();
+                scheduleData = { subject: '', chapters: [], totalHours: 0, needSleep: true, breakDuration: 10, studyTimePref: 'any' };
+                document.getElementById('subjectName').value = '';
+                document.getElementById('totalHours').value = '';
+                document.getElementById('chaptersList').innerHTML = '';
+                addChapterRow();
+                document.getElementById('schedule-result-page').classList.add('hidden');
+                document.getElementById('schedule-input-page').classList.remove('hidden');
+                showBeautifulAlert('success', 'تم الحذف', 'تم حذف الجدول السابق، يمكنك إنشاء جدول جديد الآن');
             }
         };
 
