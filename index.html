@@ -1458,17 +1458,15 @@
 
         <div id="tab-leaderboard" class="screen pt-20">
             <div class="scroll-container px-4">
-                <div class="countdown-container">
-                    <p class="text-xs text-gray-300 mb-1">الجوائز الأسبوعية 🎁 (تنتهي الجمعة 00:00)</p>
-                    <div id="weekly-timer" class="timer-digits">00:00:00:00</div>
-                </div>
-
-                <div class="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white p-4 rounded-2xl mb-4 shadow-lg flex items-center justify-between">
-                    <div>
-                        <p class="font-bold text-sm opacity-90">ترتيبك الحالي</p>
-                        <h2 id="my-rank-text" class="text-2xl font-bold">#...</h2>
+                <div class="countdown-container flex justify-between items-center px-4 py-3 mb-4 rounded-2xl">
+                    <div class="text-right">
+                        <p class="text-xs text-gray-300 mb-1">ترتيبك الحالي 🏆</p>
+                        <h2 id="my-rank-text" class="text-2xl font-black text-yellow-400">#...</h2>
                     </div>
-                    <i class="fas fa-trophy text-4xl opacity-50"></i>
+                    <div class="text-left border-r-2 border-gray-600 pr-4">
+                        <p class="text-xs text-gray-300 mb-1">نهاية الأسبوع 🎁</p>
+                        <div id="weekly-timer" class="timer-digits text-lg">00:00:00:00</div>
+                    </div>
                 </div>
                 <div id="leaderboard-list" class="space-y-4 pb-10 flex flex-col"></div>
                 <button id="load-more-leaderboard" onclick="loadMoreLeaderboard()" class="beautiful-btn secondary hidden mt-4 mb-10">
@@ -2066,8 +2064,9 @@
                             </div>
                         </div>
 
-                        <button onclick="goToUploadStep2()" class="beautiful-btn">
-                            <i class="fas fa-arrow-left"></i> التالي
+                        <button onclick="goToUploadStep2()" class="w-full h-12 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl shadow-md hover:shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 mt-4">
+                            <span>التالي</span>
+                            <i class="fas fa-arrow-left"></i>
                         </button>
                     </div>
 
@@ -2101,12 +2100,14 @@
                             </div>
                         </div>
 
-                        <div class="flex gap-3">
-                            <button onclick="goToUploadStep1()" class="beautiful-btn secondary flex-1">
-                                <i class="fas fa-arrow-right"></i> رجوع
+                        <div class="flex gap-3 mt-6">
+                            <button onclick="goToUploadStep1()" class="flex-1 h-12 bg-gray-100 text-gray-700 font-bold rounded-xl shadow-sm hover:bg-gray-200 active:scale-95 transition-all flex items-center justify-center gap-2">
+                                <i class="fas fa-arrow-right"></i>
+                                <span>رجوع</span>
                             </button>
-                            <button onclick="submitQuestionMCQ()" class="beautiful-btn flex-1">
-                                <i class="fas fa-paper-plane"></i> إرسال للمراجعة
+                            <button onclick="submitQuestionMCQ()" class="flex-1 h-12 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold rounded-xl shadow-md hover:shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2">
+                                <i class="fas fa-paper-plane"></i>
+                                <span>إرسال للمراجعة</span>
                             </button>
                         </div>
                     </div>
@@ -2125,12 +2126,14 @@
                             </div>
                         </div>
 
-                        <div class="flex gap-3">
-                            <button onclick="goToUploadStep1()" class="beautiful-btn secondary flex-1">
-                                <i class="fas fa-arrow-right"></i> رجوع
+                        <div class="flex gap-3 mt-6">
+                            <button onclick="goToUploadStep1()" class="flex-1 h-12 bg-gray-100 text-gray-700 font-bold rounded-xl shadow-sm hover:bg-gray-200 active:scale-95 transition-all flex items-center justify-center gap-2">
+                                <i class="fas fa-arrow-right"></i>
+                                <span>رجوع</span>
                             </button>
-                            <button onclick="submitQuestionTF()" class="beautiful-btn flex-1">
-                                <i class="fas fa-paper-plane"></i> إرسال للمراجعة
+                            <button onclick="submitQuestionTF()" class="flex-1 h-12 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold rounded-xl shadow-md hover:shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2">
+                                <i class="fas fa-paper-plane"></i>
+                                <span>إرسال للمراجعة</span>
                             </button>
                         </div>
                     </div>
@@ -2506,7 +2509,9 @@
                 const minute = now.getMinutes();
                 const second = now.getSeconds();
                 
+                // حساب الأيام المتبقية ليوم الجمعة الساعة 00:00
                 let daysUntilFriday = 5 - day;
+                // إذا كان اليوم هو الجمعة بعد منتصف الليل أو السبت، ننتقل للجمعة القادمة
                 if (day > 5 || (day === 5 && (hour > 0 || minute > 0 || second > 0))) {
                     daysUntilFriday += 7;
                 }
@@ -2517,11 +2522,12 @@
                 
                 const diff = target - now;
                 
-                if (diff <= 0) {
+                // التعديل هنا: اصطياد اللحظة بدقة لتفعيل التوزيع فوراً
+                if (diff <= 1000 && diff > -5000) { 
                     timerEl.innerText = "00:00:00:00";
                     if (!window.weeklyRewardDistributed) {
                         window.weeklyRewardDistributed = true;
-                        setTimeout(() => autoDistributeWeeklyPrizes(), 1000);
+                        autoDistributeWeeklyPrizes();
                     }
                     return;
                 }
@@ -2533,7 +2539,8 @@
 
                 timerEl.innerText = `${d}:${h<10?'0'+h:h}:${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
                 
-                if (d === 0 && h === 0 && m === 0 && s < 60) {
+                // إعادة التهيئة للمستقبل
+                if (d > 0 || h > 0) {
                     window.weeklyRewardDistributed = false;
                 }
             }
@@ -2892,264 +2899,114 @@
 }
 
         window.checkDailyReward = async () => {
-    const iraqDate = getIraqDate();
-    const currentDayKey = `${iraqDate.getDate()}-${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
-    const currentWeekKey = `${iraqDate.getFullYear()}-W${getWeekNumber(iraqDate)}`;
+            const iraqDate = getIraqDate();
+            const currentDayKey = `${iraqDate.getDate()}-${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
 
-    console.log("اليوم الحالي:", currentDayKey);
-    console.log("آخر يوم تم المطالبة:", userData.lastRewardDayKey);
-    console.log("مفتاح الأسبوع الحالي:", currentWeekKey);
-    console.log("مفتاح أسبوع المستخدم:", userData.rewardWeekKey);
-    console.log("الأيام المطالب بها هذا الأسبوع:", userData.daysClaimedInWeek || 0);
+            // إذا أخذ الجائزة اليوم، لا نعرض الشاشة أبداً
+            if (userData.lastRewardDayKey === currentDayKey) {
+                return;
+            }
 
-    // إذا طالب اليوم فلا تعرض شيء
-    if (userData.lastRewardDayKey === currentDayKey) {
-        console.log("تم المطالبة اليوم بالفعل");
-        return;
-    }
-
-    let userDaysClaimed = userData.daysClaimedInWeek || 0;
-    
-    // إذا تغير الأسبوع، ابدأ من الصفر وجدد الجوائز
-    if (userData.rewardWeekKey !== currentWeekKey) {
-        console.log("أسبوع جديد، إعادة التعيين وتوليد جوائز جديدة");
-        userDaysClaimed = 0;
-        
-        // توليد جوائز جديدة للأسبوع
-        const weeklyRewards = generateWeeklyRewards();
-        
-        // حفظ الجوائز في localStorage أو في قاعدة البيانات
-        localStorage.setItem(`weeklyRewards_${currentWeekKey}`, JSON.stringify(weeklyRewards));
-        localStorage.setItem(`currentWeekKey`, currentWeekKey);
-    }
-
-    const nextDayToClaim = userDaysClaimed + 1;
-    console.log("اليوم التالي للمطالبة:", nextDayToClaim);
-    
-    // استرجاع جوائز الأسبوع الحالي
-    const currentWeekKeyStored = localStorage.getItem('currentWeekKey');
-    let weeklyRewards;
-    
-    if (currentWeekKeyStored === currentWeekKey) {
-        const storedRewards = localStorage.getItem(`weeklyRewards_${currentWeekKey}`);
-        if (storedRewards) {
-            weeklyRewards = JSON.parse(storedRewards);
-        } else {
-            weeklyRewards = generateWeeklyRewards();
-            localStorage.setItem(`weeklyRewards_${currentWeekKey}`, JSON.stringify(weeklyRewards));
-        }
-    } else {
-        weeklyRewards = generateWeeklyRewards();
-        localStorage.setItem(`weeklyRewards_${currentWeekKey}`, JSON.stringify(weeklyRewards));
-        localStorage.setItem('currentWeekKey', currentWeekKey);
-    }
-
-    const grid = document.getElementById('reward-grid-container');
-    grid.innerHTML = '';
-    
-    for(let i = 1; i <= 7; i++) {
-        let reward = weeklyRewards[i-1];
-        let pts = reward.points || 0;
-        let money = reward.money || 0;
-
-        let cls = "day-box";
-        if (i < nextDayToClaim) {
-            cls += " claimed"; 
-            console.log(`اليوم ${i}: تم المطالبة`);
-        } else if (i === nextDayToClaim) {
-            cls += " active"; 
-            console.log(`اليوم ${i}: نشط وجاهز للمطالبة`);
-        } else {
-            cls += " locked"; 
-            console.log(`اليوم ${i}: مقفل`);
-        }
-        
-        let content = `<p>يوم ${i}</p>`;
-        if (money > 0) {
-            content += `<span>$${money.toFixed(1)}</span>`;
-        } else {
-            content += `<span>${pts} نقطة</span>`;
-        }
-        
-        grid.innerHTML += `<div class="${cls}">${content}</div>`;
-    }
-    
-    document.getElementById('daily-reward-screen').classList.remove('hidden');
-};
-
-// دالة مساعدة للحصول على رقم الأسبوع
-function getWeekNumber(d) {
-    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-    const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-    return weekNo;
-}
-
-// دالة توليد الجوائز الأسبوعية حسب النظام الجديد
-function generateWeeklyRewards() {
-    const rewards = [];
-    const moneyOptions = [1.0, 1.5, 2.0, 2.5, 3.0];
-    const pointsOptions = [10, 15, 20, 25, 30, 35, 40, 45, 50];
-    
-    for (let i = 1; i <= 7; i++) {
-        // يوم 2 و 5 للاموال، باقي الأيام للنقاط
-        if (i === 2 || i === 5) {
-            // أموال عشوائية بين 1 و 3 دولار
-            const randomMoney = moneyOptions[Math.floor(Math.random() * moneyOptions.length)];
-            rewards.push({ points: 0, money: randomMoney });
-        } else {
-            // نقاط عشوائية بين 10 و 50
-            const randomPoints = pointsOptions[Math.floor(Math.random() * pointsOptions.length)];
-            rewards.push({ points: randomPoints, money: 0 });
-        }
-    }
-    
-    // خلط الجوائز لجعلها أكثر عشوائية مع الحفاظ على يومي 2 و 5 للاموال
-    // نستخرج يومي 2 و 5 أولاً
-    const moneyDay2 = rewards[1];
-    const moneyDay5 = rewards[4];
-    
-    // نخلط باقي الأيام
-    const otherDays = [];
-    for (let i = 0; i < 7; i++) {
-        if (i !== 1 && i !== 4) {
-            otherDays.push(rewards[i]);
-        }
-    }
-    
-    // نخلط الأيام الأخرى عشوائياً
-    for (let i = otherDays.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [otherDays[i], otherDays[j]] = [otherDays[j], otherDays[i]];
-    }
-    
-    // إعادة بناء المصفوفة بالترتيب الصحيح
-    const finalRewards = [];
-    let otherIndex = 0;
-    for (let i = 0; i < 7; i++) {
-        if (i === 1) {
-            finalRewards.push(moneyDay2);
-        } else if (i === 4) {
-            finalRewards.push(moneyDay5);
-        } else {
-            finalRewards.push(otherDays[otherIndex]);
-            otherIndex++;
-        }
-    }
-    
-    console.log("جوائز الأسبوع الجديدة:", finalRewards);
-    return finalRewards;
-}
-
-        function getRandomPoints() {
-            const pointsOptions = [10, 15, 20, 25, 30, 35, 40, 45, 50];
-            return pointsOptions[Math.floor(Math.random() * pointsOptions.length)];
-        }
-
-        function getRandomMoney() {
-            const moneyOptions = [1.0, 1.5, 2.0, 2.5, 3.0];
-            return moneyOptions[Math.floor(Math.random() * moneyOptions.length)];
-        }
+            // معرفة اليوم الذي وصل إليه المستخدم في تسلسله (من 1 إلى 7)
+            let userDaysClaimed = userData.daysClaimedInWeek || 0;
+            
+            // النظام الذكي: إذا كان قد أنهى 7 أيام، نرجعه لليوم الأول مباشرة ليبدأ دورة جديدة!
+            if (userDaysClaimed >= 7) {
+                userDaysClaimed = 0; 
+            }
+            
+            const nextDayToClaim = userDaysClaimed + 1;
+            
+            const grid = document.getElementById('reward-grid-container');
+            grid.innerHTML = '';
+            
+            // تصميم الهيكل الثابت للجوائز (يظهر للجميع بنفس الشكل والدقة)
+            const rewardStructure = [
+                { type: 'points', text: '10-50 نقطة' }, // اليوم 1
+                { type: 'money', text: '1$-3$' },       // اليوم 2
+                { type: 'points', text: '10-50 نقطة' }, // اليوم 3
+                { type: 'points', text: '10-50 نقطة' }, // اليوم 4
+                { type: 'money', text: '1$-3$' },       // اليوم 5
+                { type: 'points', text: '10-50 نقطة' }, // اليوم 6
+                { type: 'points', text: '10-50 نقطة' }  // اليوم 7
+            ];
+            
+            for(let i = 1; i <= 7; i++) {
+                let cls = "day-box";
+                // التصميم يعتمد على تقدمه، ولا يحترق عليه أي يوم!
+                if (i < nextDayToClaim) {
+                    cls += " claimed"; 
+                } else if (i === nextDayToClaim) {
+                    cls += " active"; 
+                } else {
+                    cls += " locked"; 
+                }
+                
+                let content = `<p>يوم ${i}</p><span>${rewardStructure[i-1].text}</span>`;
+                grid.innerHTML += `<div class="${cls}">${content}</div>`;
+            }
+            
+            document.getElementById('daily-reward-screen').classList.remove('hidden');
+        };
 
         window.claimReward = async () => {
-    const iraqDate = getIraqDate();
-    const currentDayKey = `${iraqDate.getDate()}-${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
-    const currentWeekKey = `${iraqDate.getFullYear()}-W${getWeekNumber(iraqDate)}`;
+            const iraqDate = getIraqDate();
+            const currentDayKey = `${iraqDate.getDate()}-${iraqDate.getMonth()}-${iraqDate.getFullYear()}`;
 
-    console.log("المطالبة بالهدية - اليوم:", currentDayKey);
-    console.log("المطالبة بالهدية - الأسبوع:", currentWeekKey);
+            let userDaysClaimed = userData.daysClaimedInWeek || 0;
+            
+            // إعادة الدورة إذا كان قد أكمل الأسبوع سابقاً
+            if (userDaysClaimed >= 7) {
+                userDaysClaimed = 0;
+            }
 
-    let userDaysClaimed = userData.daysClaimedInWeek || 0;
-    console.log("الأيام المطالب بها قبل:", userDaysClaimed);
-    
-    // إذا كان أسبوع مختلف، ابدأ من الصفر
-    if (userData.rewardWeekKey !== currentWeekKey) {
-        console.log("أسبوع مختلف، إعادة التعيين إلى الصفر");
-        userDaysClaimed = 0;
-    }
+            const dayToClaim = userDaysClaimed + 1;
+            
+            let rewardAmount = 0;
+            let moneyAmount = 0;
+            let rewardMessage = '';
 
-    const dayToClaim = userDaysClaimed + 1;
-    console.log("اليوم للمطالبة:", dayToClaim);
-    
-    if (dayToClaim > 7) {
-        showBeautifulAlert('info', 'تم الانتهاء', 'لقد أنهيت جميع أيام هذا الأسبوع! عد في الأسبوع القادم.');
-        document.getElementById('daily-reward-screen').classList.add('hidden');
-        return;
-    }
-    
-    // استرجاع جوائز الأسبوع الحالي
-    let weeklyRewards;
-    const storedRewards = localStorage.getItem(`weeklyRewards_${currentWeekKey}`);
-    
-    if (storedRewards) {
-        weeklyRewards = JSON.parse(storedRewards);
-    } else {
-        weeklyRewards = generateWeeklyRewards();
-        localStorage.setItem(`weeklyRewards_${currentWeekKey}`, JSON.stringify(weeklyRewards));
-    }
-    
-    if (dayToClaim < 1 || dayToClaim > 7) {
-        showBeautifulAlert('error', 'خطأ', 'يوم غير صالح للمطالبة!');
-        return;
-    }
-    
-    const reward = weeklyRewards[dayToClaim - 1];
-    let rewardAmount = reward.points || 0;
-    let moneyAmount = reward.money || 0;
-
-    console.log("قبل التحديث - النقاط:", userData.points);
-    console.log("قبل التحديث - الرصيد:", userData.balance);
-    console.log("المكافأة المستلمة:", rewardAmount > 0 ? `${rewardAmount} نقطة` : `$${moneyAmount}`);
-    
-    try {
-        // تحديث قاعدة البيانات
-        await updateDoc(doc(db, "users", currentUser.uid), {
-            points: increment(rewardAmount),
-            balance: increment(moneyAmount),
-            lastRewardDayKey: currentDayKey,
-            rewardWeekKey: currentWeekKey,
-            daysClaimedInWeek: dayToClaim
-        });
-        
-        // تحديث البيانات المحلية
-        userData.points += rewardAmount;
-        userData.balance += moneyAmount;
-        userData.lastRewardDayKey = currentDayKey;
-        userData.rewardWeekKey = currentWeekKey;
-        userData.daysClaimedInWeek = dayToClaim;
-        
-        console.log("بعد التحديث - النقاط:", userData.points);
-        console.log("بعد التحديث - الرصيد:", userData.balance);
-        console.log("بعد التحديث - الأيام المطالب بها:", userData.daysClaimedInWeek);
-        
-        setupHeaderUI();
-        
-        let rewardMessage = '';
-        if (moneyAmount > 0) {
-            rewardMessage = `🎉 مبروك! لقد حصلت على $${moneyAmount.toFixed(1)}`;
-        } else {
-            rewardMessage = `🎉 مبروك! لقد حصلت على ${rewardAmount} نقطة`;
-        }
-        
-        showBeautifulAlert('success', 'هدية اليوم', rewardMessage);
-        
-        document.getElementById('daily-reward-screen').classList.add('hidden');
-        
-        // إنشاء إشعار بالمكافأة
-        await createNotification('reward', rewardMessage);
-        
-        // إذا أنهى الأسبوع، نحذف الجوائز القديمة
-        if (dayToClaim === 7) {
-            localStorage.removeItem(`weeklyRewards_${currentWeekKey}`);
-            console.log("تم إنهاء الأسبوع، سيتم توليد جوائز جديدة الأسبوع القادم");
-        }
-        
-    } catch (error) {
-        console.error("خطأ في المطالبة بالهدية:", error);
-        showBeautifulAlert('error', 'خطأ', 'حدث خطأ أثناء المطالبة بالهدية: ' + error.message);
-    }
-};
+            // التوزيع العشوائي الدقيق بناءً على اليوم!
+            if (dayToClaim === 2 || dayToClaim === 5) {
+                // اليوم الثاني والخامس: أموال حصراً
+                const moneyOptions = [1.0, 1.5, 2.0, 2.5, 3.0];
+                moneyAmount = moneyOptions[Math.floor(Math.random() * moneyOptions.length)];
+                rewardMessage = `🎉 مبروك! لقد حصلت على $${moneyAmount.toFixed(1)}`;
+            } else {
+                // باقي الأيام: نقاط حصراً
+                const pointsOptions = [10, 15, 20, 25, 30, 35, 40, 45, 50];
+                rewardAmount = pointsOptions[Math.floor(Math.random() * pointsOptions.length)];
+                rewardMessage = `🎉 مبروك! لقد حصلت على ${rewardAmount} نقطة`;
+            }
+            
+            try {
+                // تحديث قاعدة البيانات
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    points: increment(rewardAmount),
+                    balance: increment(moneyAmount),
+                    lastRewardDayKey: currentDayKey,
+                    daysClaimedInWeek: dayToClaim
+                });
+                
+                // تحديث البيانات المحلية مباشرة للتطبيق
+                userData.points += rewardAmount;
+                userData.balance += moneyAmount;
+                userData.lastRewardDayKey = currentDayKey;
+                userData.daysClaimedInWeek = dayToClaim;
+                
+                setupHeaderUI();
+                
+                showBeautifulAlert('success', 'هدية اليوم', rewardMessage);
+                document.getElementById('daily-reward-screen').classList.add('hidden');
+                
+                // إنشاء إشعار بالمكافأة لتأكيدها
+                await createNotification('reward', rewardMessage);
+                
+            } catch (error) {
+                console.error("خطأ في المطالبة بالهدية:", error);
+                showBeautifulAlert('error', 'خطأ', 'حدث خطأ أثناء المطالبة بالهدية: ' + error.message);
+            }
+        };
 
         async function createNotification(type, message, opponentId = null, opponentName = null, matchResult = null) {
             try {
@@ -3587,6 +3444,12 @@ async function markAllNotificationsAsRead() {
                     display.innerText = "00:00:00:00";
                     clearInterval(premiumInterval);
                     deactivatePremiumFeatures(currentUser.uid);
+                    
+                    // إخفاء واجهة المميز فوراً وعرض واجهة إدخال الكود
+                    document.getElementById('premium-active-view').classList.add('hidden');
+                    document.getElementById('premium-locked-view').classList.remove('hidden');
+                    document.getElementById('add-subscription-btn').classList.add('hidden');
+                    showBeautifulAlert('info', 'انتهى الاشتراك', 'لقد انتهت مدة اشتراكك المميز، تم إرجاع حسابك للوضع العادي.');
                     return;
                 }
                 
@@ -4830,30 +4693,24 @@ function showWithdrawalResult() {
         // الطالب العشوائي يخسر: يخسر نقاط = عدد إجاباتك الصحيحة
         if (currentGameMode === 'student' && opId !== 'AI_BOT') {
             try {
-                // منع النقاط السالبة (لا تقل عن صفر)
-                const opponentDoc = await getDoc(doc(db, "users", opId));
-                if (opponentDoc.exists()) {
-                    const opponentData = opponentDoc.data();
-                    const currentPoints = opponentData.points || 0;
-                    const deduction = myScore; // يخسر عدد إجاباتك الصحيحة
-                    
-                    if (currentPoints > 0) {
-                        // يخسر نقاط لكن لا يصل للسالب
-                        const newPoints = Math.max(0, currentPoints - deduction);
-                        await updateDoc(doc(db, "users", opId), { 
-                            points: newPoints 
-                        });
-                        
-                        // إشعار للطالب الخاسر
-                        // إشعار للطالب الخاسر (يصل للخاسر وليس الفائز)
-await createNotification('revenge', 
-    `😡 ${userData.name} فاز عليك بنتيجة ${myScore}-${opScore}! (-${deduction} نقطة)`,
-    opId,  // الخاسر
-    userData.name,  // اسم الفائز
-    `${myScore}-${opScore}`
-);
-                    }
-                }
+                const deduction = myScore; // يخسر عدد إجاباتك الصحيحة
+                
+                // خصم النقاط فوراً وإجبارياً من الخصم باستخدام increment بالسالب (أضمن طريقة في فايربيس)
+                await updateDoc(doc(db, "users", opId), { 
+                    points: increment(-deduction) 
+                });
+
+                // إرسال إشعار مباشر لـ قاعدة بيانات "المنافس" (الخاسر) لكي ينتقم منك!
+                await addDoc(collection(db, "notifications"), {
+                    userId: opId, // الآيدي الخاص بالمنافس الخاسر
+                    type: 'revenge',
+                    message: `😡 ${userData.name} فاز عليك بنتيجة ${myScore}-${opScore}! لازم تنتقم منه!`,
+                    opponentId: currentUser.uid, // الآيدي الخاص بك ليتمكن من الانتقام
+                    opponentName: userData.name, // اسمك
+                    matchResult: `${opScore}-${myScore}`,
+                    read: false,
+                    createdAt: serverTimestamp()
+                });
             } catch (error) {
                 console.error("Error updating opponent points:", error);
             }
@@ -4873,7 +4730,6 @@ await createNotification('revenge',
                 const opponentDoc = await getDoc(doc(db, "users", opId));
                 if (opponentDoc.exists()) {
                     const opponentData = opponentDoc.data();
-                    const currentPoints = opponentData.points || 0;
                     let addition = opScore * 2; // يحصل على (عدد إجاباته الصحيحة × 2)
                     
                     // مضاعفة النقاط إذا كان الخصم مشترك مميز
@@ -4883,16 +4739,8 @@ await createNotification('revenge',
                     }
                     
                     await updateDoc(doc(db, "users", opId), { 
-                        points: currentPoints + addition
+                        points: increment(addition)
                     });
-                    
-                    // إشعار انتقام للطالب الفائز
-                    revengeMatchData = {
-                        opponentId: opId,
-                        opponentName: opName,
-                        opponentScore: opScore,
-                        myScore: myScore
-                    };
                 }
             } catch (error) {
                 console.error("Error updating opponent points:", error);
@@ -4940,15 +4788,15 @@ await createNotification('revenge',
             userData.points -= pointsLost;
             setupHeaderUI();
             
-// إشعار للطالب الخاسر (يصل للخاسر وليس الفائز)
-if (currentGameMode === 'student' && opId !== 'AI_BOT') {
-    await createNotification('revenge', 
-        `😡 ${userData.name} فاز عليك بنتيجة ${myScore}-${opScore}! (-${pointsLost} نقطة)`,
-        opId,  // الخاسر
-        userData.name,  // اسم الفائز
-        `${myScore}-${opScore}`
-    );
-}
+            // أنت الذي خسرت، الإشعار يصل لك لكي تنتقم من المنافس الفائز
+            if (currentGameMode === 'student' && opId !== 'AI_BOT') {
+                await createNotification('revenge', 
+                    `😡 ${opName} فاز عليك بنتيجة ${opScore}-${myScore}! لازم تنتقم منه!`,
+                    opId,  // الآيدي الخاص بالمنافس الذي فاز
+                    opName,  // اسم المنافس الذي فاز
+                    `${myScore}-${opScore}`
+                );
+            }
         }
     }
     
@@ -5440,6 +5288,7 @@ async function promptForRevengeSubject(opponentName) {
             leaderboardOffset = 0;
             
             try {
+                // نجلب 150 مستخدم لمعرفة ترتيبك الحقيقي بدقة
                 const q = query(collection(db, "users"), orderBy("points", "desc"), limit(150));
                 const snap = await getDocs(q);
                 allLeaderboardUsers = [];
@@ -5449,12 +5298,15 @@ async function promptForRevengeSubject(opponentName) {
                 
                 allLeaderboardUsers.sort((a, b) => (b.points || 0) - (a.points || 0));
 
+                // حساب ترتيبك الحقيقي وطباعته في الأعلى (حتى لو كان فوق الـ 50)
                 const myIndex = allLeaderboardUsers.findIndex(u => u.uid === currentUser.uid);
                 if(myIndex !== -1) document.getElementById('my-rank-text').innerText = "#" + (myIndex + 1);
-                else document.getElementById('my-rank-text').innerText = "#" + (allLeaderboardUsers.length + 1);
+                else document.getElementById('my-rank-text').innerText = "+150";
 
+                // نعرض أول 25 فقط
                 renderLeaderboardChunk(0, 25);
                 
+                // إذا كان هناك أكثر من 25 مستخدماً، نظهر زر عرض المزيد (ليكمل للـ 50 فقط)
                 if (allLeaderboardUsers.length > 25) {
                     loadMoreBtn.classList.remove('hidden');
                 } else {
@@ -5555,8 +5407,10 @@ async function promptForRevengeSubject(opponentName) {
 
         window.loadMoreLeaderboard = function() {
             leaderboardOffset += 25;
+            // يعرض من 25 إلى 50 فقط كحد أقصى
             const nextChunk = allLeaderboardUsers.slice(leaderboardOffset, Math.min(leaderboardOffset + 25, 50));
             
+            const div = document.getElementById('leaderboard-list');
             nextChunk.forEach((u, index) => {
                 const globalIndex = leaderboardOffset + index;
                 let frameClass = "frame-rank-common";
@@ -5577,7 +5431,6 @@ async function promptForRevengeSubject(opponentName) {
                     resetBtn = `<button onclick="resetUserPoints('${u.id}', '${u.name}')" class="w-6 h-6 rounded bg-red-100 text-red-500 flex items-center justify-center mr-2"><i class="fas fa-trash-alt text-xs"></i></button>`;
                 }
                 
-                const div = document.getElementById('leaderboard-list');
                 div.innerHTML += `
                     <div class="flex items-center justify-between p-4 rounded-xl shadow-sm mb-3 relative overflow-hidden ${backgroundClass}">
                         <div class="flex items-center gap-4 z-10">
@@ -5603,7 +5456,8 @@ async function promptForRevengeSubject(opponentName) {
                     </div>`;
             });
             
-            if (leaderboardOffset + 25 >= 50) {
+            // إخفاء الزر نهائياً بمجرد الوصول إلى 50 مستخدم
+            if (leaderboardOffset + 25 >= 50 || leaderboardOffset + 25 >= allLeaderboardUsers.length) {
                 document.getElementById('load-more-leaderboard').classList.add('hidden');
             }
         };
@@ -5693,6 +5547,17 @@ async function promptForRevengeSubject(opponentName) {
                 const createdAt = uData.createdAt ? uData.createdAt.toDate().toLocaleDateString('ar-EG') : 'غير معروف';
                 const lastLogin = uData.lastLogin ? new Date(uData.lastLogin).toLocaleDateString('ar-EG') : 'لم يسجل دخول';
 
+                // التحقق من حالة المميز الحقيقية (الوقت)
+                let premiumText = '❌ لا';
+                if (uData.isPremium) {
+                    if (uData.premiumExpiry && uData.premiumExpiry.toDate() > new Date()) {
+                        premiumText = '✅ نعم (نشط)';
+                    } else {
+                        premiumText = '⚠️ منتهي الصلاحية';
+                        deactivatePremiumFeatures(docId); // تنظيف الداتا له وإلغاء مميزاته
+                    }
+                }
+
                 resDiv.innerHTML = `
                     <div class="text-center mb-4">
                         <img src="${uData.photo}" class="w-16 h-16 rounded-full mx-auto mb-2">
@@ -5708,7 +5573,7 @@ async function promptForRevengeSubject(opponentName) {
                         <p class="text-sm"><span class="font-bold">المرحلة الدراسية:</span> ${uData.grade ? getGradeName(uData.grade) : 'غير محدد'}</p>
                         <p class="text-sm"><span class="font-bold">السيرة الذاتية:</span> ${uData.bio || 'لا يوجد'}</p>
                         <p class="text-sm"><span class="font-bold">حالة الحظر:</span> ${isBanned ? '🛑 محظور' : '✅ نشط'}</p>
-                        <p class="text-sm"><span class="font-bold">حساب مميز:</span> ${uData.isPremium ? '✅ نعم' : '❌ لا'}</p>
+                        <p class="text-sm"><span class="font-bold">حساب مميز:</span> ${premiumText}</p>
                     </div>
                     <div class="grid grid-cols-2 gap-2 mb-4 text-xs font-bold text-center">
                         <div class="bg-gray-50 p-2 rounded">النقاط: ${uData.points || 0}</div>
@@ -5918,25 +5783,32 @@ async function promptForRevengeSubject(opponentName) {
                 const q = query(collection(db, "users"), where("isPremium", "==", true));
                 const snap = await getDocs(q);
                 
-                if(snap.empty) {
-                    listDiv.innerHTML = '<p class="text-center text-gray-400 py-10">لا يوجد مستخدمين مميزين</p>';
-                    return;
-                }
-                
                 let html = '';
                 const now = new Date();
+                let activePremiumCount = 0;
                 
-                snap.docs.forEach(doc => {
-                    const u = doc.data();
+                snap.docs.forEach(userDoc => {
+                    const u = userDoc.data();
                     let remainingDays = "منتهي";
+                    let isValid = false;
+
+                    // التحقق الدقيق من تاريخ الانتهاء
                     if (u.premiumExpiry) {
                         const expiry = u.premiumExpiry.toDate();
                         const diff = expiry - now;
                         if(diff > 0) {
+                            isValid = true;
                             remainingDays = Math.ceil(diff / (1000 * 60 * 60 * 24)) + " يوم";
                         }
                     }
+
+                    // إذا كان الوقت قد انتهى، نقوم بإلغاء اشتراكه فوراً في قاعدة البيانات ولا نعرضه
+                    if (!isValid) {
+                        deactivatePremiumFeatures(userDoc.id); 
+                        return; // لا تعرضه في القائمة
+                    }
                     
+                    activePremiumCount++;
                     html += `
                         <div class="bg-white rounded-xl p-4 border border-yellow-100 shadow-sm">
                             <div class="flex justify-between items-center">
@@ -5952,7 +5824,12 @@ async function promptForRevengeSubject(opponentName) {
                     `;
                 });
                 
-                listDiv.innerHTML = html;
+                if(activePremiumCount === 0) {
+                    listDiv.innerHTML = '<p class="text-center text-gray-400 py-10">لا يوجد مستخدمين مميزين حالياً</p>';
+                } else {
+                    listDiv.innerHTML = html;
+                }
+
             } catch (error) {
                 listDiv.innerHTML = '<p class="text-center text-gray-400">خطأ في تحميل المستخدمين المميزين</p>';
             }
@@ -6680,11 +6557,28 @@ async function promptForRevengeSubject(opponentName) {
                 });
                 
                 if (questionData.senderId) {
+                    // 1. إضافة 5 نقاط في قاعدة البيانات بشكل مؤكد
                     await updateDoc(doc(db, "users", questionData.senderId), {
                         points: increment(5)
                     });
+
+                    // 2. تحديث واجهة المستخدم فوراً (إذا كان المشرف هو نفسه من رفع السؤال ويجربه)
+                    if (questionData.senderId === currentUser.uid) {
+                        userData.points += 5;
+                        setupHeaderUI();
+                    }
+
+                    // 3. إرسال إشعار للمستخدم بأن سؤاله تم قبوله وحصل على نقاط!
+                    await addDoc(collection(db, "notifications"), {
+                        userId: questionData.senderId,
+                        type: 'reward',
+                        message: `🎉 تم قبول سؤالك في مادة ${questionData.subject || ''} وحصلت على مكافأة +5 نقاط!`,
+                        read: false,
+                        createdAt: serverTimestamp()
+                    });
                 }
                 
+                showBeautifulAlert('success', 'تم القبول', '✅ تم قبول السؤال وإضافة 5 نقاط للمرسل بنجاح!');
                 loadReviewQuestions();
                 checkPendingQuestionsNotification();
                 
