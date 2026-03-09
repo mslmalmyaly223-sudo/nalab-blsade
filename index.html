@@ -2489,9 +2489,7 @@
                 const minute = now.getMinutes();
                 const second = now.getSeconds();
                 
-                // حساب الأيام المتبقية ليوم الجمعة الساعة 00:00
                 let daysUntilFriday = 5 - day;
-                // إذا كان اليوم هو الجمعة بعد منتصف الليل أو السبت، ننتقل للجمعة القادمة
                 if (day > 5 || (day === 5 && (hour > 0 || minute > 0 || second > 0))) {
                     daysUntilFriday += 7;
                 }
@@ -2502,25 +2500,21 @@
                 
                 const diff = target - now;
                 
-                // التعديل هنا: اصطياد اللحظة بدقة لتفعيل التوزيع فوراً
-                if (diff <= 1000 && diff > -5000) { 
-                    timerEl.innerText = "00:00:00:00";
+                // إزالة القيد الصارم للوقت لتفعيل التوزيع مهما كان الوقت متأخراً عن الجمعة
+                if (diff <= 1000) { 
+                    timerEl.innerText = "00:00:00";
                     if (!window.weeklyRewardDistributed) {
                         window.weeklyRewardDistributed = true;
                         autoDistributeWeeklyPrizes();
                     }
-                    return;
-                }
+                    // يتم احتساب الأسبوع الجديد في الدورة القادمة
+                } else {
+                    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const s = Math.floor((diff % (1000 * 60)) / 1000);
 
-                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const s = Math.floor((diff % (1000 * 60)) / 1000);
-
-                timerEl.innerText = `${d}:${h<10?'0'+h:h}:${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
-                
-                // إعادة التهيئة للمستقبل
-                if (d > 0 || h > 0) {
+                    timerEl.innerText = `${d}:${h<10?'0'+h:h}:${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
                     window.weeklyRewardDistributed = false;
                 }
             }
@@ -2530,51 +2524,65 @@
 
         async function autoDistributeWeeklyPrizes() {
     try {
-        console.log("بدء التوزيع التلقائي للجوائز الأسبوعية...");
+        console.log("بدء التوزيع التلقائي للجوائز الأسبوعية وتصفير الكل...");
         
-        const q = query(collection(db, "users"), orderBy("points", "desc"), limit(10));
-        const snap = await getDocs(q);
+        // 1. توزيع الجوائز على أول 10
+        const qTop = query(collection(db, "users"), orderBy("points", "desc"), limit(10));
+        const snapTop = await getDocs(qTop);
         const prizes = [10, 7, 5, 3, 2, 1, 1, 1, 1, 1];
         
-        let batch = writeBatch(db);
+        let batchTop = writeBatch(db);
         
-        snap.docs.forEach((d, index) => {
+        snapTop.docs.forEach((d, index) => {
             if(index < 10) {
                 const prize = prizes[index];
-                let userData = d.data();
+                let uData = d.data();
                 let finalPrize = prize;
                 
-                // مضاعفة الجائزة للمشتركين المميزين
-                if (userData.isPremium && userData.premiumExpiry) {
-                    const expiry = userData.premiumExpiry.toDate();
-                    const now = new Date();
-                    if (expiry > now) {
-                        finalPrize = prize * 2; // مضاعفة الجائزة
-                        console.log(`مستخدم مميز ${userData.name}: ${prize} -> ${finalPrize}$`);
+                if (uData.isPremium && uData.premiumExpiry) {
+                    const expiry = uData.premiumExpiry.toDate();
+                    if (expiry > new Date()) {
+                        finalPrize = prize * 2; 
                     }
                 }
                 
-                const newBalance = (userData.balance || 0) + finalPrize;
-                batch.update(doc(db, "users", d.id), { 
+                const newBalance = (uData.balance || 0) + finalPrize;
+                batchTop.update(doc(db, "users", d.id), { 
                     balance: newBalance,
                     lastWeeklyPrize: finalPrize,
                     lastWeeklyRank: index + 1
                 });
             }
         });
-        await batch.commit();
+        await batchTop.commit();
 
-        const qReset = query(collection(db, "users"), orderBy("points", "desc"), limit(150));
-        const snapReset = await getDocs(qReset);
+        // 2. تصفير النقاط شلع قلع (لجميع المستخدمين)
+        const qAll = query(collection(db, "users"));
+        const snapAll = await getDocs(qAll);
         
-        let resetBatch = writeBatch(db);
-        snapReset.docs.forEach(d => {
-            resetBatch.update(doc(db, "users", d.id), { 
+        let batchesArray = [];
+        let currentBatch = writeBatch(db);
+        let operationCount = 0;
+
+        snapAll.docs.forEach(d => {
+            currentBatch.update(doc(db, "users", d.id), { 
                 points: 0,
-                previousPoints: d.data().points || 0
+                previousPoints: d.data().points || 0 
             });
+            operationCount++;
+            
+            // فايربيس يسمح بـ 500 عملية فقط في كل Batch
+            if (operationCount >= 490) {
+                batchesArray.push(currentBatch.commit());
+                currentBatch = writeBatch(db);
+                operationCount = 0;
+            }
         });
-        await resetBatch.commit();
+        
+        if (operationCount > 0) {
+            batchesArray.push(currentBatch.commit());
+        }
+        await Promise.all(batchesArray);
         
         await setDoc(doc(db, "system_settings", "last_weekly_distribution"), {
             timestamp: serverTimestamp(),
@@ -2582,22 +2590,18 @@
             prizesDoubledForPremium: true
         }, { merge: true });
         
-        console.log("✅ تم التوزيع التلقائي للجوائز وتصفير النقاط بنجاح!");
+        console.log("✅ تم التوزيع وتصفير نقاط جميع المستخدمين بنجاح!");
         
-        // إرسال إشعارات للمستخدمين
-        snap.docs.forEach(async (d, index) => {
-            if(index < 3) { // المراكز الثلاثة الأولى فقط
-                const userData = d.data();
+        // إرسال إشعارات للمراكز الثلاثة الأولى
+        snapTop.docs.forEach(async (d, index) => {
+            if(index < 3) {
+                const uData = d.data();
                 let prize = prizes[index];
                 let isDoubled = false;
                 
-                if (userData.isPremium && userData.premiumExpiry) {
-                    const expiry = userData.premiumExpiry.toDate();
-                    const now = new Date();
-                    if (expiry > now) {
-                        prize = prize * 2;
-                        isDoubled = true;
-                    }
+                if (uData.isPremium && uData.premiumExpiry && uData.premiumExpiry.toDate() > new Date()) {
+                    prize = prize * 2;
+                    isDoubled = true;
                 }
                 
                 await createNotification('weekly', 
@@ -2610,18 +2614,8 @@
             loadLeaderboard();
         }
         
-        if (userData && userData.email === ADMIN_EMAIL) {
-            showBeautifulAlert('success', 'تم التوزيع', '✅ تم التوزيع التلقائي للجوائز الأسبوعية وتصفير النقاط! تم مضاعفة الجوائز للمشتركين المميزين.');
-        }
-        
     } catch (error) {
         console.error("❌ خطأ في التوزيع التلقائي:", error);
-        setTimeout(() => {
-            if (!window.retryWeeklyDistribution) {
-                window.retryWeeklyDistribution = true;
-                autoDistributeWeeklyPrizes();
-            }
-        }, 5 * 60 * 1000);
     }
 }
 
@@ -4437,16 +4431,11 @@ function triggerStudentAIResponse() {
     }
     
     try {
-        let penalty = -10;
-        
-        // التحقق من وجود نقاط كافية
-        if (userData.points < 10) {
-            penalty = -userData.points;
-        }
+        let penalty = -10; // الخصم ثابت -10 سواء كانت نقاطه صفر أو أقل
         
         console.log("خصم النقاط:", penalty);
         
-        // تحديث النقاط في قاعدة البيانات
+        // تحديث النقاط في قاعدة البيانات (سيقبل النزول للسالب)
         await updateDoc(doc(db, "users", currentUser.uid), {
             points: increment(penalty)
         });
@@ -4555,32 +4544,28 @@ function showWithdrawalResult() {
         msg = "فوز ساحق!"; 
         icon = "🏆"; 
         
-        // أنت تفوز: تحصل على نقاط = (عدد إجاباتك الصحيحة × 2)
         pointsGained = myScore * 2;
         pointsLost = 0;
         
-        // مضاعفة النقاط للمشتركين المميزين (×2 فقط للفائز، ليس للخاسر)
         if (isPremiumValid(userData)) {
-            pointsGained = pointsGained * 2; // مضاعفة إضافية للمشترك المميز
+            pointsGained = pointsGained * 2; 
         }
         
-        // الطالب العشوائي يخسر: يخسر نقاط = عدد إجاباتك الصحيحة
         if (currentGameMode === 'student' && opId !== 'AI_BOT') {
             try {
-                const deduction = myScore; // يخسر عدد إجاباتك الصحيحة
+                const deduction = myScore; 
                 
-                // خصم النقاط فوراً وإجبارياً من الخصم باستخدام increment بالسالب (أضمن طريقة في فايربيس)
                 await updateDoc(doc(db, "users", opId), { 
                     points: increment(-deduction) 
                 });
 
-                // إرسال إشعار مباشر لـ قاعدة بيانات "المنافس" (الخاسر) لكي ينتقم منك!
+                // إرسال الإشعار للخصم الخاسر (يتم الحفظ في قاعدة بياناته)
                 await addDoc(collection(db, "notifications"), {
-                    userId: opId, // الآيدي الخاص بالمنافس الخاسر
+                    userId: opId, 
                     type: 'revenge',
                     message: `😡 ${userData.name} فاز عليك بنتيجة ${myScore}-${opScore}! لازم تنتقم منه!`,
-                    opponentId: currentUser.uid, // الآيدي الخاص بك ليتمكن من الانتقام
-                    opponentName: userData.name, // اسمك
+                    opponentId: currentUser.uid, 
+                    opponentName: userData.name, 
                     matchResult: `${opScore}-${myScore}`,
                     read: false,
                     createdAt: serverTimestamp()
@@ -4594,22 +4579,19 @@ function showWithdrawalResult() {
         msg = "حظ أوفر!"; 
         icon = "😢"; 
         
-        // أنت تخسر: تخسر نقاط = عدد إجابات الخصم الصحيحة
-        pointsLost = opScore; // فقط عدد إجابات الخصم الصحيحة
+        pointsLost = opScore; 
         pointsGained = 0;
         
-        // الطالب العشوائي يفوز: يحصل على نقاط = (عدد إجاباته الصحيحة × 2)
         if (currentGameMode === 'student' && opId !== 'AI_BOT') {
             try {
                 const opponentDoc = await getDoc(doc(db, "users", opId));
                 if (opponentDoc.exists()) {
                     const opponentData = opponentDoc.data();
-                    let addition = opScore * 2; // يحصل على (عدد إجاباته الصحيحة × 2)
+                    let addition = opScore * 2; 
                     
-                    // مضاعفة النقاط إذا كان الخصم مشترك مميز
                     if (opponentData.isPremium && opponentData.premiumExpiry && 
                         opponentData.premiumExpiry.toDate() > new Date()) {
-                        addition = addition * 2; // مضاعفة إضافية للمشترك المميز
+                        addition = addition * 2; 
                     }
                     
                     await updateDoc(doc(db, "users", opId), { 
@@ -4622,29 +4604,22 @@ function showWithdrawalResult() {
         }
         
     } else { 
-        // حالة التعادل
         if(myScore > 0) { 
             msg = "تعادل إيجابي!"; 
             icon = "🤝"; 
-            // كل واحد يحصل على نقاط إجاباته
             pointsGained = myScore; 
             pointsLost = 0;
         } else { 
             msg = "تعادل سلبي!"; 
             icon = "😐"; 
-            // كل شخص يحصل على نقطة واحدة فقط
             pointsGained = 1; 
             pointsLost = 0;
         }
     }
     
-    // منع المستخدم من اللعب إذا نقاطه سالبة
-    if (userData.points + pointsGained - pointsLost < 0) {
-        showBeautifulAlert('warning', 'انتبه', 'نقاطك ستكون سالبة! رفع الأسئلة للحصول على نقاط.');
-        pointsLost = 0; // لا نخسر نقاط
-    }
+    // تم حذف قيد منع النزول تحت الصفر من هنا ليسمح بالنقاط السالبة
     
-    // تحديث نقاط المستخدم الحالي
+    // تحديث نقاط المستخدم الحالي بالموجب
     if(pointsGained > 0) {
         await updateDoc(doc(db, "users", currentUser.uid), { 
             points: increment(pointsGained) 
@@ -4653,30 +4628,31 @@ function showWithdrawalResult() {
         setupHeaderUI();
     }
     
+    // تحديث نقاط المستخدم الحالي بالسالب (خسارة)
     if(pointsLost > 0) {
-        // تأكد أن النقاط لا تصبح سالبة
-        if (userData.points - pointsLost >= 0) {
-            await updateDoc(doc(db, "users", currentUser.uid), { 
-                points: increment(-pointsLost) 
+        await updateDoc(doc(db, "users", currentUser.uid), { 
+            points: increment(-pointsLost) 
+        });
+        userData.points -= pointsLost;
+        setupHeaderUI();
+        
+        // إذا خسرت، يصل لك إشعار لكي تنتقم من المنافس الفائز
+        if (currentGameMode === 'student' && opId !== 'AI_BOT') {
+            await addDoc(collection(db, "notifications"), {
+                userId: currentUser.uid, 
+                type: 'revenge',
+                message: `😡 ${opName} فاز عليك بنتيجة ${opScore}-${myScore}! لازم تنتقم منه!`,
+                opponentId: opId,  
+                opponentName: opName,  
+                matchResult: `${myScore}-${opScore}`,
+                read: false,
+                createdAt: serverTimestamp()
             });
-            userData.points -= pointsLost;
-            setupHeaderUI();
-            
-            // أنت الذي خسرت، الإشعار يصل لك لكي تنتقم من المنافس الفائز
-            if (currentGameMode === 'student' && opId !== 'AI_BOT') {
-                await createNotification('revenge', 
-                    `😡 ${opName} فاز عليك بنتيجة ${opScore}-${myScore}! لازم تنتقم منه!`,
-                    opId,  // الآيدي الخاص بالمنافس الذي فاز
-                    opName,  // اسم المنافس الذي فاز
-                    `${myScore}-${opScore}`
-                );
-            }
         }
     }
     
-    // منع البحث إذا النقاط سالبة
     if (userData.points < 0) {
-        showBeautifulAlert('error', 'نقاط سالبة', 'نقاطك سالبة! رفع الأسئلة للحصول على 5 نقاط لكل سؤال يتم قبوله.');
+        showBeautifulAlert('error', 'نقاط سالبة', 'الآن نقاطك سالبة! ارفع الأسئلة للحصول على 5 نقاط تعويضية لكل سؤال يتم قبوله.');
     }
     
     const resultScreen = document.getElementById('result-screen');
@@ -4689,7 +4665,7 @@ function showWithdrawalResult() {
     
     iconContainer.innerText = icon;
     document.getElementById('result-title').innerText = msg;
-    resultMsg.innerText = "لقد قمت بأداء رائع";
+    resultMsg.innerText = "انتهت المباراة!";
     finalMyScore.innerText = myScore;
     finalOpScore.innerText = opScore;
     finalOpName.innerText = opName;
@@ -4705,7 +4681,6 @@ function showWithdrawalResult() {
         pointsGainedText.innerText = `-${pointsLost}`;
         pointsGainedText.style.background = "linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)";
         pointsGainedText.style.color = "#991b1b";
-        // لا تظهر (x2) عند الخسارة
     } else {
         pointsGainedText.innerText = `+${pointsGained}`;
         pointsGainedText.style.background = "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)";
@@ -5162,19 +5137,7 @@ async function promptForRevengeSubject(opponentName) {
             leaderboardOffset = 0;
             
             try {
-                // 1. حساب ترتيبك الحقيقي بدقة (حتى لو كنت بالمركز 1000 أو مليون)
-                const myPoints = userData.points || 0;
-                
-                // نحسب كم مستخدم يمتلك نقاط أعلى منك مباشرة من قاعدة البيانات
-                const higherRankQuery = query(collection(db, "users"), where("points", ">", myPoints));
-                const higherRankSnap = await getDocs(higherRankQuery);
-                
-                // ترتيبك هو: عدد الأشخاص اللي أعلى منك + 1
-                const myTrueRank = higherRankSnap.size + 1; 
-                
-                document.getElementById('my-rank-text').innerText = "#" + myTrueRank;
-
-                // 2. جلب أفضل 50 مستخدم فقط لعرضهم في القائمة السفلية
+                // جلب أفضل 50 مستخدم أولاً
                 const q = query(collection(db, "users"), orderBy("points", "desc"), limit(50));
                 const snap = await getDocs(q);
                 
@@ -5182,13 +5145,27 @@ async function promptForRevengeSubject(opponentName) {
                 snap.forEach(d => { 
                     allLeaderboardUsers.push({ id: d.id, ...d.data() });
                 });
-                
                 allLeaderboardUsers.sort((a, b) => (b.points || 0) - (a.points || 0));
 
-                // نعرض أول 25 مستخدم
+                // حساب ترتيبك الحقيقي بدقة خالية من الأخطاء
+                let myTrueRank = 0;
+                const myIndexInTop50 = allLeaderboardUsers.findIndex(u => u.id === currentUser.uid);
+                
+                if (myIndexInTop50 !== -1) {
+                    // إذا كنت من ضمن الـ 50 الأوائل، ترتيبك هو الاندكس + 1
+                    myTrueRank = myIndexInTop50 + 1;
+                } else {
+                    // إذا لم تكن من الأوائل، نحسب من هم أعلى منك
+                    const myPoints = userData.points || 0;
+                    const higherRankQuery = query(collection(db, "users"), where("points", ">", myPoints));
+                    const higherRankSnap = await getDocs(higherRankQuery);
+                    myTrueRank = higherRankSnap.size + 1; 
+                }
+                
+                document.getElementById('my-rank-text').innerText = "#" + myTrueRank;
+
                 renderLeaderboardChunk(0, 25);
                 
-                // زر عرض المزيد ليظهر الـ 25 مستخدم المتبقين
                 if (allLeaderboardUsers.length > 25) {
                     loadMoreBtn.classList.remove('hidden');
                 } else {
@@ -5495,49 +5472,60 @@ async function promptForRevengeSubject(opponentName) {
         };
 
         window.manualWeeklyDistribution = async () => {
-    if(!confirm("⚠️ تحذير: هذا الإجراء سيقوم بتوزيع الجوائز على الـ 10 الأوائل وتصفير نقاط جميع المستخدمين (أعلى 150). هل أنت متأكد؟")) return;
+    if(!confirm("⚠️ تحذير: هذا الإجراء سيقوم بتوزيع الجوائز وتصفير نقاط جميع المستخدمين بالكامل شلع قلع. هل أنت متأكد؟")) return;
     
-    const q = query(collection(db, "users"), orderBy("points", "desc"), limit(10));
-    const snap = await getDocs(q);
+    const qTop = query(collection(db, "users"), orderBy("points", "desc"), limit(10));
+    const snapTop = await getDocs(qTop);
     const prizes = [10, 7, 5, 3, 2, 1, 1, 1, 1, 1];
     
-    let batch = writeBatch(db);
+    let batchTop = writeBatch(db);
     
-    snap.docs.forEach((d, index) => {
+    snapTop.docs.forEach((d, index) => {
         if(index < 10) {
             const prize = prizes[index];
-            let userData = d.data();
+            let uData = d.data();
             let finalPrize = prize;
             
-            // مضاعفة الجائزة للمشتركين المميزين
-            if (userData.isPremium && userData.premiumExpiry) {
-                const expiry = userData.premiumExpiry.toDate();
-                const now = new Date();
-                if (expiry > now) {
-                    finalPrize = prize * 2;
-                }
+            if (uData.isPremium && uData.premiumExpiry && uData.premiumExpiry.toDate() > new Date()) {
+                finalPrize = prize * 2;
             }
             
-            const newBalance = (userData.balance || 0) + finalPrize;
-            batch.update(doc(db, "users", d.id), { 
+            const newBalance = (uData.balance || 0) + finalPrize;
+            batchTop.update(doc(db, "users", d.id), { 
                 balance: newBalance,
                 lastWeeklyPrize: finalPrize,
                 lastWeeklyRank: index + 1
             });
         }
     });
-    await batch.commit();
+    await batchTop.commit();
 
-    const qReset = query(collection(db, "users"), orderBy("points", "desc"), limit(150));
-    const snapReset = await getDocs(qReset);
+    // جلب وتصفير الكل 
+    const qAll = query(collection(db, "users"));
+    const snapAll = await getDocs(qAll);
     
-    let resetBatch = writeBatch(db);
-    snapReset.docs.forEach(d => {
-        resetBatch.update(doc(db, "users", d.id), { points: 0 });
+    let batchesArray = [];
+    let currentBatch = writeBatch(db);
+    let operationCount = 0;
+
+    snapAll.docs.forEach(d => {
+        currentBatch.update(doc(db, "users", d.id), { points: 0 });
+        operationCount++;
+        
+        if (operationCount >= 490) {
+            batchesArray.push(currentBatch.commit());
+            currentBatch = writeBatch(db);
+            operationCount = 0;
+        }
     });
-    await resetBatch.commit();
     
-    showBeautifulAlert('success', 'تم التوزيع', '✅ تم توزيع الجوائز وتصفير النقاط بنجاح! تم مضاعفة الجوائز للمشتركين المميزين.');
+    if (operationCount > 0) batchesArray.push(currentBatch.commit());
+    await Promise.all(batchesArray);
+    
+    showBeautifulAlert('success', 'تم التوزيع', '✅ تم توزيع الجوائز وتصفير نقاط كافة المستخدمين بنجاح!');
+    if (document.getElementById('tab-leaderboard').classList.contains('active')) {
+        loadLeaderboard();
+    }
 };
 
         window.generateSubscriptionCode = async function() {
