@@ -2481,33 +2481,61 @@
         function startWeeklyCountdown() {
             if(countdownInterval) clearInterval(countdownInterval);
             const timerEl = document.getElementById('weekly-timer');
-            
+
+            async function checkAutoDistribute() {
+                try {
+                    const settingsDoc = await getDoc(doc(db, "system_settings", "last_weekly_distribution"));
+                    let lastDistTime = 0;
+                    if (settingsDoc.exists() && settingsDoc.data().timestamp) {
+                        lastDistTime = settingsDoc.data().timestamp.toDate().getTime();
+                    }
+
+                    const now = new Date();
+                    const day = now.getDay();
+                    
+                    const lastFriday = new Date(now);
+                    let diffDays = day >= 5 ? day - 5 : day + 2;
+                    lastFriday.setDate(now.getDate() - diffDays);
+                    lastFriday.setHours(0, 0, 0, 0);
+
+                    // إذا كان الوقت الحالي بعد آخر جمعة والتوزيع الأخير كان قبلها
+                    if (now.getTime() >= lastFriday.getTime() && lastDistTime < lastFriday.getTime()) {
+                        if (!window.isDistributing) {
+                            window.isDistributing = true;
+                            // نقوم بتحديث الوقت فورا لمنع التكرار من بقية المستخدمين
+                            await setDoc(doc(db, "system_settings", "last_weekly_distribution"), {
+                                timestamp: serverTimestamp(),
+                                distributedBy: 'auto-system-client'
+                            }, { merge: true });
+                            
+                            await autoDistributeWeeklyPrizes();
+                            window.isDistributing = false;
+                        }
+                    }
+                } catch(e) {
+                    console.error(e);
+                    window.isDistributing = false;
+                }
+            }
+
             function updateTimer() {
                 const now = new Date();
-                const day = now.getDay(); 
-                const hour = now.getHours();
-                const minute = now.getMinutes();
-                const second = now.getSeconds();
-                
+                const day = now.getDay();
+
                 let daysUntilFriday = 5 - day;
-                if (day > 5 || (day === 5 && (hour > 0 || minute > 0 || second > 0))) {
+                if (daysUntilFriday < 0 || (daysUntilFriday === 0 && (now.getHours() > 0 || now.getMinutes() > 0 || now.getSeconds() > 0))) {
                     daysUntilFriday += 7;
                 }
-                
+
                 const target = new Date(now);
                 target.setDate(now.getDate() + daysUntilFriday);
                 target.setHours(0, 0, 0, 0);
-                
+
                 const diff = target - now;
-                
-                // إزالة القيد الصارم للوقت لتفعيل التوزيع مهما كان الوقت متأخراً عن الجمعة
-                if (diff <= 1000) { 
-                    timerEl.innerText = "00:00:00";
-                    if (!window.weeklyRewardDistributed) {
-                        window.weeklyRewardDistributed = true;
-                        autoDistributeWeeklyPrizes();
-                    }
-                    // يتم احتساب الأسبوع الجديد في الدورة القادمة
+
+                if (diff <= 1000 && diff >= -1000) {
+                    timerEl.innerText = "00:00:00:00";
+                    checkAutoDistribute();
                 } else {
                     const d = Math.floor(diff / (1000 * 60 * 60 * 24));
                     const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -2515,9 +2543,12 @@
                     const s = Math.floor((diff % (1000 * 60)) / 1000);
 
                     timerEl.innerText = `${d}:${h<10?'0'+h:h}:${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
-                    window.weeklyRewardDistributed = false;
                 }
             }
+            
+            // تحقق عند تحميل الصفحة مباشرة لضمان عدم تفويت التوزيع إذا تم فتح التطبيق متأخراً
+            checkAutoDistribute();
+            
             updateTimer();
             countdownInterval = setInterval(updateTimer, 1000);
         }
@@ -4648,6 +4679,8 @@ function showWithdrawalResult() {
                 read: false,
                 createdAt: serverTimestamp()
             });
+            // 🔴 هذا السطر يضمن ظهور النقطة الحمراء فورا عند الخسارة
+            checkNotifications();
         }
     }
     
