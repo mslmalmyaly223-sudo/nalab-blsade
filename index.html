@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     
     <style>
         :root {
@@ -1823,6 +1824,12 @@
             <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-orange-600"><i class="fas fa-bullhorn text-xl"></i></div>
             <span class="font-bold text-sm text-gray-700">الإعلانات</span>
         </button>
+        <button onclick="openPage('screen-admin-ai-pdf')" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-2 hover:bg-gray-50 transition-all active:scale-95">
+    <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-600 rounded-full flex items-center justify-center text-white shadow-md">
+        <i class="fas fa-file-invoice text-xl"></i>
+    </div>
+    <span class="font-bold text-sm text-gray-700">رفع أسئلة (AI)</span>
+</button>
     </div>
 </div>
         </div>
@@ -2296,6 +2303,74 @@
             <button onclick="publishGlobalAd()" class="btn-main bg-orange-500 hover:bg-orange-600 mt-2">
                 <i class="fas fa-paper-plane ml-2"></i> نشر الإعلان الآن
             </button>
+        </div>
+    </div>
+</div>
+
+<div id="screen-admin-ai-pdf" class="screen pt-20">
+    <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
+        <button onclick="openPage('screen-admin-hub')" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
+        <h1 class="font-bold text-lg text-gray-800">المستخرج الذكي</h1>
+    </div>
+    <div class="scroll-container px-5 py-6">
+        <div class="bg-white p-6 rounded-3xl shadow-xl border border-red-100 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 to-orange-500"></div>
+            
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-robot text-3xl"></i>
+                </div>
+                <h3 class="font-black text-gray-800">تحويل الملزمة إلى أسئلة</h3>
+                <p class="text-xs text-gray-400 mt-1">ارفع ملف الـ PDF وسيقوم الذكاء الاصطناعي بالباقي</p>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-2 mr-1">1. اختر ملف الملزمة (PDF)</label>
+                    <input type="file" id="bulk-ai-pdf" accept="application/pdf" class="input-box p-2 text-sm border-dashed border-2">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 mb-2 mr-1">2. المرحلة</label>
+                        <select id="bulk-ai-grade" class="input-box text-sm" onchange="window.populateSubjects(this.value, 'bulk-ai-subject')">
+                            <option value="">اختر</option>
+                            <option value="6sci">6 علمي</option>
+                            <option value="6lit">6 أدبي</option>
+                            <option value="3med">3 متوسط</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 mb-2 mr-1">3. المادة</label>
+                        <select id="bulk-ai-subject" class="input-box text-sm">
+                            <option value="">اختر المرحلة أولاً</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-2 mr-1">4. نوع الأسئلة المطلوب استخراجها</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="setBulkType('mcq')" id="bulk-btn-mcq" class="py-3 rounded-xl border-2 border-red-50 text-gray-500 font-bold transition-all">اختيارات</button>
+                        <button onclick="setBulkType('tf')" id="bulk-btn-tf" class="py-3 rounded-xl border-2 border-red-50 text-gray-500 font-bold transition-all">صح وخطأ</button>
+                    </div>
+                </div>
+
+                <button onclick="startBulkAIExtraction()" id="bulk-start-btn" class="w-full bg-gradient-to-r from-red-600 to-orange-600 text-white font-black py-4 rounded-2xl shadow-lg hover:shadow-red-500/30 active:scale-95 transition-all flex items-center justify-center gap-3 mt-4">
+                    <i class="fas fa-play"></i>
+                    <span>بدء الاستخراج الشامل</span>
+                </button>
+
+                <div id="bulk-progress-container" class="hidden mt-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <span id="bulk-status-text" class="text-xs font-bold text-red-600 animate-pulse">جاري القراءة...</span>
+                        <span id="bulk-percent" class="text-xs font-black text-gray-800">0%</span>
+                    </div>
+                    <div class="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+                        <div id="bulk-progress-bar" class="h-full bg-red-500 transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -2781,6 +2856,9 @@ snapAll.docs.forEach(async (d) => {
             filteredSubjects.forEach(s => sel.innerHTML += `<option value="${s}">${s}</option>`);
             if (filteredSubjects.length === 0) sel.innerHTML += '<option value="" disabled>لا توجد مواد متاحة</option>';
         }
+        
+        // هذا السطر الجديد اللي راح يحل مشكلة عدم ظهور المواد
+        window.populateSubjects = populateSubjects;
 
         window.switchAuthTab = (tab) => {
             if(tab === 'login') {
@@ -6395,6 +6473,159 @@ window.closeGlobalAd = function(timestamp) {
     modal.classList.add('hidden');
     modal.style.display = 'none'; // إجبار الإخفاء
 };
+
+let selectedBulkType = 'mcq';
+
+        window.setBulkType = (type) => {
+            selectedBulkType = type;
+            document.getElementById('bulk-btn-mcq').className = `py-3 rounded-xl border-2 font-bold transition-all flex-1 ${type==='mcq'?'border-red-600 bg-red-50 text-red-600':'border-gray-100 text-gray-400'}`;
+            document.getElementById('bulk-btn-tf').className = `py-3 rounded-xl border-2 font-bold transition-all flex-1 ${type==='tf'?'border-red-600 bg-red-50 text-red-600':'border-gray-100 text-gray-400'}`;
+        };
+
+        window.startBulkAIExtraction = async function() {
+            const fileInput = document.getElementById('bulk-ai-pdf');
+            const grade = document.getElementById('bulk-ai-grade').value;
+            const subject = document.getElementById('bulk-ai-subject').value;
+            
+            const GEMINI_API_KEY = 'AIzaSyCZqKum34_UCb4OITTulpLZQKnQEO8u9UM'; 
+
+            if (!fileInput.files[0] || !grade || !subject) {
+                showBeautifulAlert('warning', 'نقص معلومات', 'يرجى رفع الملف واختيار الصف والمادة');
+                return;
+            }
+
+            const pdfjs = window.pdfjsLib || window['pdfjs-dist/build/pdf'];
+            
+            if (!pdfjs) {
+                showBeautifulAlert('error', 'خطأ فني', 'مكتبة قراءة الـ PDF لم يتم تحميلها. تأكد من اتصالك بالإنترنت وحدّث الصفحة.');
+                return;
+            }
+
+            const btn = document.getElementById('bulk-start-btn');
+            const progContainer = document.getElementById('bulk-progress-container');
+            const progBar = document.getElementById('bulk-progress-bar');
+            const progText = document.getElementById('bulk-status-text');
+            const progPercent = document.getElementById('bulk-percent');
+
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+            progContainer.classList.remove('hidden');
+
+            try {
+                progText.innerText = "جاري قراءة صفحات الملف...";
+                pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+                
+                const file = fileInput.files[0];
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjs.getDocument({data: arrayBuffer}).promise;
+                
+                let fullText = '';
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const content = await page.getTextContent();
+                    fullText += content.items.map(s => s.str).join(' ') + '\n';
+                    
+                    let loadPercent = Math.round((i / pdf.numPages) * 30);
+                    progBar.style.width = loadPercent + '%';
+                    progPercent.innerText = loadPercent + '%';
+                }
+
+                progText.innerText = "جاري الاتصال بـ Gemini AI لاستخراج الأسئلة...";
+                
+                const promptMCQ = `أنت خبير في المناهج الدراسية العراقية. قم باستخراج أكبر عدد ممكن من الأسئلة التعليمية من النص المرفق.
+                نوع الأسئلة المطلوبة: اختيارات (MCQ).
+                شروط صارمة:
+                1. لكل سؤال 3 خيارات فقط.
+                2. يجب أن يكون هناك خيار واحد صحيح تماماً، وخياران خاطئان لكنهما "منطقيان جداً ومقاربان للجواب الصحيح".
+                3. أرجع النتيجة بصيغة JSON مصفوفة فقط كالتالي: [{"question": "نص السؤال", "answers": ["خيار1", "خيار2", "خيار3"], "correct": index_الجواب_الصحيح_من_0_الى_2}]
+                4. لا تكتب أي كلام خارج مصفوفة الـ JSON.
+                النص: ${fullText.substring(0, 30000)}`;
+
+                const promptTF = `أنت خبير في المناهج الدراسية العراقية. قم باستخراج أكبر عدد ممكن من الأسئلة التعليمية من النص المرفق.
+                نوع الأسئلة المطلوبة: صح وخطأ (True/False).
+                شروط صارمة:
+                1. قم بصياغة معلومة من النص واذكر ما إذا كانت صحيحة أم خاطئة.
+                2. أرجع النتيجة بصيغة JSON مصفوفة فقط كالتالي: [{"question": "نص المعلومة", "correct": true_او_false}]
+                3. لا تكتب أي كلام خارج مصفوفة الـ JSON.
+                النص: ${fullText.substring(0, 30000)}`;
+
+                const finalPrompt = selectedBulkType === 'mcq' ? promptMCQ : promptTF;
+
+                // الحل الجذري: تجميع اسم الموديل برمجياً حتى المحرر ما يكدر يحذف الشارحة (-) 
+                const modelParts = ["gemini", "1.5", "flash"];
+                const modelName = modelParts.join("-");
+                const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/" + modelName + ":generateContent?key=" + GEMINI_API_KEY;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: finalPrompt }] }],
+                        generationConfig: { response_mime_type: "application/json", temperature: 0.4 }
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (!response.ok || result.error) {
+                    const errorMsg = result.error ? result.error.message : 'خطأ غير معروف في الاتصال';
+                    if (errorMsg.includes('API_KEY_INVALID') || response.status === 400) {
+                        throw new Error('مفتاح Gemini غير صالح أو معطل. يرجى التأكد من المفتاح.');
+                    } else if (response.status === 429) {
+                        throw new Error('تم تجاوز الحد المسموح للاستخدام المجاني من Gemini مؤقتاً. جرب بعد قليل.');
+                    } else {
+                        throw new Error(`خطأ من خادم Gemini: ${errorMsg}`);
+                    }
+                }
+
+                const questionsText = result.candidates[0].content.parts[0].text;
+                let questions = [];
+                try {
+                    questions = JSON.parse(questionsText);
+                } catch (parseError) {
+                    throw new Error('Gemini لم يرجع البيانات بصيغة صحيحة.');
+                }
+
+                if (questions.length === 0) {
+                    throw new Error('لم يتمكن الذكاء الاصطناعي من العثور على أسئلة مناسبة في هذا النص.');
+                }
+
+                progText.innerText = `جاري رفع ${questions.length} سؤال لقسم المراجعة...`;
+                let uploaded = 0;
+
+                for (const q of questions) {
+                    await addDoc(collection(db, "pending_questions"), {
+                        question: q.question,
+                        answers: q.answers || null,
+                        correct: q.correct,
+                        type: selectedBulkType,
+                        grade: grade,
+                        subject: subject,
+                        senderId: 'AI_GEMINI',
+                        senderName: 'Gemini AI 🤖',
+                        status: 'pending',
+                        createdAt: serverTimestamp()
+                    });
+                    uploaded++;
+                    let uploadPercent = 30 + Math.round((uploaded / questions.length) * 70);
+                    progBar.style.width = uploadPercent + '%';
+                    progPercent.innerText = uploadPercent + '%';
+                }
+
+                showBeautifulAlert('success', 'تمت العملية بنجاح', `بفضل Gemini 🤖 تم استخراج ورفع ${uploaded} سؤال إلى قسم المراجعة.`);
+                progContainer.classList.add('hidden');
+                btn.disabled = false;
+                btn.classList.remove('opacity-50');
+                fileInput.value = '';
+
+            } catch (error) {
+                console.error("Gemini Extraction Error:", error);
+                showBeautifulAlert('error', 'فشل الاستخراج', error.message);
+                btn.disabled = false;
+                btn.classList.remove('opacity-50');
+                progContainer.classList.add('hidden');
+            }
+        };
         
     </script>
 </body>
