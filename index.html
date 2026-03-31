@@ -1343,14 +1343,9 @@
                         <button onclick="setQType('tf')" id="btn-tf" class="py-3 rounded-xl border-2 border-indigo-100 text-gray-500 font-bold active:scale-95 transition">صح وخطأ</button>
                     </div>
 
-                    <button onclick="startMatchmaking('ai')" class="btn-main bg-gradient-to-r from-emerald-500 to-green-600 mb-3 h-12">
-                        <i class="fas fa-robot ml-2"></i> ضد الذكاء الاصطناعي
-                        <span id="ai-remaining" class="text-xs bg-white text-green-600 px-2 py-1 rounded-full mr-2">10</span>
-                    </button>
-                    
-                    <button onclick="startMatchmaking('student')" class="btn-main bg-gradient-to-r from-purple-500 to-pink-600 h-12">
-                        <i class="fas fa-user-graduate ml-2"></i> ضد طالب عشوائي
-                    </button>
+                    <button onclick="startMatchmaking('student')" class="btn-main bg-gradient-to-r from-purple-500 to-pink-600 h-12 w-full mt-4">
+    <i class="fas fa-user-graduate ml-2"></i> بدء التحدي ضد طالب  ⚔️
+</button>
                 </div>
 
                 <div id="searching-ui" class="hidden flex-col items-center justify-center py-10 min-h-[300px]">
@@ -1821,11 +1816,15 @@
                         <span class="font-bold text-sm text-gray-700">مراجعة الأسئلة</span>
                     </button>
                     <button onclick="openPage('screen-admin-badges')" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-2 hover:bg-gray-50">
-                        <div class="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center text-cyan-600"><i class="fas fa-certificate text-xl"></i></div>
-                        <span class="font-bold text-sm text-gray-700">التوثيقات</span>
-                    </button>
-                </div>
-            </div>
+            <div class="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center text-cyan-600"><i class="fas fa-certificate text-xl"></i></div>
+            <span class="font-bold text-sm text-gray-700">التوثيقات</span>
+        </button>
+        <button onclick="openPage('screen-admin-ads')" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-2 hover:bg-gray-50">
+            <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-orange-600"><i class="fas fa-bullhorn text-xl"></i></div>
+            <span class="font-bold text-sm text-gray-700">الإعلانات</span>
+        </button>
+    </div>
+</div>
         </div>
 
         <div id="screen-admin-subscription" class="screen pt-20">
@@ -1852,6 +1851,7 @@
                 </div>
             </div>
         </div>
+        
 
         <div id="screen-admin-generate-code" class="screen pt-20">
             <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
@@ -2255,7 +2255,50 @@
             <p id="beautiful-alert-message" class="beautiful-alert-message">...</p>
             <button id="beautiful-alert-ok-btn" class="beautiful-alert-btn">حسناً</button>
         </div>
+    </div
+    
+    <div id="global-ad-modal" class="modal-overlay hidden" style="z-index: 999999 !important;">
+    <div class="modal-content relative text-center border-4 border-indigo-500 animate-[zoomInBounce_0.5s_ease-out] bg-white p-8 rounded-3xl shadow-2xl w-11/12 max-w-md">
+        <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center border-4 border-white shadow-lg">
+            <i class="fas fa-bullhorn text-3xl text-white animate-pulse"></i>
+        </div>
+        <h3 class="text-2xl font-black text-gray-800 mt-8 mb-4">إعلان هام!</h3>
+        <p id="global-ad-content" class="text-gray-600 font-bold text-lg mb-8 leading-relaxed whitespace-pre-line"></p>
+        <div id="global-ad-buttons" class="flex flex-col gap-3">
+            </div>
     </div>
+</div>
+
+<div id="screen-admin-ads" class="screen pt-20">
+    <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
+        <button onclick="openPage('screen-admin-hub')" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
+        <h1 class="font-bold text-lg text-gray-800">نشر إعلان للمستخدمين</h1>
+    </div>
+    <div class="scroll-container px-5 py-6">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <label class="block text-sm font-bold text-gray-600 mb-2">نص الإعلان</label>
+            <textarea id="admin-ad-text" class="input-box h-32 mb-4" placeholder="اكتب هنا ما تريد أن يظهر للمستخدمين عند فتح التطبيق..."></textarea>
+            
+            <label class="block text-sm font-bold text-gray-600 mb-2">نوع الإعلان</label>
+            <select id="admin-ad-type" class="input-box mb-4" onchange="toggleAdType()">
+                <option value="msg">رسالة فقط (زر حسناً)</option>
+                <option value="link">رسالة مع رابط تحويل</option>
+            </select>
+
+            <div id="admin-link-container" class="hidden">
+                <label class="block text-sm font-bold text-gray-600 mb-2">اسم الزر (مثال: انضم لقناتنا)</label>
+                <input type="text" id="admin-ad-btn-name" class="input-box mb-4" placeholder="اكتب اسم الزر...">
+                
+                <label class="block text-sm font-bold text-gray-600 mb-2">الرابط (تلكرام أو سوق بلي)</label>
+                <input type="url" id="admin-ad-link" class="input-box mb-6" placeholder="https://t.me/yourchannel">
+            </div>
+            
+            <button onclick="publishGlobalAd()" class="btn-main bg-orange-500 hover:bg-orange-600 mt-2">
+                <i class="fas fa-paper-plane ml-2"></i> نشر الإعلان الآن
+            </button>
+        </div>
+    </div>
+</div>
 
 <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
@@ -2374,11 +2417,10 @@
                         setupHeaderUI();
                         setupAdminUI();
                         checkDailyReward();
-                        checkAIRemaining();
-                        checkPremiumStatus();
-                        checkNotifications();
-                        if(userData.email === ADMIN_EMAIL) checkAdminNotifications();
-                        checkPendingQuestionsNotification();
+checkPremiumStatus();
+checkNotifications();
+if(userData.email === ADMIN_EMAIL) checkAdminNotifications();
+checkPendingQuestionsNotification();
 
                         if (userData.grade) {
                             document.getElementById('grade-selector-card').classList.add('hidden');
@@ -2394,12 +2436,19 @@
                         }
                         
                         setTimeout(() => {
-                            intro.classList.add('hidden');
-                            authScreen.classList.add('hidden');
-                            mainApp.classList.remove('hidden');
-                            if(!document.querySelector('.screen.active')) switchTab('challenges');
-                            startWeeklyCountdown();
-                        }, 2500);
+    intro.classList.add('hidden');
+    authScreen.classList.add('hidden');
+    mainApp.classList.remove('hidden');
+    if(!document.querySelector('.screen.active')) switchTab('challenges');
+    startWeeklyCountdown();
+    
+    // استدعاء الإعلان بعد ظهور قسم التحديات بنصف ثانية لضمان الاستقرار
+    setTimeout(() => {
+        if(typeof window.checkGlobalAnnouncement === 'function') {
+            window.checkGlobalAnnouncement();
+        }
+    }, 500);
+}, 2500);
                         
                     } else {
                         console.log("المستخدم غير موجود في قاعدة البيانات، تسجيل الخروج...");
@@ -2623,23 +2672,24 @@
         
         console.log("✅ تم التوزيع وتصفير نقاط جميع المستخدمين بنجاح!");
         
-        // إرسال إشعارات للمراكز الثلاثة الأولى
-        snapTop.docs.forEach(async (d, index) => {
-            if(index < 3) {
-                const uData = d.data();
-                let prize = prizes[index];
-                let isDoubled = false;
-                
-                if (uData.isPremium && uData.premiumExpiry && uData.premiumExpiry.toDate() > new Date()) {
-                    prize = prize * 2;
-                    isDoubled = true;
-                }
-                
-                await createNotification('weekly', 
-                    `🎉 مبروك! لقد حصلت على المركز ${index + 1} وحصلت على ${prize}$ ${isDoubled ? '(مضاعفة مميز)' : ''}`
-                );
-            }
-        });
+snapAll.docs.forEach(async (d) => {
+    let uData = d.data();
+    // البحث عن ما إذا كان من الأوائل
+    let topIndex = snapTop.docs.findIndex(topDoc => topDoc.id === d.id);
+    let message = "";
+
+    if (topIndex !== -1 && topIndex < 10) {
+        let prize = prizes[topIndex];
+        let isDoubled = (uData.isPremium && uData.premiumExpiry && uData.premiumExpiry.toDate() > new Date());
+        if (isDoubled) prize = prize * 2;
+
+        message = `🏆 نهاية الأسبوع: تم تصفير جميع النقاط للموسم الجديد. ألف مبروك إنهاءك بالمركز #${topIndex + 1}! لقد حصلت على جائزة قدرها ${prize}$ ${isDoubled ? '(مضاعفة للمميزين)' : ''}. استمر بالقمة!`;
+    } else {
+        message = `🔄 بداية أسبوع جديدة: تم تصفير نقاط جميع اللاعبين لتبدأ المنافسة من الصفر. شد حيلك هذا الأسبوع لتكون من الـ 10 الأوائل وتربح الدولارات!`;
+    }
+
+    await createNotification('weekly', message);
+});
         
         if (document.getElementById('tab-leaderboard').classList.contains('active')) {
             loadLeaderboard();
@@ -3482,37 +3532,6 @@ async function markAllNotificationsAsRead() {
             premiumInterval = setInterval(update, 1000);
         }
 
-        async function checkAIRemaining() {
-            const today = new Date().toISOString().split('T')[0];
-            
-            if (userData.lastAIReset !== today) {
-                const limit = isPremiumValid(userData) ? 15 : 10;
-                await updateDoc(doc(db, "users", currentUser.uid), {
-                    dailyAIRemaining: limit,
-                    lastAIReset: today
-                });
-                userData.dailyAIRemaining = limit;
-                userData.lastAIReset = today;
-            }
-            
-            dailyAIRemaining = userData.dailyAIRemaining || 10;
-            updateAIRemainingDisplay();
-        }
-
-        function updateAIRemainingDisplay() {
-            const aiRemainingElement = document.getElementById('ai-remaining');
-            if (aiRemainingElement) {
-                aiRemainingElement.textContent = dailyAIRemaining;
-                
-                if (dailyAIRemaining <= 3) {
-                    aiRemainingElement.classList.add('bg-red-100', 'text-red-600');
-                    aiRemainingElement.classList.remove('bg-white', 'text-green-600');
-                } else {
-                    aiRemainingElement.classList.add('bg-white', 'text-green-600');
-                    aiRemainingElement.classList.remove('bg-red-100', 'text-red-600');
-                }
-            }
-        }
 
         window.showPremiumDetails = () => { 
             document.getElementById('premium-details-modal').classList.remove('hidden'); 
@@ -3580,8 +3599,7 @@ async function markAllNotificationsAsRead() {
 
                 showBeautifulAlert('success', 'مبروك!', `🎉 تم تفعيل الاشتراك المميز لمدة ${durationDays} يوم.\n\nالكود استخدم ولن يعمل مرة أخرى.`);
                 checkPremiumStatus();
-                checkAIRemaining();
-                setupHeaderUI();
+setupHeaderUI();
                 document.getElementById('premium-code-input').value = "";
 
             } catch(e) { 
@@ -3717,45 +3735,26 @@ async function markAllNotificationsAsRead() {
         };
 
         window.startMatchmaking = async (mode) => {
-            if (userData.points < 0) {
-                showBeautifulAlert('error', 'نقاط سالبة', 'نقاطك سالبة! رفع الأسئلة للحصول على 5 نقاط لكل سؤال يتم قبوله.');
-                return;
-            }
-            
-            const sub = document.getElementById('challenge-subject').value;
-            if(!sub || !selectedQType) {
-                showBeautifulAlert('warning', 'تنبيه', 'يرجى اختيار المادة ونوع الأسئلة');
-                return;
-            }
+    if (userData.points < 0) {
+        showBeautifulAlert('error', 'نقاط سالبة', 'نقاطك سالبة! قم برفع الأسئلة للحصول على نقاط تعويضية.');
+        return;
+    }
+    
+    const sub = document.getElementById('challenge-subject').value;
+    if(!sub || !selectedQType) {
+        showBeautifulAlert('warning', 'تنبيه', 'يرجى اختيار المادة ونوع الأسئلة أولاً');
+        return;
+    }
 
-            if (mode === 'ai') {
-                if (dailyAIRemaining <= 0) {
-                    showBeautifulAlert('error', 'انتهت المحاولات', 'لقد استنفدت جميع محاولات الذكاء الاصطناعي لهذا اليوم. يرجى العودة غداً أو اشتراك مميز للحصول على 15 محاولة يومية.');
-                    return;
-                }
-                
-                dailyAIRemaining--;
-                await updateDoc(doc(db, "users", currentUser.uid), {
-                    dailyAIRemaining: dailyAIRemaining
-                });
-                userData.dailyAIRemaining = dailyAIRemaining;
-                updateAIRemainingDisplay();
-            }
+    currentGameMode = 'student';
 
-            currentGameMode = mode;
-
-            document.getElementById('challenge-active-card').classList.add('hidden');
-            document.getElementById('searching-ui').classList.remove('hidden');
-            document.getElementById('searching-ui').style.display = 'flex'; 
-            
-            if (mode === 'student') {
-                document.getElementById('search-msg').innerText = "جاري البحث عن منافس...";
-                await findRandomOpponent(sub);
-            } else {
-                document.getElementById('search-msg').innerText = "جاري تحضير البوت...";
-                setTimeout(() => startAIMatch(sub), 1500);
-            }
-        };
+    document.getElementById('challenge-active-card').classList.add('hidden');
+    document.getElementById('searching-ui').classList.remove('hidden');
+    document.getElementById('searching-ui').style.display = 'flex'; 
+    document.getElementById('search-msg').innerText = "جاري البحث عن منافس حقيقي... 🔍";
+    
+    await findRandomOpponent(sub);
+};
 
 async function findRandomOpponent(sub) {
     console.log("بدء البحث عن منافس عشوائي من جميع المستخدمين...");
@@ -4031,47 +4030,7 @@ async function startStudentMatch(sub, opponent) {
     renderGame(localMatchData);
 }
 
-        async function startAIMatch(sub) {
-    const qDocs = await getQuestions(sub, selectedQType);
-    if(qDocs.length === 0) { 
-        showBeautifulAlert('warning', 'تنبيه', 'لا توجد أسئلة كافية في هذا القسم لهذه المرحلة'); 
-        cancelSearch(); 
-        return; 
-    }
-    
-    // تحديد عدد الأسئلة بناءً على الاشتراك
-    let limit = isPremiumValid(userData) ? 15 : 10;
-
-    const shuffledQs = qDocs.sort(() => 0.5 - Math.random()).slice(0, limit);
-    localMatchData = {
-        status: 'active',
-        grade: userData.grade,
-        player1: { 
-            uid: currentUser.uid, 
-            name: userData.name, 
-            score: 0, 
-            photo: userData.photo,
-            grade: userData.grade
-        },
-        player2: { 
-            uid: 'AI_BOT', 
-            name: "الذكاء الاصطناعي", 
-            score: 0, 
-            photo: 'https://cdn-icons-png.flaticon.com/512/4712/4712027.png',
-            grade: userData.grade
-        },
-        questions: shuffledQs, 
-        currentIdx: 0, 
-        answersCount: 0,
-        totalQuestions: limit // إضافة عدد الأسئلة الكلي
-    };
-    
-    await showVSAnimation(localMatchData.player1, localMatchData.player2);
-    document.getElementById('game-overlay').classList.remove('hidden');
-    document.getElementById('withdraw-game-btn').classList.remove('hidden');
-    document.getElementById('emoji-container').classList.remove('hidden');
-    renderGame(localMatchData);
-}
+       
 
         async function showVSAnimation(p1, p2) {
             return new Promise(resolve => {
@@ -4303,26 +4262,6 @@ function enableEmojiButtons() {
     }, 2000);
 }
 
-function getAISmartEmoji(aiAnsweredCorrectly, userWasCorrect) {
-    // حالة 1: الذكاء الاصطناعي جاوب صح، وأنت أخطأت (قمة الشماتة)
-    if (aiAnsweredCorrectly && !userWasCorrect) {
-        return Math.random() > 0.5 ? '😂' : '😒'; // يضحك عليك أو يستهزئ
-    }
-    // حالة 2: الذكاء الاصطناعي أخطأ، وأنت جاوبت صح (قهر/غضب)
-    if (!aiAnsweredCorrectly && userWasCorrect) {
-        return Math.random() > 0.5 ? '😡' : '😔'; // يغضب أو ينقهر
-    }
-    // حالة 3: كلاكما صح (تحدي / بكاء مزيف)
-    if (aiAnsweredCorrectly && userWasCorrect) {
-        return Math.random() > 0.5 ? '🥲' : '😒'; 
-    }
-    // حالة 4: كلاكما خطأ (احباط/بكاء)
-    if (!aiAnsweredCorrectly && !userWasCorrect) {
-        return '😭'; // يبكي لأنكما أخطأتما
-    }
-    return '😒';
-}
-
 function getStudentSmartEmoji(studentAnsweredCorrectly, userWasCorrect) {
     // حالة 1: الطالب جاوب صح، وأنت أخطأت (انفجار شماتة وضحك هستيري)
     if (studentAnsweredCorrectly && !userWasCorrect) {
@@ -4376,41 +4315,7 @@ function getStudentSmartEmoji(studentAnsweredCorrectly, userWasCorrect) {
     }
 }
 
-        function triggerAIResponse() {
-    document.getElementById('waiting-msg').classList.add('hidden');
-    document.getElementById('ai-thinking-msg').classList.remove('hidden');
-    
-    let delay = Math.random() * 3000 + 1000;
-    // نسبة الذكاء الاصطناعي 60%
-    let accuracy = 0.60;
-    
-    if (Math.random() < 0.2) {
-        document.getElementById('weak-signal').classList.remove('hidden');
-        setTimeout(() => {
-            document.getElementById('weak-signal').classList.add('hidden');
-        }, 2000);
-    }
-    
-    aiTimeoutId = setTimeout(() => {
-        const isCorrect = Math.random() < accuracy;
         
-        // الذكاء الاصطناعي يتفاعل كل 2 أسئلة كما طلبت
-        const shouldShowEmoji = (localMatchData.currentIdx + 1) % 2 === 0;
-        
-        if (shouldShowEmoji) {
-            // نمرر للوظيفة: هل الذكاء جاوب صح؟ وهل المستخدم جاوب صح؟
-            const aiEmoji = getAISmartEmoji(isCorrect, userAnsweredCorrectly);
-            showEmoji(aiEmoji, 'ai');
-        }
-        
-        if(isCorrect) {
-            localMatchData.player2.score += 1;
-            document.getElementById('game-op-score').innerText = localMatchData.player2.score;
-        }
-        
-        handleAINextTurn();
-    }, delay);
-}
 
 function triggerStudentAIResponse() {
     document.getElementById('waiting-msg').classList.remove('hidden');
@@ -4555,7 +4460,6 @@ function showWithdrawalResult() {
     document.getElementById('withdraw-game-btn').classList.add('hidden');
     document.getElementById('emoji-container').classList.add('hidden');
     
-    // إعادة تعيين متغير التفاعل
     emojiUsedInCurrentQuestion = false;
     
     if (isExitingGame) return;
@@ -4570,139 +4474,101 @@ function showWithdrawalResult() {
     let msg = ""; 
     let icon = "";
     
-    // توزيع النقاط حسب القواعد الجديدة
+    // 1. حساب النقاط
     if (myScore > opScore) { 
         msg = "فوز ساحق!"; 
         icon = "🏆"; 
-        
         pointsGained = myScore * 2;
+        if (isPremiumValid(userData)) pointsGained = pointsGained * 2; 
         pointsLost = 0;
-        
-        if (isPremiumValid(userData)) {
-            pointsGained = pointsGained * 2; 
-        }
-        
-        if (currentGameMode === 'student' && opId !== 'AI_BOT') {
-            try {
-                const deduction = myScore; 
-                
-                await updateDoc(doc(db, "users", opId), { 
-                    points: increment(-deduction) 
-                });
-
-                // إرسال الإشعار للخصم الخاسر (يتم الحفظ في قاعدة بياناته)
-                await addDoc(collection(db, "notifications"), {
-                    userId: opId, 
-                    type: 'revenge',
-                    message: `😡 ${userData.name} فاز عليك بنتيجة ${myScore}-${opScore}! لازم تنتقم منه!`,
-                    opponentId: currentUser.uid, 
-                    opponentName: userData.name, 
-                    matchResult: `${opScore}-${myScore}`,
-                    read: false,
-                    createdAt: serverTimestamp()
-                });
-            } catch (error) {
-                console.error("Error updating opponent points:", error);
-            }
-        }
-        
     } else if (myScore < opScore) { 
         msg = "حظ أوفر!"; 
         icon = "😢"; 
-        
         pointsLost = opScore; 
         pointsGained = 0;
-        
-        if (currentGameMode === 'student' && opId !== 'AI_BOT') {
-            try {
-                const opponentDoc = await getDoc(doc(db, "users", opId));
-                if (opponentDoc.exists()) {
-                    const opponentData = opponentDoc.data();
-                    let addition = opScore * 2; 
-                    
-                    if (opponentData.isPremium && opponentData.premiumExpiry && 
-                        opponentData.premiumExpiry.toDate() > new Date()) {
-                        addition = addition * 2; 
-                    }
-                    
-                    await updateDoc(doc(db, "users", opId), { 
-                        points: increment(addition)
-                    });
-                }
-            } catch (error) {
-                console.error("Error updating opponent points:", error);
-            }
-        }
-        
     } else { 
         if(myScore > 0) { 
             msg = "تعادل إيجابي!"; 
             icon = "🤝"; 
             pointsGained = myScore; 
-            pointsLost = 0;
         } else { 
             msg = "تعادل سلبي!"; 
             icon = "😐"; 
             pointsGained = 1; 
-            pointsLost = 0;
+        }
+        pointsLost = 0;
+    }
+    
+    // 2. تحديث قاعدة البيانات بناءً على النتيجة وإرسال الإشعار
+    if (currentGameMode === 'student') {
+        try {
+            if (myScore > opScore) {
+                // أنت فزت: نقص نقاط الخصم، وارسل له إشعار ينتقم منك
+                await updateDoc(doc(db, "users", opId), { points: increment(-myScore) });
+                await addDoc(collection(db, "notifications"), {
+                    userId: opId, 
+                    type: 'revenge',
+                    message: `🔥 إهانة كروية! المنافس "${userData.name}" سحقك للتو بنتيجة ${myScore} مقابل ${opScore}. هل ستقف مكتوف الأيدي أم ستثأر لكرامتك الآن؟ ⚔️`,
+                    opponentId: currentUser.uid,  
+                    opponentName: userData.name,  
+                    matchResult: `${opScore}-${myScore}`,
+                    read: false,
+                    createdAt: serverTimestamp()
+                });
+            } else if (myScore < opScore) {
+                // الخصم فاز: زيد نقاط الخصم، وارسل إشعار لك أنت حتى تنتقم
+                const opponentDoc = await getDoc(doc(db, "users", opId));
+                if (opponentDoc.exists()) {
+                    const opponentData = opponentDoc.data();
+                    let addition = opScore * 2; 
+                    if (opponentData.isPremium && opponentData.premiumExpiry && opponentData.premiumExpiry.toDate() > new Date()) {
+                        addition = addition * 2; 
+                    }
+                    await updateDoc(doc(db, "users", opId), { points: increment(addition) });
+                }
+                await addDoc(collection(db, "notifications"), {
+                    userId: currentUser.uid, 
+                    type: 'revenge',
+                    message: `🔥 إهانة كبيرة! المنافس "${opName}" سحقك للتو بنتيجة ${opScore} مقابل ${myScore}. هل ستقف مكتوف الأيدي أم ستثأر لكرامتك الآن؟ ⚔️`,
+                    opponentId: opId,  
+                    opponentName: opName,  
+                    matchResult: `${myScore}-${opScore}`,
+                    read: false,
+                    createdAt: serverTimestamp()
+                });
+                checkNotifications();
+            }
+        } catch (error) {
+            console.error("Error updating match results:", error);
         }
     }
     
-    // تم حذف قيد منع النزول تحت الصفر من هنا ليسمح بالنقاط السالبة
-    
-    // تحديث نقاط المستخدم الحالي بالموجب
+    // 3. تحديث نقاطك أنت في الواجهة وقاعدة البيانات
     if(pointsGained > 0) {
-        await updateDoc(doc(db, "users", currentUser.uid), { 
-            points: increment(pointsGained) 
-        });
+        await updateDoc(doc(db, "users", currentUser.uid), { points: increment(pointsGained) });
         userData.points += pointsGained;
         setupHeaderUI();
     }
-    
-    // تحديث نقاط المستخدم الحالي بالسالب (خسارة)
     if(pointsLost > 0) {
-        await updateDoc(doc(db, "users", currentUser.uid), { 
-            points: increment(-pointsLost) 
-        });
+        await updateDoc(doc(db, "users", currentUser.uid), { points: increment(-pointsLost) });
         userData.points -= pointsLost;
         setupHeaderUI();
-        
-        // إذا خسرت، يصل لك إشعار لكي تنتقم من المنافس الفائز
-        if (currentGameMode === 'student' && opId !== 'AI_BOT') {
-            await addDoc(collection(db, "notifications"), {
-                userId: currentUser.uid, 
-                type: 'revenge',
-                message: `😡 ${opName} فاز عليك بنتيجة ${opScore}-${myScore}! لازم تنتقم منه!`,
-                opponentId: opId,  
-                opponentName: opName,  
-                matchResult: `${myScore}-${opScore}`,
-                read: false,
-                createdAt: serverTimestamp()
-            });
-            // 🔴 هذا السطر يضمن ظهور النقطة الحمراء فورا عند الخسارة
-            checkNotifications();
-        }
     }
     
     if (userData.points < 0) {
-        showBeautifulAlert('error', 'نقاط سالبة', 'الآن نقاطك سالبة! ارفع الأسئلة للحصول على 5 نقاط تعويضية لكل سؤال يتم قبوله.');
+        showBeautifulAlert('error', 'نقاط سالبة', 'الآن نقاطك سالبة! ارفع الأسئلة للحصول على 5 نقاط تعويضية.');
     }
     
+    // 4. عرض النتيجة
     const resultScreen = document.getElementById('result-screen');
-    const iconContainer = document.getElementById('result-icon-container');
-    const resultMsg = document.getElementById('result-msg');
-    const finalMyScore = document.getElementById('final-my-score');
-    const finalOpScore = document.getElementById('final-op-score');
-    const finalOpName = document.getElementById('final-op-name');
-    const pointsGainedText = document.getElementById('result-points-gained-text');
-    
-    iconContainer.innerText = icon;
+    document.getElementById('result-icon-container').innerText = icon;
     document.getElementById('result-title').innerText = msg;
-    resultMsg.innerText = "انتهت المباراة!";
-    finalMyScore.innerText = myScore;
-    finalOpScore.innerText = opScore;
-    finalOpName.innerText = opName;
+    document.getElementById('result-msg').innerText = "انتهت المباراة!";
+    document.getElementById('final-my-score').innerText = myScore;
+    document.getElementById('final-op-score').innerText = opScore;
+    document.getElementById('final-op-name').innerText = opName;
     
+    const pointsGainedText = document.getElementById('result-points-gained-text');
     if (pointsGained > 0) {
         pointsGainedText.innerText = `+${pointsGained}`;
         if (isPremiumValid(userData) && msg === "فوز ساحق!") {
@@ -4721,11 +4587,6 @@ function showWithdrawalResult() {
     }
     
     resultScreen.classList.remove('hidden');
-    
-    if (currentGameMode === 'ai' || opId === 'AI_BOT') {
-        const rewardMessage = `🎮 ${userData.name} أنهى تحدياً ضد ${opName} بنتيجة ${myScore}-${opScore}`;
-        await createNotification('reward', rewardMessage);
-    }
 }
 
         window.startRevengeMatch = async function(opponentId, opponentName) {
@@ -4883,9 +4744,8 @@ async function promptForRevengeSubject(opponentName) {
      if(currentUser) {
          const userDoc = await getDoc(doc(db, "users", currentUser.uid));
          if(userDoc.exists()) { 
-             userData = userDoc.data(); 
-             checkAIRemaining();
-             setupHeaderUI(); 
+    userData = userDoc.data(); 
+    setupHeaderUI();
              setupProfileUI(); 
          }
          loadLeaderboard();
@@ -6517,6 +6377,107 @@ async function promptForRevengeSubject(opponentName) {
             }
         };
         
+window.toggleAdType = function() {
+    const type = document.getElementById('admin-ad-type').value;
+    const linkContainer = document.getElementById('admin-link-container');
+    if (type === 'link') {
+        linkContainer.classList.remove('hidden');
+    } else {
+        linkContainer.classList.add('hidden');
+    }
+};
+
+window.publishGlobalAd = async function() {
+    const text = document.getElementById('admin-ad-text').value.trim();
+    const type = document.getElementById('admin-ad-type').value;
+    const link = document.getElementById('admin-ad-link').value.trim();
+    const btnName = document.getElementById('admin-ad-btn-name').value.trim();
+    
+    if (!text) {
+        showBeautifulAlert('warning', 'تنبيه', 'يجب كتابة نص الإعلان أولاً');
+        return;
+    }
+
+    if (type === 'link' && (!link || !btnName)) {
+        showBeautifulAlert('warning', 'تنبيه', 'يرجى إدخال الرابط واسم الزر');
+        return;
+    }
+
+    if (confirm('هل أنت متأكد من نشر هذا الإعلان لجميع المستخدمين فوراً؟')) {
+        try {
+            await setDoc(doc(db, "system_settings", "global_announcement"), {
+                text: text,
+                type: type,
+                linkUrl: type === 'link' ? link : null,
+                btnName: type === 'link' ? btnName : null,
+                timestamp: Date.now()
+            });
+            showBeautifulAlert('success', 'تم النشر', 'تم إرسال الإعلان لجميع المستخدمين بنجاح!');
+            document.getElementById('admin-ad-text').value = '';
+            document.getElementById('admin-ad-link').value = '';
+            document.getElementById('admin-ad-btn-name').value = '';
+        } catch (error) {
+            console.error(error);
+            showBeautifulAlert('error', 'خطأ', 'حدث خطأ أثناء النشر');
+        }
+    }
+};
+
+window.checkGlobalAnnouncement = async function() {
+    try {
+        const adDoc = await getDoc(doc(db, "system_settings", "global_announcement"));
+        if (adDoc.exists()) {
+            const adData = adDoc.data();
+            // نجلب وقت آخر إعلان شافه المستخدم (إذا ما شايف شي نعتبره 0)
+            const lastSeenAd = localStorage.getItem('last_seen_ad_timestamp') || "0";
+
+            // الشرط الذكي: هل الإعلان الموجود بالسيرفر أحدث من الإعلان اللي شافه المستخدم؟
+            if (adData.timestamp && Number(adData.timestamp) > Number(lastSeenAd)) {
+                document.getElementById('global-ad-content').innerText = adData.text;
+                
+                const btnContainer = document.getElementById('global-ad-buttons');
+                btnContainer.innerHTML = '';
+
+                if (adData.type === 'link' && adData.linkUrl) {
+                    let finalUrl = adData.linkUrl;
+                    if (finalUrl.includes('play.google.com/store/apps/details?id=')) {
+                        finalUrl = finalUrl.replace('https://play.google.com/store/apps/details?id=', 'market://details?id=');
+                    } else if (finalUrl.includes('t.me/') && !finalUrl.startsWith('tg://')) {
+                        finalUrl = finalUrl.replace('https://t.me/', 'tg://resolve?domain=').replace('http://t.me/', 'tg://resolve?domain=');
+                    }
+                    
+                    btnContainer.innerHTML += `
+                        <button onclick="window.open('${finalUrl}', '_system'); window.closeGlobalAd('${adData.timestamp}');" class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-4 rounded-xl font-black text-lg shadow-lg hover:scale-105 transition mb-2">
+                            <i class="fas fa-external-link-alt ml-2"></i> ${adData.btnName || 'اضغط هنا'}
+                        </button>
+                        <button onclick="window.closeGlobalAd('${adData.timestamp}')" class="w-full bg-gray-100 text-gray-500 py-3 rounded-xl font-bold hover:bg-gray-200 transition">
+                            إغلاق
+                        </button>
+                    `;
+                } else {
+                    btnContainer.innerHTML += `
+                        <button onclick="window.closeGlobalAd('${adData.timestamp}')" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-xl font-black text-lg shadow-lg hover:scale-105 transition">
+                            حسناً، فهمت
+                        </button>
+                    `;
+                }
+
+                const modal = document.getElementById('global-ad-modal');
+                modal.classList.remove('hidden');
+                modal.style.display = 'flex';
+            }
+        }
+    } catch (error) {
+        console.error("Error fetching announcement:", error);
+    }
+};
+
+window.closeGlobalAd = function(timestamp) {
+    localStorage.setItem('last_seen_ad_timestamp', String(timestamp));
+    const modal = document.getElementById('global-ad-modal');
+    modal.classList.add('hidden');
+    modal.style.display = 'none'; // إجبار الإخفاء
+};
         
     </script>
 </body>
