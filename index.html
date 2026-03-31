@@ -327,7 +327,11 @@
         .answer-correct::after { content: '✓'; position: absolute; left: 15px; font-size: 1.2rem; font-weight: bold; color: #22C55E; }
         .answer-wrong { background: #FEE2E2 !important; border-color: #EF4444 !important; color: #991B1B !important; position: relative; }
         .answer-wrong::after { content: '✗'; position: absolute; left: 15px; font-size: 1.2rem; font-weight: bold; color: #EF4444; }
-        .answer-neutral { background: white !important; border-color: #E5E7EB !important; color: #374151 !important; }
+        .answer-neutral { 
+    background: #ffffff !important; 
+    border-color: #e2e8f0 !important; 
+    color: #334155 !important; 
+}
 
         .countdown-container {
             background: linear-gradient(to right, #1e293b, #0f172a);
@@ -803,9 +807,9 @@
             transition: all 0.3s;
         }
         .withdraw-game-btn:hover {
-            transform: translateX(-50%) scale(1.05);
-            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
-        }
+    transform: translateX(-50%) scale(1.05);
+    box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+} 
 
 /* تأكد من هذه الأنماط */
 .notification-btn {
@@ -850,55 +854,6 @@
 .notification-dot.visible {
     display: block !important;
 }        
-
-        /* الإيموجيات التفاعلية */
-        .emoji-container {
-            position: absolute;
-            bottom: 70px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 8px;
-            z-index: 1000;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 8px 12px;
-            border-radius: 25px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        }
-        .emoji-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: #f8fafc;
-            border: 2px solid #e2e8f0;
-        }
-        .emoji-btn:hover {
-            transform: scale(1.2);
-            background: #e0f2fe;
-            border-color: #38bdf8;
-        }
-        .emoji-display {
-    position: absolute;
-    top: 60px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 1.8rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
-    animation: emojiAppear 0.3s ease-out, emojiFloat 2s infinite;
-    border: 2px solid rgba(255, 255, 255, 0.8);
-    min-width: 60px;
-    text-align: center;
-}
 
 @keyframes emojiAppear {
     from { 
@@ -1114,10 +1069,10 @@
     100% { transform: scale(1); }
 }
 
-/* تحديث مكان الإيموجيات */
+/* ترتيب الإيموجيات بحجم صغير وأنيق بالأسفل */
 .emoji-container {
-    position: absolute;
-    bottom: 100px; /* رفع 30px للأعلى (كان 70px) */
+    position: fixed;
+    bottom: 15px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -1125,33 +1080,55 @@
     z-index: 1000;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
-    padding: 8px 12px;
-    border-radius: 25px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    padding: 6px 12px;
+    border-radius: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    width: auto;
+    justify-content: center;
 }
 
-/* تحديث مكان زر الانسحاب */
+.emoji-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.emoji-btn:hover, .emoji-btn:active {
+    transform: scale(1.15);
+    background: #e0f2fe;
+    border-color: #38bdf8;
+}
+
+/* زر الانسحاب صار بي مسافة ممتازة فوق الإيموجيات */
 .withdraw-game-btn {
-    position: absolute;
-    bottom: 60px; /* تخفيض 30px للأسفل (كان 90px) */
+    position: fixed;
+    bottom: 85px; /* مسافة كبيرة بينه وبين الإيموجيات */
     left: 50%;
     transform: translateX(-50%);
     background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 8px 20px;
     border-radius: 25px;
     font-weight: bold;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     cursor: pointer;
-    z-index: 999; /* أقل من الإيموجيات */
+    z-index: 999;
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     transition: all 0.3s;
 }
-
 
 
     </style>
@@ -1407,36 +1384,59 @@
 </button>
         </div>
 
-        <div id="result-screen" class="fixed inset-0 bg-white z-[200] hidden">
-            <div class="result-container">
-                <button onclick="closeResultScreen()" class="absolute top-6 right-6 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-200">
+        <div id="result-screen" class="fixed inset-0 z-[200] hidden bg-slate-900/85 backdrop-blur-md flex items-center justify-center p-5">
+            <div class="relative w-full max-w-sm bg-white rounded-[2.5rem] shadow-[0_20px_60px_rgba(0,0,0,0.5)] overflow-hidden animate-[zoomInBounce_0.6s_cubic-bezier(0.34,1.56,0.64,1)] flex flex-col items-center text-center border border-white/20">
+                
+                <div class="absolute top-0 w-[150%] h-40 bg-gradient-to-b from-indigo-500/10 to-transparent rounded-b-[100%]"></div>
+                
+                <button onclick="closeResultScreen()" class="absolute top-5 right-5 w-10 h-10 bg-white/50 backdrop-blur-md rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-red-500 transition-all z-20 shadow-sm border border-gray-100">
                     <i class="fas fa-times"></i>
                 </button>
-                <div id="result-icon-container" class="result-emoji">🏆</div>
-                <h2 id="result-title" class="result-title">مبروك!</h2>
-                <p id="result-msg" class="result-subtitle">لقد قمت بأداء رائع</p>
-                
-                <div class="result-score-container">
-                    <div class="result-player">
-                        <p class="result-player-name">أنت</p>
-                        <p id="final-my-score" class="result-player-score">0</p>
-                    </div>
-                    <div class="result-vs">VS</div>
-                    <div class="result-player op">
-                        <p id="final-op-name" class="result-player-name">الخصم</p>
-                        <p id="final-op-score" class="result-player-score">0</p>
+
+                <div class="relative z-10 mt-12 mb-2">
+                    <div id="result-icon-container" class="text-8xl drop-shadow-[0_10px_10px_rgba(0,0,0,0.15)] animate-[float_3s_ease-in-out_infinite]">🏆</div>
+                </div>
+
+                <h2 id="result-title" class="relative z-10 text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-1">مبروك!</h2>
+                <p id="result-msg" class="relative z-10 text-gray-400 font-bold text-sm mb-8 px-6">لقد قمت بأداء رائع</p>
+
+                <div class="w-full px-6 mb-8 relative z-10">
+                    <div class="bg-slate-50 rounded-3xl p-5 flex items-center justify-between border-2 border-white shadow-[inset_0_2px_10px_rgba(0,0,0,0.03),0_5px_15px_rgba(0,0,0,0.06)] relative">
+                        
+                        <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-gradient-to-br from-slate-800 to-slate-900 rounded-full flex items-center justify-center text-white font-black text-lg border-[3px] border-white shadow-[0_5px_15px_rgba(0,0,0,0.2)] z-20">
+                            VS
+                        </div>
+
+                        <div class="flex-1 flex flex-col items-center justify-center pr-2">
+                            <span class="px-3 py-1 bg-indigo-100 text-indigo-600 text-[10px] font-black rounded-full mb-2 tracking-wider">أنت</span>
+                            <p id="final-my-score" class="text-5xl font-black text-indigo-600 drop-shadow-sm">0</p>
+                        </div>
+
+                        <div class="w-[2px] h-16 bg-gray-200 rounded-full"></div>
+
+                        <div class="flex-1 flex flex-col items-center justify-center pl-2">
+                            <span id="final-op-name" class="px-3 py-1 bg-red-100 text-red-600 text-[10px] font-black rounded-full mb-2 truncate max-w-[80px] tracking-wider">الخصم</span>
+                            <p id="final-op-score" class="text-5xl font-black text-red-500 drop-shadow-sm">0</p>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="result-points-gained">
-                    <span id="result-points-gained-text">+0</span>
-                    <i class="fas fa-gem"></i>
+
+                <div class="relative z-10 mb-10 flex flex-col items-center w-full px-8">
+                    <p class="text-xs font-bold text-gray-400 mb-3 tracking-wide">النقاط</p>
+                    <div class="flex items-center justify-center gap-3">
+                        <span id="result-points-gained-text" class="px-6 py-2 rounded-2xl text-2xl font-black shadow-sm border border-white/50 transition-all">+0</span>
+                        <div class="w-12 h-12 bg-amber-50 rounded-full flex items-center justify-center shadow-inner border border-amber-200 animate-pulse">
+                            <i class="fas fa-gem text-2xl text-amber-500"></i>
+                        </div>
+                    </div>
                 </div>
-                
-                <button onclick="closeResultScreen()" class="beautiful-btn">
-                    <i class="fas fa-home"></i>
-                    <span>العودة للصفحة الرئيسية</span>
-                </button>
+
+                <div class="w-full px-6 mb-8 relative z-10">
+                    <button onclick="closeResultScreen()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 text-white font-black text-lg shadow-[0_10px_20px_rgba(79,70,229,0.3)] hover:shadow-[0_15px_25px_rgba(79,70,229,0.4)] active:scale-95 transition-all duration-300 flex items-center justify-center gap-3">
+                        <span>العودة للرئيسية</span>
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -2250,18 +2250,18 @@
         </div>
 
         <div id="beautiful-alert" class="beautiful-alert hidden">
-            <div id="beautiful-alert-icon" class="beautiful-alert-icon">!</div>
-            <h3 id="beautiful-alert-title" class="beautiful-alert-title">تنبيه</h3>
-            <p id="beautiful-alert-message" class="beautiful-alert-message">...</p>
-            <button id="beautiful-alert-ok-btn" class="beautiful-alert-btn">حسناً</button>
-        </div>
-    </div
-    
-    <div id="global-ad-modal" class="modal-overlay hidden" style="z-index: 999999 !important;">
-    <div class="modal-content relative text-center border-4 border-indigo-500 animate-[zoomInBounce_0.5s_ease-out] bg-white p-8 rounded-3xl shadow-2xl w-11/12 max-w-md">
-        <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center border-4 border-white shadow-lg">
-            <i class="fas fa-bullhorn text-3xl text-white animate-pulse"></i>
-        </div>
+            <div id="beautiful-alert-icon" class="beautiful-alert-icon">!</div>
+            <h3 id="beautiful-alert-title" class="beautiful-alert-title">تنبيه</h3>
+            <p id="beautiful-alert-message" class="beautiful-alert-message">...</p>
+            <button id="beautiful-alert-ok-btn" class="beautiful-alert-btn">حسناً</button>
+        </div>
+    </div>
+    
+    <div id="global-ad-modal" class="modal-overlay hidden" style="z-index: 999999 !important;">
+    <div class="modal-content relative text-center border-4 border-indigo-500 animate-[zoomInBounce_0.5s_ease-out] bg-white p-8 rounded-3xl shadow-2xl w-11/12 max-w-md" style="overflow: visible;">
+        <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center border-4 border-white shadow-lg z-50">
+            <i class="fas fa-bullhorn text-3xl text-white animate-pulse"></i>
+        </div>
         <h3 class="text-2xl font-black text-gray-800 mt-8 mb-4">إعلان هام!</h3>
         <p id="global-ad-content" class="text-gray-600 font-bold text-lg mb-8 leading-relaxed whitespace-pre-line"></p>
         <div id="global-ad-buttons" class="flex flex-col gap-3">
@@ -2435,20 +2435,20 @@ checkPendingQuestionsNotification();
                             document.getElementById('header-grade-badge').classList.add('hidden');
                         }
                         
-                        setTimeout(() => {
-    intro.classList.add('hidden');
-    authScreen.classList.add('hidden');
-    mainApp.classList.remove('hidden');
-    if(!document.querySelector('.screen.active')) switchTab('challenges');
-    startWeeklyCountdown();
-    
-    // استدعاء الإعلان بعد ظهور قسم التحديات بنصف ثانية لضمان الاستقرار
-    setTimeout(() => {
-        if(typeof window.checkGlobalAnnouncement === 'function') {
-            window.checkGlobalAnnouncement();
-        }
-    }, 500);
-}, 2500);
+                        // جلب الإعلان في الخلفية أثناء تشغيل الأنيميشن
+                        if(typeof window.preloadGlobalAnnouncement === 'function') {
+                            window.preloadGlobalAnnouncement();
+                        }
+
+                        intro.classList.add('hidden');
+                        authScreen.classList.add('hidden');
+                        mainApp.classList.remove('hidden');
+                        if(!document.querySelector('.screen.active')) switchTab('challenges');
+                        startWeeklyCountdown();
+                        
+                        if(typeof window.showPreloadedAnnouncement === 'function') {
+                            window.showPreloadedAnnouncement();
+                        }
                         
                     } else {
                         console.log("المستخدم غير موجود في قاعدة البيانات، تسجيل الخروج...");
@@ -2833,16 +2833,15 @@ snapAll.docs.forEach(async (d) => {
                     emailToUse = userData.email;
                 }
                 
-                setTimeout(async () => {
-                    try {
-                        await signInWithEmailAndPassword(auth, emailToUse, pass);
-                        hideAuthLoading();
-                        showBeautifulAlert('success', 'تم تسجيل الدخول', 'مرحباً بعودتك!');
-                    } catch (e) {
-                        hideAuthLoading();
-                        showBeautifulAlert('error', 'خطأ في التسجيل', getArabicError(e.code));
-                    }
-                }, 500);
+                // التعديل: إزالة الـ setTimeout لإلغاء الصفنة وتسريع الدخول
+                try {
+                    await signInWithEmailAndPassword(auth, emailToUse, pass);
+                    hideAuthLoading();
+                    showBeautifulAlert('success', 'تم تسجيل الدخول', 'مرحباً بعودتك!');
+                } catch (e) {
+                    hideAuthLoading();
+                    showBeautifulAlert('error', 'خطأ في الدخول', getArabicError(e.code));
+                }
                 
             } catch (e) {
                 hideAuthLoading();
@@ -2875,52 +2874,53 @@ snapAll.docs.forEach(async (d) => {
 
                 let photoURL = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&size=128`;
                 const imgFile = document.getElementById('signup-img').files[0];
+                
+                // تعديل 1: تحويل الصورة إلى نص (Base64) بدل التخزين
                 if(imgFile) {
                     try {
-                        photoURL = await uploadImageToStorage(imgFile, "new_user_" + Date.now());
+                        photoURL = await compressImage(imgFile);
                     } catch (error) {
-                        console.error("Error uploading profile image:", error);
+                        console.error("Error compressing profile image:", error);
                     }
                 }
 
-                setTimeout(async () => {
-                    try {
-                        const cred = await createUserWithEmailAndPassword(auth, email, pass);
-                        
-                        await setDoc(doc(db, "users", cred.user.uid), {
-    uid: cred.user.uid,
-    name: name,
-    email: email,
-    photo: photoURL,
-    uniqueId: generateId(),
-    points: 0,
-    balance: 0,
-    role: 'user',
-    isBanned: false,
-    bio: "",
-    invitedCount: 0,
-    createdAt: serverTimestamp(),
-    lastRewardDayKey: null, 
-    rewardWeekKey: null,    // تغيير من rewardMonthKey
-    daysClaimedInWeek: 0,   // تغيير من daysClaimedInMonth
-    isPremium: false,
-    premiumExpiry: null,
-    selectedBadge: null,
-    selectedBadgeColor: null,
-    selectedBgTheme: 'bg-rank-default',
-    lastLogin: new Date().toISOString(),
-    dailyAIRemaining: 10,
-    lastAIReset: new Date().toISOString().split('T')[0]
-});
+                // تعديل 2: إزالة تأخير הـ setTimeout المزعج
+                try {
+                    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+                    
+                    await setDoc(doc(db, "users", cred.user.uid), {
+                        uid: cred.user.uid,
+                        name: name,
+                        email: email,
+                        photo: photoURL,
+                        uniqueId: generateId(),
+                        points: 0,
+                        balance: 0,
+                        role: 'user',
+                        isBanned: false,
+                        bio: "",
+                        invitedCount: 0,
+                        createdAt: serverTimestamp(),
+                        lastRewardDayKey: null, 
+                        rewardWeekKey: null,
+                        daysClaimedInWeek: 0,
+                        isPremium: false,
+                        premiumExpiry: null,
+                        selectedBadge: null,
+                        selectedBadgeColor: null,
+                        selectedBgTheme: 'bg-rank-default',
+                        lastLogin: new Date().toISOString(),
+                        dailyAIRemaining: 10,
+                        lastAIReset: new Date().toISOString().split('T')[0]
+                    });
 
-                        hideAuthLoading();
-                        showBeautifulAlert('success', 'مبروك!', 'تم إنشاء حسابك بنجاح، يمكنك الآن تسجيل الدخول');
+                    hideAuthLoading();
+                    showBeautifulAlert('success', 'مبروك!', 'تم إنشاء حسابك بنجاح، جاري الدخول...');
 
-                    } catch (e) {
-                        hideAuthLoading();
-                        showBeautifulAlert('error', 'خطأ', getArabicError(e.code));
-                    }
-                }, 1000);
+                } catch (e) {
+                    hideAuthLoading();
+                    showBeautifulAlert('error', 'خطأ في الإنشاء', getArabicError(e.code));
+                }
 
             } catch (e) {
                 hideAuthLoading();
@@ -3321,36 +3321,40 @@ async function loadNotifications() {
 }
 
 
-// دالة جديدة لتعليم جميع الإشعارات كمقروءة
-async function markAllNotificationsAsRead() {
+window.markAllNotificationsAsRead = async function(showAlert = true) {
     try {
-        const notificationsRef = collection(db, "notifications");
-        const snapshot = await getDocs(notificationsRef);
+        const q = query(
+            collection(db, "notifications"), 
+            where("userId", "==", currentUser.uid),
+            where("read", "==", false)
+        );
+        const snap = await getDocs(q);
         
+        if (snap.empty) {
+            if(showAlert) showBeautifulAlert('info', 'لا توجد إشعارات جديدة', 'جميع إشعاراتك مقروءة بالفعل');
+            return;
+        }
+
         const batch = writeBatch(db);
-        let foundUnread = false;
-        
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            if (data.userId === currentUser.uid && data.read === false) {
-                batch.update(doc.ref, { read: true });
-                foundUnread = true;
-            }
+        snap.forEach(doc => {
+            batch.update(doc.ref, { read: true });
         });
         
-        if (foundUnread) {
-            await batch.commit();
-            checkNotifications();
+        await batch.commit();
+        checkNotifications();
+        
+        if (showAlert) {
             loadNotifications();
             showBeautifulAlert('success', 'تم', 'تم تعليم جميع الإشعارات كمقروءة');
-        } else {
-            showBeautifulAlert('info', 'لا توجد إشعارات جديدة', 'جميع إشعاراتك مقروءة بالفعل');
         }
     } catch (error) {
-        console.error("Error marking all as read:", error);
-        showBeautifulAlert('error', 'خطأ', 'حدث خطأ أثناء تحديث الإشعارات');
+        console.error("Error marking notifications as read:", error);
+        if(showAlert) showBeautifulAlert('error', 'خطأ', 'حدث خطأ أثناء تحديث الإشعارات');
     }
-}
+};
+
+// للحفاظ على توافق الكود في باقي الأماكن التي تستدعي الاسم القديم
+window.markNotificationsAsRead = () => window.markAllNotificationsAsRead(false);
 
         function getTimeAgo(date) {
             if (!date) return 'منذ وقت';
@@ -3757,10 +3761,8 @@ setupHeaderUI();
 };
 
 async function findRandomOpponent(sub) {
-    console.log("بدء البحث عن منافس عشوائي من جميع المستخدمين...");
-    
+    console.log("البحث عن منافس عشوائي للمادة:", sub);
     try {
-        // جلب جميع المستخدمين بدون أي شروط
         const q = query(collection(db, "users"), limit(500));
         const snap = await getDocs(q);
         
@@ -3770,30 +3772,26 @@ async function findRandomOpponent(sub) {
             return;
         }
         
-        // فصل المستخدمين حسب وجود الصورة
-        const allUsers = [];
+        const eligibleUsers = [];
         snap.forEach(doc => {
             const user = doc.data();
             if (user.uid && user.uid !== currentUser.uid) {
-                allUsers.push({ id: doc.id, ...user });
+                eligibleUsers.push({ id: doc.id, ...user });
             }
         });
         
-        if (allUsers.length === 0) {
+        if (eligibleUsers.length === 0) {
             showBeautifulAlert('warning', 'تنبيه', 'لا يوجد منافسين متاحين حالياً');
             cancelSearch();
             return;
         }
         
-        // اختيار منافس عشوائي تماماً
-        const randomIndex = Math.floor(Math.random() * allUsers.length);
-        const selectedOpponent = allUsers[randomIndex];
-        
-        console.log("تم اختيار المنافس عشوائياً:", selectedOpponent.name);
+        const chosenOpponent = eligibleUsers[Math.floor(Math.random() * eligibleUsers.length)];
+        console.log("تم اختيار المنافس:", chosenOpponent.name);
         
         await showVSAnimationWithButtons(
-            { uid: currentUser.uid, name: userData.name, photo: userData.photo },
-            { uid: selectedOpponent.id, name: selectedOpponent.name, photo: selectedOpponent.photo }
+            { uid: currentUser.uid, name: userData.name, photo: userData.photo, grade: userData.grade },
+            { uid: chosenOpponent.id, name: chosenOpponent.name, photo: chosenOpponent.photo, grade: chosenOpponent.grade }
         );
         
     } catch (error) {
@@ -3802,7 +3800,6 @@ async function findRandomOpponent(sub) {
         cancelSearch();
     }
 }
-
 
 async function showVSAnimationWithButtons(p1, p2) {
     return new Promise(resolve => {
@@ -3814,7 +3811,6 @@ async function showVSAnimationWithButtons(p1, p2) {
         const me = isP1 ? p1 : p2;
         const op = isP1 ? p2 : p1;
 
-        // حفظ بيانات المنافس في المتغير العام
         selectedOpponent = { 
             id: op.uid, 
             name: op.name, 
@@ -3832,68 +3828,15 @@ async function showVSAnimationWithButtons(p1, p2) {
         const text = screen.querySelector('p');
         
         screen.classList.remove('hidden');
-        text.classList.remove('hidden'); // إظهار النص فقط
+        text.classList.remove('hidden'); 
         
-        // إخفاء الأزرار
         document.getElementById('vs-buttons').classList.add('hidden');
         
-        // بدء المباراة تلقائياً بعد 2.5 ثانية
         setTimeout(() => {
             console.log("بدء المباراة تلقائياً بعد 2.5 ثانية");
             startMatchWithOpponent();
         }, 2500);
     });
-}
-
-
-async function findRandomOpponentWithPriority(sub) {
-    try {
-        console.log("البحث عن منافس عشوائي للمادة:", sub);
-        
-        // جلب جميع المستخدمين بدون شروط
-        const q = query(collection(db, "users"), limit(500));
-        const snap = await getDocs(q);
-        
-        console.log("عدد المستخدمين الذين تم جلبهم:", snap.size);
-        
-        if (snap.empty) {
-            showBeautifulAlert('warning', 'تنبيه', 'لا يوجد منافسين متاحين حالياً');
-            cancelSearch();
-            return;
-        }
-        
-        // جمع جميع المستخدمين المؤهلين
-        const eligibleUsers = [];
-        snap.forEach(doc => {
-            const user = doc.data();
-            if (user.uid && user.uid !== currentUser.uid) {
-                eligibleUsers.push({ id: doc.id, ...user });
-            }
-        });
-        
-        console.log("المستخدمين المؤهلين:", eligibleUsers.length);
-        
-        if (eligibleUsers.length === 0) {
-            showBeautifulAlert('warning', 'تنبيه', 'لا يوجد منافسين متاحين حالياً');
-            cancelSearch();
-            return;
-        }
-        
-        // اختيار عشوائي مباشر
-        const chosenOpponent = eligibleUsers[Math.floor(Math.random() * eligibleUsers.length)];
-        
-        console.log("تم اختيار المنافس:", chosenOpponent.name);
-        
-        await showVSAnimationWithButtons(
-            { uid: currentUser.uid, name: userData.name, photo: userData.photo, grade: userData.grade },
-            { uid: chosenOpponent.id, name: chosenOpponent.name, photo: chosenOpponent.photo, grade: chosenOpponent.grade }
-        );
-        
-    } catch (error) {
-        console.error("Error finding opponent:", error);
-        showBeautifulAlert('error', 'خطأ', 'حدث خطأ في البحث عن منافس');
-        cancelSearch();
-    }
 }
 
 
@@ -4030,32 +3973,6 @@ async function startStudentMatch(sub, opponent) {
     renderGame(localMatchData);
 }
 
-       
-
-        async function showVSAnimation(p1, p2) {
-            return new Promise(resolve => {
-                document.getElementById('searching-ui').classList.add('hidden');
-                document.getElementById('searching-ui').style.display = 'none';
-                
-                const isP1 = p1.uid === currentUser.uid;
-                const me = isP1 ? p1 : p2;
-                const op = isP1 ? p2 : p1;
-
-                document.getElementById('vs-p1-img').src = me.photo;
-                document.getElementById('vs-p1-name').innerText = me.name;
-                
-                document.getElementById('vs-p2-img').src = op.photo;
-                document.getElementById('vs-p2-name').innerText = op.name;
-
-                const screen = document.getElementById('vs-screen');
-                screen.classList.remove('hidden');
-                
-                setTimeout(() => {
-                    screen.classList.add('hidden');
-                    resolve();
-                }, 2500); 
-            });
-        }
 
         async function getQuestions(sub, type) {
             if (!userData.grade) {
@@ -4455,15 +4372,13 @@ function showWithdrawalResult() {
 }
 
         async function endGame(d) {
+    // 1. إيقاف المؤقتات فوراً
     clearInterval(gameTimer);
-    document.getElementById('game-overlay').classList.add('hidden');
-    document.getElementById('withdraw-game-btn').classList.add('hidden');
-    document.getElementById('emoji-container').classList.add('hidden');
-    
-    emojiUsedInCurrentQuestion = false;
+    clearTimeout(aiTimeoutId);
     
     if (isExitingGame) return;
-    
+
+    // 2. تجهيز البيانات محلياً (بدون انتظار السيرفر)
     let myScore = localMatchData.player1.score;
     let opScore = localMatchData.player2.score;
     let opName = localMatchData.player2.name;
@@ -4473,97 +4388,29 @@ function showWithdrawalResult() {
     let pointsLost = 0;
     let msg = ""; 
     let icon = "";
-    
-    // 1. حساب النقاط
+
+    // حساب النقاط محلياً فوراً
     if (myScore > opScore) { 
-        msg = "فوز ساحق!"; 
-        icon = "🏆"; 
+        msg = "فوز ساحق!"; icon = "🏆"; 
         pointsGained = myScore * 2;
-        if (isPremiumValid(userData)) pointsGained = pointsGained * 2; 
-        pointsLost = 0;
+        if (isPremiumValid(userData)) pointsGained *= 2;
     } else if (myScore < opScore) { 
-        msg = "حظ أوفر!"; 
-        icon = "😢"; 
-        pointsLost = opScore; 
-        pointsGained = 0;
+        msg = "حظ أوفر!"; icon = "😢"; 
+        pointsLost = opScore;
     } else { 
-        if(myScore > 0) { 
-            msg = "تعادل إيجابي!"; 
-            icon = "🤝"; 
-            pointsGained = myScore; 
-        } else { 
-            msg = "تعادل سلبي!"; 
-            icon = "😐"; 
-            pointsGained = 1; 
-        }
-        pointsLost = 0;
+        msg = myScore > 0 ? "تعادل إيجابي!" : "تعادل سلبي!";
+        icon = myScore > 0 ? "🤝" : "😐";
+        pointsGained = myScore > 0 ? myScore : 1;
     }
+
+    // 3. عرض شاشة النتيجة فوراً (السرعة هنا!)
+    document.getElementById('game-overlay').classList.add('hidden');
+    document.getElementById('withdraw-game-btn').classList.add('hidden');
+    document.getElementById('emoji-container').classList.add('hidden');
     
-    // 2. تحديث قاعدة البيانات بناءً على النتيجة وإرسال الإشعار
-    if (currentGameMode === 'student') {
-        try {
-            if (myScore > opScore) {
-                // أنت فزت: نقص نقاط الخصم، وارسل له إشعار ينتقم منك
-                await updateDoc(doc(db, "users", opId), { points: increment(-myScore) });
-                await addDoc(collection(db, "notifications"), {
-                    userId: opId, 
-                    type: 'revenge',
-                    message: `🔥 إهانة كروية! المنافس "${userData.name}" سحقك للتو بنتيجة ${myScore} مقابل ${opScore}. هل ستقف مكتوف الأيدي أم ستثأر لكرامتك الآن؟ ⚔️`,
-                    opponentId: currentUser.uid,  
-                    opponentName: userData.name,  
-                    matchResult: `${opScore}-${myScore}`,
-                    read: false,
-                    createdAt: serverTimestamp()
-                });
-            } else if (myScore < opScore) {
-                // الخصم فاز: زيد نقاط الخصم، وارسل إشعار لك أنت حتى تنتقم
-                const opponentDoc = await getDoc(doc(db, "users", opId));
-                if (opponentDoc.exists()) {
-                    const opponentData = opponentDoc.data();
-                    let addition = opScore * 2; 
-                    if (opponentData.isPremium && opponentData.premiumExpiry && opponentData.premiumExpiry.toDate() > new Date()) {
-                        addition = addition * 2; 
-                    }
-                    await updateDoc(doc(db, "users", opId), { points: increment(addition) });
-                }
-                await addDoc(collection(db, "notifications"), {
-                    userId: currentUser.uid, 
-                    type: 'revenge',
-                    message: `🔥 إهانة كبيرة! المنافس "${opName}" سحقك للتو بنتيجة ${opScore} مقابل ${myScore}. هل ستقف مكتوف الأيدي أم ستثأر لكرامتك الآن؟ ⚔️`,
-                    opponentId: opId,  
-                    opponentName: opName,  
-                    matchResult: `${myScore}-${opScore}`,
-                    read: false,
-                    createdAt: serverTimestamp()
-                });
-                checkNotifications();
-            }
-        } catch (error) {
-            console.error("Error updating match results:", error);
-        }
-    }
-    
-    // 3. تحديث نقاطك أنت في الواجهة وقاعدة البيانات
-    if(pointsGained > 0) {
-        await updateDoc(doc(db, "users", currentUser.uid), { points: increment(pointsGained) });
-        userData.points += pointsGained;
-        setupHeaderUI();
-    }
-    if(pointsLost > 0) {
-        await updateDoc(doc(db, "users", currentUser.uid), { points: increment(-pointsLost) });
-        userData.points -= pointsLost;
-        setupHeaderUI();
-    }
-    
-    if (userData.points < 0) {
-        showBeautifulAlert('error', 'نقاط سالبة', 'الآن نقاطك سالبة! ارفع الأسئلة للحصول على 5 نقاط تعويضية.');
-    }
-    
-    // 4. عرض النتيجة
     const resultScreen = document.getElementById('result-screen');
     document.getElementById('result-icon-container').innerText = icon;
     document.getElementById('result-title').innerText = msg;
-    document.getElementById('result-msg').innerText = "انتهت المباراة!";
     document.getElementById('final-my-score').innerText = myScore;
     document.getElementById('final-op-score').innerText = opScore;
     document.getElementById('final-op-name').innerText = opName;
@@ -4571,9 +4418,6 @@ function showWithdrawalResult() {
     const pointsGainedText = document.getElementById('result-points-gained-text');
     if (pointsGained > 0) {
         pointsGainedText.innerText = `+${pointsGained}`;
-        if (isPremiumValid(userData) && msg === "فوز ساحق!") {
-            pointsGainedText.innerHTML += ' <span class="text-xs text-green-600">(مضاعفة مميز)</span>';
-        }
         pointsGainedText.style.background = "linear-gradient(135deg, #fef3c7 0%, #fbbf24 100%)";
         pointsGainedText.style.color = "#92400e";
     } else if (pointsLost > 0) {
@@ -4581,12 +4425,57 @@ function showWithdrawalResult() {
         pointsGainedText.style.background = "linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)";
         pointsGainedText.style.color = "#991b1b";
     } else {
-        pointsGainedText.innerText = `+${pointsGained}`;
-        pointsGainedText.style.background = "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)";
+        pointsGainedText.innerText = "+0";
+        pointsGainedText.style.background = "#f1f5f9";
         pointsGainedText.style.color = "#374151";
     }
-    
+
     resultScreen.classList.remove('hidden');
+    // نهاية تحديث الواجهة الفوري
+
+    // 4. تنفيذ عمليات قاعدة البيانات في الخلفية (Background)
+    // لا نستخدم await هنا لكي لا نعطل ظهور الشاشة
+    (async () => {
+        try {
+            if (currentGameMode === 'student') {
+                if (myScore > opScore) {
+                    updateDoc(doc(db, "users", opId), { points: increment(-myScore) });
+                    addDoc(collection(db, "notifications"), {
+                        userId: opId, type: 'revenge',
+                        message: `🔥 إهانة كروية! المنافس "${userData.name}" سحقك بنتيجة ${myScore}-${opScore}. ثأر لكرامتك! ⚔️`,
+                        opponentId: currentUser.uid, opponentName: userData.name, matchResult: `${opScore}-${myScore}`,
+                        read: false, createdAt: serverTimestamp()
+                    });
+                } else if (myScore < opScore) {
+                    // زيادة نقاط الخصم
+                    const opRef = doc(db, "users", opId);
+                    const opSnap = await getDoc(opRef);
+                    if (opSnap.exists()) {
+                        let opData = opSnap.data();
+                        let add = opScore * 2;
+                        if (opData.isPremium && opData.premiumExpiry?.toDate() > new Date()) add *= 2;
+                        updateDoc(opRef, { points: increment(add) });
+                    }
+                    // إرسال إشعار لك
+                    addDoc(collection(db, "notifications"), {
+                        userId: currentUser.uid, type: 'revenge',
+                        message: `🔥 خسرت أمام "${opName}" بنتيجة ${opScore}-${myScore}. هل ستنتقم؟ ⚔️`,
+                        opponentId: opId, opponentName: opName, matchResult: `${myScore}-${opScore}`,
+                        read: false, createdAt: serverTimestamp()
+                    });
+                }
+            }
+
+            // تحديث نقاطك أنت
+            if (pointsGained !== 0 || pointsLost !== 0) {
+                const myChange = pointsGained > 0 ? pointsGained : -pointsLost;
+                await updateDoc(doc(db, "users", currentUser.uid), { points: increment(myChange) });
+                userData.points += myChange;
+                setupHeaderUI();
+            }
+            checkNotifications();
+        } catch (e) { console.error("Background DB Error:", e); }
+    })();
 }
 
         window.startRevengeMatch = async function(opponentId, opponentName) {
@@ -4786,27 +4675,6 @@ async function promptForRevengeSubject(opponentName) {
                 loadAdminBadges();
             }
         };
-
-        async function markNotificationsAsRead() {
-            try {
-                const q = query(
-                    collection(db, "notifications"), 
-                    where("userId", "==", currentUser.uid),
-                    where("read", "==", false)
-                );
-                const snap = await getDocs(q);
-                
-                const batch = writeBatch(db);
-                snap.forEach(doc => {
-                    batch.update(doc.ref, { read: true });
-                });
-                
-                await batch.commit();
-                checkNotifications();
-            } catch (error) {
-                console.error("Error marking notifications as read:", error);
-            }
-        }
 
         window.backToProfile = () => { 
              document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -5076,82 +4944,95 @@ async function promptForRevengeSubject(opponentName) {
             const div = document.getElementById('leaderboard-list');
             div.innerHTML = '';
             
+            const loadMoreBtn = document.getElementById('load-more-leaderboard');
+            if(loadMoreBtn) {
+                // تصغير حجم زر عرض المزيد قليلاً
+                loadMoreBtn.className = "hidden w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-black py-3 rounded-xl shadow-lg hover:shadow-indigo-500/30 active:scale-95 transition-all mt-3 mb-10 flex items-center justify-center gap-2 text-base border-2 border-indigo-400/50";
+            }
+            
             const usersToShow = allLeaderboardUsers.slice(start, Math.min(end, 50));
             
             usersToShow.forEach((u, index) => {
                 const globalIndex = start + index;
-                let frameClass = "frame-rank-common";
-                let crown = "";
-                let rankBadge = `<div class="rank-badge-top">${globalIndex + 1}</div>`;
-                let raysHtml = ""; 
-                let backgroundClass = 'bg-rank-default';
                 
-                if (u.isPremium && u.premiumExpiry && u.premiumExpiry.toDate() > new Date()) {
-                    backgroundClass = u.selectedBgTheme || 'bg-rank-default';
+                let cardClass = "bg-white border-gray-100 shadow-sm";
+                let backgroundClass = "bg-rank-default";
+                let premiumOverlay = "";
+
+                if (globalIndex === 0) cardClass = "bg-gradient-to-r from-yellow-50 to-amber-100 border-yellow-300 shadow-md";
+                else if (globalIndex === 1) cardClass = "bg-gradient-to-r from-slate-50 to-gray-200 border-slate-300 shadow-sm";
+                else if (globalIndex === 2) cardClass = "bg-gradient-to-r from-orange-50 to-orange-100 border-orange-300 shadow-sm";
+                else if (globalIndex <= 9) cardClass = "bg-gradient-to-r from-indigo-50/50 to-blue-50/50 border-indigo-100";
+
+                if (u.isPremium && u.premiumExpiry && u.premiumExpiry.toDate() > new Date() && u.selectedBgTheme && u.selectedBgTheme !== 'bg-rank-default') {
+                    backgroundClass = u.selectedBgTheme;
+                    cardClass = "border-white/30 shadow-sm";
+                    // تعديل: تقليل التغبيش واللون الأبيض لإظهار لون الخلفية الحقيقي
+                    premiumOverlay = `<div class="absolute inset-0 bg-white/40 backdrop-blur-[1px] z-0 rounded-xl"></div>`;
                 }
 
-                if (globalIndex === 0) { 
-                    frameClass = "frame-rank-1"; 
-                    crown = `<i class="fas fa-crown text-yellow-500 name-crown"></i>`; 
-                    raysHtml = `<div class="rank-rays rays-gold"></div>`; 
-                }
-                else if (globalIndex === 1) { 
-                    frameClass = "frame-rank-2"; 
-                    raysHtml = `<div class="rank-rays rays-silver"></div>`; 
-                }
-                else if (globalIndex === 2) { 
-                    frameClass = "frame-rank-3"; 
-                    raysHtml = `<div class="rank-rays rays-bronze"></div>`; 
-                }
-                else if (globalIndex <= 9) { 
-                    const colors = ['rays-blue', 'rays-red', 'rays-green', 'rays-purple', 'rays-blue', 'rays-red'];
-                    frameClass = "frame-rank-other-top"; 
-                    raysHtml = `<div class="rank-rays ${colors[globalIndex-3]}"></div>`; 
-                }
-                
+                // تصغير حجم رقعة المركز (التاج)
+                let rankVisual = "";
+                if (globalIndex === 0) rankVisual = `<div class="absolute -right-2.5 -top-2.5 w-8 h-8 bg-gradient-to-br from-yellow-300 to-yellow-500 text-white rounded-xl shadow-md border-2 border-white flex items-center justify-center font-black text-lg z-20 animate-bounce">1</div>`;
+                else if (globalIndex === 1) rankVisual = `<div class="absolute -right-2.5 -top-2.5 w-7 h-7 bg-gradient-to-br from-slate-300 to-slate-500 text-white rounded-xl shadow-md border-2 border-white flex items-center justify-center font-black text-base z-20">2</div>`;
+                else if (globalIndex === 2) rankVisual = `<div class="absolute -right-2.5 -top-2.5 w-7 h-7 bg-gradient-to-br from-orange-300 to-orange-500 text-white rounded-xl shadow-md border-2 border-white flex items-center justify-center font-black text-base z-20">3</div>`;
+                else rankVisual = `<div class="absolute -right-2 -top-2 w-6 h-6 bg-gray-800 text-white rounded-lg shadow border-2 border-white flex items-center justify-center font-black text-xs z-20">${globalIndex + 1}</div>`;
+
+                // تصغير إطار الصورة والأشعة
+                let frameClass = "border-2 border-gray-100";
+                let raysHtml = "";
+                if (globalIndex === 0) { frameClass = "border-2 border-yellow-400"; raysHtml = `<div class="rank-rays rays-gold absolute inset-[-4px] z-0"></div>`; }
+                else if (globalIndex === 1) { frameClass = "border-2 border-slate-400"; raysHtml = `<div class="rank-rays rays-silver absolute inset-[-4px] z-0"></div>`; }
+                else if (globalIndex === 2) { frameClass = "border-2 border-orange-400"; raysHtml = `<div class="rank-rays rays-bronze absolute inset-[-4px] z-0"></div>`; }
+                else if (globalIndex <= 9) { frameClass = "border-2 border-indigo-300"; }
+
                 let badgeHtml = "";
                 if (u.isPremium && u.premiumExpiry && u.premiumExpiry.toDate() > new Date() && u.selectedBadge) {
-                    badgeHtml = `<span class="premium-badge" style="background-color: ${u.selectedBadgeColor || '#f59e0b'}">${u.selectedBadge}</span>`;
+                    badgeHtml = `<span class="px-1.5 py-0.5 text-[9px] text-white rounded shadow-sm mx-1" style="background-color: ${u.selectedBadgeColor || '#f59e0b'}">${u.selectedBadge}</span>`;
                 }
-                
+                let premiumStar = u.isPremium && u.premiumExpiry && u.premiumExpiry.toDate() > new Date() ? `<i class="fas fa-crown text-yellow-500 text-[10px] drop-shadow-sm ml-1"></i>` : '';
+
                 let prizeMoney = "";
-                if (globalIndex === 0) prizeMoney = " <span class='text-xs text-green-300'>10$</span>";
-                else if (globalIndex === 1) prizeMoney = " <span class='text-xs text-green-300'>7$</span>";
-                else if (globalIndex === 2) prizeMoney = " <span class='text-xs text-green-300'>5$</span>";
-                else if (globalIndex === 3) prizeMoney = " <span class='text-xs text-green-300'>3$</span>";
-                else if (globalIndex === 4) prizeMoney = " <span class='text-xs text-green-300'>2$</span>";
-                else if (globalIndex >= 5 && globalIndex <= 9) prizeMoney = " <span class='text-xs text-green-300'>1$</span>";
-                
+                const prizes = ['10$', '7$', '5$', '3$', '2$', '1$', '1$', '1$', '1$', '1$'];
+                if (globalIndex <= 9) {
+                    prizeMoney = `<div class="mt-1 bg-green-100/80 text-green-700 px-1.5 py-0.5 rounded-md text-[9px] font-black border border-green-200 flex items-center justify-center gap-1 shadow-xs w-full"><i class="fas fa-money-bill-wave text-[8px]"></i> ${prizes[globalIndex]}</div>`;
+                }
+
                 let resetBtn = "";
                 if (currentUser && userData && userData.email === ADMIN_EMAIL) {
-                    resetBtn = `<button onclick="resetUserPoints('${u.id}', '${u.name}')" class="w-6 h-6 rounded bg-red-100 text-red-500 flex items-center justify-center mr-2"><i class="fas fa-trash-alt text-xs"></i></button>`;
+                    resetBtn = `<button onclick="resetUserPoints('${u.id}', '${u.name}')" class="mt-1.5 w-6 h-6 rounded-lg bg-red-100 text-red-500 flex items-center justify-center hover:bg-red-200 transition shadow-xs mx-auto"><i class="fas fa-trash-alt text-[9px]"></i></button>`;
                 }
-                
+
                 div.innerHTML += `
-                    <div class="flex items-center justify-between p-4 rounded-xl shadow-sm mb-3 relative overflow-hidden ${backgroundClass}">
-                        <div class="flex items-center gap-4 z-10">
-                            <div class="rank-img-container">
-                                ${rankBadge}
-                                ${raysHtml}
-                                <img src="${u.photo}" class="rank-img ${frameClass}">
-                            </div>
-                            <div>
-                                <p class="font-bold text-gray-800 text-sm flex items-center">
-                                    ${crown} 
-                                    ${u.name}
-                                    ${badgeHtml}
-                                </p>
-                                <p class="text-[10px] text-gray-600">ID: ${u.uniqueId}</p>
-                                <p class="text-[10px] text-gray-500 mt-1">${u.bio || ""}</p>
-                                ${u.isPremium && u.premiumExpiry && u.premiumExpiry.toDate() > new Date() ? 
-                                    `<p class="text-[10px] text-yellow-600 font-bold">👑 مميز</p>` : 
-                                    ''}
-                            </div>
-                        </div>
-                        <div class="flex items-center z-10">
-                            ${resetBtn}
-                            <div class="text-right">
-                                <span class="font-black text-indigo-600 text-lg">${u.points || 0} 💎${prizeMoney}</span>
+                    <div class="relative mb-3 group animate-[slideUp_0.3s_ease-out]" style="animation-delay: ${index * 0.04}s; animation-fill-mode: both;">
+                        <div class="flex items-center p-2 rounded-xl border overflow-visible transition-all duration-300 ${cardClass} ${backgroundClass}">
+                            ${premiumOverlay}
+                            ${rankVisual}
+                            
+                            <div class="flex items-center gap-2.5 w-full z-10">
+                                <div class="relative w-11 h-11 shrink-0 flex items-center justify-center">
+                                    ${raysHtml}
+                                    <img src="${u.photo}" class="w-10 h-10 rounded-full object-cover bg-white p-0.5 relative z-10 ${frameClass}">
+                                </div>
+                                
+                                <div class="flex-1 min-w-0 pr-1">
+                                    <div class="flex items-center flex-wrap gap-0.5 mb-0.5">
+                                        <h3 class="font-bold text-gray-800 text-xs truncate max-w-[110px]">${u.name}</h3>
+                                        ${premiumStar}
+                                        ${badgeHtml}
+                                    </div>
+                                    <p class="text-[9px] text-gray-500 truncate font-medium bg-white/60 inline-block px-1 py-0.5 rounded mt-0.5">${u.bio || "يطمح للوصول إلى القمة 🚀"}</p>
+                                    <p class="text-[8px] text-gray-400 mt-0.5 pl-1.5">ID: ${u.uniqueId}</p>
+                                </div>
+                                
+                                <div class="flex flex-col items-center justify-center shrink-0 pl-1.5 border-r border-gray-100 min-w-[60px]">
+                                    <div class="flex items-center justify-center gap-1 bg-white/70 px-1.5 py-1 rounded-lg shadow-xs w-full border border-gray-100">
+                                        <span class="font-black text-indigo-700 text-base tracking-tight">${u.points || 0}</span>
+                                        <i class="fas fa-gem text-indigo-500 text-[10px]"></i>
+                                    </div>
+                                    ${prizeMoney}
+                                    ${resetBtn}
+                                </div>
                             </div>
                         </div>
                     </div>`;
@@ -5160,56 +5041,81 @@ async function promptForRevengeSubject(opponentName) {
 
         window.loadMoreLeaderboard = function() {
             leaderboardOffset += 25;
-            // يعرض من 25 إلى 50 فقط كحد أقصى
             const nextChunk = allLeaderboardUsers.slice(leaderboardOffset, Math.min(leaderboardOffset + 25, 50));
             
             const div = document.getElementById('leaderboard-list');
             nextChunk.forEach((u, index) => {
                 const globalIndex = leaderboardOffset + index;
-                let frameClass = "frame-rank-common";
-                let rankBadge = `<div class="rank-badge-top">${globalIndex + 1}</div>`;
-                let backgroundClass = 'bg-rank-default';
                 
-                if (u.isPremium && u.premiumExpiry && u.premiumExpiry.toDate() > new Date()) {
-                    backgroundClass = u.selectedBgTheme || 'bg-rank-default';
+                let cardClass = "bg-white border-gray-100 shadow-sm";
+                let backgroundClass = "bg-rank-default";
+                let premiumOverlay = "";
+
+                if (globalIndex <= 9) cardClass = "bg-gradient-to-r from-indigo-50/50 to-blue-50/50 border-indigo-100";
+
+                if (u.isPremium && u.premiumExpiry && u.premiumExpiry.toDate() > new Date() && u.selectedBgTheme && u.selectedBgTheme !== 'bg-rank-default') {
+                    backgroundClass = u.selectedBgTheme;
+                    cardClass = "border-white/30 shadow-sm";
+                    premiumOverlay = `<div class="absolute inset-0 bg-white/40 backdrop-blur-[1px] z-0 rounded-xl"></div>`;
                 }
+
+                let rankVisual = `<div class="absolute -right-2 -top-2 w-6 h-6 bg-gray-800 text-white rounded-lg shadow border-2 border-white flex items-center justify-center font-black text-xs z-20">${globalIndex + 1}</div>`;
                 
+                let frameClass = "border-2 border-gray-100";
+                if (globalIndex <= 9) { frameClass = "border-2 border-indigo-300"; }
+
                 let badgeHtml = "";
                 if (u.isPremium && u.premiumExpiry && u.premiumExpiry.toDate() > new Date() && u.selectedBadge) {
-                    badgeHtml = `<span class="premium-badge" style="background-color: ${u.selectedBadgeColor || '#f59e0b'}">${u.selectedBadge}</span>`;
+                    badgeHtml = `<span class="px-1.5 py-0.5 text-[9px] text-white rounded shadow-sm mx-1" style="background-color: ${u.selectedBadgeColor || '#f59e0b'}">${u.selectedBadge}</span>`;
                 }
-                
+                let premiumStar = u.isPremium && u.premiumExpiry && u.premiumExpiry.toDate() > new Date() ? `<i class="fas fa-crown text-yellow-500 text-[10px] drop-shadow-sm ml-1"></i>` : '';
+
+                let prizeMoney = "";
+                const prizes = ['10$', '7$', '5$', '3$', '2$', '1$', '1$', '1$', '1$', '1$'];
+                if (globalIndex <= 9) {
+                    prizeMoney = `<div class="mt-1 bg-green-100/80 text-green-700 px-1.5 py-0.5 rounded-md text-[9px] font-black border border-green-200 flex items-center justify-center gap-1 shadow-xs w-full"><i class="fas fa-money-bill-wave text-[8px]"></i> ${prizes[globalIndex]}</div>`;
+                }
+
                 let resetBtn = "";
                 if (currentUser && userData && userData.email === ADMIN_EMAIL) {
-                    resetBtn = `<button onclick="resetUserPoints('${u.id}', '${u.name}')" class="w-6 h-6 rounded bg-red-100 text-red-500 flex items-center justify-center mr-2"><i class="fas fa-trash-alt text-xs"></i></button>`;
+                    resetBtn = `<button onclick="resetUserPoints('${u.id}', '${u.name}')" class="mt-1.5 w-6 h-6 rounded-lg bg-red-100 text-red-500 flex items-center justify-center hover:bg-red-200 transition shadow-xs mx-auto"><i class="fas fa-trash-alt text-[9px]"></i></button>`;
                 }
-                
+
                 div.innerHTML += `
-                    <div class="flex items-center justify-between p-4 rounded-xl shadow-sm mb-3 relative overflow-hidden ${backgroundClass}">
-                        <div class="flex items-center gap-4 z-10">
-                            <div class="rank-img-container">
-                                ${rankBadge}
-                                <img src="${u.photo}" class="rank-img ${frameClass}">
-                            </div>
-                            <div>
-                                <p class="font-bold text-gray-800 text-sm flex items-center">
-                                    ${u.name}
-                                    ${badgeHtml}
-                                </p>
-                                <p class="text-[10px] text-gray-600">ID: ${u.uniqueId}</p>
-                                <p class="text-[10px] text-gray-500 mt-1">${u.bio || ""}</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center z-10">
-                            ${resetBtn}
-                            <div class="text-right">
-                                <span class="font-black text-indigo-600 text-lg">${u.points || 0} 💎</span>
+                    <div class="relative mb-3 group animate-[slideUp_0.3s_ease-out]" style="animation-delay: ${index * 0.04}s; animation-fill-mode: both;">
+                        <div class="flex items-center p-2 rounded-xl border overflow-visible transition-all duration-300 ${cardClass} ${backgroundClass}">
+                            ${premiumOverlay}
+                            ${rankVisual}
+                            
+                            <div class="flex items-center gap-2.5 w-full z-10">
+                                <div class="relative w-11 h-11 shrink-0 flex items-center justify-center">
+                                    <img src="${u.photo}" class="w-10 h-10 rounded-full object-cover bg-white p-0.5 relative z-10 ${frameClass}">
+                                </div>
+                                
+                                <div class="flex-1 min-w-0 pr-1">
+                                    <div class="flex items-center flex-wrap gap-0.5 mb-0.5">
+                                        <h3 class="font-bold text-gray-800 text-xs truncate max-w-[110px]">${u.name}</h3>
+                                        ${premiumStar}
+                                        ${badgeHtml}
+                                    </div>
+                                    <p class="text-[9px] text-gray-500 truncate font-medium bg-white/60 inline-block px-1 py-0.5 rounded mt-0.5">${u.bio || "يطمح للوصول إلى القمة 🚀"}</p>
+                                    <p class="text-[8px] text-gray-400 mt-0.5 pl-1.5">ID: ${u.uniqueId}</p>
+                                </div>
+                                
+                                <div class="flex flex-col items-center justify-center shrink-0 pl-1.5 border-r border-gray-100 min-w-[60px]">
+                                    <div class="flex items-center justify-center gap-1 bg-white/70 px-1.5 py-1 rounded-lg shadow-xs w-full border border-gray-100">
+                                        <span class="font-black text-indigo-700 text-base tracking-tight">${u.points || 0}</span>
+                                        <i class="fas fa-gem text-indigo-500 text-[10px]"></i>
+                                    </div>
+                                    ${prizeMoney}
+                                    ${resetBtn}
+                                }
+                                </div>
                             </div>
                         </div>
                     </div>`;
             });
             
-            // إخفاء الزر نهائياً بمجرد الوصول إلى 50 مستخدم
             if (leaderboardOffset + 25 >= 50 || leaderboardOffset + 25 >= allLeaderboardUsers.length) {
                 document.getElementById('load-more-leaderboard').classList.add('hidden');
             }
@@ -5676,17 +5582,19 @@ async function promptForRevengeSubject(opponentName) {
         window.updateProfilePic = async (input) => {
             if(input.files[0]) {
                 try {
-                    showBeautifulAlert('info', 'جاري الرفع', 'جاري رفع الصورة...');
-                    const photoURL = await uploadImageToStorage(input.files[0], currentUser.uid);
+                    showBeautifulAlert('info', 'جاري الرفع', 'جاري معالجة الصورة وتحديثها...');
+                    
+                    // التعديل: استخدام compressImage للحصول على Base64 بدل التخزين في Storage
+                    const photoURL = await compressImage(input.files[0]);
                     
                     await updateDoc(doc(db, "users", currentUser.uid), { photo: photoURL });
                     userData.photo = photoURL;
                     document.getElementById('profile-img').src = photoURL;
                     
-                    showBeautifulAlert('success', 'تم التحديث', 'تم تحديث صورة الملف الشخصي ✅');
+                    showBeautifulAlert('success', 'تم التحديث', 'تم تحديث صورة الملف الشخصي بنجاح ✅');
                 } catch (error) {
                     console.error("Error updating profile picture:", error);
-                    showBeautifulAlert('error', 'خطأ', '❌ حدث خطأ في رفع الصورة: ' + getArabicError(error.code));
+                    showBeautifulAlert('error', 'خطأ', '❌ حدث خطأ في حفظ الصورة');
                 }
             }
         };
@@ -6423,53 +6331,62 @@ window.publishGlobalAd = async function() {
     }
 };
 
-window.checkGlobalAnnouncement = async function() {
+let preloadedAdData = null;
+
+window.preloadGlobalAnnouncement = async function() {
     try {
         const adDoc = await getDoc(doc(db, "system_settings", "global_announcement"));
         if (adDoc.exists()) {
             const adData = adDoc.data();
-            // نجلب وقت آخر إعلان شافه المستخدم (إذا ما شايف شي نعتبره 0)
             const lastSeenAd = localStorage.getItem('last_seen_ad_timestamp') || "0";
-
-            // الشرط الذكي: هل الإعلان الموجود بالسيرفر أحدث من الإعلان اللي شافه المستخدم؟
+            
             if (adData.timestamp && Number(adData.timestamp) > Number(lastSeenAd)) {
-                document.getElementById('global-ad-content').innerText = adData.text;
-                
-                const btnContainer = document.getElementById('global-ad-buttons');
-                btnContainer.innerHTML = '';
-
-                if (adData.type === 'link' && adData.linkUrl) {
-                    let finalUrl = adData.linkUrl;
-                    if (finalUrl.includes('play.google.com/store/apps/details?id=')) {
-                        finalUrl = finalUrl.replace('https://play.google.com/store/apps/details?id=', 'market://details?id=');
-                    } else if (finalUrl.includes('t.me/') && !finalUrl.startsWith('tg://')) {
-                        finalUrl = finalUrl.replace('https://t.me/', 'tg://resolve?domain=').replace('http://t.me/', 'tg://resolve?domain=');
-                    }
-                    
-                    btnContainer.innerHTML += `
-                        <button onclick="window.open('${finalUrl}', '_system'); window.closeGlobalAd('${adData.timestamp}');" class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-4 rounded-xl font-black text-lg shadow-lg hover:scale-105 transition mb-2">
-                            <i class="fas fa-external-link-alt ml-2"></i> ${adData.btnName || 'اضغط هنا'}
-                        </button>
-                        <button onclick="window.closeGlobalAd('${adData.timestamp}')" class="w-full bg-gray-100 text-gray-500 py-3 rounded-xl font-bold hover:bg-gray-200 transition">
-                            إغلاق
-                        </button>
-                    `;
-                } else {
-                    btnContainer.innerHTML += `
-                        <button onclick="window.closeGlobalAd('${adData.timestamp}')" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-xl font-black text-lg shadow-lg hover:scale-105 transition">
-                            حسناً، فهمت
-                        </button>
-                    `;
-                }
-
-                const modal = document.getElementById('global-ad-modal');
-                modal.classList.remove('hidden');
-                modal.style.display = 'flex';
+                preloadedAdData = adData; // حفظ الإعلان ليتم عرضه لاحقاً
             }
         }
     } catch (error) {
-        console.error("Error fetching announcement:", error);
+        console.error("Error prefetching announcement:", error);
     }
+};
+
+window.showPreloadedAnnouncement = function() {
+    if (!preloadedAdData) return; // لا يوجد إعلان جديد
+    
+    const adData = preloadedAdData;
+    document.getElementById('global-ad-content').innerText = adData.text;
+    
+    const btnContainer = document.getElementById('global-ad-buttons');
+    btnContainer.innerHTML = '';
+
+    if (adData.type === 'link' && adData.linkUrl) {
+        let finalUrl = adData.linkUrl;
+        if (finalUrl.includes('play.google.com/store/apps/details?id=')) {
+            finalUrl = finalUrl.replace('https://play.google.com/store/apps/details?id=', 'market://details?id=');
+        } else if (finalUrl.includes('t.me/') && !finalUrl.startsWith('tg://')) {
+            finalUrl = finalUrl.replace('https://t.me/', 'tg://resolve?domain=').replace('http://t.me/', 'tg://resolve?domain=');
+        }
+        
+        btnContainer.innerHTML += `
+            <button onclick="window.open('${finalUrl}', '_system'); window.closeGlobalAd('${adData.timestamp}');" class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-4 rounded-xl font-black text-lg shadow-lg hover:scale-105 transition mb-2">
+                <i class="fas fa-external-link-alt ml-2"></i> ${adData.btnName || 'اضغط هنا'}
+            </button>
+            <button onclick="window.closeGlobalAd('${adData.timestamp}')" class="w-full bg-gray-100 text-gray-500 py-3 rounded-xl font-bold hover:bg-gray-200 transition">
+                إغلاق
+            </button>
+        `;
+    } else {
+        btnContainer.innerHTML += `
+            <button onclick="window.closeGlobalAd('${adData.timestamp}')" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-xl font-black text-lg shadow-lg hover:scale-105 transition">
+                حسناً، فهمت
+            </button>
+        `;
+    }
+
+    const modal = document.getElementById('global-ad-modal');
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+    
+    preloadedAdData = null; // تفريغ المتغير حتى لا يعرض مرة أخرى خطأً
 };
 
 window.closeGlobalAd = function(timestamp) {
