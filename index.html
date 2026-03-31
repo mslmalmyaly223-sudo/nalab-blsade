@@ -856,54 +856,45 @@
     display: block !important;
 }        
 
-@keyframes emojiAppear {
-    from { 
-        opacity: 0; 
-        transform: translate(50%, 20px) scale(0.8); /* للاعب */
-    }
-    to { 
-        opacity: 1; 
-        transform: translate(50%, 0) scale(1); /* للاعب */
-    }
+/* تصميم غيمة الإيموجي الجديدة المحدثة (حجم أصغر وأرتب) */
+.emoji-display {
+    position: absolute;
+    font-size: 35px; /* تم التصغير من 50 إلى 35 */
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    padding: 5px 15px; /* تم تقليل الحواف */
+    border-radius: 30px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    border: 2px solid #f1f5f9;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: cloudPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, cloudFloat 2.5s ease-in-out infinite;
 }
 
-/* أنيميشن خاص للمنافس (اليسار) */
-.emoji-display[style*="left"] {
-    animation: emojiAppearLeft 0.3s ease-out, emojiFloat 2s infinite;
+.emoji-display::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    width: 14px;
+    height: 14px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: -10px 4px 0 -4px white, 10px 4px 0 -4px white;
 }
 
-@keyframes emojiAppearLeft {
-    from { 
-        opacity: 0; 
-        transform: translate(-50%, 20px) scale(0.8); /* للمنافس */
-    }
-    to { 
-        opacity: 1; 
-        transform: translate(-50%, 0) scale(1); /* للمنافس */
-    }
+.emoji-display[style*="right"]::before { right: 20px; }
+.emoji-display[style*="left"]::before { left: 20px; }
+
+@keyframes cloudPop {
+    0% { opacity: 0; transform: translateY(20px) scale(0.5); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-@keyframes emojiFloat {
-    0%, 100% { 
-        transform: translate(50%, 0); /* للاعب */
-    }
-    50% { 
-        transform: translate(50%, -10px); /* للاعب */
-    }
-}
-
-/* أنيميشن خاص للمنافس */
-.emoji-display[style*="left"] {
-    animation: emojiAppearLeft 0.3s ease-out, emojiFloatLeft 2s infinite;
-}
-
-@keyframes emojiFloatLeft {
-    0%, 100% { 
-        transform: translate(-50%, 0); /* للمنافس */
-    }
-    50% { 
-        transform: translate(-50%, -10px); /* للمنافس */
-    }
+@keyframes cloudFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
 }
         
         <!-- أضف هذا الستايل في قسم <style> -->
@@ -1314,6 +1305,11 @@
                     <h3 class="font-bold text-gray-800 mb-4 border-r-4 border-indigo-500 pr-3">بدء تحدي جديد 🔥</h3>
                     <label class="block text-sm font-bold text-gray-600 mb-2">المادة</label>
                     <select id="challenge-subject" class="input-box mb-4 bg-gray-50"></select>
+                    
+                    <label class="block text-sm font-bold text-gray-600 mb-2 mt-3">الفصل / الموضوع</label>
+<select id="challenge-chapter" class="input-box mb-4 bg-gray-50">
+    <option value="">اختر المادة أولاً</option>
+</select>
 
                     <label class="block text-sm font-bold text-gray-600 mb-2">نوع التحدي</label>
                     <div class="grid grid-cols-2 gap-3 mb-6">
@@ -2003,6 +1999,9 @@
                             <option value="3med">الثالث متوسط</option>
                         </select>
                         <select id="admin-filter-subject" class="input-box text-sm p-2" onchange="filterAdminQuestions()"><option value="">كل المواد</option></select>
+                        <select id="admin-filter-chapter" class="input-box text-sm p-2" onchange="filterAdminQuestions()">
+    <option value="">كل الفصول</option>
+</select>
                         <select id="admin-filter-type" class="input-box text-sm p-2" onchange="filterAdminQuestions()">
                             <option value="">كل الأنواع</option>
                             <option value="mcq">اختيارات</option>
@@ -2042,6 +2041,11 @@
                                 <option value="">اختر المادة</option>
                             </select>
                         </div>
+                        
+                        <label class="block text-sm font-bold text-gray-600 mb-2 mt-3">الفصل / الموضوع</label>
+<select id="upload-chapter" class="input-box mb-4">
+    <option value="">اختر المادة أولاً</option>
+</select>
 
                         <div class="mb-6">
                             <label class="block text-sm font-bold text-gray-600 mb-2">نوع السؤال</label>
@@ -2211,6 +2215,10 @@
                 <div class="flex gap-2 mb-3">
                      <div class="flex-1"><label class="block text-xs font-bold text-gray-500 mb-1">الصف</label><select id="edit-q-grade" class="input-box text-sm p-2"><option value="6sci">6 علمي</option><option value="6lit">6 أدبي</option><option value="3med">3 متوسط</option></select></div>
                      <div class="flex-1"><label class="block text-xs font-bold text-gray-500 mb-1">المادة</label><select id="edit-q-subject" class="input-box text-sm p-2"></select></div>
+                     <div class="flex-1 mt-2 mb-3">
+    <label class="block text-xs font-bold text-gray-500 mb-1">الفصل</label>
+    <select id="edit-q-chapter" class="input-box text-sm p-2"></select>
+</div>
                 </div>
                 <div id="edit-mcq-fields" class="hidden">
                      <label class="block text-xs font-bold text-gray-500 mb-1">الخيار 1</label><input type="text" id="edit-ans-0" class="input-box mb-2 p-2 text-sm">
@@ -2312,7 +2320,7 @@
         <button onclick="openPage('screen-admin-hub')" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
         <h1 class="font-bold text-lg text-gray-800">المستخرج الذكي</h1>
     </div>
-    <div class="scroll-container px-5 py-6">
+    <div class="scroll-container px-5 py-6 pb-40 mb-20">
         <div class="bg-white p-6 rounded-3xl shadow-xl border border-red-100 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 to-orange-500"></div>
             
@@ -2333,7 +2341,7 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-gray-500 mb-2 mr-1">2. المرحلة</label>
-                        <select id="bulk-ai-grade" class="input-box text-sm" onchange="window.populateSubjects(this.value, 'bulk-ai-subject')">
+                        <select id="bulk-ai-grade" class="input-box text-sm" onchange="window.populateSubjects(this.value, 'bulk-ai-subject', 'bulk-ai-chapter')">
                             <option value="">اختر</option>
                             <option value="6sci">6 علمي</option>
                             <option value="6lit">6 أدبي</option>
@@ -2347,6 +2355,12 @@
                         </select>
                     </div>
                 </div>
+                <div class="mt-3">
+    <label class="block text-xs font-bold text-gray-500 mb-2 mr-1">الفصل / الموضوع</label>
+    <select id="bulk-ai-chapter" class="input-box text-sm">
+        <option value="">اختر المادة أولاً</option>
+    </select>
+</div>
 
                 <div>
                     <label class="block text-xs font-bold text-gray-500 mb-2 mr-1">4. نوع الأسئلة المطلوب استخراجها</label>
@@ -2372,6 +2386,26 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<div id="interruption-modal" class="modal-overlay hidden" style="z-index: 30000 !important;">
+    <div class="modal-content text-center border-4 border-rose-500 shadow-2xl">
+        <div class="w-20 h-20 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
+            <i class="fas fa-exclamation-triangle text-3xl"></i>
+        </div>
+        <h3 class="text-2xl font-black text-gray-800 mb-2">محاولة هروب! 🏃‍♂️</h3>
+        <p class="text-gray-600 font-bold mb-6">لقد خرجت من التطبيق أثناء المباراة. أمامك خياران فقط:</p>
+        
+        <div class="flex flex-col gap-3">
+            <button onclick="resumeInterruptedGame()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-black rounded-2xl shadow-lg active:scale-95 transition">
+                ✅ العودة وإكمال التحدي
+            </button>
+            <button onclick="withdrawFromInterruption()" class="w-full py-3 bg-rose-50 text-rose-600 font-bold rounded-xl border-2 border-rose-200 active:scale-95 transition">
+                ❌ انسحاب وخسارة 10 نقاط
+            </button>
+        </div>
+        <p id="interruption-timer" class="mt-4 text-xs text-gray-400 font-medium">سيتم اعتبارك منسحباً تلقائياً بعد مرور 5 دقائق</p>
     </div>
 </div>
 
@@ -2437,12 +2471,54 @@
         ];
 
         const subjects = {
-            '6sci': ['اسلامية', 'عربي', 'انكليزي', 'احياء', 'رياضيات', 'كيمياء', 'فيزياء'],
-            '6lit': ['اسلامية', 'عربي', 'انكليزي', 'تاريخ', 'رياضيات', 'جغرافية', 'اقتصاد'],
+            '6sci': ['اسلامية', 'قواعد', 'ادب', 'انكليزي', 'احياء', 'رياضيات', 'كيمياء', 'فيزياء'],
+            '6lit': ['اسلامية', 'قواعد', 'ادب', 'انكليزي', 'تاريخ', 'رياضيات', 'جغرافية', 'اقتصاد'],
             '3med': ['اسلامية', 'عربي', 'انكليزي', 'رياضيات', 'كيمياء', 'فيزياء', 'اجتماعيات', 'احياء']
         };
 
-        const sharedSubjects = ['اسلامية', 'عربي', 'انكليزي'];
+        // المواد المشتركة بين (السادس العلمي والسادس الأدبي) فـقـط
+        const sharedSubjects = ['اسلامية', 'انكليزي', 'قواعد', 'ادب'];
+
+        // دالة مساعدة لتوليد الفصول أوتوماتيكياً
+        function generateChapters(count, prefix = 'الفصل') {
+            let arr = [];
+            for(let i = 1; i <= count; i++) arr.push(`${prefix} ${i}`);
+            return arr;
+        }
+
+        // قاعدة بيانات الفصول لكل مادة حسب الصف
+        const chaptersData = {
+            '6sci': {
+                'اسلامية': generateChapters(5),
+                'قواعد': ['الاستفهام', 'النفي', 'التوكيد', 'النداء', 'التقديم والتأخير', 'التعجب', 'المدح والذم'],
+                'ادب': ['الجزء الأول', 'الجزء الثاني'],
+                'انكليزي': generateChapters(8, 'الوحدة'),
+                'احياء': generateChapters(5),
+                'رياضيات': generateChapters(6),
+                'كيمياء': generateChapters(8),
+                'فيزياء': generateChapters(9)
+            },
+            '6lit': {
+                'اسلامية': generateChapters(5),
+                'قواعد': ['الاستفهام', 'النفي', 'التوكيد', 'النداء', 'التقديم والتأخير', 'التعجب', 'المدح والذم', 'التمني والترجي', 'العرض والتحضيض'],
+                'ادب': ['الجزء الأول', 'الجزء الثاني'],
+                'انكليزي': generateChapters(8, 'الوحدة'),
+                'جغرافية': generateChapters(7),
+                'رياضيات': generateChapters(4),
+                'تاريخ': generateChapters(6),
+                'اقتصاد': generateChapters(6)
+            },
+            '3med': {
+                'اسلامية': generateChapters(5, 'الوحدة'),
+                'عربي': ['الجزء الأول', 'الجزء الثاني'],
+                'انكليزي': generateChapters(8, 'الوحدة'),
+                'رياضيات': generateChapters(6),
+                'احياء': generateChapters(14),
+                'فيزياء': generateChapters(9),
+                'كيمياء': generateChapters(9),
+                'اجتماعيات': ['تاريخ', 'جغرافية', 'التربية الوطنية']
+            }
+        };
 
         let uploadQType = 'mcq';
         let uploadCorrectAnswer = null;
@@ -2502,7 +2578,7 @@ checkPendingQuestionsNotification();
                             document.getElementById('challenge-active-card').classList.remove('hidden');
                             document.getElementById('header-grade-badge').innerText = getGradeName(userData.grade);
                             document.getElementById('header-grade-badge').classList.remove('hidden');
-                            populateSubjects(userData.grade, 'challenge-subject');
+                            populateSubjects(userData.grade, 'challenge-subject', 'challenge-chapter');
                         } else {
                         
                             document.getElementById('grade-selector-card').classList.remove('hidden');
@@ -2512,6 +2588,7 @@ checkPendingQuestionsNotification();
                         
                         // جلب الإعلان في الخلفية أثناء تشغيل الأنيميشن
                         if(typeof window.preloadGlobalAnnouncement === 'function') {
+                        window.checkInterruptedGame();
                             window.preloadGlobalAnnouncement();
                         }
 
@@ -2848,17 +2925,61 @@ snapAll.docs.forEach(async (d) => {
             }
         }
 
-        function populateSubjects(grade, elementId, type = null) {
-            const sel = document.getElementById(elementId);
+        function populateSubjects(grade, subjectElementId, chapterElementId = null) {
+            const sel = document.getElementById(subjectElementId);
             if(!sel) return;
             let filteredSubjects = subjects[grade] || [];
             sel.innerHTML = '<option value="">اختر المادة</option>';
             filteredSubjects.forEach(s => sel.innerHTML += `<option value="${s}">${s}</option>`);
             if (filteredSubjects.length === 0) sel.innerHTML += '<option value="" disabled>لا توجد مواد متاحة</option>';
+
+            // ربط حدث تغيير المادة لتحديث الفصول تلقائياً
+            if(chapterElementId) {
+                sel.onchange = function() {
+                    populateChapters(grade, this.value, chapterElementId);
+                    // إذا كان في صفحة الرفع اليدوي
+                    if(subjectElementId === 'upload-subject') {
+                        window.onUploadSubjectChange();
+                    }
+                };
+                // تصفير الفصول عند تغيير الصف
+                document.getElementById(chapterElementId).innerHTML = '<option value="">اختر المادة أولاً</option>';
+            }
         }
         
-        // هذا السطر الجديد اللي راح يحل مشكلة عدم ظهور المواد
         window.populateSubjects = populateSubjects;
+
+        window.populateChapters = function(grade, subject, chapterElementId) {
+            const chapterSel = document.getElementById(chapterElementId);
+            if(!chapterSel) return;
+            
+            chapterSel.innerHTML = '<option value="">اختر الفصل / الموضوع</option>';
+            
+            if(grade && subject && chaptersData[grade] && chaptersData[grade][subject]) {
+                const chaptersList = chaptersData[grade][subject];
+                chaptersList.forEach(ch => {
+                    chapterSel.innerHTML += `<option value="${ch}">${ch}</option>`;
+                });
+            } else {
+                chapterSel.innerHTML = '<option value="">الكل</option>';
+            }
+        };
+
+        // تحديث دالة حفظ المرحلة للمستخدم لتشمل الفصول
+        window.saveUserGrade = async () => {
+            const g = document.getElementById('grade-select').value;
+            if (!g) {
+                showBeautifulAlert('warning', 'تنبيه', 'يرجى اختيار المرحلة');
+                return;
+            }
+            await updateDoc(doc(db, "users", currentUser.uid), { grade: g });
+            userData.grade = g;
+            document.getElementById('grade-selector-card').classList.add('hidden');
+            document.getElementById('challenge-active-card').classList.remove('hidden');
+            document.getElementById('header-grade-badge').innerText = getGradeName(g);
+            document.getElementById('header-grade-badge').classList.remove('hidden');
+            populateSubjects(g, 'challenge-subject', 'challenge-chapter');
+        };
 
         window.switchAuthTab = (tab) => {
             if(tab === 'login') {
@@ -3461,6 +3582,7 @@ window.markNotificationsAsRead = () => window.markAllNotificationsAsRead(false);
             if (bioText.length > 25) {
                 bioText = bioText.substring(0, 25) + "...";
             }
+            window.checkInterruptedGame();
             document.getElementById('profile-bio-text').innerText = bioText;
             
             const container = document.getElementById('profile-name-container');
@@ -3817,67 +3939,70 @@ setupHeaderUI();
         };
 
         window.startMatchmaking = async (mode) => {
-    if (userData.points < 0) {
-        showBeautifulAlert('error', 'نقاط سالبة', 'نقاطك سالبة! قم برفع الأسئلة للحصول على نقاط تعويضية.');
-        return;
-    }
-    
-    const sub = document.getElementById('challenge-subject').value;
-    if(!sub || !selectedQType) {
-        showBeautifulAlert('warning', 'تنبيه', 'يرجى اختيار المادة ونوع الأسئلة أولاً');
-        return;
-    }
-
-    currentGameMode = 'student';
-
-    document.getElementById('challenge-active-card').classList.add('hidden');
-    document.getElementById('searching-ui').classList.remove('hidden');
-    document.getElementById('searching-ui').style.display = 'flex'; 
-    document.getElementById('search-msg').innerText = "جاري البحث عن منافس حقيقي... 🔍";
-    
-    await findRandomOpponent(sub);
-};
-
-async function findRandomOpponent(sub) {
-    console.log("البحث عن منافس عشوائي للمادة:", sub);
-    try {
-        const q = query(collection(db, "users"), limit(500));
-        const snap = await getDocs(q);
-        
-        if (snap.empty) {
-            showBeautifulAlert('warning', 'تنبيه', 'لا يوجد منافسين متاحين حالياً');
-            cancelSearch();
-            return;
-        }
-        
-        const eligibleUsers = [];
-        snap.forEach(doc => {
-            const user = doc.data();
-            if (user.uid && user.uid !== currentUser.uid) {
-                eligibleUsers.push({ id: doc.id, ...user });
+            if (userData.points < 0) {
+                showBeautifulAlert('error', 'نقاط سالبة', 'نقاطك سالبة! قم برفع الأسئلة للحصول على نقاط تعويضية.');
+                return;
             }
-        });
-        
-        if (eligibleUsers.length === 0) {
-            showBeautifulAlert('warning', 'تنبيه', 'لا يوجد منافسين متاحين حالياً');
-            cancelSearch();
-            return;
+            
+            const sub = document.getElementById('challenge-subject').value;
+            const chapter = document.getElementById('challenge-chapter').value;
+
+            if(!sub || !chapter || !selectedQType) {
+                showBeautifulAlert('warning', 'تنبيه', 'يرجى اختيار المادة والفصل ونوع الأسئلة أولاً');
+                return;
+            }
+
+            currentGameMode = 'student';
+
+            document.getElementById('challenge-active-card').classList.add('hidden');
+            document.getElementById('searching-ui').classList.remove('hidden');
+            document.getElementById('searching-ui').style.display = 'flex'; 
+            document.getElementById('search-msg').innerText = "جاري البحث عن منافس حقيقي... 🔍";
+            
+            // سنمرر الفصل مع المادة
+            await findRandomOpponent(sub, chapter);
+        };
+
+async function findRandomOpponent(sub, chapter) {
+            console.log("البحث عن منافس عشوائي للمادة والفصل:", sub, chapter);
+            try {
+                const q = query(collection(db, "users"), limit(500));
+                const snap = await getDocs(q);
+                
+                if (snap.empty) {
+                    showBeautifulAlert('warning', 'تنبيه', 'لا يوجد منافسين متاحين حالياً');
+                    cancelSearch();
+                    return;
+                }
+                
+                const eligibleUsers = [];
+                snap.forEach(doc => {
+                    const user = doc.data();
+                    if (user.uid && user.uid !== currentUser.uid) {
+                        eligibleUsers.push({ id: doc.id, ...user });
+                    }
+                });
+                
+                if (eligibleUsers.length === 0) {
+                    showBeautifulAlert('warning', 'تنبيه', 'لا يوجد منافسين متاحين حالياً');
+                    cancelSearch();
+                    return;
+                }
+                
+                const chosenOpponent = eligibleUsers[Math.floor(Math.random() * eligibleUsers.length)];
+                
+                await showVSAnimationWithButtons(
+                    { uid: currentUser.uid, name: userData.name, photo: userData.photo, grade: userData.grade },
+                    { uid: chosenOpponent.id, name: chosenOpponent.name, photo: chosenOpponent.photo, grade: chosenOpponent.grade },
+                    chapter // تمرير الفصل
+                );
+                
+            } catch (error) {
+                console.error("Error finding opponent:", error);
+                showBeautifulAlert('error', 'خطأ', 'حدث خطأ في البحث عن منافس');
+                cancelSearch();
+            }
         }
-        
-        const chosenOpponent = eligibleUsers[Math.floor(Math.random() * eligibleUsers.length)];
-        console.log("تم اختيار المنافس:", chosenOpponent.name);
-        
-        await showVSAnimationWithButtons(
-            { uid: currentUser.uid, name: userData.name, photo: userData.photo, grade: userData.grade },
-            { uid: chosenOpponent.id, name: chosenOpponent.name, photo: chosenOpponent.photo, grade: chosenOpponent.grade }
-        );
-        
-    } catch (error) {
-        console.error("Error finding opponent:", error);
-        showBeautifulAlert('error', 'خطأ', 'حدث خطأ في البحث عن منافس');
-        cancelSearch();
-    }
-}
 
 async function showVSAnimationWithButtons(p1, p2) {
     return new Promise(resolve => {
@@ -3919,148 +4044,111 @@ async function showVSAnimationWithButtons(p1, p2) {
 
 
         async function startMatchWithOpponent() {
-    console.log("بدء المباراة مع المنافس:", selectedOpponent?.name);
-    
-    // إخفاء شاشة VS
-    document.getElementById('vs-screen').classList.add('hidden');
-    
-    // بدء المباراة مباشرة
-    const sub = document.getElementById('challenge-subject').value;
-    if (!sub) {
-        showBeautifulAlert('error', 'خطأ', 'لم يتم اختيار المادة');
-        document.getElementById('challenge-active-card').classList.remove('hidden');
-        return;
-    }
-    
-    if (selectedOpponent && selectedOpponent.id) {
-        startStudentMatch(sub, selectedOpponent);
-    } else {
-        console.error("خطأ: لم يتم تحديد منافس");
-        showBeautifulAlert('error', 'خطأ', 'لم يتم تحديد منافس');
-        cancelSearch();
-    }
-}
-
-        // أضف هذا الجزء في بداية دالة startStudentMatch
-async function startStudentMatch(sub, opponent) {
-    console.log("بدء مباراة طالب مع:", opponent?.name || "منافس غير معروف");
-    
-    if (!opponent || !opponent.id) {
-        console.error("خطأ: بيانات المنافس غير مكتملة");
-        showBeautifulAlert('error', 'خطأ', 'بيانات المنافس غير مكتملة');
-        cancelSearch();
-        return;
-    }
-    
-    // الحصول على الأسئلة مع معالجة أفضل للخطأ
-    let qDocs = [];
-    try {
-        qDocs = await getQuestions(sub, selectedQType);
-    } catch (error) {
-        console.error("Error getting questions:", error);
-    }
-    
-    // إذا لم توجد أسئلة كافية، نبحث في المواد المشتركة
-    if (qDocs.length < 5) {
-        console.log(`أسئلة ${sub} غير كافية (${qDocs.length})، البحث في المواد المشتركة...`);
-        
-        // البحث في جميع المواد المشتركة
-        const sharedSubjectsList = sharedSubjects.filter(s => s !== sub);
-        for (let sharedSub of sharedSubjectsList) {
-            try {
-                const additionalQs = await getQuestions(sharedSub, selectedQType);
-                if (additionalQs.length > 0) {
-                    qDocs = [...qDocs, ...additionalQs];
-                    console.log(`تم إضافة ${additionalQs.length} سؤال من ${sharedSub}`);
-                    if (qDocs.length >= 10) break;
-                }
-            } catch (e) {
-                console.error(`Error getting questions from ${sharedSub}:`, e);
+            const sub = document.getElementById('challenge-subject').value;
+            const chapter = document.getElementById('challenge-chapter').value;
+            document.getElementById('vs-screen').classList.add('hidden');
+            
+            if (selectedOpponent && selectedOpponent.id) {
+                startStudentMatch(sub, chapter, selectedOpponent);
+            } else {
+                cancelSearch();
             }
         }
-    }
-    
-    // إذا مازالت الأسئلة غير كافية، نستخدم أي أسئلة متوفرة
-    if (qDocs.length === 0) {
-        showBeautifulAlert('warning', 'تنبيه', `لا توجد أسئلة كافية في مادة ${sub}. جاري استخدام أسئلة من مواد أخرى...`);
-        
-        // البحث في جميع مواد المرحلة
-        const allSubjects = subjects[userData.grade] || [];
-        for (let otherSub of allSubjects) {
-            if (otherSub === sub) continue;
-            try {
-                const otherQs = await getQuestions(otherSub, selectedQType);
-                if (otherQs.length > 0) {
-                    qDocs = [...qDocs, ...otherQs];
-                    console.log(`تم إضافة ${otherQs.length} سؤال من ${otherSub}`);
-                    if (qDocs.length >= 10) break;
-                }
-            } catch (e) {
-                console.error(`Error getting questions from ${otherSub}:`, e);
-            }
-        }
-    }
-    
-    if (qDocs.length === 0) {
-        showBeautifulAlert('error', 'خطأ', 'عذراً، لا توجد أسئلة كافية حالياً. يرجى المحاولة لاحقاً أو اختيار مادة أخرى.');
-        cancelSearch();
-        return;
-    }
-    
-    // تحديد عدد الأسئلة بناءً على الاشتراك
-    let limit = isPremiumValid(userData) ? 15 : 10;
-    const shuffledQs = qDocs.sort(() => 0.5 - Math.random()).slice(0, limit);
-    
-    console.log(`تم تحضير ${shuffledQs.length} سؤال للمباراة`);
-    
-    localMatchData = {
-        status: 'active',
-        grade: userData.grade,
-        player1: { 
-            uid: currentUser.uid, 
-            name: userData.name, 
-            score: 0, 
-            photo: userData.photo,
-            grade: userData.grade
-        },
-        player2: { 
-            uid: opponent.id, 
-            name: opponent.name, 
-            score: 0, 
-            photo: opponent.photo,
-            grade: opponent.grade
-        },
-        questions: shuffledQs, 
-        currentIdx: 0, 
-        answersCount: 0,
-        totalQuestions: limit,
-        subject: sub // حفظ المادة المستخدمة
-    };
-    
-    console.log("تم تحضير المباراة مع:", opponent.name);
-    
-    // إخفاء جميع الشاشات الأخرى
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById('searching-ui').classList.add('hidden');
-    
-    // عرض واجهة اللعبة
-    document.getElementById('game-overlay').classList.remove('hidden');
-    document.getElementById('withdraw-game-btn').classList.remove('hidden');
-    document.getElementById('emoji-container').classList.remove('hidden');
-    
-    renderGame(localMatchData);
-}
 
-
-        async function getQuestions(sub, type) {
-            if (!userData.grade) {
-                console.error("لا توجد مرحلة محددة للمستخدم");
-                return [];
+async function startStudentMatch(sub, chapter, opponent) {
+            if (!opponent || !opponent.id) { cancelSearch(); return; }
+            
+            let qDocs = [];
+            try { qDocs = await getQuestions(sub, chapter, selectedQType); } catch (error) { console.error(error); }
+            
+            if (qDocs.length === 0) {
+                showBeautifulAlert('error', 'عذراً', `لا توجد أسئلة كافية في "${chapter}" لمادة ${sub}. جرب فصلاً آخر.`);
+                cancelSearch();
+                return;
             }
             
+            let limit = isPremiumValid(userData) ? 15 : 10;
+            const shuffledQs = qDocs.sort(() => 0.5 - Math.random()).slice(0, limit);
+            
+            localMatchData = {
+                status: 'active', grade: userData.grade,
+                player1: { uid: currentUser.uid, name: userData.name, score: 0, photo: userData.photo, grade: userData.grade },
+                player2: { uid: opponent.id, name: opponent.name, score: 0, photo: opponent.photo, grade: opponent.grade },
+                questions: shuffledQs, currentIdx: 0, answersCount: 0, totalQuestions: limit, subject: sub, chapter: chapter
+            };
+            
+            // ⚠️ التعديل المهم: حفظ كل التفاصيل (الخصم ونوع اللعبة) حتى ما يصفن الذكاء الاصطناعي من ترجع
+            const session = {
+                matchData: localMatchData,
+                gameMode: currentGameMode,
+                opponent: opponent,
+                startTime: Date.now(),
+                lastActive: Date.now()
+            };
+            localStorage.setItem('active_match_session', JSON.stringify(session));
+            
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('searching-ui').classList.add('hidden');
+            document.getElementById('game-overlay').classList.remove('hidden');
+            document.getElementById('withdraw-game-btn').classList.remove('hidden');
+            document.getElementById('emoji-container').classList.remove('hidden');
+            
+            renderGame(localMatchData);
+        }
+        
+window.checkInterruptedGame = async function() {
+            const savedSession = localStorage.getItem('active_match_session');
+            if (!savedSession) return;
+
+            const session = JSON.parse(savedSession);
+            const now = Date.now();
+            const diffMinutes = (now - session.lastActive) / (1000 * 60);
+
+            if (diffMinutes > 5) {
+                localStorage.removeItem('active_match_session');
+                await updateDoc(doc(db, "users", currentUser.uid), { points: increment(-10) });
+                userData.points -= 10;
+                setupHeaderUI();
+                showBeautifulAlert('error', 'انسحاب تلقائي', 'لقد تغيبت عن المباراة لأكثر من 5 دقائق، تم خصم 10 نقاط منك.');
+            } else {
+                // ⚠️ التعديل: استرجاع الخصم ونوع اللعبة حتى يكمل لعب
+                localMatchData = session.matchData;
+                currentGameMode = session.gameMode || 'student';
+                selectedOpponent = session.opponent || null;
+                document.getElementById('interruption-modal').classList.remove('hidden');
+            }
+        };
+
+        window.resumeInterruptedGame = function() {
+            document.getElementById('interruption-modal').classList.add('hidden');
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('game-overlay').classList.remove('hidden');
+            document.getElementById('withdraw-game-btn').classList.remove('hidden');
+            document.getElementById('emoji-container').classList.remove('hidden');
+            renderGame(localMatchData);
+        };
+
+        // دالة جديدة مخصصة للانسحاب المباشر من نافذة الهروب (بدون رسالة تأكيد مزعجة وتخفي النافذة فوراً)
+        window.withdrawFromInterruption = async function() {
+            document.getElementById('interruption-modal').classList.add('hidden');
+            localStorage.removeItem('active_match_session');
+            await window.withdrawFromGame(true); // نمرر true لتجاوز الـ confirm
+        };
+
+        async function getQuestions(sub, chapter, type) {
+            if (!userData.grade) return [];
+            
             let gradeCondition = userData.grade;
-            if(sharedSubjects.includes(sub) && (userData.grade === '6sci' || userData.grade === '6lit')) {
-                gradeCondition = ['6sci', '6lit'];
+            
+            // ⚠️ الشرط الصارم: المشترك فقط للسادس العلمي والأدبي حصراً (الثالث متوسط معزول تماماً)
+            if (sharedSubjects.includes(sub)) {
+                if (userData.grade === '6sci' || userData.grade === '6lit') {
+                    // إذا كان الطالب سادس، يبحث بأسئلة العلمي والأدبي معاً للمواد المشتركة (إذا تطابق الفصل)
+                    gradeCondition = ['6sci', '6lit'];
+                } else {
+                    // إذا كان الطالب ثالث متوسط، يبقى ثالث متوسط فقط ولا يختلط مع السادس
+                    gradeCondition = '3med'; 
+                }
             }
             
             let q;
@@ -4068,33 +4156,39 @@ async function startStudentMatch(sub, opponent) {
                 q = query(
                     collection(db, "questions"), 
                     where("grade", "in", gradeCondition),  
-                    where("subject", "==", sub), 
+                    where("subject", "==", sub),
+                    where("chapter", "==", chapter),
                     where("type", "==", type), 
-                    limit(30)
+                    limit(40)
                 );
             } else {
                 q = query(
                     collection(db, "questions"), 
                     where("grade", "==", gradeCondition),  
-                    where("subject", "==", sub), 
+                    where("subject", "==", sub),
+                    where("chapter", "==", chapter),
                     where("type", "==", type), 
-                    limit(30)
+                    limit(40)
                 );
             }
             
             const snap = await getDocs(q);
             const list = [];
-            snap.forEach(d => {
-                const data = d.data();
-                list.push(data);
-            });
+            snap.forEach(d => list.push(d.data()));
             return list;
         }
         
         let emojiUsedInCurrentQuestion = false;
 
         function renderGame(data) {
-    if (isExitingGame) return;
+            if (isExitingGame) return;
+            
+            // تحديث وقت النشاط في الجلسة المحفوظة
+            const session = JSON.parse(localStorage.getItem('active_match_session'));
+            if(session) {
+                session.lastActive = Date.now();
+                localStorage.setItem('active_match_session', JSON.stringify(session));
+            }
     const totalQs = data.questions.length;
     if(!data.questions || data.currentIdx >= totalQs) { 
         endGame(data); 
@@ -4224,38 +4318,40 @@ function enableEmojiButtons() {
 }
 
         function showEmoji(emoji, player) {
-    if (currentEmojiDisplay) {
-        currentEmojiDisplay.remove();
-    }
-    
-    const display = document.createElement('div');
-    display.className = 'emoji-display';
-    display.innerText = emoji;
-    
-    // تصحيح المواقع (RTL)
-    // أنت (اللاعب) في اليمين، المنافس في اليسار
-    if (player === 'player') {
-        // تظهر تحت صورتك (أنت) - الجانب الأيمن
-        display.style.top = '60px';
-        display.style.right = '20%';  // تغيير من left إلى right
-        display.style.transform = 'translateX(50%)'; // تصحيح التحويل
-    } else {
-        // تظهر تحت صورة المنافس - الجانب الأيسر
-        display.style.top = '60px';
-        display.style.left = '20%';  // المنافس في اليسار
-        display.style.transform = 'translateX(-50%)';
-    }
-    
-    document.getElementById('game-overlay').appendChild(display);
-    currentEmojiDisplay = display;
-    
-    setTimeout(() => {
-        if (display.parentNode) {
-            display.remove();
-            currentEmojiDisplay = null;
+            if (currentEmojiDisplay) {
+                currentEmojiDisplay.remove();
+            }
+            
+            const display = document.createElement('div');
+            display.className = 'emoji-display';
+            display.innerText = emoji;
+            
+            // ضبط موقع الغيمة لتظهر أسفل صورة المستخدم مباشرة وبشكل أنيق
+            if (player === 'player') {
+                display.style.top = '85px'; // أسفل الشريط العلوي
+                display.style.right = '5%'; // تحت صورتك باليمين
+            } else {
+                display.style.top = '85px'; // أسفل الشريط العلوي
+                display.style.left = '5%';  // تحت صورة المنافس باليسار
+            }
+            
+            document.getElementById('game-overlay').appendChild(display);
+            currentEmojiDisplay = display;
+            
+            // إخفاء الغيمة بعد 2.5 ثانية (وقت كافي وجميل)
+            setTimeout(() => {
+                if (display.parentNode) {
+                    display.style.animation = 'none'; // نوقف الطوفان
+                    display.style.opacity = '0';
+                    display.style.transform = 'translateY(10px) scale(0.8)';
+                    display.style.transition = 'all 0.3s ease-in';
+                    setTimeout(() => {
+                        if(display.parentNode) display.remove();
+                        currentEmojiDisplay = null;
+                    }, 300);
+                }
+            }, 2500);
         }
-    }, 2000);
-}
 
 function getStudentSmartEmoji(studentAnsweredCorrectly, userWasCorrect) {
     // حالة 1: الطالب جاوب صح، وأنت أخطأت (انفجار شماتة وضحك هستيري)
@@ -4350,52 +4446,51 @@ function triggerStudentAIResponse() {
             renderGame(localMatchData);
         }
 
-        window.withdrawFromGame = async function() {
-    console.log("محاولة الانسحاب من المباراة");
-    
-    // التأكيد من المستخدم باستخدام alert مدمج
-    const userConfirmed = confirm("هل أنت متأكد من الانسحاب من المباراة؟\nسيتم خصم 10 نقاط منك!");
-    
-    if (!userConfirmed) {
-        console.log("تم إلغاء الانسحاب");
-        return;
-    }
-    
-    try {
-        let penalty = -10; // الخصم ثابت -10 سواء كانت نقاطه صفر أو أقل
-        
-        console.log("خصم النقاط:", penalty);
-        
-        // تحديث النقاط في قاعدة البيانات (سيقبل النزول للسالب)
-        await updateDoc(doc(db, "users", currentUser.uid), {
-            points: increment(penalty)
-        });
-        
-        // تحديث النقاط محلياً
-        userData.points += penalty;
-        setupHeaderUI();
-        
-        // منح النقاط للخصم إذا كان طالب عشوائي
-        if (localMatchData && localMatchData.player2 && localMatchData.player2.uid !== 'AI_BOT') {
-            try {
-                const opponentRef = doc(db, "users", localMatchData.player2.uid);
-                await updateDoc(opponentRef, {
-                    points: increment(10)
-                });
-                console.log("تم منح 10 نقاط للخصم");
-            } catch (error) {
-                console.error("Error giving points to opponent:", error);
+        window.withdrawFromGame = async function(skipConfirm = false) {
+            console.log("محاولة الانسحاب من المباراة");
+            
+            // إذا لم يكن الانسحاب من شاشة الانقطاع، اطلب التأكيد
+            if (!skipConfirm) {
+                const userConfirmed = confirm("هل أنت متأكد من الانسحاب من المباراة؟\nسيتم خصم 10 نقاط منك!");
+                if (!userConfirmed) {
+                    console.log("تم إلغاء الانسحاب");
+                    return;
+                }
             }
-        }
-        
-        // إظهار نتيجة الانسحاب
-        showWithdrawalResult();
-        
-    } catch (error) {
-        console.error("Error withdrawing:", error);
-        showBeautifulAlert('error', 'خطأ', 'حدث خطأ أثناء الانسحاب');
-    }
-};
+            
+            try {
+                let penalty = -10;
+                
+                // إخفاء نافذة الانقطاع احتياطياً وحذف الجلسة
+                const interruptionModal = document.getElementById('interruption-modal');
+                if(interruptionModal) interruptionModal.classList.add('hidden');
+                localStorage.removeItem('active_match_session');
+
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    points: increment(penalty)
+                });
+                
+                userData.points += penalty;
+                setupHeaderUI();
+                
+                if (localMatchData && localMatchData.player2 && localMatchData.player2.uid !== 'AI_BOT') {
+                    try {
+                        const opponentRef = doc(db, "users", localMatchData.player2.uid);
+                        await updateDoc(opponentRef, {
+                            points: increment(10)
+                        });
+                    } catch (error) {
+                        console.error("Error giving points to opponent:", error);
+                    }
+                }
+                
+                showWithdrawalResult();
+                
+            } catch (error) {
+                console.error("Error withdrawing:", error);
+                showBeautifulAlert('error', 'خطأ', 'حدث خطأ أثناء الانسحاب');
+            }
+        };
 
 function showWithdrawalResult() {
     console.log("عرض نتيجة الانسحاب");
@@ -4452,6 +4547,7 @@ function showWithdrawalResult() {
         async function endGame(d) {
     // 1. إيقاف المؤقتات فوراً
     clearInterval(gameTimer);
+    localStorage.removeItem('active_match_session');
     clearTimeout(aiTimeoutId);
     
     if (isExitingGame) return;
@@ -4691,6 +4787,7 @@ async function promptForRevengeSubject(opponentName) {
          matchListenerUnsubscribe = null; 
      }
      clearInterval(gameTimer); 
+     localStorage.removeItem('active_match_session');
      clearTimeout(aiTimeoutId);
      
      document.getElementById('result-screen').classList.add('hidden');
@@ -4837,9 +4934,8 @@ async function promptForRevengeSubject(opponentName) {
 
         window.populateAdminFilterSubjects = () => {
             const grade = document.getElementById('admin-filter-grade').value;
-            const subSel = document.getElementById('admin-filter-subject');
-            subSel.innerHTML = '<option value="">كل المواد</option>';
-            if(grade && subjects[grade]) subjects[grade].forEach(s => subSel.innerHTML += `<option value="${s}">${s}</option>`);
+            populateSubjects(grade, 'admin-filter-subject', 'admin-filter-chapter');
+            document.getElementById('admin-filter-chapter').innerHTML = '<option value="">كل الفصول</option>';
         }
 
         window.renderAdminAllList = (list) => {
@@ -4850,21 +4946,37 @@ async function promptForRevengeSubject(opponentName) {
             }
             let html = `<p class="text-xs text-gray-400 mb-2">تم العثور على: ${list.length} سؤال</p>`;
             list.slice(0, 50).forEach(q => { 
-                html += `<div class="bg-white rounded-xl p-3 mb-2 border border-gray-100 shadow-sm flex flex-col gap-2"><div class="flex justify-between items-start"><div><span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded font-bold">${q.grade || 'غير محدد'} | ${q.subject}</span><span class="text-xs text-gray-400 ml-2">${q.type==='mcq'?'اختيارات':'صح/خطأ'}</span></div><div class="flex gap-1"><button onclick="openEditModal('${q.id}')" class="bg-blue-100 text-blue-600 px-3 py-1 rounded-lg text-xs font-bold hover:bg-blue-200 transition"><i class="fas fa-edit ml-1"></i>تعديل</button><button onclick="deleteApprovedQ('${q.id}')" class="bg-red-100 text-red-600 px-3 py-1 rounded-lg text-xs font-bold hover:bg-red-200 transition"><i class="fas fa-trash"></i></button></div></div><p class="font-bold text-gray-700 text-sm leading-6 border-r-2 border-indigo-200 pr-2">${q.question}</p></div>`;
+                html += `<div class="bg-white rounded-xl p-3 mb-2 border border-gray-100 shadow-sm flex flex-col gap-2">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded font-bold">${q.grade || 'غير محدد'} | ${q.subject} | ${q.chapter || 'بدون فصل'}</span>
+                            <span class="text-xs text-gray-400 ml-2">${q.type==='mcq'?'اختيارات':'صح/خطأ'}</span>
+                        </div>
+                        <div class="flex gap-1">
+                            <button onclick="openEditModal('${q.id}')" class="bg-blue-100 text-blue-600 px-3 py-1 rounded-lg text-xs font-bold hover:bg-blue-200 transition"><i class="fas fa-edit ml-1"></i>تعديل</button>
+                            <button onclick="deleteApprovedQ('${q.id}')" class="bg-red-100 text-red-600 px-3 py-1 rounded-lg text-xs font-bold hover:bg-red-200 transition"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <p class="font-bold text-gray-700 text-sm leading-6 border-r-2 border-indigo-200 pr-2">${q.question}</p>
+                </div>`;
             });
             div.innerHTML = html;
         };
 
         window.filterAdminQuestions = () => {
             if(event && event.target && event.target.id === 'admin-filter-grade') populateAdminFilterSubjects();
+            
             const gr = document.getElementById('admin-filter-grade').value;
             const sub = document.getElementById('admin-filter-subject').value;
+            const chap = document.getElementById('admin-filter-chapter') ? document.getElementById('admin-filter-chapter').value : '';
             const type = document.getElementById('admin-filter-type').value;
+            
             const filtered = allAdminQuestions.filter(q => {
                 const matchesGrade = gr ? (q.grade === gr) : true;
                 const matchesSubject = sub ? (q.subject === sub) : true;
+                const matchesChapter = chap ? (q.chapter === chap) : true;
                 const matchesType = type ? (q.type === type) : true;
-                return matchesGrade && matchesSubject && matchesType;
+                return matchesGrade && matchesSubject && matchesChapter && matchesType;
             });
             renderAdminAllList(filtered);
         };
@@ -4875,15 +4987,19 @@ async function promptForRevengeSubject(opponentName) {
             document.getElementById('edit-q-id').value = id;
             document.getElementById('edit-q-text').value = q.question;
             document.getElementById('edit-q-grade').value = q.grade || '6sci';
-            const subSel = document.getElementById('edit-q-subject');
-            subSel.innerHTML = "";
-            subjects[q.grade || '6sci'].forEach(s => subSel.innerHTML += `<option value="${s}">${s}</option>`);
-            subSel.value = q.subject;
-            document.getElementById('edit-q-grade').onchange = () => {
-                const g = document.getElementById('edit-q-grade').value;
-                subSel.innerHTML = "";
-                subjects[g].forEach(s => subSel.innerHTML += `<option value="${s}">${s}</option>`);
-            };
+            
+            populateSubjects(q.grade || '6sci', 'edit-q-subject', 'edit-q-chapter');
+            
+            // تأخير بسيط لضمان تحميل الخيارات قبل التعيين
+            setTimeout(() => {
+                document.getElementById('edit-q-subject').value = q.subject;
+                populateChapters(q.grade || '6sci', q.subject, 'edit-q-chapter');
+                
+                setTimeout(() => {
+                    if (q.chapter) document.getElementById('edit-q-chapter').value = q.chapter;
+                }, 50);
+            }, 50);
+
             if(q.type === 'mcq') {
                 document.getElementById('edit-mcq-fields').classList.remove('hidden');
                 document.getElementById('edit-tf-fields').classList.add('hidden');
@@ -4903,18 +5019,29 @@ async function promptForRevengeSubject(opponentName) {
             const id = document.getElementById('edit-q-id').value;
             const originalQ = allAdminQuestions.find(i => i.id === id);
             const type = originalQ.type;
-            const updates = { question: document.getElementById('edit-q-text').value, grade: document.getElementById('edit-q-grade').value, subject: document.getElementById('edit-q-subject').value };
+            const updates = { 
+                question: document.getElementById('edit-q-text').value, 
+                grade: document.getElementById('edit-q-grade').value, 
+                subject: document.getElementById('edit-q-subject').value,
+                chapter: document.getElementById('edit-q-chapter').value // حفظ التعديل عالفصل
+            };
+            
             if(type === 'mcq') {
                 updates.answers = [document.getElementById('edit-ans-0').value, document.getElementById('edit-ans-1').value, document.getElementById('edit-ans-2').value];
                 updates.correct = parseInt(document.getElementById('edit-correct-mcq').value);
-            } else { updates.correct = document.getElementById('edit-correct-tf').value; }
+            } else { 
+                updates.correct = document.getElementById('edit-correct-tf').value; 
+            }
+            
             await updateDoc(doc(db, "questions", id), updates);
             const idx = allAdminQuestions.findIndex(i => i.id === id);
             if(idx !== -1) allAdminQuestions[idx] = { ...allAdminQuestions[idx], ...updates };
+            
             const activeScreen = document.querySelector('.screen.active').id;
             if (activeScreen === 'screen-admin-all') filterAdminQuestions();
+            
             document.getElementById('edit-modal').classList.add('hidden');
-            showBeautifulAlert('success', 'تم الحفظ', 'تم حفظ التعديلات بنجاح!');
+            showBeautifulAlert('success', 'تم الحفظ', 'تم حفظ التعديلات وتحديث الفصل بنجاح!');
         };
 
         window.deleteApprovedQ = async (id) => {
@@ -5922,13 +6049,8 @@ async function promptForRevengeSubject(opponentName) {
                 setTimeout(() => backToProfile(), 1000);
                 return;
             }
-            
-            const subjectSelect = document.getElementById('upload-subject');
-            subjectSelect.innerHTML = '<option value="">اختر المادة</option>';
-            const gradeSubjects = subjects[userData.grade] || [];
-            gradeSubjects.forEach(sub => {
-                subjectSelect.innerHTML += `<option value="${sub}">${sub}</option>`;
-            });
+            // ربط الفصول بالمادة
+            populateSubjects(userData.grade, 'upload-subject', 'upload-chapter');
             
             uploadQType = 'mcq';
             uploadCorrectAnswer = null;
@@ -5937,9 +6059,6 @@ async function promptForRevengeSubject(opponentName) {
             document.getElementById('upload-step-1').classList.remove('hidden');
             document.getElementById('upload-step-2-mcq').classList.add('hidden');
             document.getElementById('upload-step-2-tf').classList.add('hidden');
-            
-            document.getElementById('upload-btn-mcq').className = `py-3 rounded-xl border-2 border-indigo-600 bg-indigo-50 text-indigo-600 font-bold active:scale-95 transition`;
-            document.getElementById('upload-btn-tf').className = `py-3 rounded-xl border-2 border-indigo-100 text-gray-500 font-bold active:scale-95 transition`;
         }
 
         window.onUploadSubjectChange = function() {
@@ -5963,6 +6082,11 @@ async function promptForRevengeSubject(opponentName) {
                 showBeautifulAlert('warning', 'تنبيه', 'يرجى اختيار المادة أولاً');
                 return;
             }
+            const uploadChapter = document.getElementById('upload-chapter').value;
+            if (!uploadChapter) {
+                showBeautifulAlert('warning', 'تنبيه', 'يرجى تحديد الفصل/الموضوع أولاً');
+                return;
+            }
             
             if (!uploadQType) {
                 showBeautifulAlert('warning', 'تنبيه', 'يرجى اختيار نوع السؤال أولاً');
@@ -5974,7 +6098,6 @@ async function promptForRevengeSubject(opponentName) {
             if (uploadQType === 'mcq') {
                 document.getElementById('upload-step-2-mcq').classList.remove('hidden');
                 document.getElementById('upload-step-2-tf').classList.add('hidden');
-                
                 document.getElementById('upload-question-text').value = '';
                 document.getElementById('upload-answer-1').value = '';
                 document.getElementById('upload-answer-2').value = '';
@@ -5984,7 +6107,6 @@ async function promptForRevengeSubject(opponentName) {
             } else {
                 document.getElementById('upload-step-2-mcq').classList.add('hidden');
                 document.getElementById('upload-step-2-tf').classList.remove('hidden');
-                
                 document.getElementById('upload-tf-question').value = '';
                 uploadTFAnswer = null;
                 resetTFButtons();
@@ -6029,23 +6151,10 @@ async function promptForRevengeSubject(opponentName) {
             const answer1 = document.getElementById('upload-answer-1').value.trim();
             const answer2 = document.getElementById('upload-answer-2').value.trim();
             const answer3 = document.getElementById('upload-answer-3').value.trim();
+            const chapter = document.getElementById('upload-chapter').value;
             
-            if (!questionText) {
-                showBeautifulAlert('warning', 'تنبيه', 'يرجى إدخال نص السؤال');
-                return;
-            }
-            
-            if (!answer1 || !answer2 || !answer3) {
-                showBeautifulAlert('warning', 'تنبيه', 'يرجى إدخال جميع الخيارات');
-                return;
-            }
-            
-            if (uploadCorrectAnswer === null) {
-                showBeautifulAlert('warning', 'تنبيه', 'يرجى تحديد الإجابة الصحيحة');
-                return;
-            }
-            
-            if (!confirm('هل أنت متأكد أن السؤال صحيح ومن ضمن المنهج الدراسي؟')) {
+            if (!questionText || !answer1 || !answer2 || !answer3 || uploadCorrectAnswer === null) {
+                showBeautifulAlert('warning', 'تنبيه', 'يرجى إدخال نص السؤال وجميع الخيارات وتحديد الإجابة الصحيحة');
                 return;
             }
             
@@ -6057,6 +6166,7 @@ async function promptForRevengeSubject(opponentName) {
                     type: 'mcq',
                     grade: userData.grade,
                     subject: uploadSubject,
+                    chapter: chapter, // حفظ الفصل
                     senderId: currentUser.uid,
                     senderName: userData.name,
                     status: 'pending',
@@ -6064,36 +6174,18 @@ async function promptForRevengeSubject(opponentName) {
                 });
                 
                 showBeautifulAlert('success', 'تم الإرسال', '✅ تم إرسال السؤال للمراجعة. ستتم إضافة 5 نقاط لك بعد قبوله.');
-                
-                document.getElementById('upload-question-text').value = '';
-                document.getElementById('upload-answer-1').value = '';
-                document.getElementById('upload-answer-2').value = '';
-                document.getElementById('upload-answer-3').value = '';
-                uploadCorrectAnswer = null;
-                resetCorrectButtons();
-                
                 goToUploadStep1();
-                
             } catch (error) {
-                console.error("Error submitting question:", error);
                 showBeautifulAlert('error', 'خطأ', '❌ حدث خطأ في إرسال السؤال');
             }
         };
 
         window.submitQuestionTF = async function() {
             const questionText = document.getElementById('upload-tf-question').value.trim();
+            const chapter = document.getElementById('upload-chapter').value;
             
-            if (!questionText) {
-                showBeautifulAlert('warning', 'تنبيه', 'يرجى إدخال نص السؤال');
-                return;
-            }
-            
-            if (uploadTFAnswer === null) {
-                showBeautifulAlert('warning', 'تنبيه', 'يرجى تحديد الإجابة الصحيحة');
-                return;
-            }
-            
-            if (!confirm('هل أنت متأكد أن السؤال صحيح ومن ضمن المنهج الدراسي؟')) {
+            if (!questionText || uploadTFAnswer === null) {
+                showBeautifulAlert('warning', 'تنبيه', 'يرجى إدخال نص السؤال وتحديد الإجابة');
                 return;
             }
             
@@ -6104,22 +6196,16 @@ async function promptForRevengeSubject(opponentName) {
                     type: 'tf',
                     grade: userData.grade,
                     subject: uploadSubject,
+                    chapter: chapter, // حفظ الفصل
                     senderId: currentUser.uid,
                     senderName: userData.name,
                     status: 'pending',
                     createdAt: serverTimestamp()
                 });
                 
-                showBeautifulAlert('success', 'تم الإرسال', '✅ تم إرسال السؤال للمراجعة. ستتم إضافة 5 نقاط لك بعد قبوله.');
-                
-                document.getElementById('upload-tf-question').value = '';
-                uploadTFAnswer = null;
-                resetTFButtons();
-                
+                showBeautifulAlert('success', 'تم الإرسال', '✅ تم إرسال السؤال للمراجعة.');
                 goToUploadStep1();
-                
             } catch (error) {
-                console.error("Error submitting question:", error);
                 showBeautifulAlert('error', 'خطأ', '❌ حدث خطأ في إرسال السؤال');
             }
         };
@@ -6179,9 +6265,9 @@ async function promptForRevengeSubject(opponentName) {
                                 <p class="font-bold text-indigo-700 text-sm">عدد الأسئلة: ${questions.length}</p>
                                 <p class="text-xs text-indigo-500">(من الأحدث للأقدم)</p>
                             </div>
-                            <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold">
-                                🔄 مرتبة تلقائياً
-                            </span>
+                            <button onclick="acceptAllPendingQuestions()" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md hover:scale-105 active:scale-95 transition flex items-center gap-2">
+                                <i class="fas fa-check-double"></i> قبول الكل
+                            </button>
                         </div>
                     </div>
                 `;
@@ -6314,19 +6400,20 @@ async function promptForRevengeSubject(opponentName) {
                     reviewedBy: currentUser.uid
                 });
                 
-                if (questionData.senderId) {
+                // التعديل هنا: ضفت شرط انه اذا المرسل AI_GEMINI لا تدور على حسابه وتطيه نقاط
+                if (questionData.senderId && questionData.senderId !== 'AI_GEMINI') {
                     // 1. إضافة 5 نقاط في قاعدة البيانات بشكل مؤكد
                     await updateDoc(doc(db, "users", questionData.senderId), {
                         points: increment(5)
                     });
 
-                    // 2. تحديث واجهة المستخدم فوراً (إذا كان المشرف هو نفسه من رفع السؤال ويجربه)
+                    // 2. تحديث واجهة المستخدم فوراً
                     if (questionData.senderId === currentUser.uid) {
                         userData.points += 5;
                         setupHeaderUI();
                     }
 
-                    // 3. إرسال إشعار للمستخدم بأن سؤاله تم قبوله وحصل على نقاط!
+                    // 3. إرسال إشعار للمستخدم
                     await addDoc(collection(db, "notifications"), {
                         userId: questionData.senderId,
                         type: 'reward',
@@ -6336,7 +6423,7 @@ async function promptForRevengeSubject(opponentName) {
                     });
                 }
                 
-                showBeautifulAlert('success', 'تم القبول', '✅ تم قبول السؤال وإضافة 5 نقاط للمرسل بنجاح!');
+                showBeautifulAlert('success', 'تم القبول', '✅ تم قبول السؤال بنجاح وإضافته للعبة!');
                 loadReviewQuestions();
                 checkPendingQuestionsNotification();
                 
@@ -6481,26 +6568,122 @@ let selectedBulkType = 'mcq';
             document.getElementById('bulk-btn-mcq').className = `py-3 rounded-xl border-2 font-bold transition-all flex-1 ${type==='mcq'?'border-red-600 bg-red-50 text-red-600':'border-gray-100 text-gray-400'}`;
             document.getElementById('bulk-btn-tf').className = `py-3 rounded-xl border-2 font-bold transition-all flex-1 ${type==='tf'?'border-red-600 bg-red-50 text-red-600':'border-gray-100 text-gray-400'}`;
         };
+        
+        window.acceptAllPendingQuestions = async function() {
+            if (!confirm("هل أنت متأكد من قبول جميع الأسئلة المعلقة دفعة واحدة؟")) return;
+            
+            showBeautifulAlert('info', 'جاري المعالجة', 'يرجى الانتظار، جاري قبول الأسئلة ونقلها للفصول بسرعة البرق 🚀...');
+            
+            try {
+                const q = query(collection(db, "pending_questions"), where("status", "==", "pending"));
+                const snapshot = await getDocs(q);
+                
+                if (snapshot.empty) {
+                    showBeautifulAlert('info', 'لا توجد أسئلة', 'لا توجد أسئلة معلقة للموافقة عليها.');
+                    return;
+                }
+
+                let acceptedCount = 0;
+                
+                // استخدمنا نظام الدفعات (Batch) حتى التطبيق ما يعلك من يوافق على 200 سؤال
+                let currentBatch = writeBatch(db);
+                let operationCount = 0;
+                let batchesArray = [];
+
+                for (const questionDoc of snapshot.docs) {
+                    const questionId = questionDoc.id;
+                    const questionData = questionDoc.data();
+                    
+                    // 1. إضافة السؤال لقاعدة البيانات الرئيسية للأسئلة
+                    const newQuestionRef = doc(collection(db, "questions"));
+                    currentBatch.set(newQuestionRef, {
+                        question: questionData.question,
+                        answers: questionData.answers || [],
+                        correct: questionData.correct,
+                        type: questionData.type,
+                        grade: questionData.grade,
+                        subject: questionData.subject,
+                        chapter: questionData.chapter || '', // 👈 التعديل المهم: حفظ الفصل
+                        createdAt: serverTimestamp()
+                    });
+                    operationCount++;
+                    
+                    // 2. تحديث حالته إلى "تم القبول"
+                    const pendingRef = doc(db, "pending_questions", questionId);
+                    currentBatch.update(pendingRef, {
+                        status: 'accepted',
+                        reviewedAt: serverTimestamp(),
+                        reviewedBy: currentUser.uid
+                    });
+                    operationCount++;
+                    
+                    // 3. إذا كان المرسل طالب حقيقي (مو الذكاء الاصطناعي)، نعطيه نقاط
+                    if (questionData.senderId && questionData.senderId !== 'AI_GEMINI') {
+                        const userRef = doc(db, "users", questionData.senderId);
+                        currentBatch.update(userRef, {
+                            points: increment(5)
+                        });
+                        operationCount++;
+
+                        // تحديث الواجهة إذا جان الإدمن هو نفسه اللي ديجرب يرفع
+                        if (questionData.senderId === currentUser.uid) {
+                            userData.points += 5;
+                            setupHeaderUI();
+                        }
+
+                        const notifRef = doc(collection(db, "notifications"));
+                        currentBatch.set(notifRef, {
+                            userId: questionData.senderId,
+                            type: 'reward',
+                            message: `🎉 تم قبول سؤالك في مادة ${questionData.subject || ''} وحصلت على مكافأة +5 نقاط!`,
+                            read: false,
+                            createdAt: serverTimestamp()
+                        });
+                        operationCount++;
+                    }
+
+                    acceptedCount++;
+
+                    // فايربيس يقبل 500 عملية بالدفعة الوحدة، إذا زادت نصفر العداد ونفتح دفعة جديدة
+                    if (operationCount >= 490) {
+                        batchesArray.push(currentBatch.commit());
+                        currentBatch = writeBatch(db);
+                        operationCount = 0;
+                    }
+                }
+                
+                // رفع باقي العمليات اللي بقت بالعداد
+                if (operationCount > 0) {
+                    batchesArray.push(currentBatch.commit());
+                }
+
+                // انتظار اكتمال كل الدفعات
+                await Promise.all(batchesArray);
+                
+                showBeautifulAlert('success', 'تم القبول بنجاح', `✅ تم الموافقة على ${acceptedCount} سؤال ونقلها للفصول المطلوبة بلمح البصر!`);
+                loadReviewQuestions();
+                checkPendingQuestionsNotification();
+                
+            } catch (error) {
+                console.error("Error accepting all questions:", error);
+                showBeautifulAlert('error', 'خطأ', 'حدث خطأ أثناء محاولة قبول جميع الأسئلة.');
+            }
+        };
 
         window.startBulkAIExtraction = async function() {
             const fileInput = document.getElementById('bulk-ai-pdf');
             const grade = document.getElementById('bulk-ai-grade').value;
             const subject = document.getElementById('bulk-ai-subject').value;
+            const chapter = document.getElementById('bulk-ai-chapter').value;
             
-            const GEMINI_API_KEY = 'AIzaSyCZqKum34_UCb4OITTulpLZQKnQEO8u9UM'; 
+            const GEMINI_API_KEY = 'AIzaSyBXbbAC1wesZHpVk--EpVzryQsRoLAvqTs'; 
 
-            if (!fileInput.files[0] || !grade || !subject) {
-                showBeautifulAlert('warning', 'نقص معلومات', 'يرجى رفع الملف واختيار الصف والمادة');
+            if (!fileInput.files[0] || !grade || !subject || !chapter) {
+                showBeautifulAlert('warning', 'نقص معلومات', 'يرجى رفع الملف واختيار الصف والمادة والفصل/الموضوع بدقة');
                 return;
             }
 
             const pdfjs = window.pdfjsLib || window['pdfjs-dist/build/pdf'];
-            
-            if (!pdfjs) {
-                showBeautifulAlert('error', 'خطأ فني', 'مكتبة قراءة الـ PDF لم يتم تحميلها. تأكد من اتصالك بالإنترنت وحدّث الصفحة.');
-                return;
-            }
-
             const btn = document.getElementById('bulk-start-btn');
             const progContainer = document.getElementById('bulk-progress-container');
             const progBar = document.getElementById('bulk-progress-bar');
@@ -6525,37 +6708,66 @@ let selectedBulkType = 'mcq';
                     const content = await page.getTextContent();
                     fullText += content.items.map(s => s.str).join(' ') + '\n';
                     
-                    let loadPercent = Math.round((i / pdf.numPages) * 30);
+                    let loadPercent = Math.round((i / pdf.numPages) * 20); // 20% للقراءة
                     progBar.style.width = loadPercent + '%';
                     progPercent.innerText = loadPercent + '%';
                 }
 
-                progText.innerText = "جاري الاتصال بـ Gemini AI لاستخراج الأسئلة...";
+                progText.innerText = "جاري فحص النماذج المتاحة من جوجل...";
                 
-                const promptMCQ = `أنت خبير في المناهج الدراسية العراقية. قم باستخراج أكبر عدد ممكن من الأسئلة التعليمية من النص المرفق.
-                نوع الأسئلة المطلوبة: اختيارات (MCQ).
-                شروط صارمة:
-                1. لكل سؤال 3 خيارات فقط.
-                2. يجب أن يكون هناك خيار واحد صحيح تماماً، وخياران خاطئان لكنهما "منطقيان جداً ومقاربان للجواب الصحيح".
-                3. أرجع النتيجة بصيغة JSON مصفوفة فقط كالتالي: [{"question": "نص السؤال", "answers": ["خيار1", "خيار2", "خيار3"], "correct": index_الجواب_الصحيح_من_0_الى_2}]
-                4. لا تكتب أي كلام خارج مصفوفة الـ JSON.
-                النص: ${fullText.substring(0, 30000)}`;
+                const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${GEMINI_API_KEY}`);
+                const modelsData = await modelsRes.json();
+                
+                if (!modelsRes.ok) {
+                    throw new Error("مشكلة بالمفتاح: " + (modelsData.error ? modelsData.error.message : 'Unknown error'));
+                }
 
-                const promptTF = `أنت خبير في المناهج الدراسية العراقية. قم باستخراج أكبر عدد ممكن من الأسئلة التعليمية من النص المرفق.
-                نوع الأسئلة المطلوبة: صح وخطأ (True/False).
+                const availableModels = modelsData.models.filter(m => 
+                    m.supportedGenerationMethods && 
+                    m.supportedGenerationMethods.includes("generateContent") && 
+                    m.name.includes("gemini")
+                );
+
+                if(availableModels.length === 0) {
+                    throw new Error("مفتاحك لا يمتلك أي موديل يدعم توليد النصوص!");
+                }
+
+                // اختيار أحدث موديل فلاش متوفر
+                const targetModel = availableModels.find(m => m.name.includes("2.5") && m.name.includes("flash")) 
+                                 || availableModels.find(m => m.name.includes("2.0") && m.name.includes("flash"))
+                                 || availableModels.find(m => m.name.includes("flash")) 
+                                 || availableModels[0];
+                                 
+                console.log("الموديل المستخدم:", targetModel.name);
+
+                progText.innerText = `جاري استخراج الأسئلة بسرعة...`;
+
+                // التعديل السحري للبرومبت: استخراج عدد مرن يغطي المنهج بدون مماطلة
+                const promptMCQ = `أنت خبير في المناهج الدراسية العراقية. استخرج أسئلة تعليمية شاملة ومهمة تغطي كافة الأفكار الموجودة في النص المرفق.
+                استخرج العدد المناسب لحجم النص (سواء كان 20، 50، 100، أو أكثر)، المهم أن لا تتجاوز 250 سؤالاً كحد أقصى، وأن لا تترك فكرة مهمة بدون سؤال. لا تقم بالمماطلة أو إجبار نفسك على رقم محدد.
+                ملاحظة للمسائل والقوانين (رياضيات، فيزياء، كيمياء): اقرأها بذكاء وصغ منها أسئلة اختيار من متعدد (مثلاً ناتج المسألة كخيار صحيح ونواتج قريبة كخيارات خاطئة).
                 شروط صارمة:
-                1. قم بصياغة معلومة من النص واذكر ما إذا كانت صحيحة أم خاطئة.
-                2. أرجع النتيجة بصيغة JSON مصفوفة فقط كالتالي: [{"question": "نص المعلومة", "correct": true_او_false}]
-                3. لا تكتب أي كلام خارج مصفوفة الـ JSON.
-                النص: ${fullText.substring(0, 30000)}`;
+                1. نوع الأسئلة: اختيارات (MCQ).
+                2. لكل سؤال 3 خيارات فقط لا غير.
+                3. خيار واحد صحيح، واثنان خاطئان بسياق منطقي.
+                4. الإرجاع بصيغة JSON مصفوفة فقط: [{"question": "السؤال", "answers": ["خيار1", "خيار2", "خيار3"], "correct": 0_او_1_او_2}]
+                5. لا تكتب أي كلمة أو حرف خارج مصفوفة الـ JSON.
+                النص: ${fullText.substring(0, 40000)}`;
+
+                const promptTF = `أنت خبير في المناهج الدراسية العراقية. استخرج أسئلة تعليمية شاملة ومهمة تغطي كافة الأفكار الموجودة في النص المرفق.
+                استخرج العدد المناسب لحجم النص، المهم أن لا تتجاوز 250 سؤالاً كحد أقصى، وأن لا تترك فكرة مهمة بدون سؤال.
+                ملاحظة للمسائل والقوانين: اكتب قاعدة أو ناتجاً واذكر ما إذا كانت صحيحة أم خاطئة.
+                شروط صارمة:
+                1. نوع الأسئلة: صح وخطأ (True/False).
+                2. صياغة معلومة من النص.
+                3. الإرجاع بصيغة JSON مصفوفة فقط: [{"question": "المعلومة", "correct": true_او_false}]
+                4. لا تكتب أي كلام خارج مصفوفة الـ JSON.
+                النص: ${fullText.substring(0, 40000)}`;
 
                 const finalPrompt = selectedBulkType === 'mcq' ? promptMCQ : promptTF;
 
-                // الحل الجذري: تجميع اسم الموديل برمجياً حتى المحرر ما يكدر يحذف الشارحة (-) 
-                const modelParts = ["gemini", "1.5", "flash"];
-                const modelName = modelParts.join("-");
-                const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/" + modelName + ":generateContent?key=" + GEMINI_API_KEY;
-
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/${targetModel.name}:generateContent?key=${GEMINI_API_KEY}`;
+                
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -6566,17 +6778,7 @@ let selectedBulkType = 'mcq';
                 });
 
                 const result = await response.json();
-                
-                if (!response.ok || result.error) {
-                    const errorMsg = result.error ? result.error.message : 'خطأ غير معروف في الاتصال';
-                    if (errorMsg.includes('API_KEY_INVALID') || response.status === 400) {
-                        throw new Error('مفتاح Gemini غير صالح أو معطل. يرجى التأكد من المفتاح.');
-                    } else if (response.status === 429) {
-                        throw new Error('تم تجاوز الحد المسموح للاستخدام المجاني من Gemini مؤقتاً. جرب بعد قليل.');
-                    } else {
-                        throw new Error(`خطأ من خادم Gemini: ${errorMsg}`);
-                    }
-                }
+                if (!response.ok || result.error) throw new Error(result.error ? result.error.message : 'خطأ غير معروف في الاتصال');
 
                 const questionsText = result.candidates[0].content.parts[0].text;
                 let questions = [];
@@ -6586,33 +6788,43 @@ let selectedBulkType = 'mcq';
                     throw new Error('Gemini لم يرجع البيانات بصيغة صحيحة.');
                 }
 
-                if (questions.length === 0) {
-                    throw new Error('لم يتمكن الذكاء الاصطناعي من العثور على أسئلة مناسبة في هذا النص.');
-                }
+                if (questions.length === 0) throw new Error('لم يتمكن الذكاء الاصطناعي من العثور على أسئلة مناسبة.');
 
-                progText.innerText = `جاري رفع ${questions.length} سؤال لقسم المراجعة...`;
+                // التعديل السحري للسرعة: رفع الأسئلة بقاعدة البيانات باستخدام دفعة واحدة (Batch)
+                progText.innerText = `جاري حفظ ${questions.length} سؤال في النظام دفعة واحدة 🚀...`;
+                progBar.style.width = '80%';
+                progPercent.innerText = '80%';
+
+                const batch = writeBatch(db);
                 let uploaded = 0;
 
                 for (const q of questions) {
-                    await addDoc(collection(db, "pending_questions"), {
+                    // إنشاء معرف تلقائي (Reference) للمستند الجديد
+                    const newDocRef = doc(collection(db, "pending_questions"));
+                    
+                    batch.set(newDocRef, {
                         question: q.question,
                         answers: q.answers || null,
                         correct: q.correct,
                         type: selectedBulkType,
                         grade: grade,
                         subject: subject,
+                        chapter: chapter,
                         senderId: 'AI_GEMINI',
                         senderName: 'Gemini AI 🤖',
                         status: 'pending',
                         createdAt: serverTimestamp()
                     });
                     uploaded++;
-                    let uploadPercent = 30 + Math.round((uploaded / questions.length) * 70);
-                    progBar.style.width = uploadPercent + '%';
-                    progPercent.innerText = uploadPercent + '%';
                 }
 
-                showBeautifulAlert('success', 'تمت العملية بنجاح', `بفضل Gemini 🤖 تم استخراج ورفع ${uploaded} سؤال إلى قسم المراجعة.`);
+                // تنفيذ الرفع دفعة واحدة (أسرع بـ 100 مرة من الرفع الفردي)
+                await batch.commit();
+
+                progBar.style.width = '100%';
+                progPercent.innerText = '100%';
+
+                showBeautifulAlert('success', 'سرعة البرق ⚡', `تم استخراج وحفظ ${uploaded} سؤال في مادة (${subject} - ${chapter}) بنجاح تام وتم رفعها للمراجعة.`);
                 progContainer.classList.add('hidden');
                 btn.disabled = false;
                 btn.classList.remove('opacity-50');
@@ -6620,7 +6832,11 @@ let selectedBulkType = 'mcq';
 
             } catch (error) {
                 console.error("Gemini Extraction Error:", error);
-                showBeautifulAlert('error', 'فشل الاستخراج', error.message);
+                if(error.message.includes("quota") || error.message.includes("429")) {
+                    showBeautifulAlert('error', 'انتهاء الحصة', 'تم تجاوز الحد المجاني. يرجى المحاولة بعد قليل وتأكد من تشغيل الـ VPN.');
+                } else {
+                    showBeautifulAlert('error', 'فشل الاستخراج', error.message);
+                }
                 btn.disabled = false;
                 btn.classList.remove('opacity-50');
                 progContainer.classList.add('hidden');
