@@ -2155,47 +2155,47 @@
     </div>
     
     <div id="global-ad-modal" class="modal-overlay hidden" style="z-index: 999999 !important;">
-    <div class="modal-content relative text-center animate-[zoomInBounce_0.4s_ease-out] bg-white p-6 rounded-2xl shadow-xl w-11/12 max-w-sm">
-        <button onclick="window.closeGlobalAd(preloadedAdData?.timestamp || Date.now())" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
-        <div class="mx-auto w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mb-4">
-            <i class="fas fa-bell text-2xl text-indigo-500 animate-pulse"></i>
-        </div>
-        <p id="global-ad-content" class="text-gray-800 font-bold text-md mb-6 leading-relaxed whitespace-pre-line"></p>
-        <div id="global-ad-dynamic-area" class="flex flex-col gap-3 w-full">
-                    </div>
-    </div>
+    <div class="modal-content relative text-center animate-[zoomInBounce_0.4s_ease-out] bg-white p-4 rounded-2xl shadow-xl w-11/12 max-w-xs">
+        <button onclick="window.closeGlobalAd(preloadedAdData?.timestamp || Date.now())" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+        <div class="mx-auto w-12 h-12 bg-indigo-50 rounded-full flex items-center justify-center mb-3">
+            <i class="fas fa-bell text-xl text-indigo-500 animate-pulse"></i>
+        </div>
+        <p id="global-ad-content" class="text-gray-800 font-bold text-sm mb-4 leading-relaxed whitespace-pre-line"></p>
+        <div id="global-ad-dynamic-area" class="flex flex-col gap-2 w-full">
+                    </div>
+    </div>
 </div>
 
 <div id="screen-admin-ads" class="screen pt-20">
-    <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
-        <button onclick="openPage('screen-admin-hub')" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
-        <h1 class="font-bold text-lg text-gray-800">نشر إعلان / طلب اقتراح</h1>
-    </div>
-    <div class="scroll-container px-5 py-6">
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-            <label class="block text-sm font-bold text-gray-600 mb-2">نص الإعلان أو الرسالة</label>
-            <textarea id="admin-ad-text" class="input-box h-32 mb-4" placeholder="اكتب هنا ما تريد أن يظهر للمستخدمين عند فتح التطبيق..."></textarea>
-            
-            <label class="block text-sm font-bold text-gray-600 mb-2">نوع الإعلان</label>
-            <select id="admin-ad-type" class="input-box mb-4" onchange="toggleAdType()">
-                <option value="msg">رسالة فقط (زر حسناً)</option>
-                <option value="link">رسالة مع رابط تحويل</option>
-                <option value="suggestion">طلب اقتراح من المستخدمين</option>
-            </select>
+    <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
+        <button onclick="openPage('screen-admin-hub')" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
+        <h1 class="font-bold text-lg text-gray-800">نشر إعلان / طلب اقتراح</h1>
+    </div>
+    <div class="scroll-container px-4 py-5">
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+            <label class="block text-xs font-bold text-gray-600 mb-1">نص الإعلان أو الرسالة</label>
+            <textarea id="admin-ad-text" class="input-box h-24 p-2.5 text-sm mb-3" placeholder="اكتب هنا ما تريد أن يظهر للمستخدمين..."></textarea>
+            
+            <label class="block text-xs font-bold text-gray-600 mb-1">نوع الإعلان</label>
+            <select id="admin-ad-type" class="input-box p-2.5 text-sm mb-3" onchange="toggleAdType()">
+                <option value="msg">رسالة فقط (زر حسناً)</option>
+                <option value="link">رسالة مع رابط تحويل</option>
+                <option value="suggestion">طلب اقتراح من المستخدمين</option>
+            </select>
 
-            <div id="admin-link-container" class="hidden">
-                <label class="block text-sm font-bold text-gray-600 mb-2">اسم الزر (مثال: انضم لقناتنا)</label>
-                <input type="text" id="admin-ad-btn-name" class="input-box mb-4" placeholder="اكتب اسم الزر...">
-                
-                <label class="block text-sm font-bold text-gray-600 mb-2">الرابط (تلكرام أو سوق بلي)</label>
-                <input type="url" id="admin-ad-link" class="input-box mb-6" placeholder="https://t.me/yourchannel">
-            </div>
-            
-            <button onclick="publishGlobalAd()" class="btn-main bg-indigo-600 hover:bg-indigo-700 mt-2">
-                <i class="fas fa-paper-plane ml-2"></i> إرسال للمستخدمين
-            </button>
-        </div>
-    </div>
+            <div id="admin-link-container" class="hidden">
+                <label class="block text-xs font-bold text-gray-600 mb-1">اسم الزر (مثال: انضم لقناتنا)</label>
+                <input type="text" id="admin-ad-btn-name" class="input-box p-2.5 text-sm mb-3" placeholder="اكتب اسم الزر...">
+                
+                <label class="block text-xs font-bold text-gray-600 mb-1">الرابط (تلكرام أو سوق بلي)</label>
+                <input type="url" id="admin-ad-link" class="input-box p-2.5 text-sm mb-4" placeholder="https://t.me/yourchannel">
+            </div>
+            
+            <button onclick="publishGlobalAd()" class="w-full bg-indigo-600 text-white font-bold py-2.5 rounded-lg shadow-sm hover:bg-indigo-700 transition flex items-center justify-center gap-2 text-sm mt-1">
+                <i class="fas fa-paper-plane"></i> إرسال للمستخدمين
+            </button>
+        </div>
+    </div>
 </div>
 
 
@@ -5884,182 +5884,165 @@ async function promptForRevengeSubject(opponentName) {
         }
 
         async function loadReviewQuestions() {
-            const listDiv = document.getElementById('review-questions-list');
-            
-            if (!userData || userData.email !== ADMIN_EMAIL) {
-                listDiv.innerHTML = `
-                    <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
-                        <i class="fas fa-shield-alt text-yellow-500 text-3xl mb-3"></i>
-                        <p class="text-yellow-700 font-bold">⛔ صلاحية محدودة</p>
-                        <p class="text-gray-600 text-sm mt-2">هذا القسم مخصص للإدارة فقط</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            listDiv.innerHTML = '<p class="text-center text-gray-400 animate-pulse">📥 جاري تحميل الطلبات للمراجعة...</p>';
-            
-            try {
-                const q = query(collection(db, "pending_questions"), where("status", "==", "pending"));
-                const snapshot = await getDocs(q);
-                
-                if (snapshot.empty) {
-                    listDiv.innerHTML = `
-                        <div class="bg-green-50 border border-green-200 rounded-xl p-8 text-center">
-                            <i class="fas fa-check-circle text-green-500 text-4xl mb-3"></i>
-                            <p class="text-green-700 font-bold">🎉 صندوق المراجعة فارغ</p>
-                            <p class="text-gray-600 text-sm mt-2">لا توجد أسئلة أو اقتراحات جديدة</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                let items = [];
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    items.push({
-                        id: doc.id,
-                        ...data,
-                        createdAt: data.createdAt ? data.createdAt.toDate() : new Date(),
-                        timestamp: data.createdAt ? data.createdAt.toDate().getTime() : Date.now()
-                    });
-                });
-                
-                items.sort((a, b) => b.timestamp - a.timestamp);
-                
-                let html = `
-                    <div class="mb-4 p-3 bg-indigo-50 rounded-xl border border-indigo-100">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <p class="font-bold text-indigo-700 text-sm">إجمالي الطلبات: ${items.length}</p>
-                                <p class="text-xs text-indigo-500">(من الأحدث للأقدم)</p>
-                            </div>
-                            <button onclick="acceptAllPendingQuestions()" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md hover:scale-105 active:scale-95 transition flex items-center gap-2">
-                                <i class="fas fa-check-double"></i> قبول الكل
-                            </button>
-                        </div>
-                    </div>
-                `;
-                
-                items.forEach((item, index) => {
-                    const data = item;
-                    const dateStr = data.createdAt.toLocaleDateString('ar-EG', {
-                        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                    });
-                    
-                    if (data.type === 'suggestion') {
-                        html += `
-                            <div class="upload-question-item mb-4 border-l-4 border-l-orange-500">
-                                <div class="upload-question-header">
-                                    <div class="flex justify-between items-start w-full">
-                                        <div class="flex gap-2 flex-wrap">
-                                            <span class="bg-orange-100 text-orange-700 px-2 py-1 rounded text-xs font-bold">💡 اقتراح من مستخدم</span>
-                                        </div>
-                                        <div class="text-xs text-gray-500">📅 ${dateStr}</div>
-                                    </div>
-                                </div>
-                                <p class="upload-question-text mt-3 font-medium text-gray-800">${data.question}</p>
-                                <div class="mt-4 pt-3 border-t border-gray-100">
-                                    <p class="upload-sender text-sm">
-                                        <span class="text-gray-500">📤 مرسل:</span>
-                                        <span class="font-bold text-purple-600">${data.senderName || 'مجهول'}</span>
-                                        <span class="text-xs text-gray-400 ml-2">(ID: ${data.senderId})</span>
-                                    </p>
-                                </div>
-                                <div class="upload-question-buttons mt-4">
-                                    <button onclick="deleteSuggestion('${item.id}')" class="w-full bg-red-100 text-red-600 py-2 rounded-xl font-bold hover:bg-red-200 transition">
-                                        <i class="fas fa-trash"></i> حذف الاقتراح
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                    } else {
-                        let answersHtml = '';
-                        if (data.type === 'mcq') {
-                            answersHtml = `
-                                <div class="upload-question-answers mt-3">
-                                    <p class="text-xs text-gray-500 mb-2 font-bold">الخيارات:</p>
-                                    ${(data.answers || []).map((ans, idx) => `
-                                        <div class="upload-question-answer ${idx === data.correct ? 'upload-question-correct' : ''}">
-                                            <span class="font-bold">${idx + 1}.</span> ${ans || '...'}
-                                            ${idx === data.correct ? '<span class="text-green-500 text-xs mr-2">✓ صح</span>' : ''}
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            `;
-                        } else {
-                            answersHtml = `
-                                <div class="upload-question-answers mt-3">
-                                    <p class="text-xs text-gray-500 mb-2 font-bold">الإجابة الصحيحة:</p>
-                                    <div class="upload-question-answer ${data.correct ? 'upload-question-correct' : ''}">
-                                        ${data.correct ? '✅ صح' : '❌ خطأ'}
-                                    </div>
-                                </div>
-                            `;
-                        }
-                        
-                        html += `
-                            <div class="upload-question-item mb-4 border-l-4 ${index === 0 ? 'border-l-blue-500' : 'border-l-gray-300'}">
-                                <div class="upload-question-header">
-                                    <div class="flex justify-between items-start">
-                                        <div class="flex gap-2 flex-wrap">
-                                            <span class="upload-question-grade">${data.grade ? getGradeName(data.grade) : 'غير محدد'}</span>
-                                            <span class="upload-question-subject" style="background:#10b981">${data.subject || 'غير محدد'}</span>
-                                            <span class="upload-question-type">${data.type === 'mcq' ? 'اختيارات' : 'صح/خطأ'}</span>
-                                            ${index === 0 ? '<span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold">🆕 الأحدث</span>' : ''}
-                                        </div>
-                                        <div class="text-xs text-gray-500" title="${data.createdAt.toISOString()}">📅 ${dateStr}</div>
-                                    </div>
-                                </div>
-                                <p class="upload-question-text mt-3">${data.question || 'لا يوجد نص للسؤال'}</p>
-                                ${answersHtml}
-                                <div class="mt-4 pt-3 border-t border-gray-100">
-                                    <div class="flex justify-between items-center">
-                                        <p class="upload-sender text-sm">
-                                            <span class="text-gray-500">📤 مرسل:</span>
-                                            <span class="font-bold text-purple-600 mr-2">${data.senderName || data.senderId || 'مجهول'}</span>
-                                        </p>
-                                        <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">#${index + 1}</span>
-                                    </div>
-                                </div>
-                                <div class="upload-question-buttons mt-4">
-                                    <button onclick="acceptQuestion('${item.id}')" class="upload-accept-btn hover:scale-105 transition">
-                                        <i class="fas fa-check"></i> قبول السؤال
-                                    </button>
-                                    <button onclick="rejectQuestion('${item.id}')" class="upload-reject-btn hover:scale-105 transition">
-                                        <i class="fas fa-times"></i> رفض
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                    }
-                });
-                
-                html += `
-                    <div class="mt-6 text-center">
-                        <button onclick="loadReviewQuestions()" class="bg-gray-100 text-gray-700 px-6 py-3 rounded-xl font-bold hover:bg-gray-200 transition flex items-center gap-2 mx-auto">
-                            <i class="fas fa-sync-alt"></i> تحديث القائمة
-                        </button>
-                        <p class="text-xs text-gray-400 mt-2">آخر تحديث: ${new Date().toLocaleTimeString('ar-EG')}</p>
-                    </div>
-                `;
-                
-                listDiv.innerHTML = html;
-                
-            } catch (error) {
-                console.error("❌ خطأ في تحميل البيانات:", error);
-                listDiv.innerHTML = `
-                    <div class="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
-                        <i class="fas fa-exclamation-triangle text-red-500 text-3xl mb-3"></i>
-                        <p class="text-red-700 font-bold">فشل في تحميل البيانات</p>
-                        <p class="text-red-600 text-sm mt-2">${error.message || 'خطأ غير معروف'}</p>
-                        <button onclick="loadReviewQuestions()" class="mt-4 bg-red-100 text-red-700 px-6 py-2 rounded-lg font-bold hover:bg-red-200 transition">
-                            <i class="fas fa-redo"></i> إعادة المحاولة
-                        </button>
-                    </div>
-                `;
-            }
-        }
+            const listDiv = document.getElementById('review-questions-list');
+            
+            if (!userData || userData.email !== ADMIN_EMAIL) {
+                listDiv.innerHTML = `
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-center">
+                        <i class="fas fa-shield-alt text-yellow-500 text-2xl mb-2"></i>
+                        <p class="text-yellow-700 font-bold text-sm">⛔ صلاحية محدودة</p>
+                        <p class="text-gray-600 text-xs mt-1">هذا القسم مخصص للإدارة فقط</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            listDiv.innerHTML = '<p class="text-center text-gray-400 text-sm animate-pulse">📥 جاري تحميل الطلبات للمراجعة...</p>';
+            
+            try {
+                const q = query(collection(db, "pending_questions"), where("status", "==", "pending"));
+                const snapshot = await getDocs(q);
+                
+                if (snapshot.empty) {
+                    listDiv.innerHTML = `
+                        <div class="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
+                            <i class="fas fa-check-circle text-green-500 text-3xl mb-2"></i>
+                            <p class="text-green-700 font-bold text-sm">🎉 صندوق المراجعة فارغ</p>
+                            <p class="text-gray-600 text-xs mt-1">لا توجد أسئلة أو اقتراحات جديدة</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let items = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    items.push({
+                        id: doc.id,
+                        ...data,
+                        createdAt: data.createdAt ? data.createdAt.toDate() : new Date(),
+                        timestamp: data.createdAt ? data.createdAt.toDate().getTime() : Date.now()
+                    });
+                });
+                
+                items.sort((a, b) => b.timestamp - a.timestamp);
+                
+                let html = `
+                    <div class="mb-3 p-2.5 bg-indigo-50 rounded-lg border border-indigo-100">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="font-bold text-indigo-700 text-xs">إجمالي الطلبات: ${items.length}</p>
+                                <p class="text-[10px] text-indigo-500">(من الأحدث للأقدم)</p>
+                            </div>
+                            <button onclick="acceptAllPendingQuestions()" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm hover:scale-105 active:scale-95 transition flex items-center gap-1">
+                                <i class="fas fa-check-double"></i> قبول الكل
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                items.forEach((item, index) => {
+                    const data = item;
+                    const dateStr = data.createdAt.toLocaleDateString('ar-EG', {
+                        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                    });
+                    
+                    if (data.type === 'suggestion') {
+                        html += `
+                            <div class="bg-white p-3 rounded-lg shadow-sm mb-3 border-r-4 border-r-orange-500 border border-gray-100">
+                                <div class="flex justify-between items-start w-full mb-2">
+                                    <span class="bg-orange-50 text-orange-600 px-2 py-0.5 rounded text-[10px] font-bold">💡 اقتراح</span>
+                                    <div class="text-[10px] text-gray-400">📅 ${dateStr}</div>
+                                </div>
+                                <p class="text-xs font-bold text-gray-800 mb-2 leading-relaxed">${data.question}</p>
+                                <div class="pt-2 border-t border-gray-50 flex justify-between items-center mb-2">
+                                    <p class="text-[10px] text-gray-500">
+                                        📤 <span class="font-bold text-purple-600">${data.senderName || 'مجهول'}</span>
+                                    </p>
+                                </div>
+                                <button onclick="deleteSuggestion('${item.id}')" class="w-full bg-red-50 text-red-600 py-1.5 rounded-lg text-xs font-bold hover:bg-red-100 transition">
+                                    <i class="fas fa-trash text-[10px]"></i> حذف
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        let answersHtml = '';
+                        if (data.type === 'mcq') {
+                            answersHtml = `
+                                <div class="bg-gray-50 p-2 rounded-lg mt-2 mb-2">
+                                    <p class="text-[10px] text-gray-400 mb-1 font-bold">الخيارات:</p>
+                                    ${(data.answers || []).map((ans, idx) => `
+                                        <div class="text-xs p-1 mb-1 rounded ${idx === data.correct ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-white border border-gray-100 text-gray-600'}">
+                                            <span class="font-bold">${idx + 1}.</span> ${ans || '...'}
+                                            ${idx === data.correct ? '<span class="text-[10px] ml-1">✓</span>' : ''}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `;
+                        } else {
+                            answersHtml = `
+                                <div class="bg-gray-50 p-2 rounded-lg mt-2 mb-2 flex items-center justify-between">
+                                    <span class="text-[10px] text-gray-400 font-bold">الإجابة الصحيحة:</span>
+                                    <span class="text-xs font-bold px-2 py-0.5 rounded ${data.correct ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+                                        ${data.correct ? '✅ صح' : '❌ خطأ'}
+                                    </span>
+                                </div>
+                            `;
+                        }
+                        
+                        html += `
+                            <div class="bg-white p-3 rounded-lg shadow-sm mb-3 border-r-4 ${index === 0 ? 'border-r-blue-500' : 'border-r-emerald-500'} border border-gray-100">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div class="flex gap-1 flex-wrap">
+                                        <span class="bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded text-[10px] font-bold">${data.grade ? getGradeName(data.grade) : 'غير محدد'}</span>
+                                        <span class="bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded text-[10px] font-bold">${data.subject || 'غير محدد'}</span>
+                                        <span class="bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded text-[10px] font-bold">${data.type === 'mcq' ? 'اختيارات' : 'صح/خطأ'}</span>
+                                    </div>
+                                    <div class="text-[10px] text-gray-400">📅 ${dateStr}</div>
+                                </div>
+                                <p class="text-xs font-bold text-gray-800 pr-2 border-r-2 border-gray-200">${data.question || 'لا يوجد نص للسؤال'}</p>
+                                ${answersHtml}
+                                <div class="pt-2 border-t border-gray-50 flex justify-between items-center mb-2">
+                                    <p class="text-[10px] text-gray-500">
+                                        📤 <span class="font-bold text-purple-600">${data.senderName || data.senderId || 'مجهول'}</span>
+                                    </p>
+                                </div>
+                                <div class="flex gap-2 mt-2">
+                                    <button onclick="acceptQuestion('${item.id}')" class="flex-1 bg-emerald-500 text-white py-1.5 rounded-lg text-xs font-bold hover:bg-emerald-600 transition">
+                                        <i class="fas fa-check"></i> قبول
+                                    </button>
+                                    <button onclick="rejectQuestion('${item.id}')" class="flex-1 bg-red-50 text-red-500 py-1.5 rounded-lg text-xs font-bold hover:bg-red-100 transition border border-red-100">
+                                        <i class="fas fa-times"></i> رفض
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+                
+                html += `
+                    <div class="mt-4 text-center">
+                        <button onclick="loadReviewQuestions()" class="bg-gray-100 text-gray-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-gray-200 transition inline-flex items-center gap-2">
+                            <i class="fas fa-sync-alt"></i> تحديث القائمة
+                        </button>
+                    </div>
+                `;
+                
+                listDiv.innerHTML = html;
+                
+            } catch (error) {
+                console.error("❌ خطأ في تحميل البيانات:", error);
+                listDiv.innerHTML = `
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+                        <i class="fas fa-exclamation-triangle text-red-500 text-xl mb-2"></i>
+                        <p class="text-red-700 font-bold text-xs">فشل في تحميل البيانات</p>
+                        <button onclick="loadReviewQuestions()" class="mt-3 bg-red-100 text-red-700 px-4 py-1.5 rounded text-xs font-bold hover:bg-red-200 transition">
+                            إعادة المحاولة
+                        </button>
+                    </div>
+                `;
+            }
+        }
 
         window.acceptQuestion = async function(questionId) {
             try {
@@ -6199,50 +6182,50 @@ window.preloadGlobalAnnouncement = async function() {
 };
 
 window.showPreloadedAnnouncement = function() {
-    if (!preloadedAdData) return; 
-    
-    const adData = preloadedAdData;
-    document.getElementById('global-ad-content').innerText = adData.text;
-    
-    const dynamicArea = document.getElementById('global-ad-dynamic-area');
-    dynamicArea.innerHTML = '';
+    if (!preloadedAdData) return; 
+    
+    const adData = preloadedAdData;
+    document.getElementById('global-ad-content').innerText = adData.text;
+    
+    const dynamicArea = document.getElementById('global-ad-dynamic-area');
+    dynamicArea.innerHTML = '';
 
-    if (adData.type === 'link' && adData.linkUrl) {
-        let finalUrl = adData.linkUrl;
-        if (finalUrl.includes('play.google.com/store/apps/details?id=')) {
-            finalUrl = finalUrl.replace('https://play.google.com/store/apps/details?id=', 'market://details?id=');
-        } else if (finalUrl.includes('t.me/') && !finalUrl.startsWith('tg://')) {
-            finalUrl = finalUrl.replace('https://t.me/', 'tg://resolve?domain=').replace('http://t.me/', 'tg://resolve?domain=');
-        }
-        
-        dynamicArea.innerHTML = `
-            <button onclick="window.open('${finalUrl}', '_system'); window.closeGlobalAd('${adData.timestamp}');" class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-xl font-bold text-md shadow-md hover:scale-105 transition mb-2">
-                <i class="fas fa-external-link-alt ml-2"></i> ${adData.btnName || 'اضغط هنا'}
-            </button>
-            <button onclick="window.closeGlobalAd('${adData.timestamp}')" class="w-full bg-gray-100 text-gray-500 py-3 rounded-xl font-bold hover:bg-gray-200 transition">
-                إغلاق
-            </button>
-        `;
-    } else if (adData.type === 'suggestion') {
-        dynamicArea.innerHTML = `
-            <textarea id="user-suggestion-input" class="input-box h-20 text-sm mb-3" placeholder="اكتب اقتراحك أو رسالتك للإدارة هنا..."></textarea>
-            <button onclick="window.submitSuggestion('${adData.timestamp}')" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-3 rounded-xl font-bold shadow-md hover:opacity-90 transition flex items-center justify-center gap-2">
-                <i class="fas fa-paper-plane"></i> إرسال
-            </button>
-        `;
-    } else {
-        dynamicArea.innerHTML = `
-            <button onclick="window.closeGlobalAd('${adData.timestamp}')" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-bold text-md shadow-md hover:scale-105 transition">
-                حسناً، فهمت
-            </button>
-        `;
-    }
+    if (adData.type === 'link' && adData.linkUrl) {
+        let finalUrl = adData.linkUrl;
+        if (finalUrl.includes('play.google.com/store/apps/details?id=')) {
+            finalUrl = finalUrl.replace('https://play.google.com/store/apps/details?id=', 'market://details?id=');
+        } else if (finalUrl.includes('t.me/') && !finalUrl.startsWith('tg://')) {
+            finalUrl = finalUrl.replace('https://t.me/', 'tg://resolve?domain=').replace('http://t.me/', 'tg://resolve?domain=');
+        }
+        
+        dynamicArea.innerHTML = `
+            <button onclick="window.open('${finalUrl}', '_system'); window.closeGlobalAd('${adData.timestamp}');" class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-2 rounded-lg font-bold text-sm shadow-sm hover:scale-105 transition mb-1">
+                <i class="fas fa-external-link-alt ml-2"></i> ${adData.btnName || 'اضغط هنا'}
+            </button>
+            <button onclick="window.closeGlobalAd('${adData.timestamp}')" class="w-full bg-gray-100 text-gray-500 py-2 rounded-lg text-sm font-bold hover:bg-gray-200 transition">
+                إغلاق
+            </button>
+        `;
+    } else if (adData.type === 'suggestion') {
+        dynamicArea.innerHTML = `
+            <textarea id="user-suggestion-input" class="input-box h-16 p-2 text-xs mb-2" placeholder="اكتب اقتراحك للإدارة هنا..."></textarea>
+            <button onclick="window.submitSuggestion('${adData.timestamp}')" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-2 rounded-lg text-sm font-bold shadow-sm hover:opacity-90 transition flex items-center justify-center gap-2">
+                <i class="fas fa-paper-plane"></i> إرسال
+            </button>
+        `;
+    } else {
+        dynamicArea.innerHTML = `
+            <button onclick="window.closeGlobalAd('${adData.timestamp}')" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-2 rounded-lg font-bold text-sm shadow-sm hover:scale-105 transition">
+                حسناً، فهمت
+            </button>
+        `;
+    }
 
-    const modal = document.getElementById('global-ad-modal');
-    modal.classList.remove('hidden');
-    modal.style.display = 'flex';
-    
-    preloadedAdData = null; 
+    const modal = document.getElementById('global-ad-modal');
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+    
+    preloadedAdData = null; 
 };
 
 window.closeGlobalAd = function(timestamp) {
