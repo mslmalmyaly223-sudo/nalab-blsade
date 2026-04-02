@@ -2409,6 +2409,24 @@
     </div>
 </div>
 
+<div id="update-packet-screen" class="modal-overlay hidden" style="z-index: 40000 !important; background: rgba(255,255,255,0.95);">
+    <div class="text-center p-8">
+        <div class="relative w-24 h-24 mx-auto mb-6">
+            <svg class="animate-spin w-full h-full text-indigo-200" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+                <path class="opacity-75" fill="#4f46e5" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <i class="fas fa-cloud-download-alt absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl text-indigo-600"></i>
+        </div>
+        <h2 class="text-2xl font-black text-gray-800 mb-2">تحديث قاعدة البيانات 📚</h2>
+        <p class="text-gray-600 font-bold mb-4">جاري تنزيل الأسئلة الجديدة لهاتفك لضمان السرعة...</p>
+        <div class="w-64 h-3 bg-gray-200 rounded-full mx-auto overflow-hidden">
+            <div id="update-progress-bar" class="h-full bg-gradient-to-r from-indigo-500 to-purple-600 w-0 transition-all duration-300"></div>
+        </div>
+        <p id="update-status-text" class="text-xs text-indigo-500 font-bold mt-3">جاري الاتصال بالسيرفر...</p>
+    </div>
+</div>
+
 <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
@@ -2568,6 +2586,7 @@
                         setupHeaderUI();
                         setupAdminUI();
                         checkDailyReward();
+                        window.syncQuestionsPacket();
 checkPremiumStatus();
 checkNotifications();
 if(userData.email === ADMIN_EMAIL) checkAdminNotifications();
@@ -4135,47 +4154,45 @@ window.checkInterruptedGame = async function() {
             await window.withdrawFromGame(true); // نمرر true لتجاوز الـ confirm
         };
 
+        // جلب الأسئلة من (ذاكرة الهاتف) وليس من فايربيس = 0 قراءات (مجاناً 100%)
         async function getQuestions(sub, chapter, type) {
             if (!userData.grade) return [];
             
-            let gradeCondition = userData.grade;
+            // قراءة الحزمة من التلفون مباشرة
+            const cachedData = localStorage.getItem('cached_questions_packet');
+            if (!cachedData) {
+                // إذا لسبب ما انمسحت، نسوي مزامنة سريعة
+                await syncQuestionsPacket();
+                return await getQuestions(sub, chapter, type);
+            }
             
-            // ⚠️ الشرط الصارم: المشترك فقط للسادس العلمي والأدبي حصراً (الثالث متوسط معزول تماماً)
-            if (sharedSubjects.includes(sub)) {
-                if (userData.grade === '6sci' || userData.grade === '6lit') {
-                    // إذا كان الطالب سادس، يبحث بأسئلة العلمي والأدبي معاً للمواد المشتركة (إذا تطابق الفصل)
-                    gradeCondition = ['6sci', '6lit'];
+            const allLocalQuestions = JSON.parse(cachedData);
+            
+            let isSharedSubject = false;
+            // التحقق إذا المادة مشتركة بين العلمي والأدبي (السادس فقط)
+            if (sharedSubjects.includes(sub) && (userData.grade === '6sci' || userData.grade === '6lit')) {
+                isSharedSubject = true;
+            }
+            
+            // فلترة الأسئلة محلياً بالتلفون (سريعة جداً)
+            const filteredQuestions = allLocalQuestions.filter(q => {
+                // 1. فحص المرحلة
+                let matchGrade = false;
+                if (isSharedSubject) {
+                    matchGrade = (q.grade === '6sci' || q.grade === '6lit');
                 } else {
-                    // إذا كان الطالب ثالث متوسط، يبقى ثالث متوسط فقط ولا يختلط مع السادس
-                    gradeCondition = '3med'; 
+                    matchGrade = (q.grade === userData.grade);
                 }
-            }
+                
+                // 2. مطابقة باقي الشروط
+                return matchGrade && 
+                       q.subject === sub && 
+                       q.chapter === chapter && 
+                       q.type === type;
+            });
             
-            let q;
-            if (Array.isArray(gradeCondition)) {
-                q = query(
-                    collection(db, "questions"), 
-                    where("grade", "in", gradeCondition),  
-                    where("subject", "==", sub),
-                    where("chapter", "==", chapter),
-                    where("type", "==", type), 
-                    limit(40)
-                );
-            } else {
-                q = query(
-                    collection(db, "questions"), 
-                    where("grade", "==", gradeCondition),  
-                    where("subject", "==", sub),
-                    where("chapter", "==", chapter),
-                    where("type", "==", type), 
-                    limit(40)
-                );
-            }
-            
-            const snap = await getDocs(q);
-            const list = [];
-            snap.forEach(d => list.push(d.data()));
-            return list;
+            // خلط الأسئلة عشوائياً (Shuffle) حتى لا تظهر بنفس الترتيب دائماً
+            return filteredQuestions.sort(() => 0.5 - Math.random());
         }
         
         let emojiUsedInCurrentQuestion = false;
@@ -6842,6 +6859,83 @@ let selectedBulkType = 'mcq';
                 progContainer.classList.add('hidden');
             }
         };
+        
+        // نظام المزامنة الذكي (لتقليل قراءات فايربيس إلى الصفر أثناء اللعب)
+        window.syncQuestionsPacket = async function() {
+            const updateScreen = document.getElementById('update-packet-screen');
+            const progBar = document.getElementById('update-progress-bar');
+            const statusTxt = document.getElementById('update-status-text');
+            
+            try {
+                // جلب وقت آخر تحديث من ذاكرة الهاتف
+                const lastSyncStr = localStorage.getItem('last_questions_sync');
+                let q;
+                
+                if (lastSyncStr) {
+                    // إذا كان محملها قبل، نجيب بس الأسئلة الجديدة اللي انضافت بعد آخر تحديث
+                    const lastSyncDate = new Date(parseInt(lastSyncStr));
+                    q = query(collection(db, "questions"), where("createdAt", ">", lastSyncDate));
+                    console.log("جاري البحث عن أسئلة جديدة فقط...");
+                } else {
+                    // أول مرة يفتح التطبيق: نجيب كل الأسئلة
+                    q = query(collection(db, "questions"));
+                    console.log("التحميل الأول: جاري جلب كل الأسئلة...");
+                }
+                
+                const snapshot = await getDocs(q);
+                
+                if (!snapshot.empty) {
+                    // إظهار شاشة التحديث للمستخدم
+                    updateScreen.classList.remove('hidden');
+                    statusTxt.innerText = `تم العثور على ${snapshot.size} سؤال جديد، جاري التنزيل...`;
+                    progBar.style.width = '50%';
+                    
+                    let newQuestions = [];
+                    snapshot.forEach(doc => {
+                        let data = doc.data();
+                        // تخزين البيانات المهمة فقط لتقليل الحجم
+                        newQuestions.push({
+                            id: doc.id,
+                            question: data.question,
+                            answers: data.answers || [],
+                            correct: data.correct,
+                            type: data.type,
+                            grade: data.grade,
+                            subject: data.subject,
+                            chapter: data.chapter || ''
+                        });
+                    });
+                    
+                    progBar.style.width = '80%';
+                    statusTxt.innerText = "جاري الحفظ في ذاكرة الهاتف...";
+                    
+                    // جلب الأسئلة القديمة من الذاكرة ودمجها مع الجديدة
+                    let existingQuestions = JSON.parse(localStorage.getItem('cached_questions_packet') || '[]');
+                    existingQuestions = existingQuestions.concat(newQuestions);
+                    
+                    // حفظ الحزمة الكاملة بالهاتف
+                    localStorage.setItem('cached_questions_packet', JSON.stringify(existingQuestions));
+                    // حفظ وقت التحديث
+                    localStorage.setItem('last_questions_sync', Date.now().toString());
+                    
+                    progBar.style.width = '100%';
+                    statusTxt.innerText = "اكتمل التحديث بنجاح! ✅";
+                    
+                    setTimeout(() => {
+                        updateScreen.classList.add('hidden');
+                    }, 1000);
+                } else {
+                    console.log("قاعدة بيانات الهاتف محدثة، لا توجد أسئلة جديدة.");
+                    // تحديث وقت الاتصال فقط
+                    localStorage.setItem('last_questions_sync', Date.now().toString());
+                }
+            } catch (error) {
+                console.error("خطأ في تحديث حزمة الأسئلة:", error);
+                updateScreen.classList.add('hidden');
+            }
+        };
+        
+        
         
     </script>
 </body>
