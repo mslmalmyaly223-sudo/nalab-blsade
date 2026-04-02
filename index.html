@@ -1611,13 +1611,7 @@
                 <i class="fas fa-chevron-left text-gray-300"></i>
             </button>
 
-            <button onclick="openPage('screen-upload-questions')" class="stat-btn border-purple-100 bg-purple-50">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-purple-600"><i class="fas fa-upload"></i></div>
-                    <span class="font-bold text-purple-700">رفع أسئلة</span>
-                </div>
-                <i class="fas fa-chevron-left text-gray-300"></i>
-            </button>
+            
 
             <div id="admin-hub-btn-container" class="hidden">
                 <button onclick="openPage('screen-admin-hub')" class="stat-btn border-red-200 bg-red-50 shadow-md">
@@ -1820,12 +1814,7 @@
             <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-orange-600"><i class="fas fa-bullhorn text-xl"></i></div>
             <span class="font-bold text-sm text-gray-700">الإعلانات</span>
         </button>
-        <button onclick="openPage('screen-admin-ai-pdf')" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-2 hover:bg-gray-50 transition-all active:scale-95">
-    <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-600 rounded-full flex items-center justify-center text-white shadow-md">
-        <i class="fas fa-file-invoice text-xl"></i>
-    </div>
-    <span class="font-bold text-sm text-gray-700">رفع أسئلة (AI)</span>
-</button>
+        
     </div>
 </div>
         </div>
@@ -2023,114 +2012,7 @@
                     <p class="text-center text-gray-400">جاري تحميل الأسئلة للمراجعة...</p>
                 </div>
             </div>
-        </div>
-
-        <div id="screen-upload-questions" class="screen pt-20">
-            <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
-                <button onclick="backToProfile()" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
-                <h1 class="font-bold text-lg text-gray-800">رفع أسئلة جديدة</h1>
-            </div>
-            <div class="scroll-container px-5 py-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <h3 class="font-bold text-gray-800 mb-4 text-center">رفع سؤال جديد</h3>
-                    
-                    <div id="upload-step-1">
-                        <div class="mb-4">
-                            <label class="block text-sm font-bold text-gray-600 mb-2">المادة</label>
-                            <select id="upload-subject" class="input-box" onchange="onUploadSubjectChange()">
-                                <option value="">اختر المادة</option>
-                            </select>
-                        </div>
-                        
-                        <label class="block text-sm font-bold text-gray-600 mb-2 mt-3">الفصل / الموضوع</label>
-<select id="upload-chapter" class="input-box mb-4">
-    <option value="">اختر المادة أولاً</option>
-</select>
-
-                        <div class="mb-6">
-                            <label class="block text-sm font-bold text-gray-600 mb-2">نوع السؤال</label>
-                            <div class="grid grid-cols-2 gap-3">
-                                <button onclick="setUploadQType('mcq')" id="upload-btn-mcq" class="py-3 rounded-xl border-2 border-indigo-100 text-gray-500 font-bold active:scale-95 transition">اختيارات</button>
-                                <button onclick="setUploadQType('tf')" id="upload-btn-tf" class="py-3 rounded-xl border-2 border-indigo-100 text-gray-500 font-bold active:scale-95 transition">صح وخطأ</button>
-                            </div>
-                        </div>
-
-                        <button onclick="goToUploadStep2()" class="w-full h-12 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl shadow-md hover:shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 mt-4">
-                            <span>التالي</span>
-                            <i class="fas fa-arrow-left"></i>
-                        </button>
-                    </div>
-
-                    <div id="upload-step-2-mcq" class="hidden">
-                        <div class="mb-4">
-                            <label class="block text-sm font-bold text-gray-600 mb-2">نص السؤال</label>
-                            <textarea id="upload-question-text" class="input-box h-24" placeholder="اكتب نص السؤال هنا..." maxlength="500"></textarea>
-                        </div>
-
-                        <div class="space-y-3 mb-4">
-                            <div>
-                                <label class="block text-sm font-bold text-gray-600 mb-2">الخيار 1</label>
-                                <div class="flex gap-2">
-                                    <input type="text" id="upload-answer-1" class="input-box flex-1" placeholder="النص">
-                                    <button onclick="setCorrectAnswer(1)" id="upload-correct-1" class="w-12 bg-gray-100 text-gray-600 rounded-lg">✓</button>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold text-gray-600 mb-2">الخيار 2</label>
-                                <div class="flex gap-2">
-                                    <input type="text" id="upload-answer-2" class="input-box flex-1" placeholder="النص">
-                                    <button onclick="setCorrectAnswer(2)" id="upload-correct-2" class="w-12 bg-gray-100 text-gray-600 rounded-lg">✓</button>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold text-gray-600 mb-2">الخيار 3</label>
-                                <div class="flex gap-2">
-                                    <input type="text" id="upload-answer-3" class="input-box flex-1" placeholder="النص">
-                                    <button onclick="setCorrectAnswer(3)" id="upload-correct-3" class="w-12 bg-gray-100 text-gray-600 rounded-lg">✓</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="flex gap-3 mt-6">
-                            <button onclick="goToUploadStep1()" class="flex-1 h-12 bg-gray-100 text-gray-700 font-bold rounded-xl shadow-sm hover:bg-gray-200 active:scale-95 transition-all flex items-center justify-center gap-2">
-                                <i class="fas fa-arrow-right"></i>
-                                <span>رجوع</span>
-                            </button>
-                            <button onclick="submitQuestionMCQ()" class="flex-1 h-12 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold rounded-xl shadow-md hover:shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2">
-                                <i class="fas fa-paper-plane"></i>
-                                <span>إرسال للمراجعة</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div id="upload-step-2-tf" class="hidden">
-                        <div class="mb-4">
-                            <label class="block text-sm font-bold text-gray-600 mb-2">نص السؤال</label>
-                            <textarea id="upload-tf-question" class="input-box h-24" placeholder="اكتب نص السؤال هنا..." maxlength="500"></textarea>
-                        </div>
-
-                        <div class="mb-6">
-                            <label class="block text-sm font-bold text-gray-600 mb-2">الإجابة الصحيحة</label>
-                            <div class="grid grid-cols-2 gap-3">
-                                <button onclick="setTFAnswer(true)" id="upload-tf-true" class="py-3 rounded-xl border-2 border-green-100 text-gray-500 font-bold">صح</button>
-                                <button onclick="setTFAnswer(false)" id="upload-tf-false" class="py-3 rounded-xl border-2 border-red-100 text-gray-500 font-bold">خطأ</button>
-                            </div>
-                        </div>
-
-                        <div class="flex gap-3 mt-6">
-                            <button onclick="goToUploadStep1()" class="flex-1 h-12 bg-gray-100 text-gray-700 font-bold rounded-xl shadow-sm hover:bg-gray-200 active:scale-95 transition-all flex items-center justify-center gap-2">
-                                <i class="fas fa-arrow-right"></i>
-                                <span>رجوع</span>
-                            </button>
-                            <button onclick="submitQuestionTF()" class="flex-1 h-12 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold rounded-xl shadow-md hover:shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2">
-                                <i class="fas fa-paper-plane"></i>
-                                <span>إرسال للمراجعة</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </div> 
         
         <div class="fixed bottom-0 w-full bg-white border-t border-gray-100 flex justify-around items-center h-20 pb-2 z-40 shadow-[0_-5px_20px_rgba(0,0,0,0.03)]">
             <div onclick="switchTab('challenges')" class="nav-item active flex-1 flex flex-col items-center justify-center h-full cursor-pointer">
@@ -2273,121 +2155,49 @@
     </div>
     
     <div id="global-ad-modal" class="modal-overlay hidden" style="z-index: 999999 !important;">
-    <div class="modal-content relative text-center border-4 border-indigo-500 animate-[zoomInBounce_0.5s_ease-out] bg-white p-8 rounded-3xl shadow-2xl w-11/12 max-w-md" style="overflow: visible;">
-        <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center border-4 border-white shadow-lg z-50">
-            <i class="fas fa-bullhorn text-3xl text-white animate-pulse"></i>
+    <div class="modal-content relative text-center animate-[zoomInBounce_0.4s_ease-out] bg-white p-6 rounded-2xl shadow-xl w-11/12 max-w-sm">
+        <button onclick="window.closeGlobalAd(preloadedAdData?.timestamp || Date.now())" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+        <div class="mx-auto w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mb-4">
+            <i class="fas fa-bell text-2xl text-indigo-500 animate-pulse"></i>
         </div>
-        <h3 class="text-2xl font-black text-gray-800 mt-8 mb-4">إعلان هام!</h3>
-        <p id="global-ad-content" class="text-gray-600 font-bold text-lg mb-8 leading-relaxed whitespace-pre-line"></p>
-        <div id="global-ad-buttons" class="flex flex-col gap-3">
-            </div>
-    </div>
+        <p id="global-ad-content" class="text-gray-800 font-bold text-md mb-6 leading-relaxed whitespace-pre-line"></p>
+        <div id="global-ad-dynamic-area" class="flex flex-col gap-3 w-full">
+                    </div>
+    </div>
 </div>
 
 <div id="screen-admin-ads" class="screen pt-20">
-    <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
-        <button onclick="openPage('screen-admin-hub')" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
-        <h1 class="font-bold text-lg text-gray-800">نشر إعلان للمستخدمين</h1>
-    </div>
-    <div class="scroll-container px-5 py-6">
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-            <label class="block text-sm font-bold text-gray-600 mb-2">نص الإعلان</label>
-            <textarea id="admin-ad-text" class="input-box h-32 mb-4" placeholder="اكتب هنا ما تريد أن يظهر للمستخدمين عند فتح التطبيق..."></textarea>
-            
-            <label class="block text-sm font-bold text-gray-600 mb-2">نوع الإعلان</label>
-            <select id="admin-ad-type" class="input-box mb-4" onchange="toggleAdType()">
-                <option value="msg">رسالة فقط (زر حسناً)</option>
-                <option value="link">رسالة مع رابط تحويل</option>
-            </select>
+    <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
+        <button onclick="openPage('screen-admin-hub')" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
+        <h1 class="font-bold text-lg text-gray-800">نشر إعلان / طلب اقتراح</h1>
+    </div>
+    <div class="scroll-container px-5 py-6">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <label class="block text-sm font-bold text-gray-600 mb-2">نص الإعلان أو الرسالة</label>
+            <textarea id="admin-ad-text" class="input-box h-32 mb-4" placeholder="اكتب هنا ما تريد أن يظهر للمستخدمين عند فتح التطبيق..."></textarea>
+            
+            <label class="block text-sm font-bold text-gray-600 mb-2">نوع الإعلان</label>
+            <select id="admin-ad-type" class="input-box mb-4" onchange="toggleAdType()">
+                <option value="msg">رسالة فقط (زر حسناً)</option>
+                <option value="link">رسالة مع رابط تحويل</option>
+                <option value="suggestion">طلب اقتراح من المستخدمين</option>
+            </select>
 
-            <div id="admin-link-container" class="hidden">
-                <label class="block text-sm font-bold text-gray-600 mb-2">اسم الزر (مثال: انضم لقناتنا)</label>
-                <input type="text" id="admin-ad-btn-name" class="input-box mb-4" placeholder="اكتب اسم الزر...">
-                
-                <label class="block text-sm font-bold text-gray-600 mb-2">الرابط (تلكرام أو سوق بلي)</label>
-                <input type="url" id="admin-ad-link" class="input-box mb-6" placeholder="https://t.me/yourchannel">
-            </div>
-            
-            <button onclick="publishGlobalAd()" class="btn-main bg-orange-500 hover:bg-orange-600 mt-2">
-                <i class="fas fa-paper-plane ml-2"></i> نشر الإعلان الآن
-            </button>
-        </div>
-    </div>
+            <div id="admin-link-container" class="hidden">
+                <label class="block text-sm font-bold text-gray-600 mb-2">اسم الزر (مثال: انضم لقناتنا)</label>
+                <input type="text" id="admin-ad-btn-name" class="input-box mb-4" placeholder="اكتب اسم الزر...">
+                
+                <label class="block text-sm font-bold text-gray-600 mb-2">الرابط (تلكرام أو سوق بلي)</label>
+                <input type="url" id="admin-ad-link" class="input-box mb-6" placeholder="https://t.me/yourchannel">
+            </div>
+            
+            <button onclick="publishGlobalAd()" class="btn-main bg-indigo-600 hover:bg-indigo-700 mt-2">
+                <i class="fas fa-paper-plane ml-2"></i> إرسال للمستخدمين
+            </button>
+        </div>
+    </div>
 </div>
 
-<div id="screen-admin-ai-pdf" class="screen pt-20">
-    <div class="absolute top-0 w-full h-20 bg-white shadow-sm z-30 flex items-center px-5 gap-4">
-        <button onclick="openPage('screen-admin-hub')" class="text-gray-500"><i class="fas fa-arrow-right text-xl"></i></button>
-        <h1 class="font-bold text-lg text-gray-800">المستخرج الذكي</h1>
-    </div>
-    <div class="scroll-container px-5 py-6 pb-40 mb-20">
-        <div class="bg-white p-6 rounded-3xl shadow-xl border border-red-100 relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 to-orange-500"></div>
-            
-            <div class="text-center mb-6">
-                <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <i class="fas fa-robot text-3xl"></i>
-                </div>
-                <h3 class="font-black text-gray-800">تحويل الملزمة إلى أسئلة</h3>
-                <p class="text-xs text-gray-400 mt-1">ارفع ملف الـ PDF وسيقوم الذكاء الاصطناعي بالباقي</p>
-            </div>
-
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 mb-2 mr-1">1. اختر ملف الملزمة (PDF)</label>
-                    <input type="file" id="bulk-ai-pdf" accept="application/pdf" class="input-box p-2 text-sm border-dashed border-2">
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-2 mr-1">2. المرحلة</label>
-                        <select id="bulk-ai-grade" class="input-box text-sm" onchange="window.populateSubjects(this.value, 'bulk-ai-subject', 'bulk-ai-chapter')">
-                            <option value="">اختر</option>
-                            <option value="6sci">6 علمي</option>
-                            <option value="6lit">6 أدبي</option>
-                            <option value="3med">3 متوسط</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-2 mr-1">3. المادة</label>
-                        <select id="bulk-ai-subject" class="input-box text-sm">
-                            <option value="">اختر المرحلة أولاً</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="mt-3">
-    <label class="block text-xs font-bold text-gray-500 mb-2 mr-1">الفصل / الموضوع</label>
-    <select id="bulk-ai-chapter" class="input-box text-sm">
-        <option value="">اختر المادة أولاً</option>
-    </select>
-</div>
-
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 mb-2 mr-1">4. نوع الأسئلة المطلوب استخراجها</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="setBulkType('mcq')" id="bulk-btn-mcq" class="py-3 rounded-xl border-2 border-red-50 text-gray-500 font-bold transition-all">اختيارات</button>
-                        <button onclick="setBulkType('tf')" id="bulk-btn-tf" class="py-3 rounded-xl border-2 border-red-50 text-gray-500 font-bold transition-all">صح وخطأ</button>
-                    </div>
-                </div>
-
-                <button onclick="startBulkAIExtraction()" id="bulk-start-btn" class="w-full bg-gradient-to-r from-red-600 to-orange-600 text-white font-black py-4 rounded-2xl shadow-lg hover:shadow-red-500/30 active:scale-95 transition-all flex items-center justify-center gap-3 mt-4">
-                    <i class="fas fa-play"></i>
-                    <span>بدء الاستخراج الشامل</span>
-                </button>
-
-                <div id="bulk-progress-container" class="hidden mt-6">
-                    <div class="flex justify-between items-center mb-2">
-                        <span id="bulk-status-text" class="text-xs font-bold text-red-600 animate-pulse">جاري القراءة...</span>
-                        <span id="bulk-percent" class="text-xs font-black text-gray-800">0%</span>
-                    </div>
-                    <div class="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
-                        <div id="bulk-progress-bar" class="h-full bg-red-500 transition-all duration-500" style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <div id="interruption-modal" class="modal-overlay hidden" style="z-index: 30000 !important;">
     <div class="modal-content text-center border-4 border-rose-500 shadow-2xl">
@@ -6060,76 +5870,6 @@ async function promptForRevengeSubject(opponentName) {
             }
         };
 
-        function initUploadQuestions() {
-            if (!userData.grade) {
-                showBeautifulAlert('warning', 'تنبيه', 'يرجى تحديد مرحلتك الدراسية أولاً');
-                setTimeout(() => backToProfile(), 1000);
-                return;
-            }
-            // ربط الفصول بالمادة
-            populateSubjects(userData.grade, 'upload-subject', 'upload-chapter');
-            
-            uploadQType = 'mcq';
-            uploadCorrectAnswer = null;
-            uploadTFAnswer = null;
-            
-            document.getElementById('upload-step-1').classList.remove('hidden');
-            document.getElementById('upload-step-2-mcq').classList.add('hidden');
-            document.getElementById('upload-step-2-tf').classList.add('hidden');
-        }
-
-        window.onUploadSubjectChange = function() {
-            uploadSubject = document.getElementById('upload-subject').value;
-        };
-
-        window.setUploadQType = (t) => {
-            uploadQType = t;
-            document.getElementById('upload-btn-mcq').className = `py-3 rounded-xl border-2 font-bold transition flex-1 ${t==='mcq'?'border-indigo-600 bg-indigo-50 text-indigo-600':'border-indigo-100 text-gray-500'}`;
-            document.getElementById('upload-btn-tf').className = `py-3 rounded-xl border-2 font-bold transition flex-1 ${t==='tf'?'border-indigo-600 bg-indigo-50 text-indigo-600':'border-indigo-100 text-gray-500'}`;
-        };
-
-        window.goToUploadStep1 = function() {
-            document.getElementById('upload-step-1').classList.remove('hidden');
-            document.getElementById('upload-step-2-mcq').classList.add('hidden');
-            document.getElementById('upload-step-2-tf').classList.add('hidden');
-        };
-
-        window.goToUploadStep2 = function() {
-            if (!uploadSubject) {
-                showBeautifulAlert('warning', 'تنبيه', 'يرجى اختيار المادة أولاً');
-                return;
-            }
-            const uploadChapter = document.getElementById('upload-chapter').value;
-            if (!uploadChapter) {
-                showBeautifulAlert('warning', 'تنبيه', 'يرجى تحديد الفصل/الموضوع أولاً');
-                return;
-            }
-            
-            if (!uploadQType) {
-                showBeautifulAlert('warning', 'تنبيه', 'يرجى اختيار نوع السؤال أولاً');
-                return;
-            }
-            
-            document.getElementById('upload-step-1').classList.add('hidden');
-            
-            if (uploadQType === 'mcq') {
-                document.getElementById('upload-step-2-mcq').classList.remove('hidden');
-                document.getElementById('upload-step-2-tf').classList.add('hidden');
-                document.getElementById('upload-question-text').value = '';
-                document.getElementById('upload-answer-1').value = '';
-                document.getElementById('upload-answer-2').value = '';
-                document.getElementById('upload-answer-3').value = '';
-                uploadCorrectAnswer = null;
-                resetCorrectButtons();
-            } else {
-                document.getElementById('upload-step-2-mcq').classList.add('hidden');
-                document.getElementById('upload-step-2-tf').classList.remove('hidden');
-                document.getElementById('upload-tf-question').value = '';
-                uploadTFAnswer = null;
-                resetTFButtons();
-            }
-        };
-
         function resetCorrectButtons() {
             for (let i = 1; i <= 3; i++) {
                 const btn = document.getElementById('upload-correct-' + i);
@@ -6143,256 +5883,183 @@ async function promptForRevengeSubject(opponentName) {
             document.getElementById('upload-tf-false').className = 'py-3 rounded-xl border-2 border-red-100 text-gray-500 font-bold';
         }
 
-        window.setCorrectAnswer = function(num) {
-            uploadCorrectAnswer = num;
-            resetCorrectButtons();
-            const btn = document.getElementById('upload-correct-' + num);
-            btn.className = 'w-12 bg-green-500 text-white rounded-lg';
-            btn.innerHTML = '✓';
-        };
-
-        window.setTFAnswer = function(isTrue) {
-            uploadTFAnswer = isTrue;
-            resetTFButtons();
-            if (isTrue) {
-                document.getElementById('upload-tf-true').className = 'py-3 rounded-xl border-2 border-green-500 bg-green-50 text-green-600 font-bold';
-                document.getElementById('upload-tf-false').className = 'py-3 rounded-xl border-2 border-red-100 text-gray-500 font-bold';
-            } else {
-                document.getElementById('upload-tf-true').className = 'py-3 rounded-xl border-2 border-green-100 text-gray-500 font-bold';
-                document.getElementById('upload-tf-false').className = 'py-3 rounded-xl border-2 border-red-500 bg-red-50 text-red-600 font-bold';
-            }
-        };
-
-        window.submitQuestionMCQ = async function() {
-            const questionText = document.getElementById('upload-question-text').value.trim();
-            const answer1 = document.getElementById('upload-answer-1').value.trim();
-            const answer2 = document.getElementById('upload-answer-2').value.trim();
-            const answer3 = document.getElementById('upload-answer-3').value.trim();
-            const chapter = document.getElementById('upload-chapter').value;
-            
-            if (!questionText || !answer1 || !answer2 || !answer3 || uploadCorrectAnswer === null) {
-                showBeautifulAlert('warning', 'تنبيه', 'يرجى إدخال نص السؤال وجميع الخيارات وتحديد الإجابة الصحيحة');
-                return;
-            }
-            
-            try {
-                await addDoc(collection(db, "pending_questions"), {
-                    question: questionText,
-                    answers: [answer1, answer2, answer3],
-                    correct: uploadCorrectAnswer,
-                    type: 'mcq',
-                    grade: userData.grade,
-                    subject: uploadSubject,
-                    chapter: chapter, // حفظ الفصل
-                    senderId: currentUser.uid,
-                    senderName: userData.name,
-                    status: 'pending',
-                    createdAt: serverTimestamp()
-                });
-                
-                showBeautifulAlert('success', 'تم الإرسال', '✅ تم إرسال السؤال للمراجعة. ستتم إضافة 5 نقاط لك بعد قبوله.');
-                goToUploadStep1();
-            } catch (error) {
-                showBeautifulAlert('error', 'خطأ', '❌ حدث خطأ في إرسال السؤال');
-            }
-        };
-
-        window.submitQuestionTF = async function() {
-            const questionText = document.getElementById('upload-tf-question').value.trim();
-            const chapter = document.getElementById('upload-chapter').value;
-            
-            if (!questionText || uploadTFAnswer === null) {
-                showBeautifulAlert('warning', 'تنبيه', 'يرجى إدخال نص السؤال وتحديد الإجابة');
-                return;
-            }
-            
-            try {
-                await addDoc(collection(db, "pending_questions"), {
-                    question: questionText,
-                    correct: uploadTFAnswer,
-                    type: 'tf',
-                    grade: userData.grade,
-                    subject: uploadSubject,
-                    chapter: chapter, // حفظ الفصل
-                    senderId: currentUser.uid,
-                    senderName: userData.name,
-                    status: 'pending',
-                    createdAt: serverTimestamp()
-                });
-                
-                showBeautifulAlert('success', 'تم الإرسال', '✅ تم إرسال السؤال للمراجعة.');
-                goToUploadStep1();
-            } catch (error) {
-                showBeautifulAlert('error', 'خطأ', '❌ حدث خطأ في إرسال السؤال');
-            }
-        };
-
         async function loadReviewQuestions() {
-            const listDiv = document.getElementById('review-questions-list');
-            
-            if (!userData || userData.email !== ADMIN_EMAIL) {
-                listDiv.innerHTML = `
-                    <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
-                        <i class="fas fa-shield-alt text-yellow-500 text-3xl mb-3"></i>
-                        <p class="text-yellow-700 font-bold">⛔ صلاحية محدودة</p>
-                        <p class="text-gray-600 text-sm mt-2">هذا القسم مخصص للإدارة فقط</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            listDiv.innerHTML = '<p class="text-center text-gray-400 animate-pulse">📥 جاري تحميل الأسئلة للمراجعة...</p>';
-            
-            try {
-                const q = query(collection(db, "pending_questions"), where("status", "==", "pending"));
-                const snapshot = await getDocs(q);
-                
-                if (snapshot.empty) {
-                    listDiv.innerHTML = `
-                        <div class="bg-green-50 border border-green-200 rounded-xl p-8 text-center">
-                            <i class="fas fa-check-circle text-green-500 text-4xl mb-3"></i>
-                            <p class="text-green-700 font-bold">🎉 كل الأسئلة تمت مراجعتها</p>
-                            <p class="text-gray-600 text-sm mt-2">لا توجد أسئلة جديدة</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                console.log(`✅ تم العثور على ${snapshot.size} سؤال للمراجعة`);
-                
-                let questions = [];
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    questions.push({
-                        id: doc.id,
-                        ...data,
-                        createdAt: data.createdAt ? data.createdAt.toDate() : new Date(),
-                        timestamp: data.createdAt ? data.createdAt.toDate().getTime() : Date.now()
-                    });
-                });
-                
-                questions.sort((a, b) => b.timestamp - a.timestamp);
-                
-                console.log("📊 الأسئلة بعد الترتيب:", questions);
-                
-                let html = `
-                    <div class="mb-4 p-3 bg-indigo-50 rounded-xl border border-indigo-100">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <p class="font-bold text-indigo-700 text-sm">عدد الأسئلة: ${questions.length}</p>
-                                <p class="text-xs text-indigo-500">(من الأحدث للأقدم)</p>
-                            </div>
-                            <button onclick="acceptAllPendingQuestions()" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md hover:scale-105 active:scale-95 transition flex items-center gap-2">
-                                <i class="fas fa-check-double"></i> قبول الكل
-                            </button>
-                        </div>
-                    </div>
-                `;
-                
-                questions.forEach((item, index) => {
-                    const data = item;
-                    
-                    const dateStr = data.createdAt.toLocaleDateString('ar-EG', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                    
-                    let answersHtml = '';
-                    if (data.type === 'mcq') {
-                        answersHtml = `
-                            <div class="upload-question-answers mt-3">
-                                <p class="text-xs text-gray-500 mb-2 font-bold">الخيارات:</p>
-                                ${(data.answers || []).map((ans, idx) => `
-                                    <div class="upload-question-answer ${idx === data.correct ? 'upload-question-correct' : ''}">
-                                        <span class="font-bold">${idx + 1}.</span> ${ans || '...'}
-                                        ${idx === data.correct ? '<span class="text-green-500 text-xs mr-2">✓ صح</span>' : ''}
-                                    </div>
-                                `).join('')}
-                            </div>
-                        `;
-                    } else {
-                        answersHtml = `
-                            <div class="upload-question-answers mt-3">
-                                <p class="text-xs text-gray-500 mb-2 font-bold">الإجابة الصحيحة:</p>
-                                <div class="upload-question-answer ${data.correct ? 'upload-question-correct' : ''}">
-                                    ${data.correct ? '✅ صح' : '❌ خطأ'}
-                                </div>
-                            </div>
-                        `;
-                    }
-                    
-                    html += `
-                        <div class="upload-question-item mb-4 border-l-4 ${index === 0 ? 'border-l-blue-500' : 'border-l-gray-300'}">
-                            <div class="upload-question-header">
-                                <div class="flex justify-between items-start">
-                                    <div class="flex gap-2 flex-wrap">
-                                        <span class="upload-question-grade">${data.grade ? getGradeName(data.grade) : 'غير محدد'}</span>
-                                        <span class="upload-question-subject" style="background:#10b981">${data.subject || 'غير محدد'}</span>
-                                        <span class="upload-question-type">${data.type === 'mcq' ? 'اختيارات' : 'صح/خطأ'}</span>
-                                        ${index === 0 ? '<span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold">🆕 الأحدث</span>' : ''}
-                                    </div>
-                                    <div class="text-xs text-gray-500" title="${data.createdAt.toISOString()}">
-                                        📅 ${dateStr}
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <p class="upload-question-text mt-3">${data.question || 'لا يوجد نص للسؤال'}</p>
-                            
-                            ${answersHtml}
-                            
-                            <div class="mt-4 pt-3 border-t border-gray-100">
-                                <div class="flex justify-between items-center">
-                                    <p class="upload-sender text-sm">
-                                        <span class="text-gray-500">📤 مرسل:</span>
-                                        <span class="font-bold text-purple-600 mr-2">${data.senderName || data.senderId || 'مجهول'}</span>
-                                    </p>
-                                    <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
-                                        #${index + 1}
-                                    </span>
-                                </div>
-                            </div>
-                            
-                            <div class="upload-question-buttons mt-4">
-                                <button onclick="acceptQuestion('${item.id}')" class="upload-accept-btn hover:scale-105 transition">
-                                    <i class="fas fa-check"></i> قبول السؤال (+5 نقاط للمرسل)
-                                </button>
-                                <button onclick="rejectQuestion('${item.id}')" class="upload-reject-btn hover:scale-105 transition">
-                                    <i class="fas fa-times"></i> رفض السؤال
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                html += `
-                    <div class="mt-6 text-center">
-                        <button onclick="loadReviewQuestions()" class="bg-gray-100 text-gray-700 px-6 py-3 rounded-xl font-bold hover:bg-gray-200 transition flex items-center gap-2 mx-auto">
-                            <i class="fas fa-sync-alt"></i> تحديث القائمة
-                        </button>
-                        <p class="text-xs text-gray-400 mt-2">آخر تحديث: ${new Date().toLocaleTimeString('ar-EG')}</p>
-                    </div>
-                `;
-                
-                listDiv.innerHTML = html;
-                
-            } catch (error) {
-                console.error("❌ خطأ في تحميل الأسئلة:", error);
-                listDiv.innerHTML = `
-                    <div class="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
-                        <i class="fas fa-exclamation-triangle text-red-500 text-3xl mb-3"></i>
-                        <p class="text-red-700 font-bold">فشل في تحميل الأسئلة</p>
-                        <p class="text-red-600 text-sm mt-2">${error.message || 'خطأ غير معروف'}</p>
-                        <button onclick="loadReviewQuestions()" class="mt-4 bg-red-100 text-red-700 px-6 py-2 rounded-lg font-bold hover:bg-red-200 transition">
-                            <i class="fas fa-redo"></i> إعادة المحاولة
-                        </button>
-                    </div>
-                `;
-            }
-        }
+            const listDiv = document.getElementById('review-questions-list');
+            
+            if (!userData || userData.email !== ADMIN_EMAIL) {
+                listDiv.innerHTML = `
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
+                        <i class="fas fa-shield-alt text-yellow-500 text-3xl mb-3"></i>
+                        <p class="text-yellow-700 font-bold">⛔ صلاحية محدودة</p>
+                        <p class="text-gray-600 text-sm mt-2">هذا القسم مخصص للإدارة فقط</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            listDiv.innerHTML = '<p class="text-center text-gray-400 animate-pulse">📥 جاري تحميل الطلبات للمراجعة...</p>';
+            
+            try {
+                const q = query(collection(db, "pending_questions"), where("status", "==", "pending"));
+                const snapshot = await getDocs(q);
+                
+                if (snapshot.empty) {
+                    listDiv.innerHTML = `
+                        <div class="bg-green-50 border border-green-200 rounded-xl p-8 text-center">
+                            <i class="fas fa-check-circle text-green-500 text-4xl mb-3"></i>
+                            <p class="text-green-700 font-bold">🎉 صندوق المراجعة فارغ</p>
+                            <p class="text-gray-600 text-sm mt-2">لا توجد أسئلة أو اقتراحات جديدة</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let items = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    items.push({
+                        id: doc.id,
+                        ...data,
+                        createdAt: data.createdAt ? data.createdAt.toDate() : new Date(),
+                        timestamp: data.createdAt ? data.createdAt.toDate().getTime() : Date.now()
+                    });
+                });
+                
+                items.sort((a, b) => b.timestamp - a.timestamp);
+                
+                let html = `
+                    <div class="mb-4 p-3 bg-indigo-50 rounded-xl border border-indigo-100">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="font-bold text-indigo-700 text-sm">إجمالي الطلبات: ${items.length}</p>
+                                <p class="text-xs text-indigo-500">(من الأحدث للأقدم)</p>
+                            </div>
+                            <button onclick="acceptAllPendingQuestions()" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md hover:scale-105 active:scale-95 transition flex items-center gap-2">
+                                <i class="fas fa-check-double"></i> قبول الكل
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                items.forEach((item, index) => {
+                    const data = item;
+                    const dateStr = data.createdAt.toLocaleDateString('ar-EG', {
+                        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                    });
+                    
+                    if (data.type === 'suggestion') {
+                        html += `
+                            <div class="upload-question-item mb-4 border-l-4 border-l-orange-500">
+                                <div class="upload-question-header">
+                                    <div class="flex justify-between items-start w-full">
+                                        <div class="flex gap-2 flex-wrap">
+                                            <span class="bg-orange-100 text-orange-700 px-2 py-1 rounded text-xs font-bold">💡 اقتراح من مستخدم</span>
+                                        </div>
+                                        <div class="text-xs text-gray-500">📅 ${dateStr}</div>
+                                    </div>
+                                </div>
+                                <p class="upload-question-text mt-3 font-medium text-gray-800">${data.question}</p>
+                                <div class="mt-4 pt-3 border-t border-gray-100">
+                                    <p class="upload-sender text-sm">
+                                        <span class="text-gray-500">📤 مرسل:</span>
+                                        <span class="font-bold text-purple-600">${data.senderName || 'مجهول'}</span>
+                                        <span class="text-xs text-gray-400 ml-2">(ID: ${data.senderId})</span>
+                                    </p>
+                                </div>
+                                <div class="upload-question-buttons mt-4">
+                                    <button onclick="deleteSuggestion('${item.id}')" class="w-full bg-red-100 text-red-600 py-2 rounded-xl font-bold hover:bg-red-200 transition">
+                                        <i class="fas fa-trash"></i> حذف الاقتراح
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        let answersHtml = '';
+                        if (data.type === 'mcq') {
+                            answersHtml = `
+                                <div class="upload-question-answers mt-3">
+                                    <p class="text-xs text-gray-500 mb-2 font-bold">الخيارات:</p>
+                                    ${(data.answers || []).map((ans, idx) => `
+                                        <div class="upload-question-answer ${idx === data.correct ? 'upload-question-correct' : ''}">
+                                            <span class="font-bold">${idx + 1}.</span> ${ans || '...'}
+                                            ${idx === data.correct ? '<span class="text-green-500 text-xs mr-2">✓ صح</span>' : ''}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `;
+                        } else {
+                            answersHtml = `
+                                <div class="upload-question-answers mt-3">
+                                    <p class="text-xs text-gray-500 mb-2 font-bold">الإجابة الصحيحة:</p>
+                                    <div class="upload-question-answer ${data.correct ? 'upload-question-correct' : ''}">
+                                        ${data.correct ? '✅ صح' : '❌ خطأ'}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        
+                        html += `
+                            <div class="upload-question-item mb-4 border-l-4 ${index === 0 ? 'border-l-blue-500' : 'border-l-gray-300'}">
+                                <div class="upload-question-header">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex gap-2 flex-wrap">
+                                            <span class="upload-question-grade">${data.grade ? getGradeName(data.grade) : 'غير محدد'}</span>
+                                            <span class="upload-question-subject" style="background:#10b981">${data.subject || 'غير محدد'}</span>
+                                            <span class="upload-question-type">${data.type === 'mcq' ? 'اختيارات' : 'صح/خطأ'}</span>
+                                            ${index === 0 ? '<span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold">🆕 الأحدث</span>' : ''}
+                                        </div>
+                                        <div class="text-xs text-gray-500" title="${data.createdAt.toISOString()}">📅 ${dateStr}</div>
+                                    </div>
+                                </div>
+                                <p class="upload-question-text mt-3">${data.question || 'لا يوجد نص للسؤال'}</p>
+                                ${answersHtml}
+                                <div class="mt-4 pt-3 border-t border-gray-100">
+                                    <div class="flex justify-between items-center">
+                                        <p class="upload-sender text-sm">
+                                            <span class="text-gray-500">📤 مرسل:</span>
+                                            <span class="font-bold text-purple-600 mr-2">${data.senderName || data.senderId || 'مجهول'}</span>
+                                        </p>
+                                        <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">#${index + 1}</span>
+                                    </div>
+                                </div>
+                                <div class="upload-question-buttons mt-4">
+                                    <button onclick="acceptQuestion('${item.id}')" class="upload-accept-btn hover:scale-105 transition">
+                                        <i class="fas fa-check"></i> قبول السؤال
+                                    </button>
+                                    <button onclick="rejectQuestion('${item.id}')" class="upload-reject-btn hover:scale-105 transition">
+                                        <i class="fas fa-times"></i> رفض
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+                
+                html += `
+                    <div class="mt-6 text-center">
+                        <button onclick="loadReviewQuestions()" class="bg-gray-100 text-gray-700 px-6 py-3 rounded-xl font-bold hover:bg-gray-200 transition flex items-center gap-2 mx-auto">
+                            <i class="fas fa-sync-alt"></i> تحديث القائمة
+                        </button>
+                        <p class="text-xs text-gray-400 mt-2">آخر تحديث: ${new Date().toLocaleTimeString('ar-EG')}</p>
+                    </div>
+                `;
+                
+                listDiv.innerHTML = html;
+                
+            } catch (error) {
+                console.error("❌ خطأ في تحميل البيانات:", error);
+                listDiv.innerHTML = `
+                    <div class="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+                        <i class="fas fa-exclamation-triangle text-red-500 text-3xl mb-3"></i>
+                        <p class="text-red-700 font-bold">فشل في تحميل البيانات</p>
+                        <p class="text-red-600 text-sm mt-2">${error.message || 'خطأ غير معروف'}</p>
+                        <button onclick="loadReviewQuestions()" class="mt-4 bg-red-100 text-red-700 px-6 py-2 rounded-lg font-bold hover:bg-red-200 transition">
+                            <i class="fas fa-redo"></i> إعادة المحاولة
+                        </button>
+                    </div>
+                `;
+            }
+        }
 
         window.acceptQuestion = async function(questionId) {
             try {
@@ -6468,397 +6135,162 @@ async function promptForRevengeSubject(opponentName) {
         };
         
 window.toggleAdType = function() {
-    const type = document.getElementById('admin-ad-type').value;
-    const linkContainer = document.getElementById('admin-link-container');
-    if (type === 'link') {
-        linkContainer.classList.remove('hidden');
-    } else {
-        linkContainer.classList.add('hidden');
-    }
+    const type = document.getElementById('admin-ad-type').value;
+    const linkContainer = document.getElementById('admin-link-container');
+    if (type === 'link') {
+        linkContainer.classList.remove('hidden');
+    } else {
+        linkContainer.classList.add('hidden');
+    }
 };
 
 window.publishGlobalAd = async function() {
-    const text = document.getElementById('admin-ad-text').value.trim();
-    const type = document.getElementById('admin-ad-type').value;
-    const link = document.getElementById('admin-ad-link').value.trim();
-    const btnName = document.getElementById('admin-ad-btn-name').value.trim();
-    
-    if (!text) {
-        showBeautifulAlert('warning', 'تنبيه', 'يجب كتابة نص الإعلان أولاً');
-        return;
-    }
+    const text = document.getElementById('admin-ad-text').value.trim();
+    const type = document.getElementById('admin-ad-type').value;
+    const link = document.getElementById('admin-ad-link').value.trim();
+    const btnName = document.getElementById('admin-ad-btn-name').value.trim();
+    
+    if (!text) {
+        showBeautifulAlert('warning', 'تنبيه', 'يجب كتابة نص الرسالة أولاً');
+        return;
+    }
 
-    if (type === 'link' && (!link || !btnName)) {
-        showBeautifulAlert('warning', 'تنبيه', 'يرجى إدخال الرابط واسم الزر');
-        return;
-    }
+    if (type === 'link' && (!link || !btnName)) {
+        showBeautifulAlert('warning', 'تنبيه', 'يرجى إدخال الرابط واسم الزر');
+        return;
+    }
 
-    if (confirm('هل أنت متأكد من نشر هذا الإعلان لجميع المستخدمين فوراً؟')) {
-        try {
-            await setDoc(doc(db, "system_settings", "global_announcement"), {
-                text: text,
-                type: type,
-                linkUrl: type === 'link' ? link : null,
-                btnName: type === 'link' ? btnName : null,
-                timestamp: Date.now()
-            });
-            showBeautifulAlert('success', 'تم النشر', 'تم إرسال الإعلان لجميع المستخدمين بنجاح!');
-            document.getElementById('admin-ad-text').value = '';
-            document.getElementById('admin-ad-link').value = '';
-            document.getElementById('admin-ad-btn-name').value = '';
-        } catch (error) {
-            console.error(error);
-            showBeautifulAlert('error', 'خطأ', 'حدث خطأ أثناء النشر');
-        }
-    }
+    if (confirm('هل أنت متأكد من إرسال هذا الإشعار لجميع المستخدمين فوراً؟')) {
+        try {
+            await setDoc(doc(db, "system_settings", "global_announcement"), {
+                text: text,
+                type: type,
+                linkUrl: type === 'link' ? link : null,
+                btnName: type === 'link' ? btnName : null,
+                timestamp: Date.now()
+            });
+            showBeautifulAlert('success', 'تم النشر', 'تم الإرسال لجميع المستخدمين بنجاح!');
+            document.getElementById('admin-ad-text').value = '';
+            document.getElementById('admin-ad-link').value = '';
+            document.getElementById('admin-ad-btn-name').value = '';
+        } catch (error) {
+            console.error(error);
+            showBeautifulAlert('error', 'خطأ', 'حدث خطأ أثناء النشر');
+        }
+    }
 };
 
 let preloadedAdData = null;
 
 window.preloadGlobalAnnouncement = async function() {
-    try {
-        const adDoc = await getDoc(doc(db, "system_settings", "global_announcement"));
-        if (adDoc.exists()) {
-            const adData = adDoc.data();
-            const lastSeenAd = localStorage.getItem('last_seen_ad_timestamp') || "0";
-            
-            if (adData.timestamp && Number(adData.timestamp) > Number(lastSeenAd)) {
-                preloadedAdData = adData; // حفظ الإعلان ليتم عرضه لاحقاً
-            }
-        }
-    } catch (error) {
-        console.error("Error prefetching announcement:", error);
-    }
+    try {
+        const adDoc = await getDoc(doc(db, "system_settings", "global_announcement"));
+        if (adDoc.exists()) {
+            const adData = adDoc.data();
+            const lastSeenAd = localStorage.getItem('last_seen_ad_timestamp') || "0";
+            
+            if (adData.timestamp && Number(adData.timestamp) > Number(lastSeenAd)) {
+                preloadedAdData = adData; 
+            }
+        }
+    } catch (error) {
+        console.error("Error prefetching announcement:", error);
+    }
 };
 
 window.showPreloadedAnnouncement = function() {
-    if (!preloadedAdData) return; // لا يوجد إعلان جديد
-    
-    const adData = preloadedAdData;
-    document.getElementById('global-ad-content').innerText = adData.text;
-    
-    const btnContainer = document.getElementById('global-ad-buttons');
-    btnContainer.innerHTML = '';
+    if (!preloadedAdData) return; 
+    
+    const adData = preloadedAdData;
+    document.getElementById('global-ad-content').innerText = adData.text;
+    
+    const dynamicArea = document.getElementById('global-ad-dynamic-area');
+    dynamicArea.innerHTML = '';
 
-    if (adData.type === 'link' && adData.linkUrl) {
-        let finalUrl = adData.linkUrl;
-        if (finalUrl.includes('play.google.com/store/apps/details?id=')) {
-            finalUrl = finalUrl.replace('https://play.google.com/store/apps/details?id=', 'market://details?id=');
-        } else if (finalUrl.includes('t.me/') && !finalUrl.startsWith('tg://')) {
-            finalUrl = finalUrl.replace('https://t.me/', 'tg://resolve?domain=').replace('http://t.me/', 'tg://resolve?domain=');
-        }
-        
-        btnContainer.innerHTML += `
-            <button onclick="window.open('${finalUrl}', '_system'); window.closeGlobalAd('${adData.timestamp}');" class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-4 rounded-xl font-black text-lg shadow-lg hover:scale-105 transition mb-2">
-                <i class="fas fa-external-link-alt ml-2"></i> ${adData.btnName || 'اضغط هنا'}
-            </button>
-            <button onclick="window.closeGlobalAd('${adData.timestamp}')" class="w-full bg-gray-100 text-gray-500 py-3 rounded-xl font-bold hover:bg-gray-200 transition">
-                إغلاق
-            </button>
-        `;
-    } else {
-        btnContainer.innerHTML += `
-            <button onclick="window.closeGlobalAd('${adData.timestamp}')" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-xl font-black text-lg shadow-lg hover:scale-105 transition">
-                حسناً، فهمت
-            </button>
-        `;
-    }
+    if (adData.type === 'link' && adData.linkUrl) {
+        let finalUrl = adData.linkUrl;
+        if (finalUrl.includes('play.google.com/store/apps/details?id=')) {
+            finalUrl = finalUrl.replace('https://play.google.com/store/apps/details?id=', 'market://details?id=');
+        } else if (finalUrl.includes('t.me/') && !finalUrl.startsWith('tg://')) {
+            finalUrl = finalUrl.replace('https://t.me/', 'tg://resolve?domain=').replace('http://t.me/', 'tg://resolve?domain=');
+        }
+        
+        dynamicArea.innerHTML = `
+            <button onclick="window.open('${finalUrl}', '_system'); window.closeGlobalAd('${adData.timestamp}');" class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-xl font-bold text-md shadow-md hover:scale-105 transition mb-2">
+                <i class="fas fa-external-link-alt ml-2"></i> ${adData.btnName || 'اضغط هنا'}
+            </button>
+            <button onclick="window.closeGlobalAd('${adData.timestamp}')" class="w-full bg-gray-100 text-gray-500 py-3 rounded-xl font-bold hover:bg-gray-200 transition">
+                إغلاق
+            </button>
+        `;
+    } else if (adData.type === 'suggestion') {
+        dynamicArea.innerHTML = `
+            <textarea id="user-suggestion-input" class="input-box h-20 text-sm mb-3" placeholder="اكتب اقتراحك أو رسالتك للإدارة هنا..."></textarea>
+            <button onclick="window.submitSuggestion('${adData.timestamp}')" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-3 rounded-xl font-bold shadow-md hover:opacity-90 transition flex items-center justify-center gap-2">
+                <i class="fas fa-paper-plane"></i> إرسال
+            </button>
+        `;
+    } else {
+        dynamicArea.innerHTML = `
+            <button onclick="window.closeGlobalAd('${adData.timestamp}')" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-bold text-md shadow-md hover:scale-105 transition">
+                حسناً، فهمت
+            </button>
+        `;
+    }
 
-    const modal = document.getElementById('global-ad-modal');
-    modal.classList.remove('hidden');
-    modal.style.display = 'flex';
-    
-    preloadedAdData = null; // تفريغ المتغير حتى لا يعرض مرة أخرى خطأً
+    const modal = document.getElementById('global-ad-modal');
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+    
+    preloadedAdData = null; 
 };
 
 window.closeGlobalAd = function(timestamp) {
-    localStorage.setItem('last_seen_ad_timestamp', String(timestamp));
-    const modal = document.getElementById('global-ad-modal');
-    modal.classList.add('hidden');
-    modal.style.display = 'none'; // إجبار الإخفاء
+    localStorage.setItem('last_seen_ad_timestamp', String(timestamp));
+    const modal = document.getElementById('global-ad-modal');
+    modal.classList.add('hidden');
+    modal.style.display = 'none';
+};
+
+window.submitSuggestion = async function(timestamp) {
+    const input = document.getElementById('user-suggestion-input');
+    const text = input.value.trim();
+    if (!text) {
+        showBeautifulAlert('warning', 'تنبيه', 'يرجى الكتابة في الحقل أولاً');
+        return;
+    }
+    try {
+        await addDoc(collection(db, "pending_questions"), {
+            question: text,
+            type: 'suggestion',
+            senderId: currentUser.uid,
+            senderName: userData.name,
+            status: 'pending',
+            createdAt: serverTimestamp()
+        });
+        window.closeGlobalAd(timestamp);
+        showBeautifulAlert('success', 'شكراً لك', 'تم إرسال اقتراحك للإدارة بنجاح!');
+    } catch (error) {
+        console.error(error);
+        showBeautifulAlert('error', 'خطأ', 'حدث خطأ أثناء الإرسال');
+    }
+};
+
+window.deleteSuggestion = async function(id) {
+    if (confirm("هل أنت متأكد من حذف هذا الاقتراح نهائياً؟")) {
+        try {
+            await deleteDoc(doc(db, "pending_questions", id));
+            loadReviewQuestions();
+            showBeautifulAlert('success', 'تم الحذف', 'تم حذف الاقتراح بنجاح');
+        } catch (error) {
+            console.error(error);
+            showBeautifulAlert('error', 'خطأ', 'حدث خطأ أثناء الحذف');
+        }
+    }
 };
 
 let selectedBulkType = 'mcq';
 
-        window.setBulkType = (type) => {
-            selectedBulkType = type;
-            document.getElementById('bulk-btn-mcq').className = `py-3 rounded-xl border-2 font-bold transition-all flex-1 ${type==='mcq'?'border-red-600 bg-red-50 text-red-600':'border-gray-100 text-gray-400'}`;
-            document.getElementById('bulk-btn-tf').className = `py-3 rounded-xl border-2 font-bold transition-all flex-1 ${type==='tf'?'border-red-600 bg-red-50 text-red-600':'border-gray-100 text-gray-400'}`;
-        };
-        
-        window.acceptAllPendingQuestions = async function() {
-            if (!confirm("هل أنت متأكد من قبول جميع الأسئلة المعلقة دفعة واحدة؟")) return;
-            
-            showBeautifulAlert('info', 'جاري المعالجة', 'يرجى الانتظار، جاري قبول الأسئلة ونقلها للفصول بسرعة البرق 🚀...');
-            
-            try {
-                const q = query(collection(db, "pending_questions"), where("status", "==", "pending"));
-                const snapshot = await getDocs(q);
-                
-                if (snapshot.empty) {
-                    showBeautifulAlert('info', 'لا توجد أسئلة', 'لا توجد أسئلة معلقة للموافقة عليها.');
-                    return;
-                }
-
-                let acceptedCount = 0;
-                
-                // استخدمنا نظام الدفعات (Batch) حتى التطبيق ما يعلك من يوافق على 200 سؤال
-                let currentBatch = writeBatch(db);
-                let operationCount = 0;
-                let batchesArray = [];
-
-                for (const questionDoc of snapshot.docs) {
-                    const questionId = questionDoc.id;
-                    const questionData = questionDoc.data();
-                    
-                    // 1. إضافة السؤال لقاعدة البيانات الرئيسية للأسئلة
-                    const newQuestionRef = doc(collection(db, "questions"));
-                    currentBatch.set(newQuestionRef, {
-                        question: questionData.question,
-                        answers: questionData.answers || [],
-                        correct: questionData.correct,
-                        type: questionData.type,
-                        grade: questionData.grade,
-                        subject: questionData.subject,
-                        chapter: questionData.chapter || '', // 👈 التعديل المهم: حفظ الفصل
-                        createdAt: serverTimestamp()
-                    });
-                    operationCount++;
-                    
-                    // 2. تحديث حالته إلى "تم القبول"
-                    const pendingRef = doc(db, "pending_questions", questionId);
-                    currentBatch.update(pendingRef, {
-                        status: 'accepted',
-                        reviewedAt: serverTimestamp(),
-                        reviewedBy: currentUser.uid
-                    });
-                    operationCount++;
-                    
-                    // 3. إذا كان المرسل طالب حقيقي (مو الذكاء الاصطناعي)، نعطيه نقاط
-                    if (questionData.senderId && questionData.senderId !== 'AI_GEMINI') {
-                        const userRef = doc(db, "users", questionData.senderId);
-                        currentBatch.update(userRef, {
-                            points: increment(5)
-                        });
-                        operationCount++;
-
-                        // تحديث الواجهة إذا جان الإدمن هو نفسه اللي ديجرب يرفع
-                        if (questionData.senderId === currentUser.uid) {
-                            userData.points += 5;
-                            setupHeaderUI();
-                        }
-
-                        const notifRef = doc(collection(db, "notifications"));
-                        currentBatch.set(notifRef, {
-                            userId: questionData.senderId,
-                            type: 'reward',
-                            message: `🎉 تم قبول سؤالك في مادة ${questionData.subject || ''} وحصلت على مكافأة +5 نقاط!`,
-                            read: false,
-                            createdAt: serverTimestamp()
-                        });
-                        operationCount++;
-                    }
-
-                    acceptedCount++;
-
-                    // فايربيس يقبل 500 عملية بالدفعة الوحدة، إذا زادت نصفر العداد ونفتح دفعة جديدة
-                    if (operationCount >= 490) {
-                        batchesArray.push(currentBatch.commit());
-                        currentBatch = writeBatch(db);
-                        operationCount = 0;
-                    }
-                }
-                
-                // رفع باقي العمليات اللي بقت بالعداد
-                if (operationCount > 0) {
-                    batchesArray.push(currentBatch.commit());
-                }
-
-                // انتظار اكتمال كل الدفعات
-                await Promise.all(batchesArray);
-                
-                showBeautifulAlert('success', 'تم القبول بنجاح', `✅ تم الموافقة على ${acceptedCount} سؤال ونقلها للفصول المطلوبة بلمح البصر!`);
-                loadReviewQuestions();
-                checkPendingQuestionsNotification();
-                
-            } catch (error) {
-                console.error("Error accepting all questions:", error);
-                showBeautifulAlert('error', 'خطأ', 'حدث خطأ أثناء محاولة قبول جميع الأسئلة.');
-            }
-        };
-
-        window.startBulkAIExtraction = async function() {
-            const fileInput = document.getElementById('bulk-ai-pdf');
-            const grade = document.getElementById('bulk-ai-grade').value;
-            const subject = document.getElementById('bulk-ai-subject').value;
-            const chapter = document.getElementById('bulk-ai-chapter').value;
-            
-            const GEMINI_API_KEY = 'AIzaSyBXbbAC1wesZHpVk--EpVzryQsRoLAvqTs'; 
-
-            if (!fileInput.files[0] || !grade || !subject || !chapter) {
-                showBeautifulAlert('warning', 'نقص معلومات', 'يرجى رفع الملف واختيار الصف والمادة والفصل/الموضوع بدقة');
-                return;
-            }
-
-            const pdfjs = window.pdfjsLib || window['pdfjs-dist/build/pdf'];
-            const btn = document.getElementById('bulk-start-btn');
-            const progContainer = document.getElementById('bulk-progress-container');
-            const progBar = document.getElementById('bulk-progress-bar');
-            const progText = document.getElementById('bulk-status-text');
-            const progPercent = document.getElementById('bulk-percent');
-
-            btn.disabled = true;
-            btn.classList.add('opacity-50');
-            progContainer.classList.remove('hidden');
-
-            try {
-                progText.innerText = "جاري قراءة صفحات الملف...";
-                pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-                
-                const file = fileInput.files[0];
-                const arrayBuffer = await file.arrayBuffer();
-                const pdf = await pdfjs.getDocument({data: arrayBuffer}).promise;
-                
-                let fullText = '';
-                for (let i = 1; i <= pdf.numPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const content = await page.getTextContent();
-                    fullText += content.items.map(s => s.str).join(' ') + '\n';
-                    
-                    let loadPercent = Math.round((i / pdf.numPages) * 20); // 20% للقراءة
-                    progBar.style.width = loadPercent + '%';
-                    progPercent.innerText = loadPercent + '%';
-                }
-
-                progText.innerText = "جاري فحص النماذج المتاحة من جوجل...";
-                
-                const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${GEMINI_API_KEY}`);
-                const modelsData = await modelsRes.json();
-                
-                if (!modelsRes.ok) {
-                    throw new Error("مشكلة بالمفتاح: " + (modelsData.error ? modelsData.error.message : 'Unknown error'));
-                }
-
-                const availableModels = modelsData.models.filter(m => 
-                    m.supportedGenerationMethods && 
-                    m.supportedGenerationMethods.includes("generateContent") && 
-                    m.name.includes("gemini")
-                );
-
-                if(availableModels.length === 0) {
-                    throw new Error("مفتاحك لا يمتلك أي موديل يدعم توليد النصوص!");
-                }
-
-                // اختيار أحدث موديل فلاش متوفر
-                const targetModel = availableModels.find(m => m.name.includes("2.5") && m.name.includes("flash")) 
-                                 || availableModels.find(m => m.name.includes("2.0") && m.name.includes("flash"))
-                                 || availableModels.find(m => m.name.includes("flash")) 
-                                 || availableModels[0];
-                                 
-                console.log("الموديل المستخدم:", targetModel.name);
-
-                progText.innerText = `جاري استخراج الأسئلة بسرعة...`;
-
-                // التعديل السحري للبرومبت: استخراج عدد مرن يغطي المنهج بدون مماطلة
-                const promptMCQ = `أنت خبير في المناهج الدراسية العراقية. استخرج أسئلة تعليمية شاملة ومهمة تغطي كافة الأفكار الموجودة في النص المرفق.
-                استخرج العدد المناسب لحجم النص (سواء كان 20، 50، 100، أو أكثر)، المهم أن لا تتجاوز 250 سؤالاً كحد أقصى، وأن لا تترك فكرة مهمة بدون سؤال. لا تقم بالمماطلة أو إجبار نفسك على رقم محدد.
-                ملاحظة للمسائل والقوانين (رياضيات، فيزياء، كيمياء): اقرأها بذكاء وصغ منها أسئلة اختيار من متعدد (مثلاً ناتج المسألة كخيار صحيح ونواتج قريبة كخيارات خاطئة).
-                شروط صارمة:
-                1. نوع الأسئلة: اختيارات (MCQ).
-                2. لكل سؤال 3 خيارات فقط لا غير.
-                3. خيار واحد صحيح، واثنان خاطئان بسياق منطقي.
-                4. الإرجاع بصيغة JSON مصفوفة فقط: [{"question": "السؤال", "answers": ["خيار1", "خيار2", "خيار3"], "correct": 0_او_1_او_2}]
-                5. لا تكتب أي كلمة أو حرف خارج مصفوفة الـ JSON.
-                النص: ${fullText.substring(0, 40000)}`;
-
-                const promptTF = `أنت خبير في المناهج الدراسية العراقية. استخرج أسئلة تعليمية شاملة ومهمة تغطي كافة الأفكار الموجودة في النص المرفق.
-                استخرج العدد المناسب لحجم النص، المهم أن لا تتجاوز 250 سؤالاً كحد أقصى، وأن لا تترك فكرة مهمة بدون سؤال.
-                ملاحظة للمسائل والقوانين: اكتب قاعدة أو ناتجاً واذكر ما إذا كانت صحيحة أم خاطئة.
-                شروط صارمة:
-                1. نوع الأسئلة: صح وخطأ (True/False).
-                2. صياغة معلومة من النص.
-                3. الإرجاع بصيغة JSON مصفوفة فقط: [{"question": "المعلومة", "correct": true_او_false}]
-                4. لا تكتب أي كلام خارج مصفوفة الـ JSON.
-                النص: ${fullText.substring(0, 40000)}`;
-
-                const finalPrompt = selectedBulkType === 'mcq' ? promptMCQ : promptTF;
-
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/${targetModel.name}:generateContent?key=${GEMINI_API_KEY}`;
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: finalPrompt }] }],
-                        generationConfig: { response_mime_type: "application/json", temperature: 0.4 }
-                    })
-                });
-
-                const result = await response.json();
-                if (!response.ok || result.error) throw new Error(result.error ? result.error.message : 'خطأ غير معروف في الاتصال');
-
-                const questionsText = result.candidates[0].content.parts[0].text;
-                let questions = [];
-                try {
-                    questions = JSON.parse(questionsText);
-                } catch (parseError) {
-                    throw new Error('Gemini لم يرجع البيانات بصيغة صحيحة.');
-                }
-
-                if (questions.length === 0) throw new Error('لم يتمكن الذكاء الاصطناعي من العثور على أسئلة مناسبة.');
-
-                // التعديل السحري للسرعة: رفع الأسئلة بقاعدة البيانات باستخدام دفعة واحدة (Batch)
-                progText.innerText = `جاري حفظ ${questions.length} سؤال في النظام دفعة واحدة 🚀...`;
-                progBar.style.width = '80%';
-                progPercent.innerText = '80%';
-
-                const batch = writeBatch(db);
-                let uploaded = 0;
-
-                for (const q of questions) {
-                    // إنشاء معرف تلقائي (Reference) للمستند الجديد
-                    const newDocRef = doc(collection(db, "pending_questions"));
-                    
-                    batch.set(newDocRef, {
-                        question: q.question,
-                        answers: q.answers || null,
-                        correct: q.correct,
-                        type: selectedBulkType,
-                        grade: grade,
-                        subject: subject,
-                        chapter: chapter,
-                        senderId: 'AI_GEMINI',
-                        senderName: 'Gemini AI 🤖',
-                        status: 'pending',
-                        createdAt: serverTimestamp()
-                    });
-                    uploaded++;
-                }
-
-                // تنفيذ الرفع دفعة واحدة (أسرع بـ 100 مرة من الرفع الفردي)
-                await batch.commit();
-
-                progBar.style.width = '100%';
-                progPercent.innerText = '100%';
-
-                showBeautifulAlert('success', 'سرعة البرق ⚡', `تم استخراج وحفظ ${uploaded} سؤال في مادة (${subject} - ${chapter}) بنجاح تام وتم رفعها للمراجعة.`);
-                progContainer.classList.add('hidden');
-                btn.disabled = false;
-                btn.classList.remove('opacity-50');
-                fileInput.value = '';
-
-            } catch (error) {
-                console.error("Gemini Extraction Error:", error);
-                if(error.message.includes("quota") || error.message.includes("429")) {
-                    showBeautifulAlert('error', 'انتهاء الحصة', 'تم تجاوز الحد المجاني. يرجى المحاولة بعد قليل وتأكد من تشغيل الـ VPN.');
-                } else {
-                    showBeautifulAlert('error', 'فشل الاستخراج', error.message);
-                }
-                btn.disabled = false;
-                btn.classList.remove('opacity-50');
-                progContainer.classList.add('hidden');
-            }
-        };
         
         // نظام المزامنة الذكي (لتقليل قراءات فايربيس إلى الصفر أثناء اللعب)
         window.syncQuestionsPacket = async function() {
