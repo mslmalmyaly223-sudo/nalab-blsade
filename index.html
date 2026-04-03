@@ -1994,8 +1994,8 @@
                         </select>
                         <select id="admin-filter-subject" class="input-box text-sm p-2" onchange="filterAdminQuestions()"><option value="">كل المواد</option></select>
                         <select id="admin-filter-chapter" class="input-box text-sm p-2" onchange="filterAdminQuestions()">
-    <option value="">كل الفصول</option>
-</select>
+                            <option value="">كل الفصول</option>
+                        </select>
                         <select id="admin-filter-type" class="input-box text-sm p-2" onchange="filterAdminQuestions()">
                             <option value="">كل الأنواع</option>
                             <option value="mcq">اختيارات</option>
@@ -2003,6 +2003,13 @@
                         </select>
                     </div>
                 </div>
+
+                <div id="admin-bulk-delete-container" class="hidden mb-4">
+                    <button onclick="deleteAllFilteredQuestions()" class="w-full bg-red-50 text-red-600 border border-red-200 py-3 rounded-xl text-sm font-bold hover:bg-red-100 transition flex items-center justify-center gap-2 shadow-sm">
+                        <i class="fas fa-trash-alt text-lg"></i> <span id="bulk-delete-text">حذف الجميع</span>
+                    </button>
+                </div>
+
                 <div id="admin-all-list" class="space-y-3 pb-20"></div>
             </div>
         </div>
@@ -4839,7 +4846,87 @@ async function promptForRevengeSubject(opponentName) {
                 const matchesType = type ? (q.type === type) : true;
                 return matchesGrade && matchesSubject && matchesChapter && matchesType;
             });
+            
+            // تحديث القائمة فوراً
             renderAdminAllList(filtered);
+
+            // منطق إظهار زر الحذف الجماعي
+            const deleteContainer = document.getElementById('admin-bulk-delete-container');
+            if (deleteContainer) {
+                // شرط الظهور: يجب تحديد الصف والمادة كحد أدنى، ويجب أن تكون هناك أسئلة
+                if (gr && sub && filtered.length > 0) {
+                    deleteContainer.classList.remove('hidden');
+                    document.getElementById('bulk-delete-text').innerText = `حذف جميع الأسئلة المطابقة (${filtered.length} سؤال)`;
+                } else {
+                    deleteContainer.classList.add('hidden');
+                }
+            }
+        };
+
+        // الدالة الجديدة الخاصة بالحذف الجماعي من الداتا بيس
+        window.deleteAllFilteredQuestions = async () => {
+            const gr = document.getElementById('admin-filter-grade').value;
+            const sub = document.getElementById('admin-filter-subject').value;
+            const chap = document.getElementById('admin-filter-chapter') ? document.getElementById('admin-filter-chapter').value : '';
+            const type = document.getElementById('admin-filter-type').value;
+
+            // تحديد الأسئلة التي سيتم حذفها بناءً على الفلاتر الحالية
+            const filteredToTrash = allAdminQuestions.filter(q => {
+                const matchesGrade = gr ? (q.grade === gr) : true;
+                const matchesSubject = sub ? (q.subject === sub) : true;
+                const matchesChapter = chap ? (q.chapter === chap) : true;
+                const matchesType = type ? (q.type === type) : true;
+                return matchesGrade && matchesSubject && matchesChapter && matchesType;
+            });
+
+            if (filteredToTrash.length === 0) return;
+
+            // طلب تأكيد صارم قبل الحذف
+            if (!confirm(`تحذير ⚠️\nهل أنت متأكد من حذف ${filteredToTrash.length} سؤال نهائياً من قاعدة البيانات؟\n\n(لا يمكن التراجع عن هذا الإجراء ابداً!)`)) {
+                return;
+            }
+
+            showBeautifulAlert('info', 'جاري الحذف', 'يتم الآن مسح الأسئلة من قاعدة البيانات...');
+
+            try {
+                // استخدام نظام الدفعات (Batch) لحذف آلاف الملفات بلمح البصر وبدون تعليق
+                let batches = [];
+                let currentBatch = writeBatch(db);
+                let opCount = 0;
+
+                filteredToTrash.forEach(q => {
+                    const docRef = doc(db, "questions", q.id);
+                    currentBatch.delete(docRef);
+                    opCount++;
+
+                    // فايربيس يتحمل 500 عملية كحد أقصى للدفعة الواحدة
+                    if (opCount >= 490) {
+                        batches.push(currentBatch.commit());
+                        currentBatch = writeBatch(db);
+                        opCount = 0;
+                    }
+                });
+
+                // تنفيذ ما تبقى من الدفعات
+                if (opCount > 0) batches.push(currentBatch.commit());
+                await Promise.all(batches);
+
+                // إزالة الأسئلة المحذوفة من المصفوفة المحلية (الرام)
+                const idsToDelete = filteredToTrash.map(q => q.id);
+                allAdminQuestions = allAdminQuestions.filter(q => !idsToDelete.includes(q.id));
+
+                // تحديث ذاكرة الهاتف (LocalStorage) لضمان عدم ظهورها للمستخدم مرة أخرى
+                localStorage.setItem('cached_questions_packet', JSON.stringify(allAdminQuestions));
+
+                showBeautifulAlert('success', 'تم المسح بنجاح', `تم حذف ${filteredToTrash.length} سؤال بالكامل ولم يعد لهم أي أثر.`);
+                
+                // تحديث واجهة الفلاتر والأسئلة فوراً بعد الحذف
+                filterAdminQuestions();
+
+            } catch (error) {
+                console.error("Error bulk deleting questions:", error);
+                showBeautifulAlert('error', 'خطأ', 'حدث خطأ أثناء محاولة حذف الأسئلة، يرجى المحاولة لاحقاً');
+            }
         };
 
         window.openEditModal = (id) => {
