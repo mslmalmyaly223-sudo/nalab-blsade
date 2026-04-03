@@ -58,8 +58,11 @@
             -webkit-overflow-scrolling: touch;
             padding-bottom: 250px; 
         }
-        .scroll-container::-webkit-scrollbar { display: none; }
-        .scroll-container { -ms-overflow-style: none; scrollbar-width: none; }
+        .scroll-container::-webkit-scrollbar { width: 6px; }
+        .scroll-container::-webkit-scrollbar-track { background: transparent; }
+        .scroll-container::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .scroll-container::-webkit-scrollbar-thumb:hover { background-color: #9ca3af; }
+        .scroll-container { -ms-overflow-style: auto; scrollbar-width: thin; }
 
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -971,6 +974,8 @@
     color: #1e293b;
     margin-bottom: 4px;
     font-size: 0.95rem;
+    white-space: pre-line; /* هذا السطر السحري يخلي الفواصل \n تشتغل وتترتب الرسالة */
+    line-height: 1.6;
 }
 
 .notification-time {
@@ -2240,7 +2245,7 @@
 <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, onSnapshot, query, where, orderBy, limit, deleteDoc, serverTimestamp, increment, getDoc, writeBatch, Timestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, onSnapshot, query, where, orderBy, limit, deleteDoc, serverTimestamp, increment, getDoc, writeBatch, Timestamp, runTransaction } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
 
         const firebaseConfig = {
@@ -2511,12 +2516,6 @@ checkPendingQuestionsNotification();
 
             async function checkAutoDistribute() {
                 try {
-                    const settingsDoc = await getDoc(doc(db, "system_settings", "last_weekly_distribution"));
-                    let lastDistTime = 0;
-                    if (settingsDoc.exists() && settingsDoc.data().timestamp) {
-                        lastDistTime = settingsDoc.data().timestamp.toDate().getTime();
-                    }
-
                     const now = new Date();
                     const day = now.getDay();
                     
@@ -2525,23 +2524,38 @@ checkPendingQuestionsNotification();
                     lastFriday.setDate(now.getDate() - diffDays);
                     lastFriday.setHours(0, 0, 0, 0);
 
-                    // إذا كان الوقت الحالي بعد آخر جمعة والتوزيع الأخير كان قبلها
-                    if (now.getTime() >= lastFriday.getTime() && lastDistTime < lastFriday.getTime()) {
-                        if (!window.isDistributing) {
-                            window.isDistributing = true;
-                            // نقوم بتحديث الوقت فورا لمنع التكرار من بقية المستخدمين
-                            await setDoc(doc(db, "system_settings", "last_weekly_distribution"), {
-                                timestamp: serverTimestamp(),
-                                distributedBy: 'auto-system-client'
-                            }, { merge: true });
-                            
+                    // توليد آيدي فريد وموحد لهذا الأسبوع بناءً على تاريخ الجمعة
+                    const weekLockId = `week_${lastFriday.getFullYear()}_${lastFriday.getMonth()}_${lastFriday.getDate()}`;
+                    const lockRef = doc(db, "system_settings", weekLockId);
+
+                    const lockSnap = await getDoc(lockRef);
+                    
+                    // إذا لم يتم التوزيع لهذا الأسبوع بعد
+                    if (!lockSnap.exists()) {
+                        // نستخدم Transaction لضمان أن شخص واحد فقط يقفل هذا الأسبوع بالملي ثانية
+                        try {
+                            await runTransaction(db, async (transaction) => {
+                                const tDoc = await transaction.get(lockRef);
+                                if (tDoc.exists()) {
+                                    throw "تم التوزيع مسبقاً من قبل مستخدم آخر في نفس اللحظة";
+                                }
+                                transaction.set(lockRef, {
+                                    timestamp: serverTimestamp(),
+                                    distributedBy: currentUser?.uid || 'auto-system',
+                                    lockedAt: new Date().toISOString()
+                                });
+                            });
+
+                            // إذا نجح القفل، نقوم بتوزيع الجوائز براحتنا (مرة واحدة فقط)
+                            console.log("تم قفل الأسبوع بنجاح، جاري بدء التوزيع والتصفير...");
                             await autoDistributeWeeklyPrizes();
-                            window.isDistributing = false;
+
+                        } catch (e) {
+                            console.log("تم إيقاف التوزيع المتكرر: ", e);
                         }
                     }
                 } catch(e) {
-                    console.error(e);
-                    window.isDistributing = false;
+                    console.error("خطأ في فحص التوزيع:", e);
                 }
             }
 
@@ -2584,63 +2598,103 @@ checkPendingQuestionsNotification();
     try {
         console.log("بدء التوزيع التلقائي للجوائز الأسبوعية وتصفير الكل...");
         
-        // 1. توزيع الجوائز على أول 10
-        const qTop = query(collection(db, "users"), orderBy("points", "desc"), limit(10));
-        const snapTop = await getDocs(qTop);
-        const prizes = [10, 7, 5, 3, 2, 1, 1, 1, 1, 1];
-        
-        let batchTop = writeBatch(db);
-        
-        snapTop.docs.forEach((d, index) => {
-            if(index < 10) {
-                const prize = prizes[index];
-                let uData = d.data();
-                let finalPrize = prize;
-                
-                if (uData.isPremium && uData.premiumExpiry) {
-                    const expiry = uData.premiumExpiry.toDate();
-                    if (expiry > new Date()) {
-                        finalPrize = prize * 2; 
-                    }
-                }
-                
-                const newBalance = (uData.balance || 0) + finalPrize;
-                batchTop.update(doc(db, "users", d.id), { 
-                    balance: newBalance,
-                    lastWeeklyPrize: finalPrize,
-                    lastWeeklyRank: index + 1
-                });
-            }
-        });
-        await batchTop.commit();
-
-        // 2. تصفير النقاط شلع قلع (لجميع المستخدمين)
+        // 1. جلب كل المستخدمين وترتيبهم بالذاكرة (حتى نضمن المراكز قبل التصفير)
         const qAll = query(collection(db, "users"));
         const snapAll = await getDocs(qAll);
         
+        let allSortedUsers = [];
+        snapAll.docs.forEach(d => {
+            allSortedUsers.push({ id: d.id, ...d.data(), points: d.data().points || 0 });
+        });
+        
+        // ترتيب تنازلي حسب النقاط
+        allSortedUsers.sort((a, b) => b.points - a.points);
+        
+        const prizes = [10, 7, 5, 3, 2, 1, 1, 1, 1, 1];
+        
+let batchTop = writeBatch(db);
+        for (let index = 0; index < 10 && index < allSortedUsers.length; index++) {
+            const uData = allSortedUsers[index];
+            // إضافة شرط الـ 150 نقطة لاستحقاق الدولارات
+            if (uData.points >= 150) {
+                let prize = prizes[index];
+                let isDoubled = (uData.isPremium && uData.premiumExpiry && uData.premiumExpiry.toDate() > new Date());
+                if (isDoubled) prize = prize * 2;
+                
+                const newBalance = (uData.balance || 0) + prize;
+                batchTop.update(doc(db, "users", uData.id), { 
+                    balance: newBalance,
+                    lastWeeklyPrize: prize,
+                    lastWeeklyRank: index + 1
+                });
+            }
+        }
+        await batchTop.commit();
+
+        // 3. تصفير النقاط لجميع المستخدمين
         let batchesArray = [];
         let currentBatch = writeBatch(db);
         let operationCount = 0;
 
-        snapAll.docs.forEach(d => {
-            currentBatch.update(doc(db, "users", d.id), { 
+        allSortedUsers.forEach(u => {
+            currentBatch.update(doc(db, "users", u.id), { 
                 points: 0,
-                previousPoints: d.data().points || 0 
+                previousPoints: u.points || 0 
             });
             operationCount++;
             
-            // فايربيس يسمح بـ 500 عملية فقط في كل Batch
             if (operationCount >= 490) {
                 batchesArray.push(currentBatch.commit());
                 currentBatch = writeBatch(db);
                 operationCount = 0;
             }
         });
-        
-        if (operationCount > 0) {
-            batchesArray.push(currentBatch.commit());
-        }
+        if (operationCount > 0) batchesArray.push(currentBatch.commit());
         await Promise.all(batchesArray);
+        
+let notifBatches = [];
+        let nBatch = writeBatch(db);
+        let nCount = 0;
+        
+        allSortedUsers.forEach((uData, index) => {
+            let myRank = index + 1;
+            let message = "";
+
+            if (myRank <= 10) {
+                if (uData.points >= 150) {
+                    // فائز بالمركز وبالجائزة
+                    let prize = prizes[myRank - 1];
+                    let isDoubled = (uData.isPremium && uData.premiumExpiry && uData.premiumExpiry.toDate() > new Date());
+                    if (isDoubled) prize = prize * 2;
+
+                    message = `🏆 مبروك يا بطل! لقد فزت بالجائزة 🥇\n\nأنهيت الأسبوع بالمركز: #${myRank}\nنقاطك: ${uData.points}\nالجائزة: ${prize}$ دولار 💵\n\nاستمر في القمة! 🔥`;
+                } else {
+                    // في المركز الأول لكن لم يصل لـ 150 نقطة
+                    message = `📊 انتهى الأسبوع وتصدرت القائمة!\n\nترتيبك كان: #${myRank} 🥈\nنقاطك: ${uData.points}\n\n⚠️ للأسف لم تستلم الجائزة النقدية لأن شرط استلام الجوائز هو الوصول لـ 150 نقطة على الأقل.\n\nشد حيلك الأسبوع القادم وعوضها! 💪`;
+                }
+            } else {
+                message = `🔄 انتهى الأسبوع وتصفرت النقاط!\n\nترتيبك النهائي كان: #${myRank} 📊\n\nالفرصة أمامك الآن، اجمع 150 نقطة وكن من الـ 10 الأوائل لتربح الدولارات! 💪`;
+            }
+
+            const newNotifRef = doc(collection(db, "notifications"));
+            nBatch.set(newNotifRef, {
+                userId: uData.id,
+                type: 'weekly',
+                message: message,
+                read: false,
+                createdAt: serverTimestamp()
+            });
+            
+            nCount++;
+            if(nCount >= 490) {
+                notifBatches.push(nBatch.commit());
+                nBatch = writeBatch(db);
+                nCount = 0;
+            }
+        });
+        
+        if (nCount > 0) notifBatches.push(nBatch.commit());
+        await Promise.all(notifBatches);
         
         await setDoc(doc(db, "system_settings", "last_weekly_distribution"), {
             timestamp: serverTimestamp(),
@@ -2648,26 +2702,7 @@ checkPendingQuestionsNotification();
             prizesDoubledForPremium: true
         }, { merge: true });
         
-        console.log("✅ تم التوزيع وتصفير نقاط جميع المستخدمين بنجاح!");
-        
-snapAll.docs.forEach(async (d) => {
-    let uData = d.data();
-    // البحث عن ما إذا كان من الأوائل
-    let topIndex = snapTop.docs.findIndex(topDoc => topDoc.id === d.id);
-    let message = "";
-
-    if (topIndex !== -1 && topIndex < 10) {
-        let prize = prizes[topIndex];
-        let isDoubled = (uData.isPremium && uData.premiumExpiry && uData.premiumExpiry.toDate() > new Date());
-        if (isDoubled) prize = prize * 2;
-
-        message = `🏆 نهاية الأسبوع: تم تصفير جميع النقاط للموسم الجديد. ألف مبروك إنهاءك بالمركز #${topIndex + 1}! لقد حصلت على جائزة قدرها ${prize}$ ${isDoubled ? '(مضاعفة للمميزين)' : ''}. استمر بالقمة!`;
-    } else {
-        message = `🔄 بداية أسبوع جديدة: تم تصفير نقاط جميع اللاعبين لتبدأ المنافسة من الصفر. شد حيلك هذا الأسبوع لتكون من الـ 10 الأوائل وتربح الدولارات!`;
-    }
-
-    await createNotification('weekly', message);
-});
+        console.log("✅ تم التوزيع وتصفير النقاط وإرسال الإشعارات بنجاح!");
         
         if (document.getElementById('tab-leaderboard').classList.contains('active')) {
             loadLeaderboard();
@@ -4742,16 +4777,18 @@ async function promptForRevengeSubject(opponentName) {
 
         async function loadAdminAllContent() {
              const div = document.getElementById('admin-all-list');
-             if(allAdminQuestions.length === 0) {
-                 div.innerHTML = '<p class="text-center text-gray-400">جاري جبل كل الأسئلة من قاعدة البيانات...</p>';
-                 try {
-                     const q = await getDocs(query(collection(db, "questions"), orderBy("createdAt", "desc"), limit(100)));
-                     allAdminQuestions = [];
-                     q.forEach(d => allAdminQuestions.push({id: d.id, ...d.data()}));
-                 } catch (error) {
-                     div.innerHTML = '<p class="text-center text-gray-400">خطأ في تحميل الأسئلة</p>';
+             div.innerHTML = '<p class="text-center text-gray-400">جاري جلب الأسئلة من ذاكرة الهاتف...</p>';
+             try {
+                 const cachedData = localStorage.getItem('cached_questions_packet');
+                 if(cachedData) {
+                     allAdminQuestions = JSON.parse(cachedData);
+                 } else {
+                     div.innerHTML = '<p class="text-center text-gray-400">لا توجد أسئلة، قم بفتح التطبيق لتحديث الحزمة أولاً.</p>';
                      return;
                  }
+             } catch (error) {
+                 div.innerHTML = '<p class="text-center text-gray-400">خطأ في تحميل الأسئلة من الذاكرة</p>';
+                 return;
              }
              filterAdminQuestions();
         }
@@ -5050,7 +5087,7 @@ async function promptForRevengeSubject(opponentName) {
                                         ${premiumStar}
                                         ${badgeHtml}
                                     </div>
-                                    <p class="text-[9px] text-gray-500 truncate font-medium bg-white/60 inline-block px-1 py-0.5 rounded mt-0.5">${u.bio || "يطمح للوصول إلى القمة 🚀"}</p>
+                                    <p class="text-[9px] text-gray-500 truncate font-medium bg-white/60 inline-block px-1 py-0.5 rounded mt-0.5">${u.bio || "يطمح للوصول إلى القمة ??"}</p>
                                     <p class="text-[8px] text-gray-400 mt-0.5 pl-1.5">ID: ${u.uniqueId}</p>
                                 </div>
                                 
@@ -5300,59 +5337,103 @@ async function promptForRevengeSubject(opponentName) {
         };
 
         window.manualWeeklyDistribution = async () => {
-    if(!confirm("⚠️ تحذير: هذا الإجراء سيقوم بتوزيع الجوائز وتصفير نقاط جميع المستخدمين بالكامل شلع قلع. هل أنت متأكد؟")) return;
+    if(!confirm("⚠️ تحذير: هذا الإجراء سيقوم بتوزيع الجوائز وتصفير نقاط جميع المستخدمين وإرسال الإشعارات. هل أنت متأكد؟")) return;
     
-    const qTop = query(collection(db, "users"), orderBy("points", "desc"), limit(10));
-    const snapTop = await getDocs(qTop);
-    const prizes = [10, 7, 5, 3, 2, 1, 1, 1, 1, 1];
-    
-    let batchTop = writeBatch(db);
-    
-    snapTop.docs.forEach((d, index) => {
-        if(index < 10) {
-            const prize = prizes[index];
-            let uData = d.data();
-            let finalPrize = prize;
-            
-            if (uData.isPremium && uData.premiumExpiry && uData.premiumExpiry.toDate() > new Date()) {
-                finalPrize = prize * 2;
-            }
-            
-            const newBalance = (uData.balance || 0) + finalPrize;
-            batchTop.update(doc(db, "users", d.id), { 
-                balance: newBalance,
-                lastWeeklyPrize: finalPrize,
-                lastWeeklyRank: index + 1
-            });
-        }
-    });
-    await batchTop.commit();
+    showBeautifulAlert('info', 'جاري التوزيع...', 'يرجى الانتظار، يتم الآن حساب المراكز وتوزيع الجوائز وإرسال الإشعارات.');
 
-    // جلب وتصفير الكل 
-    const qAll = query(collection(db, "users"));
-    const snapAll = await getDocs(qAll);
-    
-    let batchesArray = [];
-    let currentBatch = writeBatch(db);
-    let operationCount = 0;
-
-    snapAll.docs.forEach(d => {
-        currentBatch.update(doc(db, "users", d.id), { points: 0 });
-        operationCount++;
+    try {
+        const qAll = query(collection(db, "users"));
+        const snapAll = await getDocs(qAll);
         
-        if (operationCount >= 490) {
-            batchesArray.push(currentBatch.commit());
-            currentBatch = writeBatch(db);
-            operationCount = 0;
+        let allSortedUsers = [];
+        snapAll.docs.forEach(d => {
+            allSortedUsers.push({ id: d.id, ...d.data(), points: d.data().points || 0 });
+        });
+        
+        allSortedUsers.sort((a, b) => b.points - a.points);
+        const prizes = [10, 7, 5, 3, 2, 1, 1, 1, 1, 1];
+        
+        let batchTop = writeBatch(db);
+        for (let index = 0; index < 10 && index < allSortedUsers.length; index++) {
+            const uData = allSortedUsers[index];
+            if (uData.points > 0) {
+                let prize = prizes[index];
+                let isDoubled = (uData.isPremium && uData.premiumExpiry && uData.premiumExpiry.toDate() > new Date());
+                if (isDoubled) prize = prize * 2;
+                
+                const newBalance = (uData.balance || 0) + prize;
+                batchTop.update(doc(db, "users", uData.id), { 
+                    balance: newBalance,
+                    lastWeeklyPrize: prize,
+                    lastWeeklyRank: index + 1
+                });
+            }
         }
-    });
-    
-    if (operationCount > 0) batchesArray.push(currentBatch.commit());
-    await Promise.all(batchesArray);
-    
-    showBeautifulAlert('success', 'تم التوزيع', '✅ تم توزيع الجوائز وتصفير نقاط كافة المستخدمين بنجاح!');
-    if (document.getElementById('tab-leaderboard').classList.contains('active')) {
-        loadLeaderboard();
+        await batchTop.commit();
+
+        let batchesArray = [];
+        let currentBatch = writeBatch(db);
+        let operationCount = 0;
+
+        allSortedUsers.forEach(u => {
+            currentBatch.update(doc(db, "users", u.id), { points: 0, previousPoints: u.points || 0 });
+            operationCount++;
+            if (operationCount >= 490) {
+                batchesArray.push(currentBatch.commit());
+                currentBatch = writeBatch(db);
+                operationCount = 0;
+            }
+        });
+        if (operationCount > 0) batchesArray.push(currentBatch.commit());
+        await Promise.all(batchesArray);
+        
+        // إرسال الإشعارات المخصصة
+        let notifBatches = [];
+        let nBatch = writeBatch(db);
+        let nCount = 0;
+        
+        allSortedUsers.forEach((uData, index) => {
+            let myRank = index + 1;
+            let message = "";
+
+            if (myRank <= 10 && uData.points > 0) {
+                let prize = prizes[myRank - 1];
+                let isDoubled = (uData.isPremium && uData.premiumExpiry && uData.premiumExpiry.toDate() > new Date());
+                if (isDoubled) prize = prize * 2;
+
+                message = `🏆 انتهى الأسبوع وتصفرت النقاط!\n\nألف مبروك يا بطل 🥇\nأنهيت الأسبوع بالمركز: #${myRank}\nالجائزة: ${prize}$ دولار 💵 ${isDoubled ? '\n(مضاعفة لأنك مميز ✨)' : ''}\n\nاستمر بالقمة هذا الأسبوع أيضاً! 🔥`;
+            } else {
+                message = `🔄 انتهى الأسبوع وتصفرت النقاط!\n\nترتيبك النهائي كان: #${myRank} 📊\nالجوائز فقط لأول 10 مراكز 🎁\n\nالفرصة أمامك الآن، شد حيلك هذا الأسبوع وكن من الأوائل لتربح الدولارات! 💪`;
+            }
+
+            const newNotifRef = doc(collection(db, "notifications"));
+            nBatch.set(newNotifRef, {
+                userId: uData.id,
+                type: 'weekly',
+                message: message,
+                read: false,
+                createdAt: serverTimestamp()
+            });
+            
+            nCount++;
+            if(nCount >= 490) {
+                notifBatches.push(nBatch.commit());
+                nBatch = writeBatch(db);
+                nCount = 0;
+            }
+        });
+        
+        if (nCount > 0) notifBatches.push(nBatch.commit());
+        await Promise.all(notifBatches);
+        
+        showBeautifulAlert('success', 'تم التوزيع', '✅ تم التوزيع، وتصفير النقاط، وإرسال الإشعارات لكافة المستخدمين بنجاح!');
+        if (document.getElementById('tab-leaderboard').classList.contains('active')) {
+            loadLeaderboard();
+        }
+        
+    } catch (error) {
+        console.error(error);
+        showBeautifulAlert('error', 'خطأ', '❌ حدث خطأ أثناء التوزيع.');
     }
 };
 
@@ -6343,8 +6424,94 @@ let selectedBulkType = 'mcq';
             }
         };
         
-        
-        
+        window.acceptAllPendingQuestions = async function() {
+            if(!confirm("هل أنت متأكد من قبول جميع الطلبات والاقتراحات المعلقة؟")) return;
+            try {
+                const q = query(collection(db, "pending_questions"), where("status", "==", "pending"));
+                const snap = await getDocs(q);
+                
+                if(snap.empty) {
+                    showBeautifulAlert('info', 'لا يوجد', 'لا توجد طلبات معلقة للموافقة عليها.');
+                    return;
+                }
+                
+                showBeautifulAlert('info', 'جاري العمل', 'جاري معالجة وقبول جميع الطلبات، يرجى الانتظار...');
+                
+                let batches = [];
+                let currentBatch = writeBatch(db);
+                let opCount = 0;
+                
+                snap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    
+                    if(data.type === 'suggestion') {
+                        // تحديث حالة الاقتراح فقط
+                        currentBatch.update(doc(db, "pending_questions", docSnap.id), { 
+                            status: 'accepted', 
+                            reviewedAt: serverTimestamp(), 
+                            reviewedBy: currentUser.uid 
+                        });
+                        opCount++;
+                    } else {
+                        // إضافة السؤال الجديد
+                        const newQRef = doc(collection(db, "questions"));
+                        currentBatch.set(newQRef, {
+                            question: data.question,
+                            answers: data.answers || [],
+                            correct: data.correct,
+                            type: data.type,
+                            grade: data.grade,
+                            subject: data.subject,
+                            chapter: data.chapter || '',
+                            createdAt: serverTimestamp()
+                        });
+                        opCount++;
+                        
+                        // تحديث حالة الطلب
+                        currentBatch.update(doc(db, "pending_questions", docSnap.id), { 
+                            status: 'accepted', 
+                            reviewedAt: serverTimestamp(), 
+                            reviewedBy: currentUser.uid 
+                        });
+                        opCount++;
+                        
+                        // مكافأة المرسل
+                        if (data.senderId && data.senderId !== 'AI_GEMINI') {
+                            const userRef = doc(db, "users", data.senderId);
+                            currentBatch.update(userRef, { points: increment(5) });
+                            opCount++;
+                            
+                            const notifRef = doc(collection(db, "notifications"));
+                            currentBatch.set(notifRef, {
+                                userId: data.senderId, type: 'reward',
+                                message: `🎉 تم قبول سؤالك في مادة ${data.subject || ''} وحصلت على مكافأة +5 نقاط!`,
+                                read: false, createdAt: serverTimestamp()
+                            });
+                            opCount++;
+                        }
+                    }
+                    
+                    // فايربيس يتحمل 500 عملية فقط للباتش الواحد
+                    if(opCount >= 490) {
+                        batches.push(currentBatch.commit());
+                        currentBatch = writeBatch(db);
+                        opCount = 0;
+                    }
+                });
+                
+                if(opCount > 0) batches.push(currentBatch.commit());
+                await Promise.all(batches);
+                
+                showBeautifulAlert('success', 'تم القبول', `✅ تم قبول جميع الطلبات بنجاح!`);
+                loadReviewQuestions();
+                checkPendingQuestionsNotification();
+                
+            } catch (e) {
+                console.error("خطأ في القبول الجماعي:", e);
+                showBeautifulAlert('error', 'خطأ', 'حدث خطأ أثناء الموافقة الجماعية');
+            }
+        };
+      
     </script>
 </body>
 </html>
