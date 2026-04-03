@@ -1816,12 +1816,17 @@
             <span class="font-bold text-sm text-gray-700">التوثيقات</span>
         </button>
         <button onclick="openPage('screen-admin-ads')" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-2 hover:bg-gray-50">
-            <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-orange-600"><i class="fas fa-bullhorn text-xl"></i></div>
-            <span class="font-bold text-sm text-gray-700">الإعلانات</span>
-        </button>
-        
-    </div>
-</div>
+                        <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-orange-600"><i class="fas fa-bullhorn text-xl"></i></div>
+                        <span class="font-bold text-sm text-gray-700">الإعلانات</span>
+                    </button>
+                    <button onclick="openPage('screen-admin-ai-pdf')" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-2 hover:bg-gray-50 transition-all active:scale-95">
+                        <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-600 rounded-full flex items-center justify-center text-white shadow-md">
+                            <i class="fas fa-file-invoice text-xl"></i>
+                        </div>
+                        <span class="font-bold text-sm text-gray-700">رفع أسئلة (AI)</span>
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div id="screen-admin-subscription" class="screen pt-20">
@@ -2531,8 +2536,8 @@ checkPendingQuestionsNotification();
                     lastFriday.setDate(now.getDate() - diffDays);
                     lastFriday.setHours(0, 0, 0, 0);
 
-                    // توليد آيدي فريد وموحد لهذا الأسبوع بناءً على تاريخ الجمعة
-                    const weekLockId = `week_${lastFriday.getFullYear()}_${lastFriday.getMonth()}_${lastFriday.getDate()}`;
+                    // توليد آيدي فريد وموحد لهذا الأسبوع بناءً على تاريخ الجمعة (يمنع التكرار نهائياً)
+                    const weekLockId = `week_lock_${lastFriday.getFullYear()}_${lastFriday.getMonth()}_${lastFriday.getDate()}`;
                     const lockRef = doc(db, "system_settings", weekLockId);
 
                     const lockSnap = await getDoc(lockRef);
@@ -2594,9 +2599,7 @@ checkPendingQuestionsNotification();
                 }
             }
             
-            // تحقق عند تحميل الصفحة مباشرة لضمان عدم تفويت التوزيع إذا تم فتح التطبيق متأخراً
             checkAutoDistribute();
-            
             updateTimer();
             countdownInterval = setInterval(updateTimer, 1000);
         }
@@ -6328,72 +6331,73 @@ window.publishGlobalAd = async function() {
     }
 };
 
-let currentAdTimestamp = null;
+let preloadedAdData = null;
+let currentActiveAdTimestamp = null; // متغير عام لحفظ الوقت بثبات
 
-window.checkAndShowGlobalAd = async function() {
+window.preloadGlobalAnnouncement = async function() {
     try {
         const adDoc = await getDoc(doc(db, "system_settings", "global_announcement"));
         if (adDoc.exists()) {
             const adData = adDoc.data();
             const lastSeenAd = localStorage.getItem('last_seen_ad_timestamp') || "0";
             
-            // يتحقق إذا الإعلان جديد والمستخدم ما شايفه بعد
             if (adData.timestamp && Number(adData.timestamp) > Number(lastSeenAd)) {
-                currentAdTimestamp = adData.timestamp;
-                
-                document.getElementById('global-ad-content').innerText = adData.text;
-                const dynamicArea = document.getElementById('global-ad-dynamic-area');
-                dynamicArea.innerHTML = '';
-
-                if (adData.type === 'link' && adData.linkUrl) {
-                    let finalUrl = adData.linkUrl;
-                    if (finalUrl.includes('play.google.com/store/apps/details?id=')) {
-                        finalUrl = finalUrl.replace('https://play.google.com/store/apps/details?id=', 'market://details?id=');
-                    } else if (finalUrl.includes('t.me/') && !finalUrl.startsWith('tg://')) {
-                        finalUrl = finalUrl.replace('https://t.me/', 'tg://resolve?domain=').replace('http://t.me/', 'tg://resolve?domain=');
-                    }
-                    
-                    dynamicArea.innerHTML = `
-                        <button onclick="window.open('${finalUrl}', '_system'); window.closeGlobalAd();" class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-2 rounded-lg font-bold text-sm shadow-sm hover:scale-105 transition mb-1">
-                            <i class="fas fa-external-link-alt ml-2"></i> ${adData.btnName || 'اضغط هنا'}
-                        </button>
-                        <button onclick="window.closeGlobalAd()" class="w-full bg-gray-100 text-gray-500 py-2 rounded-lg text-sm font-bold hover:bg-gray-200 transition">
-                            إغلاق
-                        </button>
-                    `;
-                } else if (adData.type === 'suggestion') {
-                    dynamicArea.innerHTML = `
-                        <textarea id="user-suggestion-input" class="input-box h-16 p-2 text-xs mb-2" placeholder="اكتب اقتراحك للإدارة هنا..."></textarea>
-                        <button onclick="window.submitSuggestion()" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-2 rounded-lg text-sm font-bold shadow-sm hover:opacity-90 transition flex items-center justify-center gap-2">
-                            <i class="fas fa-paper-plane"></i> إرسال
-                        </button>
-                    `;
-                } else {
-                    dynamicArea.innerHTML = `
-                        <button onclick="window.closeGlobalAd()" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-2 rounded-lg font-bold text-sm shadow-sm hover:scale-105 transition">
-                            حسناً، فهمت
-                        </button>
-                    `;
-                }
-
-                const modal = document.getElementById('global-ad-modal');
-                modal.classList.remove('hidden');
-                modal.style.display = 'flex';
+                preloadedAdData = adData; 
+                currentActiveAdTimestamp = adData.timestamp; // حفظه هنا بأمان
             }
         }
     } catch (error) {
-        console.error("Error fetching announcement:", error);
+        console.error("Error prefetching announcement:", error);
     }
 };
 
+window.showPreloadedAnnouncement = function() {
+    if (!preloadedAdData) return; 
+    
+    const adData = preloadedAdData;
+    document.getElementById('global-ad-content').innerText = adData.text;
+    
+    const btnContainer = document.getElementById('global-ad-buttons');
+    btnContainer.innerHTML = '';
+
+    if (adData.type === 'link' && adData.linkUrl) {
+        let finalUrl = adData.linkUrl;
+        if (finalUrl.includes('play.google.com/store/apps/details?id=')) {
+            finalUrl = finalUrl.replace('https://play.google.com/store/apps/details?id=', 'market://details?id=');
+        } else if (finalUrl.includes('t.me/') && !finalUrl.startsWith('tg://')) {
+            finalUrl = finalUrl.replace('https://t.me/', 'tg://resolve?domain=').replace('http://t.me/', 'tg://resolve?domain=');
+        }
+        
+        btnContainer.innerHTML += `
+            <button onclick="window.open('${finalUrl}', '_system'); window.closeGlobalAd();" class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-4 rounded-xl font-black text-lg shadow-lg hover:scale-105 transition mb-2">
+                <i class="fas fa-external-link-alt ml-2"></i> ${adData.btnName || 'اضغط هنا'}
+            </button>
+            <button onclick="window.closeGlobalAd()" class="w-full bg-gray-100 text-gray-500 py-3 rounded-xl font-bold hover:bg-gray-200 transition">
+                إغلاق
+            </button>
+        `;
+    } else {
+        btnContainer.innerHTML += `
+            <button onclick="window.closeGlobalAd()" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-xl font-black text-lg shadow-lg hover:scale-105 transition">
+                حسناً، فهمت
+            </button>
+        `;
+    }
+
+    const modal = document.getElementById('global-ad-modal');
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+    
+    preloadedAdData = null; 
+};
+
 window.closeGlobalAd = function() {
-    if (currentAdTimestamp) {
-        // بمجرد إغلاق الإعلان، نسجل وقته حتى ما يظهر مرة ثانية إلا إذا إجه إعلان بـ timestamp أحدث
-        localStorage.setItem('last_seen_ad_timestamp', String(currentAdTimestamp));
+    if (currentActiveAdTimestamp) {
+        localStorage.setItem('last_seen_ad_timestamp', String(currentActiveAdTimestamp));
     }
     const modal = document.getElementById('global-ad-modal');
     modal.classList.add('hidden');
-    modal.style.display = 'none';
+    modal.style.display = 'none'; 
 };
 
 window.submitSuggestion = async function() {
