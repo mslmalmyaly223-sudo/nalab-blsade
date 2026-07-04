@@ -469,7 +469,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, doc, setDoc, getDoc, query, where, orderBy, onSnapshot, serverTimestamp, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, initializeFirestore, collection, addDoc, doc, setDoc, getDoc, query, where, orderBy, onSnapshot, serverTimestamp, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
         // إعدادات فايربيس الخاصة بك
@@ -485,7 +485,12 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = getFirestore(app);
+        
+        // إجبار قاعدة البيانات على استخدام Long Polling لتخطي حظر شبكات الهاتف بالعراق
+        const db = initializeFirestore(app, {
+            experimentalForceLongPolling: true
+        });
+        
         const storage = getStorage(app);
 
         const ADMIN_EMAIL = "mslmalmyaly223@gmail.com";
@@ -581,6 +586,12 @@
 
             if (!name || !address || !phone) return alert("يرجى ملء جميع الحقول");
 
+            // --- الشرط البرمجي الحاسم لكشف بيئة التشغيل ---
+            if (window.location.protocol === 'file:') {
+                alert("سبب المشكلة: أنت تقوم بتشغيل التطبيق من ملف محلي داخل الهاتف (file:///). قاعدة بيانات Firestore برمجياً ترفض حفظ البيانات في هذا الوضع. يجب عليك رفع التحديث إلى GitHub وفتح الرابط من هناك.");
+                return; // إيقاف العملية فوراً لمنع التعليق
+            }
+
             const user = auth.currentUser;
             if (!user) return alert("خطأ: لم يتم التعرف على حسابك، يرجى إعادة تحميل التطبيق.");
 
@@ -591,12 +602,12 @@
             saveBtn.disabled = true;
 
             try {
-                // دالة لاختبار تأخير الاتصال (10 ثواني)
+                // وضع مؤقت زمني (8 ثواني) لتجنب التعليق النهائي
                 const timeoutHelper = new Promise((_, reject) => 
-                    setTimeout(() => reject(new Error("TIMEOUT_ERROR")), 10000)
+                    setTimeout(() => reject(new Error("TIMEOUT_ERROR")), 8000)
                 );
 
-                // أمر حفظ البيانات
+                // أمر حفظ البيانات في فايربيس
                 const saveData = setDoc(doc(db, "users", user.uid), {
                     name: name,
                     address: address,
@@ -604,10 +615,10 @@
                     createdAt: serverTimestamp()
                 });
 
-                // تطبيق سباق التايم أوت: إذا ما تم الحفظ خلال 10 ثواني، يعتبره خطأ اتصال
+                // تنفيذ السباق بين الحفظ والوقت
                 await Promise.race([saveData, timeoutHelper]);
 
-                // إذا نجح الحفظ قبل انتهاء الـ 10 ثواني
+                // إذا نجح الحفظ قبل انتهاء الوقت
                 currentUser = user;
                 showScreen('main-app');
                 loadUserApp();
@@ -616,11 +627,11 @@
                 console.error("تفاصيل الخطأ:", error);
                 
                 if (error.message === "TIMEOUT_ERROR") {
-                    alert("التطبيق يحاول يتصل بقاعدة البيانات بس ماكو استجابة!\nالأسباب المحتملة:\n1. فاتح الملف مباشرة كـ file:/// (استخدم Live Server).\n2. مشغل مانع إعلانات (AdBlock) يحظر الاتصال.\n3. جرب استخدام متصفح Chrome أو افتح VPN.");
+                    alert("فشل الاتصال بقاعدة البيانات! يرجى مسح ذاكرة التخزين المؤقت (Clear Cache) للمتصفح إذا كنت تستخدم رابط جيثاب، أو إيقاف الـ VPN مؤقتاً.");
                 } else if (error.code === 'permission-denied') {
                     alert("قواعد الحماية (Rules) تمنع الحفظ. تأكد من تعديلها إلى allow read, write: if true;");
                 } else {
-                    alert("فشل الحفظ. رسالة الخطأ: " + error.message);
+                    alert("حدث خطأ أثناء الحفظ: " + error.message);
                 }
             } finally {
                 loader.style.display = 'none';
