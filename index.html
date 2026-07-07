@@ -3,476 +3,518 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>المتبرع</title>
+    <title>مشروع حلم الايتام</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
-        /* إعدادات التطبيق الأساسية ومنع النسخ */
+        /* ===== الإعدادات الأساسية ومنع النسخ ===== */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'Cairo', sans-serif;
-            user-select: none; /* منع تحديد النصوص */
-            -webkit-user-select: none;
             -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        :root {
-            --primary: #128C7E;
-            --primary-dark: #075E54;
-            --secondary: #25D366;
-            --bg-color: #f0f2f5;
-            --card-bg: #ffffff;
-            --text-dark: #111b21;
-            --text-light: #667781;
+        body {
+            background-color: #f4f7f6;
+            color: #334155;
+            overflow-x: hidden;
+            overscroll-behavior-y: none;
         }
 
-        body, html {
-            height: 100%;
-            background-color: var(--bg-color);
-            overflow: hidden; /* لمنع السحب الافتراضي للمتصفح */
+        input, textarea, select {
+            -webkit-user-select: auto;
+            user-select: auto;
         }
 
+        /* ===== الحاويات الأساسية (بالعرض الكامل للموبايل) ===== */
         .screen {
             display: none;
-            height: 100%;
+            min-height: 100vh;
             width: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            background-color: var(--bg-color);
-            overflow-y: auto;
-            padding-bottom: 70px;
-            animation: fadeIn 0.4s ease;
+            max-width: 500px;
+            margin: 0 auto;
+            background: #f8fafc;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            padding-bottom: 75px; /* مساحة للشريط السفلي المصغر */
         }
-
-        .screen.active {
+        .active-screen {
             display: block;
+            animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* أنيميشن البداية (يخبل يسودن) */
+        /* ===== أنيميشن البداية (Splash) الخرافي ===== */
         #splash-screen {
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            background: linear-gradient(-45deg, #00BFA5, #00897B, #00564d, #00BFA5);
+            background-size: 400% 400%;
+            animation: gradientBG 6s ease infinite;
+            /* override block when active */
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
+            padding: 20px;
+            color: white;
+            text-align: center;
+            z-index: 1000;
         }
-
-        #splash-screen.active {
+        #splash-screen.active-screen {
             display: flex;
         }
-
-        .splash-icon {
+        
+        .splash-logo-container {
             position: relative;
-            width: 120px;
-            height: 120px;
+            width: 140px;
+            height: 140px;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
-        .heart-icon {
-            font-size: 60px;
+        .ripple {
+            position: absolute;
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.6);
+            animation: rippleAnim 2s infinite cubic-bezier(0.65, 0, 0.34, 1);
+        }
+        .ripple:nth-child(2) { animation-delay: 0.6s; }
+        .ripple:nth-child(3) { animation-delay: 1.2s; }
+
+        .heart-logo {
+            width: 65px;
+            height: 65px;
+            fill: white;
+            z-index: 2;
+            animation: pulseLogo 2s infinite ease-in-out;
+        }
+
+        .splash-title { font-size: 32px; font-weight: 800; margin-bottom: 10px; letter-spacing: 1px; text-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .splash-msg { font-size: 16px; margin-bottom: 40px; line-height: 1.6; opacity: 0.9; }
+
+        /* ===== الأزرار ===== */
+        .btn {
+            background: #fff;
+            color: #00897B;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 20px;
+            font-size: 17px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            width: 90%;
+            max-width: 320px;
+            display: block;
+            margin: 10px auto;
+        }
+        .btn:active { transform: scale(0.95); }
+        .btn-primary {
+            background: linear-gradient(135deg, #00BFA5 0%, #00897B 100%);
             color: white;
-            animation: heartbeat 1.5s infinite alternate, glow 2s infinite alternate;
+            box-shadow: 0 10px 20px rgba(0, 191, 165, 0.3);
+        }
+        .btn-primary:hover { box-shadow: 0 15px 25px rgba(0, 191, 165, 0.4); transform: translateY(-2px); }
+        .btn-danger { background: linear-gradient(135deg, #ff5252, #e53935); color: white; box-shadow: 0 8px 20px rgba(229, 57, 53, 0.3); }
+
+        /* ===== الهيدر ===== */
+        .header {
+            background: linear-gradient(135deg, #00BFA5, #00897B);
+            color: white;
+            padding: 35px 20px 45px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: 800;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            box-shadow: 0 10px 25px rgba(0,191,165,0.2);
+            position: relative;
+            margin-bottom: -20px;
             z-index: 2;
         }
+        .header-content { position: relative; z-index: 3; }
 
-        .hands-icon {
-            position: absolute;
-            bottom: -15px;
-            font-size: 80px;
-            color: rgba(255,255,255,0.8);
-            z-index: 1;
-            animation: slideUp 2s ease-out forwards;
-        }
-
-        .splash-title {
-            color: white;
-            font-size: 32px;
-            font-weight: 800;
-            opacity: 0;
-            animation: fadeInText 1s 0.5s forwards;
+        /* ===== حاوية المحتوى ===== */
+        .content-area {
+            position: relative;
+            z-index: 5;
+            padding: 30px 20px 20px;
         }
 
-        @keyframes heartbeat {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.2); }
-        }
-        @keyframes glow {
-            0% { text-shadow: 0 0 10px rgba(255,255,255,0.5); }
-            100% { text-shadow: 0 0 30px rgba(255,255,255,1), 0 0 40px var(--secondary); }
-        }
-        @keyframes slideUp {
-            0% { transform: translateY(30px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes fadeInText {
-            to { opacity: 1; }
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* التصميم العام للواجهات */
-        .container {
-            padding: 20px;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 25px 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        h2 { color: var(--primary-dark); margin-bottom: 15px; font-weight: 700; }
-        p { color: var(--text-light); margin-bottom: 20px; font-size: 15px; line-height: 1.6; }
-
-        input, select, textarea {
+        /* ===== الفورم والمدخلات ===== */
+        .form-group { margin-bottom: 22px; }
+        .form-group label { display: block; margin-bottom: 10px; font-weight: 700; color: #475569; font-size: 15px; padding-right: 5px; }
+        .form-control {
             width: 100%;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1.5px solid #e0e0e0;
-            border-radius: 12px;
-            font-size: 16px;
-            outline: none;
-            transition: 0.3s;
-            background: #f9f9f9;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 18px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #334155;
+            transition: all 0.3s ease;
+            background: #ffffff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
         }
+        .form-control:focus { border-color: #00BFA5; outline: none; box-shadow: 0 0 0 4px rgba(0, 191, 165, 0.15); background: #fff; }
+        .form-control::placeholder { color: #cbd5e1; font-weight: 400; }
 
-        input:focus, select:focus, textarea:focus {
-            border-color: var(--primary);
-            background: #fff;
-            box-shadow: 0 0 0 3px rgba(18, 140, 126, 0.1);
-        }
-
-        .btn {
-            width: 100%;
-            padding: 15px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(18, 140, 126, 0.3);
-            transition: 0.3s;
-        }
-        .btn:active { transform: scale(0.98); }
-        
-        .btn-large { font-size: 20px; padding: 18px; }
-
-        /* شريط التنقل السفلي */
+        /* ===== الشريط السفلي (ثابت فوق الجميع) ===== */
         .bottom-nav {
             position: fixed;
             bottom: 0;
-            left: 0;
+            left: 50%;
+            transform: translateX(-50%);
             width: 100%;
-            background: white;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
             display: flex;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-            z-index: 1000;
-            padding-bottom: env(safe-area-inset-bottom);
+            justify-content: space-around;
+            align-items: center;
+            height: 60px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
+            z-index: 99999; /* تم رفع الطبقة ليكون دائماً الأول ولا يغطيه شيء */
+            margin: 0; /* لضمان عدم تأثره بأي هوامش خارجية */
         }
-
         .nav-item {
             flex: 1;
-            text-align: center;
-            padding: 12px 0;
-            color: var(--text-light);
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .nav-item i {
-            display: block;
-            font-size: 22px;
-            margin-bottom: 4px;
-        }
-
-        .nav-item.active {
-            color: var(--primary);
-        }
-
-        /* زر رفع الصورة الكبير الواضح لكبار السن */
-        .upload-box {
-            border: 2px dashed var(--primary);
-            background: rgba(18, 140, 126, 0.05);
-            border-radius: 15px;
-            padding: 30px 20px;
-            text-align: center;
-            margin-bottom: 20px;
-            position: relative;
-            cursor: pointer;
-        }
-        .upload-box i { font-size: 40px; color: var(--primary); margin-bottom: 10px; }
-        .upload-box span { display: block; font-size: 18px; font-weight: 700; color: var(--text-dark); }
-        .upload-box small { color: var(--text-light); font-size: 14px; }
-        .upload-box input[type="file"] {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            opacity: 0; cursor: pointer;
-        }
-        .preview-img { width: 100%; border-radius: 10px; display: none; margin-top: 15px; }
-
-        /* رقم التحويل المنسق */
-        .account-number-box {
-            background: #111b21;
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            font-size: 28px;
-            letter-spacing: 3px;
-            font-weight: 800;
-            margin: 15px 0;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-        }
-
-        /* سجل التحويل */
-        .history-item {
-            background: white;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 12px;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-            border-right: 4px solid var(--secondary);
+            justify-content: center;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            height: 100%;
         }
-        .h-info h4 { color: var(--text-dark); font-size: 18px; margin-bottom: 5px; }
-        .h-info p { margin: 0; font-size: 13px; color: var(--text-light); }
-        .h-amount { font-size: 18px; font-weight: 800; color: var(--primary-dark); }
+        .nav-icon {
+            width: 34px; /* تم التصغير */
+            height: 34px; /* تم التصغير */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            transition: all 0.4s;
+            margin-bottom: 2px;
+        }
+        .nav-icon svg { width: 18px; height: 18px; fill: currentColor; transition: all 0.3s; }
+        .nav-item span { font-size: 11px; font-weight: 700; transition: all 0.3s; }
 
-        /* نقطة الإدارة المخفية */
-        #secret-admin-dot {
+        /* تأثير التفعيل (Active) للشريط السفلي */
+        .nav-item.active { color: #00BFA5; transform: translateY(-5px); }
+        .nav-item.active .nav-icon {
+            background: linear-gradient(135deg, #00BFA5, #00897B);
+            color: white;
+            box-shadow: 0 6px 12px rgba(0, 191, 165, 0.3);
+            border-radius: 50%;
+        }
+        .nav-item.active .nav-icon svg { fill: white; }
+        .nav-item.active span { transform: translateY(2px); }
+
+        /* ===== صفحة التحويل ورفع الصور ===== */
+        .transfer-card {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(15, 23, 42, 0.25);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 20px;
+        }
+        .transfer-card::before { content: ''; position: absolute; top: -40px; right: -40px; width: 120px; height: 120px; background: rgba(255,255,255,0.05); border-radius: 50%; }
+        .transfer-card::after { content: ''; position: absolute; bottom: -30px; left: -30px; width: 80px; height: 80px; background: rgba(255,255,255,0.05); border-radius: 50%; }
+        
+        .transfer-card h3 { font-size: 16px; color: #cbd5e1; font-weight: 600; margin-bottom: 10px; position: relative; z-index: 2; }
+        .card-number { font-size: 28px; font-weight: 800; letter-spacing: 3px; color: #f1c40f; text-shadow: 0 2px 10px rgba(241, 196, 15, 0.3); position: relative; z-index: 2; user-select: all; }
+        
+        .upload-area {
+            border: 2px dashed #00BFA5;
+            background: #f0fdfa;
+            border-radius: 20px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        .upload-area:hover { background: #ccfbf1; transform: scale(1.02); }
+        .upload-area p { color: #0f766e; font-weight: 700; font-size: 16px; display: flex; flex-direction: column; align-items: center; gap: 10px;}
+        .upload-area p svg { width: 35px; height: 35px; fill: #00BFA5; }
+        .upload-area input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+        .image-preview { width: 100%; max-height: 220px; object-fit: cover; margin-top: 15px; display: none; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+        /* ===== السجلات والبطاقات ===== */
+        .history-card {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid #f1f5f9;
+            border-right: 5px solid #00BFA5;
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .history-card:active { transform: scale(0.98); }
+        .history-card h4 { color: #1e293b; margin-bottom: 8px; font-size: 18px; }
+        .history-card p { color: #64748b; font-size: 14px; margin-bottom: 5px; font-weight: 600; }
+        .history-card .date { color: #94a3b8; font-size: 12px; display: inline-block; background: #f1f5f9; padding: 4px 10px; border-radius: 20px; margin-top: 5px; }
+        .admin-img { width: 100%; height: 180px; object-fit: cover; border-radius: 12px; margin-top: 15px; cursor: pointer; border: 1px solid #e2e8f0; }
+
+        /* ===== الزر المخفي للمالك ===== */
+        #secret-admin-btn {
             position: absolute;
-            top: 10px;
-            left: 10px;
-            width: 20px;
-            height: 20px;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
             background: transparent;
-            opacity: 0.05; /* شبه مخفية تماماً */
-            z-index: 100;
+            z-index: 1000;
         }
 
-        /* نافذة منبثقة (Modal) */
-        .modal {
+        /* ===== شاشة التحميل ===== */
+        #loading-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
-            display: none; justify-content: center; align-items: center; z-index: 2000;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            display: none; justify-content: center; align-items: center; flex-direction: column;
+        }
+        .spinner {
+            border: 4px solid #e2e8f0; border-top: 4px solid #00BFA5;
+            border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite;
+        }
+
+        /* ===== النوافذ المنبثقة (Modals) ===== */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(5px); z-index: 2000;
+            justify-content: center; align-items: center;
         }
         .modal-content {
-            background: white; width: 90%; max-width: 400px; padding: 25px;
-            border-radius: 20px; text-align: center; position: relative;
+            background: #fff; padding: 30px; border-radius: 24px; width: 85%; max-width: 360px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .close-modal {
-            position: absolute; top: 15px; left: 15px; font-size: 20px; color: #aaa; cursor: pointer;
-        }
+        .full-img { width: 100%; border-radius: 16px; max-height: 70vh; object-fit: contain; }
+        .close-modal { margin-top: 20px; width: 100%; }
 
-        /* شاشة الإدارة */
-        .admin-request-card {
-            background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: right;
-        }
-        .admin-request-card img {
-            width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-top: 10px; cursor: pointer;
-        }
-        .admin-header {
-            background: var(--primary-dark); color: white; padding: 15px; text-align: center;
-            font-size: 20px; font-weight: bold; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
-        }
-        .method-item {
-            display: flex; justify-content: space-between; align-items: center;
-            background: #fff; padding: 15px; border-radius: 10px; margin-bottom: 10px;
-            border: 1px solid #ddd;
-        }
-
-        /* تحميل */
-        .loader {
-            display: none;
-            width: 40px; height: 40px;
-            border: 4px solid #f3f3f3; border-top: 4px solid var(--primary);
-            border-radius: 50%; animation: spin 1s linear infinite;
-            margin: 10px auto;
-        }
+        /* ===== الأنيميشن ===== */
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes pulseLogo { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes rippleAnim { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(2.5); opacity: 0; } }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         
-        #full-image-modal img { max-width: 100%; max-height: 80vh; border-radius: 10px; }
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .mt-20 { margin-top: 20px; }
+        .app-tab { padding-bottom: 20px; }
     </style>
 </head>
 <body>
 
-    <div id="splash-screen" class="screen active">
-        <div class="splash-icon">
-            <i class="fa-solid fa-hands-holding hands-icon"></i>
-            <i class="fa-solid fa-heart heart-icon"></i>
-        </div>
-        <div class="splash-title">المتبرع</div>
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <p style="margin-top: 15px; font-weight: 800; color: #00BFA5; font-size: 18px;">جاري التحميل...</p>
     </div>
 
-    <div id="intro-screen" class="screen">
-        <div class="container" style="height: 100%; display: flex; align-items: center;">
-            <div class="card" style="width: 100%;">
-                <i class="fa-solid fa-hand-holding-dollar" style="font-size: 60px; color: var(--primary); margin-bottom: 20px;"></i>
-                <h2>مرحباً بك في مؤسستنا</h2>
-                <p>تطبيق المتبرع هو بوابتك لتقديم الخير والمساعدة. هل ترغب في التبرع إلى مؤسستنا؟</p>
-                <div class="loader" id="intro-loader"></div>
-                <button class="btn btn-large" id="btn-confirm-donate" style="margin-top: 20px;">نعم متأكد <i class="fa-solid fa-check" style="margin-right: 10px;"></i></button>
-            </div>
+    <div id="splash-screen" class="screen active-screen">
+        <div class="splash-logo-container">
+            <div class="ripple"></div>
+            <div class="ripple"></div>
+            <div class="ripple"></div>
+            <svg class="heart-logo" viewBox="0 0 24 24">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
         </div>
+        <h1 class="splash-title">مشروع حلم الايتام</h1>
+        <p class="splash-msg">أهلاً بك في منصتنا<br>هل ترغب في ترك بصمة خير؟</p>
+        <button class="btn" id="btn-confirm-yes">ابدأ الآن</button>
     </div>
 
-    <div id="setup-screen" class="screen">
-        <div class="container">
-            <div class="card">
-                <h2>بيانات المتبرع</h2>
-                <p>يرجى إدخال بياناتك لمرة واحدة فقط</p>
-                <input type="text" id="user-name" placeholder="الاسم الثلاثي" required>
-                <input type="text" id="user-address" placeholder="مكان السكن" required>
-                <input type="tel" id="user-phone" placeholder="رقم الهاتف" required>
-                <div class="loader" id="setup-loader"></div>
-                <button class="btn" id="btn-save-user">حفظ البيانات</button>
+    <div id="register-screen" class="screen">
+        <div class="header">
+            <div class="header-content">بيانات المتبرع</div>
+        </div>
+        <div class="content-area">
+            <p class="text-center" style="margin-bottom: 25px; color:#64748b; font-weight: 600;">يرجى إكمال بياناتك لمرة واحدة فقط</p>
+            <div class="form-group">
+                <label>الاسم الثلاثي</label>
+                <input type="text" id="reg-name" class="form-control" placeholder="اكتب اسمك الثلاثي هنا">
             </div>
+            <div class="form-group">
+                <label>مكان السكن</label>
+                <input type="text" id="reg-address" class="form-control" placeholder="المحافظة - المنطقة">
+            </div>
+            <div class="form-group">
+                <label>رقم الهاتف</label>
+                <input type="tel" id="reg-phone" class="form-control" placeholder="07XXXXXXXXX">
+            </div>
+            <button class="btn btn-primary" id="btn-save-profile" style="margin-top: 30px;">حفظ البيانات</button>
         </div>
     </div>
 
     <div id="main-app" class="screen">
         
-        <div id="tab-donate-step1" class="app-tab active" style="padding-bottom: 80px;">
-            <div class="container">
-                <div class="card">
-                    <h2>معلومات التبرع</h2>
-                    <p>اختر طريقة الدفع وأدخل المبلغ</p>
-                    <select id="payment-method-select">
-                        <option value="">جاري تحميل طرق الدفع...</option>
+        <div id="tab-donate-step1" class="app-tab active-screen">
+            <div class="header">
+                <div class="header-content">بوابة التبرع</div>
+            </div>
+            <div class="content-area">
+                <div class="form-group">
+                    <label>طريقة التحويل</label>
+                    <select id="donate-method" class="form-control">
+                        <option value="ماستر كارد">ماستر كارد</option>
                     </select>
-                    <input type="number" id="donate-amount" placeholder="المبلغ المراد تحويله (مثال: 50000)" required>
-                    <textarea id="donate-note" placeholder="ملاحظة أو رسالة مع التحويل (اختياري)" rows="3"></textarea>
-                    <button class="btn" id="btn-next-step">التالي <i class="fa-solid fa-arrow-left" style="margin-right: 8px;"></i></button>
                 </div>
+                <div class="form-group">
+                    <label>المبلغ المراد تحويله</label>
+                    <input type="number" id="donate-amount" class="form-control" placeholder="مثال: 25000">
+                </div>
+                <div class="form-group">
+                    <label>ملاحظة (اختياري)</label>
+                    <textarea id="donate-note" class="form-control" rows="3" placeholder="اكتب رسالتك هنا..."></textarea>
+                </div>
+                <button class="btn btn-primary" id="btn-next-step" style="margin-top: 25px;">متابعة</button>
             </div>
         </div>
 
-        <div id="tab-donate-step2" class="app-tab" style="display: none; padding-bottom: 80px;">
-            <div class="container">
-                <div class="card">
-                    <button id="btn-back-step1" style="background:none; border:none; color:var(--text-light); font-size:20px; float:right; cursor:pointer;"><i class="fa-solid fa-arrow-right"></i></button>
-                    <h2 id="method-title-display">التحويل</h2>
-                    <p>يرجى تحويل المبلغ إلى الرقم التالي:</p>
-                    <div class="account-number-box" id="method-number-display">
-                        -------
-                    </div>
-                    <p style="color: red; font-weight: bold; font-size: 14px;">يجب أخذ سكرين عند تحويل مبلغ التبرع وإرفاق السكرين بالأسفل</p>
-                    
-                    <div class="upload-box" id="upload-trigger">
-                        <i class="fa-solid fa-cloud-arrow-up"></i>
-                        <span>اضغط هنا لرفع صورة التحويل</span>
-                        <small>دعم للصور من الاستوديو أو الكاميرا</small>
-                        <input type="file" id="screenshot-file" accept="image/*">
-                        <img id="screenshot-preview" class="preview-img" src="" alt="Preview">
-                    </div>
-
-                    <div class="loader" id="upload-loader"></div>
-                    <button class="btn btn-large" id="btn-submit-donation" style="background-color: var(--secondary);"><i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i> إرسال التحويل</button>
+        <div id="tab-donate-step2" class="app-tab hidden">
+            <div class="header">
+                <div class="header-content">إتمام التحويل</div>
+            </div>
+            <div class="content-area">
+                <div class="transfer-card">
+                    <h3>طريقة التحويل: <span id="display-method-name" style="color:#00BFA5;">ماستر كارد</span></h3>
+                    <p style="color: #94a3b8; font-size:14px; margin-top:5px;">يرجى تحويل المبلغ إلى الرقم التالي:</p>
+                    <div class="card-number" id="display-method-number">5754939477</div>
                 </div>
+                
+                <p class="text-center" style="color: #ef4444; font-weight: 700; padding: 0 10px; font-size:14px;">
+                    ⚠️ ملاحظة: يجب أخذ سكرين شوت لعملية التحويل وإرفاقها بالأسفل.
+                </p>
+
+                <div class="upload-area" id="upload-box">
+                    <p>
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54-1.96-2.36L6.5 17h11l-3.54-4.71z"/></svg>
+                        اضغط هنا لإرفاق صورة التحويل
+                    </p>
+                    <input type="file" id="donate-image" accept="image/*">
+                    <img id="preview-image" class="image-preview" src="" alt="preview">
+                </div>
+                
+                <button class="btn btn-primary" id="btn-submit-donation">إرسال التبرع</button>
+                <button class="btn" style="background:#f1f5f9; color:#475569; margin-top:10px; box-shadow:none;" id="btn-back-step">رجوع للخلف</button>
             </div>
         </div>
 
-        <div id="tab-history" class="app-tab" style="display: none; padding-bottom: 80px; position: relative;">
-            <div id="secret-admin-dot"></div>
+        <div id="tab-history" class="app-tab hidden">
+            <div class="header">
+                <div class="header-content">سجل تحويلاتي</div>
+            </div>
+            <div id="secret-admin-btn"></div>
+            <div class="content-area" id="user-history-list">
+                </div>
+            <p id="no-history-msg" class="text-center mt-20 hidden" style="color:#94a3b8; font-weight:600;">لم تقم بأي تبرعات بعد.</p>
+        </div>
+
+        <div id="tab-admin-received" class="app-tab hidden">
+            <button id="btn-admin-logout" style="position: absolute; top: 35px; left: 20px; background: transparent; border: none; font-size: 24px; cursor: pointer; z-index: 10;">🔙</button>
             
-            <div class="container">
-                <h2 style="text-align: center; margin-top: 10px;">سجل تحويلاتي</h2>
-                <div id="history-list">
-                    <p style="text-align:center; color:#999; margin-top: 50px;">لا توجد تحويلات سابقة.</p>
-                </div>
+            <div class="header" style="background: linear-gradient(135deg, #334155, #0f172a);">
+                <div class="header-content">طلبات التبرع المستلمة</div>
             </div>
-        </div>
-
-        <div class="bottom-nav">
-            <div class="nav-item active" id="nav-donate" onclick="switchTab('donate')">
-                <i class="fa-solid fa-hand-holding-heart"></i>
-                التبرع
-            </div>
-            <div class="nav-item" id="nav-history" onclick="switchTab('history')">
-                <i class="fa-solid fa-clock-rotate-left"></i>
-                سجل التحويل
-            </div>
-        </div>
-    </div>
-
-    <div id="admin-app" class="screen">
-        <div class="admin-header">لوحة تحكم المالك</div>
-        
-        <div id="admin-tab-requests" class="admin-tab active" style="padding-bottom: 80px;">
-            <div class="container" id="admin-requests-list">
+            <div class="content-area" id="admin-donations-list">
                 </div>
         </div>
 
-        <div id="admin-tab-methods" class="admin-tab" style="display: none; padding-bottom: 80px;">
-            <div class="container">
-                <div class="card">
-                    <h2>إضافة طريقة دفع جديدة</h2>
-                    <input type="text" id="new-method-name" placeholder="اسم الطريقة (مثال: زين كاش)">
-                    <input type="text" id="new-method-number" placeholder="رقم التحويل / البطاقة">
-                    <button class="btn" id="btn-add-method">حفظ وإضافة</button>
+        <div id="tab-admin-settings" class="app-tab hidden">
+            <div class="header" style="background: linear-gradient(135deg, #334155, #0f172a);">
+                <div class="header-content">إدارة طرق الدفع</div>
+            </div>
+            <div class="content-area">
+                <div class="form-group">
+                    <label>اسم طريقة الدفع</label>
+                    <input type="text" id="admin-method-name" class="form-control" placeholder="مثال: زين كاش">
                 </div>
-                <h3 style="margin: 20px 0 10px;">طرق الدفع الحالية</h3>
+                <div class="form-group">
+                    <label>رقم الحساب / البطاقة</label>
+                    <input type="text" id="admin-method-number" class="form-control" placeholder="اكتب الرقم هنا">
+                </div>
+                <button class="btn btn-primary" id="btn-save-method">حفظ وإضافة</button>
+
+                <h3 class="text-center mt-20" style="color:#1e293b; margin-top:30px; margin-bottom:15px;">طرق الدفع الحالية</h3>
                 <div id="admin-methods-list">
                     </div>
             </div>
         </div>
 
-        <div class="bottom-nav">
-            <div class="nav-item active" id="admin-nav-requests" onclick="switchAdminTab('requests')">
-                <i class="fa-solid fa-inbox"></i>
-                الطلبات المستلمة
+        <div class="bottom-nav" id="bottom-nav">
+            <div class="nav-item active" id="nav-donate" onclick="switchTab('donate')">
+                <div class="nav-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                </div>
+                <span id="text-nav-donate">التبرع</span>
             </div>
-            <div class="nav-item" id="admin-nav-methods" onclick="switchAdminTab('methods')">
-                <i class="fa-solid fa-money-check-dollar"></i>
-                طرق الدفع
+            <div class="nav-item" id="nav-history" onclick="switchTab('history')">
+                <div class="nav-icon">
+                    <svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+                </div>
+                <span id="text-nav-history">السجل</span>
             </div>
         </div>
     </div>
 
-    <div class="modal" id="admin-modal">
+    <div id="admin-modal" class="modal">
         <div class="modal-content">
-            <i class="fa-solid fa-xmark close-modal" onclick="closeAdminModal()"></i>
-            <h2 style="color:var(--text-dark);">دخول المالك</h2>
-            <input type="email" id="admin-email" placeholder="البريد الإلكتروني">
-            <input type="password" id="admin-pass" placeholder="كلمة المرور">
-            <div class="loader" id="admin-loader"></div>
-            <button class="btn" id="btn-admin-login" style="margin-bottom:10px;">تسجيل الدخول</button>
-            <button class="btn" id="btn-admin-register" style="background:var(--text-light);">إنشاء حساب مالك</button>
+            <h3 class="text-center" style="margin-bottom: 25px; color:#1e293b; font-weight:800;">لوحة الإدارة</h3>
+            <div class="form-group">
+                <label>البريد الإلكتروني</label>
+                <input type="email" id="admin-email" class="form-control" placeholder="البريد">
+            </div>
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <input type="password" id="admin-pass" class="form-control" placeholder="الرمز">
+            </div>
+            <button class="btn btn-primary" id="btn-admin-login">تسجيل الدخول</button>
+            <button class="btn" style="background:#f1f5f9; color:#475569; margin-top:10px; box-shadow:none;" id="btn-admin-register">إنشاء حساب (لأول مرة)</button>
+            <button class="btn btn-danger close-modal" onclick="closeModal('admin-modal')" style="margin-top:10px;">إلغاء</button>
         </div>
     </div>
 
-    <div class="modal" id="full-image-modal" onclick="this.style.display='none'">
-        <div class="modal-content" style="background: transparent; box-shadow: none; width: 100%; max-width: 600px;">
-            <img id="full-image-view" src="" alt="Screenshot">
+    <div id="image-modal" class="modal" onclick="closeModal('image-modal')">
+        <div class="modal-content" style="background:transparent; box-shadow:none; text-align:center; padding:0;">
+            <img src="" id="full-screen-img" class="full-img" alt="صورة التحويل">
+            <button class="btn btn-danger close-modal" style="width: auto; margin: 20px auto 0;">إغلاق الصورة</button>
         </div>
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, initializeFirestore, collection, addDoc, doc, setDoc, getDoc, query, where, orderBy, onSnapshot, serverTimestamp, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-analytics.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } 
+            from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, doc, getDoc, setDoc, deleteDoc } 
+            from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-lite.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } 
+            from "https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js";
 
-        // إعدادات فايربيس الخاصة بك
         const firebaseConfig = {
             apiKey: "AIzaSyDwTkp_M4WUHmsu4eduKAJOIZb-jtQkqfc",
             authDomain: "hassanein-db2b9.firebaseapp.com",
@@ -484,450 +526,422 @@
         };
 
         const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
         const auth = getAuth(app);
-        
-        // إجبار قاعدة البيانات على استخدام Long Polling لتخطي حظر شبكات الهاتف بالعراق
-        const db = initializeFirestore(app, {
-            experimentalForceLongPolling: true
-        });
-        
+        const db = getFirestore(app);
         const storage = getStorage(app);
 
-        const ADMIN_EMAIL = "mslmalmyaly223@gmail.com";
         let currentUser = null;
-        let paymentMethodsData = [];
-        let selectedMethod = null;
-        let fileToUpload = null;
+        let isAdmin = false;
+        let selectedFile = null;
+        let currentMethodNumber = "";
+        const ADMIN_EMAIL = "mslmalmyaly223@gmail.com";
 
-        // إدارة الواجهات (التنقل بين الشاشات)
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-        }
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const splashScreen = document.getElementById('splash-screen');
+        const registerScreen = document.getElementById('register-screen');
+        const mainApp = document.getElementById('main-app');
+        
+        function showLoading() { loadingOverlay.style.display = 'flex'; }
+        function hideLoading() { loadingOverlay.style.display = 'none'; }
 
-        window.switchTab = function(tab) {
+        window.switchTab = function(tabName) {
+            document.querySelectorAll('.app-tab').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById('nav-' + tab).classList.add('active');
-            
-            document.getElementById('tab-donate-step1').style.display = 'none';
-            document.getElementById('tab-donate-step2').style.display = 'none';
-            document.getElementById('tab-history').style.display = 'none';
 
-            if(tab === 'donate') {
-                document.getElementById('tab-donate-step1').style.display = 'block';
+            if(isAdmin) {
+                if(tabName === 'donate') {
+                    document.getElementById('tab-admin-received').classList.remove('hidden');
+                    document.getElementById('nav-donate').classList.add('active');
+                    loadAdminDonations();
+                } else {
+                    document.getElementById('tab-admin-settings').classList.remove('hidden');
+                    document.getElementById('nav-history').classList.add('active');
+                    loadAdminMethods();
+                }
             } else {
-                document.getElementById('tab-history').style.display = 'block';
+                if(tabName === 'donate') {
+                    document.getElementById('tab-donate-step1').classList.remove('hidden');
+                    document.getElementById('nav-donate').classList.add('active');
+                } else {
+                    document.getElementById('tab-history').classList.remove('hidden');
+                    document.getElementById('nav-history').classList.add('active');
+                    loadUserHistory();
+                }
             }
         };
 
-        window.switchAdminTab = function(tab) {
-            document.querySelectorAll('#admin-app .nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById('admin-nav-' + tab).classList.add('active');
-            
-            document.querySelectorAll('.admin-tab').forEach(el => el.style.display = 'none');
-            document.getElementById('admin-tab-' + tab).style.display = 'block';
-        };
-
-        // التحقق من حالة المستخدم عند فتح التطبيق
-        setTimeout(() => {
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    currentUser = user;
-                    if (user.email === ADMIN_EMAIL) {
-                        showScreen('admin-app');
-                        loadAdminData();
-                    } else {
-                        // مستخدم عادي، التحقق من اكتمال معلوماته
-                        const userDoc = await getDoc(doc(db, "users", user.uid));
-                        if (userDoc.exists()) {
-                            showScreen('main-app');
-                            loadUserApp();
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                isAdmin = (user.email === ADMIN_EMAIL);
+                
+                if (isAdmin) {
+                    document.getElementById('text-nav-donate').innerText = 'الاستلام';
+                    document.getElementById('text-nav-history').innerText = 'الإعدادات';
+                    
+                    splashScreen.classList.remove('active-screen');
+                    registerScreen.classList.remove('active-screen');
+                    mainApp.classList.add('active-screen');
+                    switchTab('donate');
+                    hideLoading();
+                } else {
+                    try {
+                        const docRef = doc(db, "users", user.uid);
+                        const docSnap = await getDoc(docRef);
+                        
+                        splashScreen.classList.remove('active-screen');
+                        
+                        if (docSnap.exists()) {
+                            registerScreen.classList.remove('active-screen');
+                            mainApp.classList.add('active-screen');
+                            loadPaymentMethods();
+                            switchTab('donate');
                         } else {
-                            showScreen('setup-screen');
+                            registerScreen.classList.add('active-screen');
+                            mainApp.classList.remove('active-screen');
                         }
+                    } catch (error) {
+                        console.error("خطأ في قاعدة البيانات Firestore:", error);
+                        alert("سبب فشل قاعدة البيانات: " + error.message);
+                    } finally {
+                        hideLoading();
                     }
-                } else {
-                    showScreen('intro-screen');
                 }
-            });
-        }, 3000); // 3 ثواني انيميشن البداية
+            } else {
+                splashScreen.classList.add('active-screen');
+                registerScreen.classList.remove('active-screen');
+                mainApp.classList.remove('active-screen');
+                hideLoading();
+            }
+        });
 
-        document.getElementById('btn-confirm-donate').addEventListener('click', async () => {
-            const loader = document.getElementById('intro-loader');
-            loader.style.display = 'block';
+        document.getElementById('btn-confirm-yes').addEventListener('click', async () => {
+            showLoading();
             try {
-                // إجبار النظام على حفظ تسجيل الدخول بشكل دائم بالجهاز
-                await setPersistence(auth, browserLocalPersistence);
-                
-                const randomId = Math.random().toString(36).substring(2, 12);
-                const randomEmail = `user_${randomId}@donor.app`;
-                const randomPass = `Pass@${Math.random().toString(36).substring(2, 10)}`;
-                
+                const randomStr = Math.random().toString(36).substring(2, 12);
+                const randomEmail = `user_${randomStr}@donorapp.com`;
+                const randomPass = randomStr + "XyZ123";
                 await createUserWithEmailAndPassword(auth, randomEmail, randomPass);
-                
-                // توجيه مباشر لشاشة الإعدادات لضمان عدم توقف التطبيق
-                showScreen('setup-screen');
-                
             } catch (error) {
-                console.error("تفاصيل الخطأ:", error);
-                if (error.code === 'auth/operation-not-allowed') {
-                    alert("خطأ: يرجى الذهاب إلى إعدادات فايربيس (Authentication > Sign-in method) وتفعيل خيار (Email/Password)!");
-                } else {
-                    alert("حدث خطأ: " + error.message);
-                }
+                console.error("خطأ في المصادقة Authentication:", error);
+                alert("فشل إنشاء الحساب. تأكد من تفعيل خيار (Email/Password) في قسم Authentication في فايربيس.");
+                hideLoading();
             }
-            loader.style.display = 'none';
         });
-// 2. زر "حفظ البيانات"
-        document.getElementById('btn-save-user').addEventListener('click', async () => {
-            const name = document.getElementById('user-name').value.trim();
-            const address = document.getElementById('user-address').value.trim();
-            const phone = document.getElementById('user-phone').value.trim();
 
-            if (!name || !address || !phone) return alert("يرجى ملء جميع الحقول");
+        document.getElementById('btn-save-profile').addEventListener('click', async () => {
+            const name = document.getElementById('reg-name').value.trim();
+            const address = document.getElementById('reg-address').value.trim();
+            const phone = document.getElementById('reg-phone').value.trim();
 
-            // --- الشرط البرمجي الحاسم لكشف بيئة التشغيل ---
-            if (window.location.protocol === 'file:') {
-                alert("سبب المشكلة: أنت تقوم بتشغيل التطبيق من ملف محلي داخل الهاتف (file:///). قاعدة بيانات Firestore برمجياً ترفض حفظ البيانات في هذا الوضع. يجب عليك رفع التحديث إلى GitHub وفتح الرابط من هناك.");
-                return; // إيقاف العملية فوراً لمنع التعليق
+            if(!name || !address || !phone) {
+                alert("يرجى ملء جميع الحقول");
+                return;
             }
 
-            const user = auth.currentUser;
-            if (!user) return alert("خطأ: لم يتم التعرف على حسابك، يرجى إعادة تحميل التطبيق.");
-
-            const loader = document.getElementById('setup-loader');
-            const saveBtn = document.getElementById('btn-save-user');
-            
-            loader.style.display = 'block';
-            saveBtn.disabled = true;
-
+            showLoading();
             try {
-                // وضع مؤقت زمني (8 ثواني) لتجنب التعليق النهائي
-                const timeoutHelper = new Promise((_, reject) => 
-                    setTimeout(() => reject(new Error("TIMEOUT_ERROR")), 8000)
-                );
-
-                // أمر حفظ البيانات في فايربيس
-                const saveData = setDoc(doc(db, "users", user.uid), {
-                    name: name,
+                await setDoc(doc(db, "users", currentUser.uid), {
+                    fullName: name,
                     address: address,
                     phone: phone,
-                    createdAt: serverTimestamp()
+                    createdAt: new Date().toISOString()
                 });
-
-                // تنفيذ السباق بين الحفظ والوقت
-                await Promise.race([saveData, timeoutHelper]);
-
-                // إذا نجح الحفظ قبل انتهاء الوقت
-                currentUser = user;
-                showScreen('main-app');
-                loadUserApp();
-
-            } catch (error) {
-                console.error("تفاصيل الخطأ:", error);
-                
-                if (error.message === "TIMEOUT_ERROR") {
-                    alert("فشل الاتصال بقاعدة البيانات! يرجى مسح ذاكرة التخزين المؤقت (Clear Cache) للمتصفح إذا كنت تستخدم رابط جيثاب، أو إيقاف الـ VPN مؤقتاً.");
-                } else if (error.code === 'permission-denied') {
-                    alert("قواعد الحماية (Rules) تمنع الحفظ. تأكد من تعديلها إلى allow read, write: if true;");
-                } else {
-                    alert("حدث خطأ أثناء الحفظ: " + error.message);
-                }
-            } finally {
-                loader.style.display = 'none';
-                saveBtn.disabled = false;
+                registerScreen.classList.remove('active-screen');
+                mainApp.classList.add('active-screen');
+                loadPaymentMethods();
+                switchTab('donate');
+            } catch(e) {
+                alert("فشل الحفظ، تأكد من الإتصال بالإنترنت.");
             }
+            hideLoading();
         });
-        // 2. زر "حفظ البيانات"
-        document.getElementById('btn-save-user').addEventListener('click', async () => {
-            const name = document.getElementById('user-name').value.trim();
-            const address = document.getElementById('user-address').value.trim();
-            const phone = document.getElementById('user-phone').value.trim();
 
-            if (!name || !address || !phone) return alert("يرجى ملء جميع الحقول");
-
-            // جلب المستخدم الحالي من النظام مباشرة لتفادي مشاكل التزامن
-            const user = auth.currentUser;
-            if (!user) {
-                return alert("خطأ: لم يتم التعرف على حسابك، يرجى إعادة تحميل التطبيق.");
-            }
-
-            const loader = document.getElementById('setup-loader');
-            const saveBtn = document.getElementById('btn-save-user');
+        async function loadPaymentMethods() {
+            const selectEl = document.getElementById('donate-method');
+            selectEl.innerHTML = '';
             
-            loader.style.display = 'block';
-            saveBtn.disabled = true; // تعطيل الزر حتى ما ينضغط أكثر من مرة
-
-            try {
-                // حفظ البيانات في قاعدة البيانات
-                await setDoc(doc(db, "users", user.uid), {
-                    name: name,
-                    address: address,
-                    phone: phone,
-                    createdAt: serverTimestamp()
+            const q = query(collection(db, "paymentMethods"));
+            const querySnapshot = await getDocs(q);
+            
+            if(querySnapshot.empty) {
+                // إذا قاعدة البيانات فارغة، نطلب من المالك إضافة طريقة دفع
+                let opt = document.createElement('option');
+                opt.value = "";
+                opt.text = "لا توجد طرق دفع (يرجى إضافة طريقة من لوحة الإدارة)";
+                selectEl.appendChild(opt);
+            } else {
+                // عرض طرق الدفع الموجودة في قاعدة البيانات فقط
+                querySnapshot.forEach((doc) => {
+                    let data = doc.data();
+                    let opt = document.createElement('option');
+                    opt.value = data.number; 
+                    opt.text = data.name;    
+                    selectEl.appendChild(opt);
                 });
-
-                // تحديث المتغير العالمي حتى يشتغل باقي التطبيق طبيعي
-                currentUser = user;
-
-                showScreen('main-app');
-                loadUserApp();
-            } catch (error) {
-                console.error("تفاصيل الخطأ:", error);
-                if (error.code === 'permission-denied') {
-                    alert("الخطأ من فايربيس: قواعد الحماية (Rules) تمنع الحفظ. يرجى تعديلها إلى allow read, write: if true;");
-                } else {
-                    alert("فشل الحفظ: تأكد من أنك قمت بإنشاء قاعدة بيانات (Firestore Database) في لوحة تحكم فايربيس.\nرسالة الخطأ: " + error.message);
-                }
-            } finally {
-                // إخفاء التحميل وإرجاع الزر لحالته الطبيعية بكل الأحوال (حتى لو صار خطأ)
-                loader.style.display = 'none';
-                saveBtn.disabled = false;
             }
-        });
-
-        // 3. تحميل التطبيق للمستخدم العادي
-        function loadUserApp() {
-            // جلب طرق الدفع
-            onSnapshot(collection(db, "paymentMethods"), (snapshot) => {
-                paymentMethodsData = [];
-                const select = document.getElementById('payment-method-select');
-                select.innerHTML = '';
-                
-                if (snapshot.empty) {
-                    // إذا لم تكن هناك طرق دفع، إضافة الماستر كارد الافتراضي
-                    const defaultMethod = { name: "ماستر كارد", number: "5754939477" };
-                    addDoc(collection(db, "paymentMethods"), defaultMethod);
-                } else {
-                    snapshot.forEach(doc => {
-                        const data = doc.data();
-                        data.id = doc.id;
-                        paymentMethodsData.push(data);
-                        const option = document.createElement('option');
-                        option.value = data.id;
-                        option.text = data.name;
-                        select.appendChild(option);
-                    });
-                }
-            });
-
-            // جلب سجل التحويلات للمستخدم
-            const q = query(collection(db, "donations"), where("uid", "==", currentUser.uid), orderBy("timestamp", "desc"));
-            onSnapshot(q, (snapshot) => {
-                const list = document.getElementById('history-list');
-                list.innerHTML = '';
-                if(snapshot.empty) {
-                    list.innerHTML = '<p style="text-align:center; color:#999; margin-top: 50px;">لا توجد تحويلات سابقة.</p>';
-                    return;
-                }
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString('ar-IQ') : 'جاري المعالجة...';
-                    list.innerHTML += `
-                        <div class="history-item">
-                            <div class="h-info">
-                                <h4>${data.methodName}</h4>
-                                <p>${date}</p>
-                                <p style="color:#666;">${data.note || 'بدون ملاحظة'}</p>
-                            </div>
-                            <div class="h-amount">${data.amount}</div>
-                        </div>
-                    `;
-                });
-            });
         }
 
-        // الانتقال للخطوة الثانية (التحويل)
         document.getElementById('btn-next-step').addEventListener('click', () => {
-            const amount = document.getElementById('donate-amount').value;
-            const methodId = document.getElementById('payment-method-select').value;
-            
-            if(!amount || !methodId) return alert("يرجى اختيار طريقة الدفع وإدخال المبلغ");
+            const amount = document.getElementById('donate-amount').value.trim();
+            const methodSelect = document.getElementById('donate-method');
+            const methodName = methodSelect.options[methodSelect.selectedIndex].text;
+            const methodNumber = methodSelect.value;
 
-            selectedMethod = paymentMethodsData.find(m => m.id === methodId);
+            if(!amount || amount <= 0) {
+                alert("يرجى إدخال مبلغ صحيح");
+                return;
+            }
+
+            document.getElementById('display-method-name').innerText = methodName;
+            document.getElementById('display-method-number').innerText = methodNumber;
             
-            document.getElementById('method-title-display').innerText = `طريقة الدفع: ${selectedMethod.name}`;
-            document.getElementById('method-number-display').innerText = selectedMethod.number;
-            
-            document.getElementById('tab-donate-step1').style.display = 'none';
-            document.getElementById('tab-donate-step2').style.display = 'block';
+            document.getElementById('tab-donate-step1').classList.add('hidden');
+            document.getElementById('tab-donate-step2').classList.remove('hidden');
         });
 
-        // الرجوع للخطوة الأولى
-        document.getElementById('btn-back-step1').addEventListener('click', () => {
-            document.getElementById('tab-donate-step2').style.display = 'none';
-            document.getElementById('tab-donate-step1').style.display = 'block';
+        document.getElementById('btn-back-step').addEventListener('click', () => {
+            document.getElementById('tab-donate-step2').classList.add('hidden');
+            document.getElementById('tab-donate-step1').classList.remove('hidden');
         });
 
-        // اختيار الصورة وتغييرها في الواجهة
-        document.getElementById('screenshot-file').addEventListener('change', (e) => {
-            if(e.target.files[0]) {
-                fileToUpload = e.target.files[0];
+        document.getElementById('donate-image').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if(file) {
+                selectedFile = file;
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById('screenshot-preview').src = e.target.result;
-                    document.getElementById('screenshot-preview').style.display = 'block';
-                    document.querySelector('.upload-box i').style.display = 'none';
-                    document.querySelector('.upload-box span').innerText = 'تم اختيار الصورة - اضغط لتغييرها';
+                    const imgPreview = document.getElementById('preview-image');
+                    imgPreview.src = e.target.result;
+                    imgPreview.style.display = 'block';
                 }
-                reader.readAsDataURL(fileToUpload);
+                reader.readAsDataURL(file);
             }
         });
 
-        // إرسال التحويل
         document.getElementById('btn-submit-donation').addEventListener('click', async () => {
-            if(!fileToUpload) return alert("يجب إرفاق صورة (سكرين) للتحويل أولاً!");
-            
-            const loader = document.getElementById('upload-loader');
-            loader.style.display = 'block';
-            document.getElementById('btn-submit-donation').disabled = true;
+            if(!selectedFile) {
+                alert("يرجى إرفاق صورة التحويل أولاً!");
+                return;
+            }
 
+            showLoading();
             try {
-                // جلب بيانات المستخدم
+                // جلب الصورة المعروضة
+                const imgElement = document.getElementById('preview-image');
+                
+                // إنشاء Canvas لضغط الصورة وتحويلها لنص (حتى لا تتجاوز حدود Firestore)
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // تصغير أبعاد الصورة قليلاً للحفاظ على المساحة
+                const MAX_WIDTH = 600;
+                const scaleSize = MAX_WIDTH / imgElement.naturalWidth;
+                canvas.width = MAX_WIDTH;
+                canvas.height = imgElement.naturalHeight * scaleSize;
+                
+                // رسم الصورة وضغطها بجودة 60%
+                ctx.drawImage(imgElement, 0, 0, canvas.width, canvas.height);
+                const imageUrl = canvas.toDataURL('image/jpeg', 0.6); // هنا الصورة صارت عبارة عن نص Base64
+
+                // جلب اسم المستخدم
                 const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-                const userData = userDoc.data();
+                const userName = userDoc.exists() ? userDoc.data().fullName : "متبرع غير معروف";
 
-                // رفع الصورة
-                const imgRef = ref(storage, `screenshots/${currentUser.uid}_${Date.now()}`);
-                await uploadBytes(imgRef, fileToUpload);
-                const imageUrl = await getDownloadURL(imgRef);
-
-                // حفظ بيانات التحويل
+                const amount = document.getElementById('donate-amount').value;
+                const note = document.getElementById('donate-note').value;
+                
+                // حفظ البيانات والصورة (كنص) مباشرة في Firestore
                 await addDoc(collection(db, "donations"), {
                     uid: currentUser.uid,
-                    userName: userData.name,
-                    userPhone: userData.phone,
-                    amount: document.getElementById('donate-amount').value,
-                    note: document.getElementById('donate-note').value,
-                    methodName: selectedMethod.name,
-                    screenshotUrl: imageUrl,
-                    timestamp: serverTimestamp()
+                    userName: userName,
+                    amount: amount,
+                    note: note,
+                    imageUrl: imageUrl, // النص الخاص بالصورة
+                    timestamp: new Date().toISOString(),
                 });
 
-                // تصفير الحقول والعودة
+                alert("تم إرسال تبرعك بنجاح، شكراً لك!");
+                
                 document.getElementById('donate-amount').value = '';
                 document.getElementById('donate-note').value = '';
-                fileToUpload = null;
-                document.getElementById('screenshot-preview').style.display = 'none';
-                document.querySelector('.upload-box i').style.display = 'block';
-                document.querySelector('.upload-box span').innerText = 'اضغط هنا لرفع صورة التحويل';
+                document.getElementById('donate-image').value = '';
+                document.getElementById('preview-image').style.display = 'none';
+                selectedFile = null;
+
+                document.getElementById('tab-donate-step2').classList.add('hidden');
+                document.getElementById('tab-donate-step1').classList.remove('hidden');
+
+            } catch (error) {
+                alert("حدث خطأ أثناء الإرسال. تأكد من اتصالك بالإنترنت.");
+                console.error(error);
+            }
+            hideLoading();
+        });
+
+        async function loadUserHistory() {
+            const listEl = document.getElementById('user-history-list');
+            const msgEl = document.getElementById('no-history-msg');
+            listEl.innerHTML = '';
+            
+            showLoading();
+            try {
+                const q = query(collection(db, "donations"), where("uid", "==", currentUser.uid), orderBy("timestamp", "desc"));
+                const querySnapshot = await getDocs(q);
                 
-                alert("تم استلام تبرعك بنجاح، جزاك الله خيراً!");
-                window.switchTab('history');
-
-            } catch (error) {
-                alert("حدث خطأ أثناء الإرسال، تأكد من اتصالك بالانترنت.");
-            }
-            
-            loader.style.display = 'none';
-            document.getElementById('btn-submit-donation').disabled = false;
-        });
-
-        // ================= إدارة المالك =================
-
-        // فتح نافذة دخول المالك من النقطة المخفية
-        document.getElementById('secret-admin-dot').addEventListener('click', () => {
-            document.getElementById('admin-modal').style.display = 'flex';
-        });
-        window.closeAdminModal = () => document.getElementById('admin-modal').style.display = 'none';
-
-        // تسجيل دخول المالك
-        document.getElementById('btn-admin-login').addEventListener('click', async () => {
-            const email = document.getElementById('admin-email').value;
-            const pass = document.getElementById('admin-pass').value;
-            if(email !== ADMIN_EMAIL) return alert("هذا البريد ليس للمالك!");
-            
-            document.getElementById('admin-loader').style.display = 'block';
-            try {
-                await signInWithEmailAndPassword(auth, email, pass);
-                closeAdminModal();
-            } catch (error) {
-                alert("الرمز غير صحيح أو الحساب غير موجود.");
-            }
-            document.getElementById('admin-loader').style.display = 'none';
-        });
-
-        // إنشاء حساب المالك لأول مرة
-        document.getElementById('btn-admin-register').addEventListener('click', async () => {
-            const email = document.getElementById('admin-email').value;
-            const pass = document.getElementById('admin-pass').value;
-            if(email !== ADMIN_EMAIL) return alert("لا يمكنك إنشاء حساب مالك بهذا البريد!");
-            
-            document.getElementById('admin-loader').style.display = 'block';
-            try {
-                await createUserWithEmailAndPassword(auth, email, pass);
-                closeAdminModal();
-            } catch (error) {
-                alert("قد يكون الحساب موجوداً مسبقاً، جرب تسجيل الدخول.");
-            }
-            document.getElementById('admin-loader').style.display = 'none';
-        });
-
-        // دوال الإدارة
-        function loadAdminData() {
-            // جلب طلبات التحويل للمالك
-            const qRequests = query(collection(db, "donations"), orderBy("timestamp", "desc"));
-            onSnapshot(qRequests, (snapshot) => {
-                const list = document.getElementById('admin-requests-list');
-                list.innerHTML = '';
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString('ar-IQ') : '';
-                    list.innerHTML += `
-                        <div class="admin-request-card">
-                            <h3 style="color:var(--primary); margin-bottom:5px;">المتبرع: ${data.userName}</h3>
-                            <p style="margin:5px 0; color:#333;"><strong>الهاتف:</strong> ${data.userPhone}</p>
-                            <p style="margin:5px 0; color:#333;"><strong>المبلغ:</strong> ${data.amount} عبر (${data.methodName})</p>
-                            <p style="margin:5px 0; color:#333;"><strong>الوقت:</strong> ${date}</p>
-                            <p style="margin:5px 0; color:#666;"><strong>ملاحظة:</strong> ${data.note || 'لا توجد'}</p>
-                            <img src="${data.screenshotUrl}" onclick="viewFullImage('${data.screenshotUrl}')">
-                        </div>
-                    `;
-                });
-            });
-
-            // جلب طرق الدفع للمالك
-            onSnapshot(collection(db, "paymentMethods"), (snapshot) => {
-                const list = document.getElementById('admin-methods-list');
-                list.innerHTML = '';
-                snapshot.forEach(docSnap => {
-                    const data = docSnap.data();
-                    list.innerHTML += `
-                        <div class="method-item">
-                            <div>
-                                <strong>${data.name}</strong><br>
-                                <span style="color:var(--primary);">${data.number}</span>
+                if(querySnapshot.empty) {
+                    msgEl.classList.remove('hidden');
+                } else {
+                    msgEl.classList.add('hidden');
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        const dateObj = new Date(data.timestamp);
+                        const dateStr = dateObj.toLocaleDateString('ar-IQ') + ' ' + dateObj.toLocaleTimeString('ar-IQ');
+                        
+                        listEl.innerHTML += `
+                            <div class="history-card">
+                                <h4>المبلغ: <span style="color:#00BFA5;">${data.amount}</span> د.ع</h4>
+                                ${data.note ? `<p>الملاحظة: ${data.note}</p>` : ''}
+                                <p class="date">${dateStr}</p>
                             </div>
-                            <button onclick="deleteMethod('${docSnap.id}')" style="background:red; color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    `;
-                });
-            });
+                        `;
+                    });
+                }
+            } catch(e) {
+                console.log(e);
+            }
+            hideLoading();
         }
 
-        // إضافة طريقة دفع
-        document.getElementById('btn-add-method').addEventListener('click', async () => {
-            const name = document.getElementById('new-method-name').value;
-            const number = document.getElementById('new-method-number').value;
-            if(!name || !number) return alert("اكتب الاسم والرقم");
-            
-            await addDoc(collection(db, "paymentMethods"), { name, number });
-            document.getElementById('new-method-name').value = '';
-            document.getElementById('new-method-number').value = '';
+        window.closeModal = function(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        };
+
+        document.getElementById('secret-admin-btn').addEventListener('click', () => {
+            document.getElementById('admin-modal').style.display = 'flex';
         });
 
-        // حذف طريقة دفع (دالة عامة في window لتستدعى من HTML)
-        window.deleteMethod = async (id) => {
-            if(confirm("هل أنت متأكد من حذف طريقة الدفع؟")) {
-                await deleteDoc(doc(db, "paymentMethods", id));
+        document.getElementById('btn-admin-login').addEventListener('click', async () => {
+            const email = document.getElementById('admin-email').value.trim();
+            const pass = document.getElementById('admin-pass').value.trim();
+            if(email !== ADMIN_EMAIL) { alert("هذا البريد غير مصرح له كمالك."); return; }
+            showLoading();
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                closeModal('admin-modal');
+            } catch(e) {
+                alert("خطأ في تسجيل الدخول. تأكد من الرمز.");
             }
+            hideLoading();
+        });
+
+        document.getElementById('btn-admin-register').addEventListener('click', async () => {
+            const email = document.getElementById('admin-email').value.trim();
+            const pass = document.getElementById('admin-pass').value.trim();
+            if(email !== ADMIN_EMAIL) { alert("هذا البريد غير مصرح له كمالك."); return; }
+            showLoading();
+            try {
+                await createUserWithEmailAndPassword(auth, email, pass);
+                closeModal('admin-modal');
+            } catch(e) {
+                alert("حدث خطأ. ربما الحساب موجود مسبقاً.");
+            }
+            hideLoading();
+        });
+
+        async function loadAdminDonations() {
+            const listEl = document.getElementById('admin-donations-list');
+            listEl.innerHTML = '';
+            showLoading();
+            try {
+                const q = query(collection(db, "donations"), orderBy("timestamp", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const dateObj = new Date(data.timestamp);
+                    const dateStr = dateObj.toLocaleDateString('ar-IQ') + ' ' + dateObj.toLocaleTimeString('ar-IQ');
+                    
+                    listEl.innerHTML += `
+                        <div class="history-card">
+                            <h4>الاسم: ${data.userName}</h4>
+                            <p style="color:#00BFA5; font-size:16px; font-weight: bold;">المبلغ: ${data.amount}</p>
+                            ${data.note ? `<p>ملاحظة: ${data.note}</p>` : ''}
+                            <p class="date">${dateStr}</p>
+                            <img src="${data.imageUrl}" class="admin-img" onclick="showFullImage('${data.imageUrl}')" alt="سكرين">
+                        </div>
+                    `;
+                });
+            } catch(e) {
+                console.log(e);
+            }
+            hideLoading();
+        }
+
+        window.showFullImage = function(url) {
+            document.getElementById('full-screen-img').src = url;
+            document.getElementById('image-modal').style.display = 'flex';
         };
 
-        // عرض الصورة بكامل الشاشة للمالك
-        window.viewFullImage = (url) => {
-            document.getElementById('full-image-view').src = url;
-            document.getElementById('full-image-modal').style.display = 'flex';
+        document.getElementById('btn-save-method').addEventListener('click', async () => {
+            const name = document.getElementById('admin-method-name').value.trim();
+            const number = document.getElementById('admin-method-number').value.trim();
+            if(!name || !number) { alert("اكتب الاسم والرقم"); return; }
+            
+            showLoading();
+            try {
+                await addDoc(collection(db, "paymentMethods"), { name: name, number: number });
+                document.getElementById('admin-method-name').value = '';
+                document.getElementById('admin-method-number').value = '';
+                loadAdminMethods();
+            } catch(e) { alert("حدث خطأ"); }
+            hideLoading();
+        });
+
+        async function loadAdminMethods() {
+            const listEl = document.getElementById('admin-methods-list');
+            listEl.innerHTML = '';
+            
+            try {
+                const q = query(collection(db, "paymentMethods"));
+                const querySnapshot = await getDocs(q);
+                
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    listEl.innerHTML += `
+                        <div class="history-card" style="display:flex; justify-content:space-between; align-items:center; padding:15px;">
+                            <div>
+                                <h4 style="margin:0; color:#0f172a;">${data.name}</h4>
+                                <p style="margin:5px 0 0; color:#64748b; font-weight:700;">${data.number}</p>
+                            </div>
+                            <button onclick="deleteMethod('${docSnap.id}')" class="btn btn-danger" style="width:auto; padding:8px 20px; margin:0; border-radius:12px;">حذف</button>
+                        </div>
+                    `;
+                });
+            } catch(e) { console.log(e); }
+        }
+
+        window.deleteMethod = async function(id) {
+            if(confirm("هل أنت متأكد من الحذف؟")) {
+                showLoading();
+                await deleteDoc(doc(db, "paymentMethods", id));
+                loadAdminMethods();
+                hideLoading();
+            }
         };
+        
+        // تسجيل خروج المالك والعودة كـ مستخدم عادي
+        document.getElementById('btn-admin-logout').addEventListener('click', async () => {
+            showLoading();
+            try {
+                await signOut(auth);
+                // الدالة onAuthStateChanged راح تتكفل تلقائياً بإرجاعك لشاشة البداية
+            } catch (error) {
+                console.log(error);
+            }
+            hideLoading();
+        });
 
     </script>
 </body>
